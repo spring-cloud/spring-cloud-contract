@@ -153,7 +153,7 @@ class StreamStubRunnerSpec {
 
 	// Contract from my service that is processing the input message and sending out another message (I'm a producer)
 	Contract myDsl =
-			// tag::sample_dsl[]
+			// tag::sample_producer_dsl[]
 			Contract.make {
 				label 'return_book_2'
 				input { triggeredBy('gotAMessageFromFunction()') }
@@ -163,6 +163,7 @@ class StreamStubRunnerSpec {
 					headers { header('BOOK-NAME', 'foo') }
 				}
 			}
+	// end::sample_producer_dsl[]
 
 	// tag::setup[]
 	@ImportAutoConfiguration(TestChannelBinderConfiguration.class)

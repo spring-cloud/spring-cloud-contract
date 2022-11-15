@@ -526,7 +526,7 @@ include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/o
 Now consider the following Spring Cloud Stream function configuration:
 
 ====
-[source,yaml]
+[source,groovy]
 ----
 include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=setup,indent=0]
 ----
