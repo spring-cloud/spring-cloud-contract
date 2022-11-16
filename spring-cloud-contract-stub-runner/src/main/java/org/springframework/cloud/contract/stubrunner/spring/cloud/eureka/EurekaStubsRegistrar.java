@@ -26,6 +26,7 @@ import com.netflix.appinfo.ApplicationInfoManager;
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.AbstractDiscoveryClientOptionalArgs;
 import com.netflix.discovery.EurekaClient;
+import com.netflix.discovery.shared.transport.jersey.TransportClientFactories;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -96,8 +97,9 @@ public class EurekaStubsRegistrar implements StubsRegistrar {
 			InstanceInfo instanceInfo = new InstanceInfoFactory().create(instance);
 			ApplicationInfoManager applicationInfoManager = new ApplicationInfoManager(instance, instanceInfo);
 			AbstractDiscoveryClientOptionalArgs<?> args = args();
-			EurekaClient client = new CloudEurekaClient(applicationInfoManager, this.eurekaClientConfigBean, args,
-					this.context);
+			TransportClientFactories<?> transportClientFactories = transportClientFactories();
+			EurekaClient client = new CloudEurekaClient(applicationInfoManager, this.eurekaClientConfigBean,
+					transportClientFactories, args, this.context);
 			EurekaRegistration registration = EurekaRegistration.builder(instance)
 					.with(this.eurekaClientConfigBean, this.context).with(client).build();
 			EurekaHealthCheckHandler eurekaHealthCheckHandler = new EurekaHealthCheckHandler(
@@ -121,6 +123,15 @@ public class EurekaStubsRegistrar implements StubsRegistrar {
 	private AbstractDiscoveryClientOptionalArgs<?> args() {
 		try {
 			return this.context.getBean(AbstractDiscoveryClientOptionalArgs.class);
+		}
+		catch (BeansException e) {
+			return null;
+		}
+	}
+
+	private TransportClientFactories<?> transportClientFactories() {
+		try {
+			return this.context.getBean(TransportClientFactories.class);
 		}
 		catch (BeansException e) {
 			return null;

@@ -52,10 +52,8 @@ import org.springframework.web.client.RestTemplate
 @SpringBootTest(classes = Config, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = ["stubrunner.cloud.eureka.enabled=true",
                 "stubrunner.cloud.stubbed.discovery.enabled=false",
-                "stubrunner.cloud.ribbon.enabled=false",
                 "eureka.client.enabled=true",
-                "eureka.instance.leaseRenewalIntervalInSeconds=1",
-                "ribbon.ServerListRefreshInterval=100"])
+                "eureka.instance.leaseRenewalIntervalInSeconds=1"])
 @AutoConfigureStubRunner(ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
  "org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer", "org.springframework.cloud.contract.verifier.stubs:bootService"] ,
 repositoryRoot = "classpath:m2repo/repository/" ,
