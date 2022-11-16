@@ -39,7 +39,7 @@
 		<hoverfly-junit.version>0.2.2</hoverfly-junit.version>
 		<commons-text.version>1.10.0</commons-text.version>
 		<handlebars.version>4.3.0</handlebars.version>
-		<jgit.version>6.1.0.202203080745-r</jgit.version>
+		<jgit.version>6.3.0.202209071007-r</jgit.version>
 		<javax-inject.version>1</javax-inject.version>
 		<json-unit-assertj.version>2.32.0</json-unit-assertj.version>
 		<rest-assured.version>5.1.0</rest-assured.version>
@@ -48,9 +48,9 @@
 		<junit-vintage.version>5.9.1</junit-vintage.version>
 		<junit-jupiter.version>5.9.1</junit-jupiter.version>
 		<gmavenplus-plugin.version>1.13.0</gmavenplus-plugin.version>
-		<maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
+		<maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>  <!-- @releaser:version-check-off -->
 		<awaitility.version>4.2.0</awaitility.version>
-		<artemis.version>${artemis-jms-server.version}</artemis.version>
+		<artemis.version>2.26.0</artemis.version>
 		<testcontainers.version>1.17.5</testcontainers.version>
 
 		<!-- We need to have compatibility with Gradle -->
@@ -72,7 +72,6 @@
 
 		<javadoc.failOnError>false</javadoc.failOnError>
 		<javadoc.failOnWarnings>false</javadoc.failOnWarnings>
-		<artemis-jms-server.version>2.26.0</artemis-jms-server.version>
 	</properties>
 
 	<modules>
@@ -170,7 +169,7 @@
 			<dependency>
 				<groupId>org.apache.activemq</groupId>
 				<artifactId>artemis-jms-server</artifactId>
-				<version>${artemis-jms-server.version}</version>
+				<version>${artemis.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.jopt-simple</groupId>
