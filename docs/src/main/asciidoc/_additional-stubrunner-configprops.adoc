@@ -4,8 +4,6 @@ IMPORTANT: The following properties can be passed as a system property (for exam
 |===
 |Name | Default | Description
 
-|`stubrunner.properties.pactbroker.provider-name-with-group-id` | `false` | When using the Pact Broker-based approach, you can automatically group ID to the provider name.
-
 |`stubrunner.properties.git.branch` |  | When using the SCM-based approach, you can customize the branch name to check out.
 |`stubrunner.properties.git.commit-message` | Updating project [$project] with stubs | When using the SCM based approach, you can customize the commit message for created stubs. The `$project` text is replaced with the project name.
 |`stubrunner.properties.git.no-of-attempts` | `10` | When using the-SCM based approach, you can customize the number of retries to push the stubs to Git.

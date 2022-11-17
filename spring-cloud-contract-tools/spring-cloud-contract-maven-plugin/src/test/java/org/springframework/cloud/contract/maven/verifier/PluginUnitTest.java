@@ -22,8 +22,6 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import org.springframework.util.StringUtils;
-
 import static java.nio.charset.Charset.defaultCharset;
 import static org.apache.commons.io.FileUtils.readFileToString;
 import static org.apache.maven.plugin.testing.MojoParameters.newParameter;
@@ -307,21 +305,6 @@ public class PluginUnitTest extends AbstractMojoTest {
 				"target/stubs/META-INF/org.springframework.cloud.verifier.sample/common-repo/0.1/contracts/consumer1/Messaging.groovy");
 		assertFilesPresent(basedir,
 				"target/stubs/META-INF/org.springframework.cloud.verifier.sample/common-repo/0.1/contracts/pom.xml");
-	}
-
-	@Test
-	public void shouldGenerateContractTestsForPactAndMaintainIndents() throws Exception {
-		File basedir = getBasedir("pact");
-
-		executeMojo(basedir, "generateTests", defaultPackageForTests());
-
-		assertFilesPresent(basedir,
-				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
-		File test = new File(basedir,
-				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/ContractVerifierTest.java");
-		String testContents = readFileToString(test, defaultCharset());
-		int countOccurrencesOf = StringUtils.countOccurrencesOf(testContents, "\t\tMockMvcRequestSpecification");
-		then(countOccurrencesOf).isEqualTo(4);
 	}
 
 	@Test

@@ -51,11 +51,6 @@ public class FraudDetectionController {
 		// end::initial_impl[]
 	}
 
-	@RequestMapping(value = "/pactfraudcheck", method = PUT)
-	public FraudCheckResult pactFraudCheck(@RequestBody FraudCheck fraudCheck) {
-		return fraudCheck(fraudCheck);
-	}
-
 	@RequestMapping(value = "/yamlfraudcheck", method = PUT)
 	public FraudCheckResult yamlFraudCheck(@RequestBody FraudCheck fraudCheck) {
 		return fraudCheck(fraudCheck);

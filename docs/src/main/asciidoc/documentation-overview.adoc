@@ -96,7 +96,6 @@ Need more details about {project-full-name}'s core features?
 <<project-features.adoc#features-jax-rs, JAX-RS>> |
 <<project-features.adoc#features-context-paths, Context Paths>> |
 <<project-features.adoc#features-rest-docs, RESTDocs>>
-<<howto.adoc#how-to-generate-pact-from-scc, Pact>>
 * *Modules:*
 <<project-features.adoc#features-stub-runner, Stub Runner>> |
 <<project-features.adoc#features-wiremock, WireMock>>

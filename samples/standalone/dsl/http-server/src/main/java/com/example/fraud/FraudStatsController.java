@@ -46,11 +46,6 @@ public class FraudStatsController {
 		return new Response(this.statsProvider.count(FraudType.ALL));
 	}
 
-	@GetMapping(value = "/pactfrauds")
-	public Response countAllPactFrauds() {
-		return countAllFrauds();
-	}
-
 	@GetMapping(value = "/yamlfrauds")
 	public Response countAllYamlFrauds() {
 		return countAllFrauds();
@@ -59,11 +54,6 @@ public class FraudStatsController {
 	@GetMapping(value = "/drunks")
 	public Response countAllDrunks() {
 		return new Response(this.statsProvider.count(FraudType.DRUNKS));
-	}
-
-	@GetMapping(value = "/pactdrunks")
-	public Response countAllPactDrunks() {
-		return countAllDrunks();
 	}
 
 	@GetMapping(value = "/yamldrunks")

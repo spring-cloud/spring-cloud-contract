@@ -162,7 +162,6 @@ public class Contract {
 				throw new IllegalStateException("Status is missing for HTTP contract");
 			}
 		}
-		// Can't assert messaging part cause Pact doesn't require destinations it seems
 	}
 
 	/**

@@ -36,4 +36,3 @@
 :doc_samples_url: {samples_url}/wiremock-for-contract-docs
 :wiremock_tests: {core_path}/spring-cloud-contract-wiremock
 :introduction_url: {core_path}
-:standalone_pact_path: {samples_url}/
