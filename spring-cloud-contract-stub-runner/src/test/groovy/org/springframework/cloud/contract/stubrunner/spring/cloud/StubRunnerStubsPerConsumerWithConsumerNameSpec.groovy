@@ -20,7 +20,6 @@ import java.util.function.Function
 
 import org.assertj.core.api.BDDAssertions
 import org.junit.jupiter.api.Test
-import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -30,7 +29,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver
 import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -57,7 +56,7 @@ class StubRunnerStubsPerConsumerWithConsumerNameSpec {
 	@Autowired
 	Environment environment
 	@Autowired
-	MessageVerifier<Message<?>> messaging
+	MessageVerifierReceiver<Message<?>> messaging
 
 	TestRestTemplate template = new TestRestTemplate()
 

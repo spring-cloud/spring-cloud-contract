@@ -29,14 +29,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessageMetadata;
 import org.springframework.util.StringUtils;
 
 /**
  * @author Marcin Grzejszczak
  */
-public class CamelStubMessages implements MessageVerifier<Message> {
+public class CamelStubMessages implements MessageVerifierSender<Message>, MessageVerifierReceiver<Message> {
 
 	private static final Logger log = LoggerFactory.getLogger(CamelStubMessages.class);
 

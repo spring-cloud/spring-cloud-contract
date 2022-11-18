@@ -50,7 +50,8 @@ public class ContractVerifierIntegrationConfiguration {
 	@ConditionalOnMissingBean(MessageVerifierSender.class)
 	public MessageVerifierSender<Message<?>> integrationContractVerifierMessageSender(
 			ApplicationContext applicationContext) {
-		SpringIntegrationStubMessages springIntegrationStubMessages = new SpringIntegrationStubMessages(applicationContext);
+		SpringIntegrationStubMessages springIntegrationStubMessages = new SpringIntegrationStubMessages(
+				applicationContext);
 		return new MessageVerifierSender<>() {
 			@Override
 			public void send(Message<?> message, String destination, @Nullable YamlContract contract) {
@@ -58,7 +59,8 @@ public class ContractVerifierIntegrationConfiguration {
 			}
 
 			@Override
-			public <T> void send(T payload, Map<String, Object> headers, String destination, @Nullable YamlContract contract) {
+			public <T> void send(T payload, Map<String, Object> headers, String destination,
+					@Nullable YamlContract contract) {
 				springIntegrationStubMessages.send(payload, headers, destination, contract);
 			}
 		};
@@ -68,10 +70,12 @@ public class ContractVerifierIntegrationConfiguration {
 	@ConditionalOnMissingBean(MessageVerifierReceiver.class)
 	public MessageVerifierReceiver<Message<?>> integrationContractVerifierMessageReceiver(
 			ApplicationContext applicationContext) {
-		SpringIntegrationStubMessages springIntegrationStubMessages = new SpringIntegrationStubMessages(applicationContext);
+		SpringIntegrationStubMessages springIntegrationStubMessages = new SpringIntegrationStubMessages(
+				applicationContext);
 		return new MessageVerifierReceiver<>() {
 			@Override
-			public Message<?> receive(String destination, long timeout, TimeUnit timeUnit, @Nullable YamlContract contract) {
+			public Message<?> receive(String destination, long timeout, TimeUnit timeUnit,
+					@Nullable YamlContract contract) {
 				return springIntegrationStubMessages.receive(destination, timeout, timeUnit, contract);
 			}
 

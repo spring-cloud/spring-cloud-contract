@@ -27,7 +27,8 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.cloud.contract.stubrunner.junit4.StubRunnerRuleCustomPortJUnitTest;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -43,7 +44,7 @@ class StubRunnerJUnit5ExtensionCustomMessageVerifierTests {
 	static StubRunnerExtension stubRunnerExtension = new StubRunnerExtension()
 			.stubsMode(StubRunnerProperties.StubsMode.REMOTE).repoRoot(repoRoot())
 			.downloadStub("org.springframework.cloud.contract.verifier.stubs", "bootService")
-			.messageVerifier(new MyMessageVerifier());
+			.messageVerifierSender(new MyMessageVerifier()).messageVerifierReceiver(new MyMessageVerifier());
 
 	@BeforeAll
 	@AfterAll
@@ -74,7 +75,7 @@ class StubRunnerJUnit5ExtensionCustomMessageVerifierTests {
 		assertThat(wrongLabelWithIvyNotation.getMessage()).contains("Failed to send a message with headers");
 	}
 
-	static class MyMessageVerifier implements MessageVerifier {
+	static class MyMessageVerifier implements MessageVerifierSender, MessageVerifierReceiver {
 
 		@Override
 		public void send(Object message, String destination, YamlContract contract) {

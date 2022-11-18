@@ -32,7 +32,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
-import org.springframework.cloud.contract.verifier.messaging.integration.SpringIntegrationStubMessages
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.ImportResource
@@ -49,7 +49,7 @@ class IntegrationStubRunnerSpec {
 	@Autowired
 	StubFinder stubFinder
 	@Autowired
-	SpringIntegrationStubMessages messaging
+	ContractVerifierMessaging messaging
 
 	@BeforeEach
 	void setup() {

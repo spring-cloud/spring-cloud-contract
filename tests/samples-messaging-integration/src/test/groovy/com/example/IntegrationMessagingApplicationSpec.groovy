@@ -22,13 +22,12 @@ import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
 import org.junit.jupiter.api.Test
-import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.messaging.Message
 
@@ -39,7 +38,7 @@ class IntegrationMessagingApplicationSpec {
 
 	// ALL CASES
 	@Inject
-	MessageVerifier<Message<?>> contractVerifierMessaging
+	ContractVerifierMessaging<Message<?>> contractVerifierMessaging
 	ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()
 
 	@Test

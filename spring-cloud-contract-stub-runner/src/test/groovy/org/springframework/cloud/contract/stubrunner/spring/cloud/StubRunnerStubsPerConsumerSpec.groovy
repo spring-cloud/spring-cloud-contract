@@ -29,7 +29,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender
 import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -37,7 +38,6 @@ import org.springframework.core.env.Environment
 import org.springframework.http.ResponseEntity
 import org.springframework.messaging.Message
 import org.springframework.test.context.ActiveProfiles
-
 /**
  * @author Marcin Grzejszczak
  */
@@ -56,7 +56,7 @@ class StubRunnerStubsPerConsumerSpec {
 	@Autowired
 	Environment environment
 	@Autowired
-	MessageVerifier<Message<?>> messaging
+	MessageVerifierReceiver<Message<?>> messaging
 	TestRestTemplate template = new TestRestTemplate()
 
 	@Test

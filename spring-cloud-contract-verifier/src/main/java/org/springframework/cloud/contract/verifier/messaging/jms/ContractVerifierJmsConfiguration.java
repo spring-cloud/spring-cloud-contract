@@ -67,7 +67,8 @@ public class ContractVerifierJmsConfiguration {
 			}
 
 			@Override
-			public <T> void send(T payload, Map<String, Object> headers, String destination, @Nullable YamlContract contract) {
+			public <T> void send(T payload, Map<String, Object> headers, String destination,
+					@Nullable YamlContract contract) {
 				jmsStubMessages.send(payload, headers, destination, contract);
 			}
 		};
@@ -81,7 +82,8 @@ public class ContractVerifierJmsConfiguration {
 		JmsStubMessages jmsStubMessages = new JmsStubMessages(jmsTemplate);
 		return new MessageVerifierReceiver<>() {
 			@Override
-			public Message receive(String destination, long timeout, TimeUnit timeUnit, @Nullable YamlContract contract) {
+			public Message receive(String destination, long timeout, TimeUnit timeUnit,
+					@Nullable YamlContract contract) {
 				return jmsStubMessages.receive(destination, timeout, timeUnit, contract);
 			}
 

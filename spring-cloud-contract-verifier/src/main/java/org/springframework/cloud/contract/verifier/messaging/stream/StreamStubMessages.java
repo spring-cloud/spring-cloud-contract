@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.messaging.Message;
@@ -28,7 +27,7 @@ import org.springframework.messaging.Message;
 /**
  * @author Marcin Grzejszczak
  */
-public class StreamStubMessages implements MessageVerifier<Message<?>> {
+public class StreamStubMessages implements MessageVerifierSender<Message<?>>, MessageVerifierReceiver<Message<?>> {
 
 	private final MessageVerifierSender<Message<?>> sender;
 

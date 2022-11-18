@@ -72,7 +72,8 @@ public class ContractVerifierStreamAutoConfiguration {
 				}
 
 				@Override
-				public <T> void send(T payload, Map<String, Object> headers, String destination, @Nullable YamlContract contract) {
+				public <T> void send(T payload, Map<String, Object> headers, String destination,
+						@Nullable YamlContract contract) {
 					stubMessages.send(payload, headers, destination, contract);
 				}
 			};
@@ -86,7 +87,8 @@ public class ContractVerifierStreamAutoConfiguration {
 					new StreamOutputDestinationMessageReceiver(context));
 			return new MessageVerifierReceiver<>() {
 				@Override
-				public Message<?> receive(String destination, long timeout, TimeUnit timeUnit, @Nullable YamlContract contract) {
+				public Message<?> receive(String destination, long timeout, TimeUnit timeUnit,
+						@Nullable YamlContract contract) {
 					return stubMessages.receive(destination, timeout, timeUnit, contract);
 				}
 

@@ -109,8 +109,7 @@ testImplementation(group: 'org.springframework.cloud', name: 'spring-cloud-strea
 
 The main interface used by the tests is
 `org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender` and `org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver`.
-It defines how to send and receive messages. If you need both sender and receiver capabilities you can use `org.springframework.cloud.contract.verifier.messaging.MessageVerifier` interface. You can create your own implementation to
-achieve the same goal.
+It defines how to send and receive messages.
 
 In a test, you can inject a `ContractVerifierMessageExchange` to send and receive
 messages that follow the contract. Then add `@AutoConfigureMessageVerifier` to your test.

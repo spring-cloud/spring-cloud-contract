@@ -20,12 +20,13 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 
 /**
  * @author Marcin Grzejszczak
  */
-public class NoOpStubMessages<U> implements MessageVerifier<U> {
+public class NoOpStubMessages<U>
+		implements org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender<U>,
+		org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver<U> {
 
 	@Override
 	public void send(U message, String destination, YamlContract contract) {

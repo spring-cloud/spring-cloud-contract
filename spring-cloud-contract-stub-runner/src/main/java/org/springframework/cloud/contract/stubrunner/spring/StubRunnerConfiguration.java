@@ -34,7 +34,6 @@ import org.springframework.cloud.contract.stubrunner.StubDownloaderBuilderProvid
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
@@ -158,7 +157,7 @@ public class StubRunnerConfiguration {
 }
 
 @SuppressWarnings("unchecked")
-class LazyMessageVerifier implements MessageVerifier {
+class LazyMessageVerifier implements MessageVerifierSender, MessageVerifierReceiver {
 
 	private MessageVerifierSender<?> messageVerifierSender;
 

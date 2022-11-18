@@ -21,7 +21,6 @@ import javax.inject.Inject
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
-import org.apache.camel.Message
 import org.apache.camel.model.ModelCamelContext
 import org.junit.jupiter.api.Test
 import org.testcontainers.containers.RabbitMQContainer
@@ -31,8 +30,8 @@ import org.testcontainers.junit.jupiter.Testcontainers
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
@@ -49,7 +48,7 @@ class CamelMessagingApplicationSpec {
 	@Autowired
 	ModelCamelContext camelContext
 	@Inject
-	MessageVerifier<Message> contractVerifierMessaging
+	ContractVerifierMessaging contractVerifierMessaging
 
 	ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()
 
@@ -87,7 +86,7 @@ class CamelMessagingApplicationSpec {
 			assert response.headers.get('BOOK-NAME') == 'foo'
 		and:
 			DocumentContext parsedJson = JsonPath.
-					parse(contractVerifierObjectMapper.writeValueAsString(response.body))
+					parse(contractVerifierObjectMapper.writeValueAsString(response.getPayload()))
 			JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
 	}
 

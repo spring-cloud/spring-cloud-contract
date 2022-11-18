@@ -23,22 +23,18 @@ import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
 import jakarta.jms.JMSException
 import jakarta.jms.Message
-import org.awaitility.Awaitility
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.jms.core.JmsTemplate
 import org.springframework.jms.core.MessagePostProcessor
-import org.springframework.test.annotation.DirtiesContext
-
 /**
  * SPIKE ON TESTS FROM NOTES IN MessagingSpec
  */
@@ -50,8 +46,6 @@ class JmsMessagingApplicationSpec {
 	// ALL CASES
 	@Autowired
 	JmsTemplate jmsTemplate
-	@Inject
-	MessageVerifier<Message> messageVerifier
 	@Inject
 	ContractVerifierMessaging contractVerifierMessaging
 	@Inject

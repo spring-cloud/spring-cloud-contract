@@ -20,13 +20,14 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 
 /**
  * @author Olga Maciaszek-Sharma
  * @since 2.1.0
  */
-class ExceptionThrowingMessageVerifier implements MessageVerifier {
+class ExceptionThrowingMessageVerifier implements MessageVerifierSender, MessageVerifierReceiver {
 
 	private static final String EXCEPTION_MESSAGE = "Please provide a custom MessageVerifier to use this feature";
 

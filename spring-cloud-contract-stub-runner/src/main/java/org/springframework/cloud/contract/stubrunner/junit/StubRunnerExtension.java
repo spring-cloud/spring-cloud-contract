@@ -43,7 +43,8 @@ import org.springframework.cloud.contract.stubrunner.StubNotFoundException;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 
 /**
  * JUnit 5 extension that allows to download and run stubs.
@@ -71,7 +72,9 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 	private StubRunnerOptionsBuilder stubRunnerOptionsBuilder = new StubRunnerOptionsBuilder(
 			StubRunnerOptions.fromSystemProps());
 
-	private MessageVerifier verifier = new ExceptionThrowingMessageVerifier();
+	private MessageVerifierSender verifierSender = new ExceptionThrowingMessageVerifier();
+
+	private MessageVerifierReceiver verifierReceiver = new ExceptionThrowingMessageVerifier();
 
 	public StubRunnerExtension() {
 	}
@@ -121,7 +124,7 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 	}
 
 	private void before() {
-		stubFinder(new BatchStubRunnerFactory(builder().build(), verifier()).buildBatchStubRunner());
+		stubFinder(new BatchStubRunnerFactory(builder().build(), verifierSender()).buildBatchStubRunner());
 		stubFinder().runStubs();
 	}
 
@@ -188,8 +191,14 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 	}
 
 	@Override
-	public StubRunnerExtension messageVerifier(MessageVerifier messageVerifier) {
-		verifier(messageVerifier);
+	public StubRunnerExtension messageVerifierSender(MessageVerifierSender messageVerifier) {
+		verifierSender(messageVerifier);
+		return this.delegate;
+	}
+
+	@Override
+	public StubRunnerExtension messageVerifierReceiver(MessageVerifierReceiver messageVerifier) {
+		verifierReceiver(messageVerifier);
 		return this.delegate;
 	}
 
@@ -326,12 +335,20 @@ public class StubRunnerExtension implements BeforeAllCallback, AfterAllCallback,
 		return this.delegate.stubRunnerOptionsBuilder;
 	}
 
-	MessageVerifier verifier() {
-		return this.delegate.verifier;
+	MessageVerifierSender verifierSender() {
+		return this.delegate.verifierSender;
 	}
 
-	void verifier(MessageVerifier verifier) {
-		this.delegate.verifier = verifier;
+	MessageVerifierReceiver verifierReceiver() {
+		return this.delegate.verifierReceiver;
+	}
+
+	void verifierSender(MessageVerifierSender verifier) {
+		this.delegate.verifierSender = verifier;
+	}
+
+	void verifierReceiver(MessageVerifierReceiver verifier) {
+		this.delegate.verifierReceiver = verifier;
 	}
 
 	/**

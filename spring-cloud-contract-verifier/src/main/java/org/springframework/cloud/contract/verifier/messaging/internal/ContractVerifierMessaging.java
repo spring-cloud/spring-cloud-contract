@@ -24,14 +24,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 
 /**
  * Wrapper around messaging. Abstracts all message related operations like sending,
  * converting and receiving. Delegates the actual work to an implementation of a
- * {@link MessageVerifier}.
+ * {@link MessageVerifierSender} and {@link MessageVerifierReceiver}.
  *
  * @param <M> message type
  * @author Dave Syer

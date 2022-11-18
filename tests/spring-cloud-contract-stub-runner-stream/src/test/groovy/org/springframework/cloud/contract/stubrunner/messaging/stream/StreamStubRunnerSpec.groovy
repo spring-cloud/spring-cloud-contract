@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.contract.stubrunner.messaging.stream
 
-
 import java.util.function.Function
 
 import groovy.json.JsonOutput
@@ -33,8 +32,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -53,7 +52,7 @@ class StreamStubRunnerSpec {
 	@Autowired
 	StubFinder stubFinder
 	@Autowired
-	MessageVerifier<Message<?>> messaging
+	ContractVerifierMessaging<Message<?>> messaging
 
 	@Test
 	void 'should trigger a message by label'() {
