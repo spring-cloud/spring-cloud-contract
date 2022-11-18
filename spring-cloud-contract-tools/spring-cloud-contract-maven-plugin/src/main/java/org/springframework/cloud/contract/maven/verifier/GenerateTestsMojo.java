@@ -41,6 +41,7 @@ import org.springframework.cloud.contract.verifier.TestGenerator;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
 import org.springframework.cloud.contract.verifier.config.TestMode;
+import org.springframework.util.StringUtils;
 
 /**
  * From the provided directory with contracts generates the acceptance tests on the
@@ -274,6 +275,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 				this.contractsRepositoryProxyPort, this.deleteStubsAfterTest, this.contractsProperties,
 				this.failOnNoContracts).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
+		throwExceptionWhenFailOnNoContracts(contractsDirectory, this.contractsRepositoryUrl);
 
 		if (this.incrementalContractTests
 				&& !ChangeDetector.inputFilesChangeDetected(contractsDirectory, mojoExecution, session)) {
@@ -304,6 +306,22 @@ public class GenerateTestsMojo extends AbstractMojo {
 		catch (ContractVerifierException e) {
 			throw new MojoExecutionException(
 					String.format("Spring Cloud Contract Verifier Plugin exception: %s", e.getMessage()), e);
+		}
+	}
+
+	private void throwExceptionWhenFailOnNoContracts(File file, String contractsRepository)
+			throws MojoExecutionException {
+		if (StringUtils.hasText(contractsRepository)) {
+			if (getLog().isDebugEnabled()) {
+				getLog().debug(
+						"Contracts repository is set, will not throw an exception that the contracts are not found");
+			}
+			return;
+		}
+		if (this.failOnNoContracts && (!file.exists() || file.listFiles().length == 0)) {
+			String path = file.getAbsolutePath();
+			throw new MojoExecutionException("Contracts could not be found: [" + path
+					+ "]\nPlease make sure that the contracts were defined, or set the [failOnNoContracts] property to [false]");
 		}
 	}
 
