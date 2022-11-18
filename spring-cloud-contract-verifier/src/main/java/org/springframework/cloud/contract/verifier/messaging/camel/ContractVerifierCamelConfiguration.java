@@ -16,17 +16,21 @@
 
 package org.springframework.cloud.contract.verifier.messaging.camel;
 
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
+import org.jetbrains.annotations.Nullable;
 
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
@@ -48,15 +52,46 @@ import org.springframework.context.annotation.Import;
 public class ContractVerifierCamelConfiguration {
 
 	@Bean
-	@ConditionalOnMissingBean
-	MessageVerifier<Message> contractVerifierMessageExchange(CamelContext camelContext,
+	@ConditionalOnMissingBean(MessageVerifierSender.class)
+	MessageVerifierSender<Message> camelContractVerifierMessageSender(CamelContext camelContext,
 			ProducerTemplate producerTemplate, ConsumerTemplate consumerTemplate) {
-		return new CamelStubMessages(camelContext, producerTemplate, consumerTemplate);
+		CamelStubMessages camelStubMessages = new CamelStubMessages(camelContext, producerTemplate, consumerTemplate);
+		return new MessageVerifierSender<>() {
+			@Override
+			public void send(Message message, String destination, @Nullable YamlContract contract) {
+				camelStubMessages.send(message, destination, contract);
+			}
+
+			@Override
+			public <T> void send(T payload, Map<String, Object> headers, String destination,
+					@Nullable YamlContract contract) {
+				camelStubMessages.send(payload, headers, destination, contract);
+			}
+		};
 	}
 
 	@Bean
-	@ConditionalOnMissingBean
-	public ContractVerifierMessaging<Message> contractVerifierMessaging(MessageVerifierSender<Message> sender,
+	@ConditionalOnMissingBean(MessageVerifierReceiver.class)
+	MessageVerifierReceiver<Message> camelContractVerifierMessageReceiver(CamelContext camelContext,
+			ProducerTemplate producerTemplate, ConsumerTemplate consumerTemplate) {
+		CamelStubMessages camelStubMessages = new CamelStubMessages(camelContext, producerTemplate, consumerTemplate);
+		return new MessageVerifierReceiver<>() {
+			@Override
+			public Message receive(String destination, long timeout, TimeUnit timeUnit,
+					@Nullable YamlContract contract) {
+				return camelStubMessages.receive(destination, timeout, timeUnit, contract);
+			}
+
+			@Override
+			public Message receive(String destination, YamlContract contract) {
+				return camelStubMessages.receive(destination, contract);
+			}
+		};
+	}
+
+	@Bean
+	@ConditionalOnMissingBean(ContractVerifierMessaging.class)
+	public ContractVerifierMessaging<Message> camelContractVerifierMessaging(MessageVerifierSender<Message> sender,
 			MessageVerifierReceiver<Message> receiver) {
 		return new ContractVerifierCamelHelper(sender, receiver);
 	}
