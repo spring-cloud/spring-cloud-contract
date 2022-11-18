@@ -56,7 +56,7 @@ public class StubRunner implements StubRunning {
 
 	public StubRunner(StubRunnerOptions stubRunnerOptions, String repositoryPath,
 			StubConfiguration stubsConfiguration) {
-		this(stubRunnerOptions, repositoryPath, stubsConfiguration, new NoOpStubMessages());
+		this(stubRunnerOptions, repositoryPath, stubsConfiguration, new NoOpStubMessages<>());
 	}
 
 	public StubRunner(StubRunnerOptions stubRunnerOptions, String repositoryPath, StubConfiguration stubsConfiguration,

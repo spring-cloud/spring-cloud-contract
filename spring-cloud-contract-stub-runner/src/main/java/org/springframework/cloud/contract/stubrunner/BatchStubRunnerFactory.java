@@ -35,7 +35,7 @@ public class BatchStubRunnerFactory {
 	private final MessageVerifierSender<?> contractVerifierMessaging;
 
 	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions) {
-		this(stubRunnerOptions, new NoOpStubMessages());
+		this(stubRunnerOptions, new NoOpStubMessages<>());
 	}
 
 	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, MessageVerifierSender<?> verifier) {
@@ -43,7 +43,7 @@ public class BatchStubRunnerFactory {
 	}
 
 	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, StubDownloader stubDownloader) {
-		this(stubRunnerOptions, stubDownloader, new NoOpStubMessages());
+		this(stubRunnerOptions, stubDownloader, new NoOpStubMessages<>());
 	}
 
 	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, StubDownloader stubDownloader,
