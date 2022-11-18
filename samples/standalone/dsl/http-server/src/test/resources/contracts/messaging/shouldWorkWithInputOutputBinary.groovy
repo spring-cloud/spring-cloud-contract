@@ -21,7 +21,7 @@ import org.springframework.cloud.contract.spec.Contract
 Contract.make {
 	label("positive")
 	input {
-		triggeredBy("hashCode()")
+		triggeredBy("createBinaryPayload()")
 	}
 	outputMessage {
 		sentTo("bytes_output")

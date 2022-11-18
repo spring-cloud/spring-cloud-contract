@@ -22,6 +22,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>17</java.version>
 		<spring-cloud-contract.version>4.0.0-SNAPSHOT</spring-cloud-contract.version>
+		<spring-cloud-stream.version>4.0.0-SNAPSHOT</spring-cloud-stream.version>
 	</properties>
 
 	<dependencies>
@@ -48,10 +49,13 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-stream-rabbit</artifactId>
+			<version>${spring-cloud-stream.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream</artifactId>
+			<version>${spring-cloud-stream.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 			<classifier>test-binder</classifier>
@@ -66,9 +70,9 @@
 		<!-- end::verifier_test_dependencies[] -->
 	</dependencies>
 
-	<!-- tag::contract_bom[] -->
 	<dependencyManagement>
 		<dependencies>
+			<!-- tag::contract_bom[] -->
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-dependencies</artifactId>
@@ -76,9 +80,17 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<!-- end::contract_bom[] -->
+			<!-- Until updated in Spring Boot -->
+			<dependency>
+				<groupId>io.rest-assured</groupId>
+				<artifactId>rest-assured-bom</artifactId>
+				<version>5.2.1</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	<!-- end::contract_bom[] -->
 
 	<build>
 		<plugins>
