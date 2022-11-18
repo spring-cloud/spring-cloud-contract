@@ -31,7 +31,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
 import org.springframework.cloud.contract.verifier.messaging.amqp.AmqpMetadata;
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.camel.StandaloneMetadata;
@@ -88,7 +88,7 @@ public abstract class ContractTestsBase {
 	String messagingType;
 
 	@Autowired
-	MessageVerifier messageVerifier;
+	MessageVerifierReceiver messageVerifier;
 
 	@BeforeEach
 	public void setup(TestInfo testInfo) {

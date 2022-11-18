@@ -29,7 +29,6 @@ import org.springframework.amqp.core.MessageProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.contract.verifier.messaging.amqp.AmqpMetadata;
@@ -69,14 +68,13 @@ public class MessagingAutoConfig {
 	String springKafkaBootstrapServers;
 
 	@Bean
-	public ContractVerifierMessaging<Message> contractVerifierMessaging(
-			MessageVerifierSender<Message> sender, MessageVerifierReceiver<Message> receiver) {
-		return new ContractVerifierCamelHelper(sender, receiver);
+	public ContractVerifierMessaging<Message> contractVerifierMessaging(MessageVerifierReceiver<Message> receiver) {
+		return new ContractVerifierCamelHelper(new NoOpStubMessages<Message>(), receiver);
 	}
 
 	@Bean
-	MessageVerifier<Message> manualMessageVerifier(ConsumerTemplate consumerTemplate) {
-		return new MessageVerifier<Message>() {
+	MessageVerifierReceiver<Message> manualMessageVerifier(ConsumerTemplate consumerTemplate) {
+		return new MessageVerifierReceiver<Message>() {
 
 			private final Logger log = LoggerFactory.getLogger(MessageVerifier.class);
 
@@ -171,15 +169,6 @@ public class MessagingAutoConfig {
 				return receive(destination, 5, TimeUnit.SECONDS, yamlContract);
 			}
 
-			@Override
-			public void send(Message message, String destination, YamlContract yamlContract) {
-				throw new UnsupportedOperationException("Currently supports only receiving");
-			}
-
-			@Override
-			public void send(Object payload, Map headers, String destination, YamlContract yamlContract) {
-				throw new UnsupportedOperationException("Currently supports only receiving");
-			}
 		};
 	}
 

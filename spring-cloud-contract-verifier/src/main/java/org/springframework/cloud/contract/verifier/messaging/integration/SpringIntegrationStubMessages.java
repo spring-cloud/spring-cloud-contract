@@ -23,6 +23,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -32,8 +34,7 @@ import org.springframework.messaging.PollableChannel;
  * @author Marcin Grzejszczak
  */
 public class SpringIntegrationStubMessages
-		implements org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender<Message<?>>,
-		org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver<Message<?>> {
+		implements MessageVerifierSender<Message<?>>, MessageVerifierReceiver<Message<?>> {
 
 	private static final Log log = LogFactory.getLog(SpringIntegrationStubMessages.class);
 
