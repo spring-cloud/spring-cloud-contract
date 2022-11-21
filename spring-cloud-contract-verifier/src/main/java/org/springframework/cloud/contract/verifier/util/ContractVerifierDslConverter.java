@@ -26,10 +26,13 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -52,6 +55,7 @@ import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.ContractConverter;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * Converts a String or a Groovy or Java file into a {@link Contract}.
@@ -140,7 +144,7 @@ public class ContractVerifierDslConverter implements ContractConverter<Collectio
 	private static Object toObject(ClassLoader cl, File rootFolder, File dsl) throws IOException {
 		if (isJava(dsl)) {
 			try {
-				return parseJavaFile(dsl);
+				return parseJavaFile(rootFolder, dsl);
 			}
 			catch (Exception ex) {
 				if (LOG.isWarnEnabled()) {
@@ -153,9 +157,9 @@ public class ContractVerifierDslConverter implements ContractConverter<Collectio
 		return groovyShell(cl, rootFolder).evaluate(dsl);
 	}
 
-	private static Object parseJavaFile(File dsl) throws IllegalAccessException, InvocationTargetException,
-			InstantiationException, IOException, NoSuchMethodException {
-		Constructor<?> constructor = classConstructor(dsl);
+	private static Object parseJavaFile(File rootFolder, File dsl) throws IllegalAccessException,
+			InvocationTargetException, InstantiationException, IOException, NoSuchMethodException {
+		Constructor<?> constructor = classConstructor(rootFolder, dsl);
 		Object newInstance = constructor.newInstance();
 		if (!(newInstance instanceof Supplier)) {
 			if (LOG.isDebugEnabled()) {
@@ -167,7 +171,7 @@ public class ContractVerifierDslConverter implements ContractConverter<Collectio
 		return supplier.get();
 	}
 
-	private static Constructor<?> classConstructor(File dsl)
+	private static Constructor<?> classConstructor(File rootFolder, File dsl)
 			throws IllegalAccessException, IOException, NoSuchMethodException {
 		try (StandardJavaFileManager fileManager = COMPILER.getStandardFileManager(null, null, null)) {
 			try (Stream<String> lines = Files.lines(Paths.get(dsl.getAbsolutePath()))) {
@@ -175,6 +179,15 @@ public class ContractVerifierDslConverter implements ContractConverter<Collectio
 				String fqn = fqn(classText);
 				Path directory = Files.createTempDirectory(fqn);
 				fileManager.setLocation(StandardLocation.CLASS_OUTPUT, List.of(directory.toFile()));
+				// set compiler's classpath to be same as the runtime's
+				Set<File> classpathLocations = new HashSet<>();
+				classpathLocations.add(rootFolder);
+				appendUrlsFromAllClassLoaders(classpathLocations);
+				String classPath = System.getProperty("java.class.path", "");
+				if (StringUtils.hasText(classPath)) {
+					classpathLocations.addAll(Arrays.stream(classPath.split(":")).map(File::new).toList());
+				}
+				fileManager.setLocation(StandardLocation.CLASS_PATH, classpathLocations);
 				// Compile the file
 				DiagnosticCollector<Object> diagnostics = new DiagnosticCollector<>();
 				JavaCompiler.CompilationTask task = COMPILER.getTask(null, fileManager, diagnostics, null, null,
@@ -183,12 +196,16 @@ public class ContractVerifierDslConverter implements ContractConverter<Collectio
 				if (!success) {
 					throw new IllegalStateException("Exceptions occurred while trying to compile the file \n"
 							+ diagnostics.getDiagnostics().stream()
-									.map(d -> "Error " + d.getMessage(Locale.getDefault()) + "on line "
+									.map(d -> "Error " + d.getMessage(Locale.getDefault()) + " on line "
 											+ d.getLineNumber() + " in " + d.getSource())
 									.collect(Collectors.joining("\n")));
 				}
 				try {
-					Class<?> clazz = ClassUtils.forName(fqn, null);
+					// Add the folder with compiled classes to the class loader
+					URLClassLoader urlClassLoader = new URLClassLoader("contract-classloader",
+							new URL[] { new URL("file://" + directory.toAbsolutePath() + "/") },
+							Thread.currentThread().getContextClassLoader());
+					Class<?> clazz = ClassUtils.forName(fqn, urlClassLoader);
 					Constructor<?> constructor = clazz.getDeclaredConstructor();
 					constructor.setAccessible(true);
 					return constructor;
@@ -196,6 +213,26 @@ public class ContractVerifierDslConverter implements ContractConverter<Collectio
 				catch (ClassNotFoundException e) {
 					throw new IllegalStateException("Class with name [" + fqn + "] not found");
 				}
+			}
+		}
+	}
+
+	private static void appendUrlsFromAllClassLoaders(Set<File> files) {
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		if (classLoader != null) {
+			appendUrlsFromClasspath(files, classLoader);
+			while (classLoader.getParent() != null) {
+				classLoader = classLoader.getParent();
+				appendUrlsFromClasspath(files, classLoader);
+			}
+		}
+	}
+
+	private static void appendUrlsFromClasspath(Set<File> files, ClassLoader classLoader) {
+		if (classLoader instanceof URLClassLoader urlClassLoader) {
+			URL[] urLs = urlClassLoader.getURLs();
+			if (urLs.length > 0) {
+				Arrays.stream(urLs).forEach(url -> files.add(new File(url.getFile())));
 			}
 		}
 	}

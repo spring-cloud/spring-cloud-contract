@@ -138,6 +138,49 @@
 					<failIfNoTests>true</failIfNoTests>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<phase>process-test-resources</phase>
+						<configuration>
+							<target>
+								<taskdef resource="net/sf/antcontrib/antcontrib.properties" />
+								<fail message="Generated test files are missing.">
+									<condition>
+										<not>
+											<resourcecount count="6">
+												<fileset id="fs" dir="${project.build.directory}/generated-test-sources/contracts/com/example/fraud/" includes="BinaryTest.java,FraudnameTest.java,FraudTest.java,MessagingTest.java,MultipartTest.java,TestTest.java"/>
+											</resourcecount>
+										</not>
+									</condition>
+								</fail>
+								<fail message="Generated test files are missing.">
+									<condition>
+										<not>
+											<resourcecount count="2">
+												<fileset id="fs" dir="${project.build.directory}/generated-test-sources/contracts/com/example/fraud/yml" includes="FraudnameTest.java,FraudTest.java"/>
+											</resourcecount>
+										</not>
+									</condition>
+								</fail>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>ant-contrib</groupId>
+						<artifactId>ant-contrib</artifactId>
+						<version>20020829</version>
+					</dependency>
+				</dependencies>
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
