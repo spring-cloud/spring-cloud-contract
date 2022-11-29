@@ -23,6 +23,7 @@ import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.Nested;
@@ -40,7 +41,7 @@ import org.springframework.util.StringUtils;
 /**
  * For SCM based repositories will copy the generated stubs to the cloned repo with
  * contracts and stubs. Will also commit the changes and push them to origin.
- *
+ * <p>
  * NOTE: starting with 2.3.0.RELEASE the <code>customize{}</code> closure previously used
  * for {@link PublishStubsToScmTask} customisation is no longer available. The settings
  * should be applied directly within the <code>publishStubsToScm</code> closure as in the
@@ -60,7 +61,7 @@ class PublishStubsToScmTask extends DefaultTask {
 	private final Property<StubRunnerProperties.StubsMode> contractsMode;
 
 	/**
-	 * @see ContractVerifierExtension#deleteStubsAfterTest
+	 * @see ContractVerifierExtension#getDeleteStubsAfterTest()
 	 *
 	 * This property will delete the Git repository where the input stubs to this task
 	 * have been committed.
@@ -73,14 +74,25 @@ class PublishStubsToScmTask extends DefaultTask {
 
 	private final DirectoryProperty stubsDir;
 
+	private final Property<String> projectGroup;
+	private final Property<String> projectName;
+	private final Property<String> projectVersion;
+
 	@Inject
-	public PublishStubsToScmTask(ObjectFactory objects) {
+	public PublishStubsToScmTask(
+			final ObjectFactory objects,
+			final ProviderFactory providers
+	) {
 		this.contractRepository = objects.newInstance(Repository.class);
 		this.contractsMode = objects.property(StubRunnerProperties.StubsMode.class);
 		this.deleteStubsAfterTest = objects.property(Boolean.class);
 		this.failOnNoContracts = objects.property(Boolean.class);
 		this.contractsProperties = objects.mapProperty(String.class, String.class);
 		this.stubsDir = objects.directoryProperty();
+
+		projectGroup = objects.property(String.class).convention(providers.provider(() -> getProject().getGroup().toString()));
+		projectName = objects.property(String.class).convention(providers.provider(() -> getProject().getName()));
+		projectVersion = objects.property(String.class).convention(providers.provider(() -> getProject().getVersion().toString()));
 
 		this.onlyIf(task -> {
 			String contractRepoUrl = contractRepository.repositoryUrl.getOrElse("");
@@ -96,11 +108,10 @@ class PublishStubsToScmTask extends DefaultTask {
 
 	@TaskAction
 	void publishStubsToScm() {
-		String projectName = getProject().getGroup().toString() + ":" + getProject().getName() + ":"
-				+ getProject().getVersion().toString();
-		getLogger().info("Pushing Stubs to SCM for project [{}]", projectName);
+		String projectGroupNameVersion = projectGroup.get() + ":" + projectName.get() + ":" + projectVersion.get();
+		getLogger().info("Pushing Stubs to SCM for project [{}]", projectGroupNameVersion);
 		StubRunnerOptions stubRunnerOptions = createStubRunnerOptions();
-		new ContractProjectUpdater(stubRunnerOptions).updateContractProject(projectName,
+		new ContractProjectUpdater(stubRunnerOptions).updateContractProject(projectGroupNameVersion,
 				stubsDir.get().getAsFile().toPath());
 	}
 
@@ -202,4 +213,7 @@ class PublishStubsToScmTask extends DefaultTask {
 		return options.build();
 	}
 
+	@Input protected Property<String> getProjectGroup() { return projectGroup; }
+	@Input protected Property<String> getProjectName() { return projectName; }
+	@Input protected Property<String> getProjectVersion() { return projectVersion; }
 }

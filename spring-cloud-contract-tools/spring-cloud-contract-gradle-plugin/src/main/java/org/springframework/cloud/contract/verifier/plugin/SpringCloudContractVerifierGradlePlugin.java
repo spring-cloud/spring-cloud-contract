@@ -24,19 +24,18 @@ import org.gradle.api.attributes.Bundling;
 import org.gradle.api.attributes.Category;
 import org.gradle.api.attributes.LibraryElements;
 import org.gradle.api.attributes.Usage;
-import org.gradle.api.file.Directory;
-import org.gradle.api.file.DirectoryProperty;
-import org.gradle.api.file.FileCollection;
+import org.gradle.api.file.*;
 import org.gradle.api.internal.HasConvention;
+import org.gradle.api.logging.Logger;
+import org.gradle.api.logging.Logging;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.plugins.GroovyPlugin;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
-import org.gradle.api.publish.PublishingExtension;
-import org.gradle.api.publish.maven.MavenPublication;
-import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
+import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.tasks.GroovySourceSet;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
@@ -46,6 +45,7 @@ import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.api.tasks.testing.Test;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
 
+import javax.inject.Inject;
 import java.io.File;
 
 /**
@@ -62,6 +62,8 @@ import java.io.File;
  * @since 1.0.0
  */
 public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> {
+
+	private static final Logger logger = Logging.getLogger(SpringCloudContractVerifierGradlePlugin.class);
 
 	private static final String SPRING_CLOUD_VERSION = VersionExtractor.forClass(SpringCloudContractVerifierGradlePlugin.class);
 
@@ -86,6 +88,21 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 	private static final String CONTRACT_TEST_TASK_NAME = "contractTest";
 
 	private Project project;
+
+	private final ProjectLayout layout;
+	private final ProviderFactory providers;
+	private final ObjectFactory objects;
+
+	@Inject
+	public SpringCloudContractVerifierGradlePlugin(
+			final ProjectLayout layout,
+			final ProviderFactory providers,
+			final ObjectFactory objects
+	) {
+		this.layout = layout;
+		this.providers = providers;
+		this.objects = objects;
+	}
 
 	@Override
 	public void apply(Project project) {
@@ -169,10 +186,10 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 			conf.setCanBeResolved(true);
 			conf.setCanBeConsumed(false);
 			conf.attributes(attributes -> {
-				attributes.attribute(Usage.USAGE_ATTRIBUTE, project.getObjects().named(Usage.class, Usage.JAVA_RUNTIME));
-				attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.getObjects().named(Category.class, Category.LIBRARY));
-				attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, project.getObjects().named(LibraryElements.class, LibraryElements.JAR));
-				attributes.attribute(Bundling.BUNDLING_ATTRIBUTE, project.getObjects().named(Bundling.class, Bundling.EXTERNAL));
+				attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.class, Usage.JAVA_RUNTIME));
+				attributes.attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.class, Category.LIBRARY));
+				attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.class, LibraryElements.JAR));
+				attributes.attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.class, Bundling.EXTERNAL));
 			});
 			conf.extendsFrom(configurations.getByName(CONTRACT_TEST_RUNTIME_CLASSPATH_CONFIGURATION_NAME));
 		});
@@ -316,7 +333,7 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 		verifierStubsJar.configure(stubsJar -> {
 			stubsJar.setDescription("Creates the stubs JAR task");
 			stubsJar.setGroup(GROUP_NAME);
-			stubsJar.getArchiveBaseName().convention(project.provider(project::getName));
+			stubsJar.getArchiveBaseName().convention(providers.provider(project::getName));
 			stubsJar.getArchiveClassifier().convention(extension.getStubsSuffix());
 			stubsJar.from(extension.getStubsOutputDir());
 
@@ -335,15 +352,15 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 					contractsCopyTask.getFailOnNoContracts().convention(extension.getFailOnNoContracts());
 					contractsCopyTask.getContractsDirectory()
 							.convention(extension.getContractsDslDir().flatMap(contractsDslDir -> {
-								return project.provider(() -> {
+								return providers.provider(() -> {
 									if (contractsDslDir.getAsFile().exists()) {
 										return contractsDslDir;
 									}
 									else {
-										Directory legacyContractsDslDir = project.getLayout().getProjectDirectory()
+										Directory legacyContractsDslDir = layout.getProjectDirectory()
 												.dir("src/test/resources/contracts");
 										if (legacyContractsDslDir.getAsFile().exists()) {
-											project.getLogger().warn(
+											logger.warn(
 													"Spring Cloud Contract Verifier Plugin: Locating contracts in <src/test/resources/contracts> has been removed. Please move them to <src/contractTest/resources/contracts>. This warning message will be removed in a future release.");
 											return contractsDslDir;
 										}
@@ -390,13 +407,17 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 	}
 
 	private Provider<String> buildRootPath(String path) {
-		return project.provider(() -> {
-			StringBuilder builder = new StringBuilder();
-			builder.append("META-INF").append(File.separator).append(project.getGroup()).append(File.separator)
-					.append(project.getName()).append(File.separator).append(project.getVersion())
-					.append(File.separator).append(path);
-			return builder.toString();
-		});
+		return providers.provider(() ->
+				"META-INF"
+					+ File.separator
+					+ project.getGroup()
+					+ File.separator
+					+ project.getName()
+					+ File.separator
+					+ project.getVersion()
+					+ File.separator
+					+ path
+		);
 	}
 
 }

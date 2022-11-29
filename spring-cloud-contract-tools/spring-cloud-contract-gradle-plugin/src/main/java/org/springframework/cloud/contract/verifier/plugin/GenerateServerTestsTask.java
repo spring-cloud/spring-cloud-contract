@@ -42,6 +42,7 @@ import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.SkipWhenEmpty;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.process.ExecOperations;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
 import org.springframework.cloud.contract.verifier.config.TestMode;
@@ -97,8 +98,15 @@ class GenerateServerTestsTask extends DefaultTask {
 
 	private final DirectoryProperty generatedTestResourcesDir;
 
+	final ExecOperations executors;
+
 	@Inject
-	public GenerateServerTestsTask(ObjectFactory objects) {
+	public GenerateServerTestsTask(
+			final ObjectFactory objects,
+			final ExecOperations executors
+	) {
+		this.executors = executors;
+
 		this.contractsDslDir = objects.directoryProperty();
 		this.nameSuffixForTests = objects.property(String.class);
 		this.basePackageForTests = objects.property(String.class);
@@ -139,8 +147,8 @@ class GenerateServerTestsTask extends DefaultTask {
 		}
 		try {
 			String propertiesJson = new ObjectMapper().writeValueAsString(properties);
-			getProject().javaexec(exec -> {
-				exec.setMain("org.springframework.cloud.contract.verifier.TestGeneratorApplication");
+			executors.javaexec(exec -> {
+				exec.getMainClass().set("org.springframework.cloud.contract.verifier.TestGeneratorApplication");
 				exec.classpath(classpath);
 				exec.args(quoteAndEscape(propertiesJson));
 				exec.setStandardOutput(os);

@@ -40,6 +40,7 @@ import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.SkipWhenEmpty;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.process.ExecOperations;
 import org.springframework.util.StringUtils;
 
 //TODO: Implement as an incremental task: https://gradle.org/docs/current/userguide/custom_tasks.html#incremental_tasks ?
@@ -67,8 +68,15 @@ class GenerateClientStubsFromDslTask extends DefaultTask {
 
 	private final DirectoryProperty stubsOutputDir;
 
+	final ExecOperations executors;
+
 	@Inject
-	public GenerateClientStubsFromDslTask(ObjectFactory objects) {
+	public GenerateClientStubsFromDslTask(
+			final ObjectFactory objects,
+			final ExecOperations executors
+	) {
+		this.executors = executors;
+
 		contractsDslDir = objects.directoryProperty();
 		excludedFiles = objects.listProperty(String.class);
 		excludeBuildFolders = objects.property(Boolean.class);
@@ -90,7 +98,7 @@ class GenerateClientStubsFromDslTask extends DefaultTask {
 			os = NullOutputStream.INSTANCE;
 		}
 		try {
-			getProject().javaexec(exec -> {
+			executors.javaexec(exec -> {
 				exec.getMainClass().set("org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverterApplication");
 				exec.classpath(classpath);
 				exec.args(quoteAndEscape(output.getAbsolutePath()), quoteAndEscape(contractsDslDir.get().getAsFile().getAbsolutePath()),
