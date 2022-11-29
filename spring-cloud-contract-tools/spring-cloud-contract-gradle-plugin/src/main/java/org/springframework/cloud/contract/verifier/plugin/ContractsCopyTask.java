@@ -270,8 +270,8 @@ class ContractsCopyTask extends DefaultTask {
 			}
 			return;
 		}
-		if (failOnNoContracts.get() && (!file.exists() || file.listFiles().length == 0)) {
-			String path = file.getAbsolutePath();
+		if (failOnNoContracts.get() && (file == null || !file.exists() || file.listFiles().length == 0)) {
+			String path = file != null ? file.getAbsolutePath() : "";
 			throw new GradleException("Contracts could not be found: [" + path
 					+ "]\nPlease make sure that the contracts were defined, or set the [failOnNoContracts] flag to [false]");
 		}

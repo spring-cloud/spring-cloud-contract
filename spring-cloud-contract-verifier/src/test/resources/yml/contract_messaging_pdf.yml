@@ -1,9 +1,6 @@
 label: some_label
 input:
-  messageFrom: jms:input
-  messageBodyFromFileAsBytes: request.pdf
-  messageHeaders:
-    contentType: application/octet-stream
+  triggeredBy: foo()
 outputMessage:
   sentTo: jms:output
   bodyFromFileAsBytes: response.pdf

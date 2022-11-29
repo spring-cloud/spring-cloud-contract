@@ -28,7 +28,7 @@ that contains all the stubs for each producer. For an example of such a project,
 As a result of pushing stubs there, the repository has the following structure:
 
 ====
-[src, bash]
+[source,bash,indent=0]
 ----
 $ tree .
 └── META-INF
@@ -239,7 +239,7 @@ For example, for a producer named `producer` and a consumer named `consumer`, th
 . Once the contracts are defined, installs the producer stubs to local storage, as the following example shows:
 +
 ====
-[src,bash]
+[source,bash,indent=0]
 ----
 $ cd src/main/resource/contracts/producer
 $ ./mvnw clean install
@@ -285,7 +285,7 @@ The producer:
 from the command line, as follows
 +
 ====
-[src,bash]
+[source,bash,indent=0]
 ----
 $ git checkout -b the_branch_with_pull_request master
 git pull https://github.com/user_id/project_name.git the_branch_with_pull_request
@@ -294,7 +294,7 @@ git pull https://github.com/user_id/project_name.git the_branch_with_pull_reques
 . Installs the contract definitions, as follows
 +
 ====
-[src,bash]
+[source,bash,indent=0]
 ----
 $ ./mvnw clean install
 ----
@@ -358,7 +358,7 @@ contracts {
 . Merges the pull request to the repository with contract definitions, as follows:
 +
 ====
-[src,bash]
+[source,bash,indent=0]
 ----
 $ git commit -am "Finished the implementation to make the contract tests pass"
 $ git checkout master

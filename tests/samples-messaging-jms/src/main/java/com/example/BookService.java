@@ -44,7 +44,7 @@ public class BookService {
 	public void returnBook() {
 		BookReturned bookReturned = new BookReturned("foo");
 		jmsTemplate.convertAndSend("output2", "{\"bookName\":\"foo\"}", message -> {
-			message.setStringProperty("BOOK-NAME", bookReturned.bookName);
+			message.setStringProperty("BOOKNAME", bookReturned.bookName);
 			return message;
 		});
 	}

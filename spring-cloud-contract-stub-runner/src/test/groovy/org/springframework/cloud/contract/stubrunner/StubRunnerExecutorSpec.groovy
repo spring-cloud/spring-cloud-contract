@@ -23,7 +23,8 @@ import spock.lang.Specification
 
 import org.springframework.cloud.contract.stubrunner.util.StubsParser
 import org.springframework.cloud.contract.verifier.converter.YamlContract
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender
 import org.springframework.cloud.test.TestSocketUtils
 
 class StubRunnerExecutorSpec extends Specification {
@@ -77,7 +78,7 @@ class StubRunnerExecutorSpec extends Specification {
 			int port = TestSocketUtils.findAvailableTcpPort()
 			StubRunnerExecutor executor = new StubRunnerExecutor(portScanner)
 			stubRunnerOptions = new StubRunnerOptionsBuilder(stubIdsToPortMapping:
-					stubIdsWithPortsFromString("group:artifact:${port},someotherartifact:${SocketUtils.findAvailableTcpPort()}"))
+					stubIdsWithPortsFromString("group:artifact:${port},someotherartifact:${TestSocketUtils.findAvailableTcpPort()}"))
 					.build()
 		when:
 			executor.runStubs(stubRunnerOptions, repository, stub)
@@ -164,7 +165,7 @@ class StubRunnerExecutorSpec extends Specification {
 			executor.shutdown()
 	}
 
-	class MockMessageVerifier implements MessageVerifier {
+	class MockMessageVerifier implements MessageVerifierSender, MessageVerifierReceiver {
 
 		boolean called
 
@@ -199,7 +200,7 @@ class StubRunnerExecutorSpec extends Specification {
 		}
 	}
 
-	private class AssertingStubMessages implements MessageVerifier<Object> {
+	private class AssertingStubMessages implements MessageVerifierSender<Object>, MessageVerifierReceiver<Object> {
 
 		@Override
 		void send(Object message, String destination, YamlContract contract) {

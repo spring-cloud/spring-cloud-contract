@@ -21,27 +21,28 @@ import javax.inject.Inject
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
-import spock.lang.Specification
+import org.junit.jupiter.api.Test
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.messaging.Message
 
 // Context configuration would end up in base class
 @AutoConfigureMessageVerifier
 @SpringBootTest(classes = IntegrationMessagingApplication)
-class IntegrationMessagingApplicationSpec extends Specification {
+class IntegrationMessagingApplicationSpec {
 
 	// ALL CASES
 	@Inject
-	MessageVerifier<Message<?>> contractVerifierMessaging
+	ContractVerifierMessaging<Message<?>> contractVerifierMessaging
 	ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()
 
-	def "should work for triggered based messaging"() {
+	@Test
+	void "should work for triggered based messaging"() {
 		given:
 			// tag::method_trigger[]
 			def dsl = Contract.make {
@@ -79,79 +80,6 @@ class IntegrationMessagingApplicationSpec extends Specification {
 			JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
 	}
 
-	def "should generate tests triggered by a message"() {
-		given:
-			// tag::message_trigger[]
-			def dsl = Contract.make {
-				description 'Some Description'
-				label 'some_label'
-				// input is a message
-				input {
-					// the message was received from this destination
-					messageFrom('input')
-					// has the following body
-					messageBody([
-							bookName: 'foo'
-					])
-					// and the following headers
-					messageHeaders {
-						header('sample', 'header')
-					}
-				}
-				outputMessage {
-					sentTo('output')
-					body([
-							bookName: 'foo'
-					])
-					headers {
-						header('BOOK-NAME', 'foo')
-					}
-				}
-			}
-			// end::message_trigger[]
-
-			// generated test should look like this:
-
-		when:
-			contractVerifierMessaging.send(
-					contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-					[sample: 'header'], 'input')
-		then:
-			def response = contractVerifierMessaging.receive('output')
-			response.headers.get('BOOK-NAME') == 'foo'
-		and:
-			DocumentContext parsedJson = JsonPath.
-					parse(contractVerifierObjectMapper.writeValueAsString(response.payload))
-			JsonAssertion.assertThat(parsedJson).field('bookName').isEqualTo('foo')
-	}
-
-	def "should generate tests without destination, triggered by a message"() {
-		given:
-			def dsl = Contract.make {
-				label 'some_label'
-				input {
-					messageFrom('delete')
-					messageBody([
-							bookName: 'foo'
-					])
-					messageHeaders {
-						header('sample', 'header')
-					}
-					assertThat('bookWasDeleted()')
-				}
-			}
-
-			// generated test should look like this:
-
-		when:
-			contractVerifierMessaging.
-					send(contractVerifierObjectMapper.writeValueAsString([bookName: 'foo']),
-							[sample: 'header'], 'delete')
-		then:
-			noExceptionThrown()
-			bookWasDeleted()
-	}
-
 	// BASE CLASS WOULD HAVE THIS:
 
 	@Autowired
@@ -161,10 +89,6 @@ class IntegrationMessagingApplicationSpec extends Specification {
 
 	void bookReturnedTriggered() {
 		bookService.returnBook(new BookReturned("foo"))
-	}
-
-	void bookWasDeleted() {
-		assert bookListener.bookSuccessfullyDeleted.get()
 	}
 
 }

@@ -22,6 +22,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>17</java.version>
 		<spring-cloud-contract.version>4.0.0-SNAPSHOT</spring-cloud-contract.version>
+		<spring-cloud-stream.version>4.0.0-SNAPSHOT</spring-cloud-stream.version>
 	</properties>
 
 	<dependencies>
@@ -48,10 +49,13 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-stream-rabbit</artifactId>
+			<version>${spring-cloud-stream.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream</artifactId>
+			<version>${spring-cloud-stream.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 			<classifier>test-binder</classifier>
@@ -66,9 +70,9 @@
 		<!-- end::verifier_test_dependencies[] -->
 	</dependencies>
 
-	<!-- tag::contract_bom[] -->
 	<dependencyManagement>
 		<dependencies>
+			<!-- tag::contract_bom[] -->
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-dependencies</artifactId>
@@ -76,9 +80,17 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<!-- end::contract_bom[] -->
+			<!-- Until updated in Spring Boot -->
+			<dependency>
+				<groupId>io.rest-assured</groupId>
+				<artifactId>rest-assured-bom</artifactId>
+				<version>5.2.1</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	<!-- end::contract_bom[] -->
 
 	<build>
 		<plugins>
@@ -96,14 +108,6 @@
 					<packageWithBaseClasses>com.example.fraud</packageWithBaseClasses>
 <!--					<convertToYaml>true</convertToYaml>-->
 				</configuration>
-				<!-- if additional dependencies are needed e.g. for Pact -->
-				<dependencies>
-					<dependency>
-						<groupId>org.springframework.cloud</groupId>
-						<artifactId>spring-cloud-contract-pact</artifactId>
-						<version>${spring-cloud-contract.version}</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 			<!-- end::contract_maven_plugin[] -->
 			<plugin>
@@ -133,6 +137,49 @@
 				<configuration>
 					<failIfNoTests>true</failIfNoTests>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<phase>process-test-resources</phase>
+						<configuration>
+							<target>
+								<taskdef resource="net/sf/antcontrib/antcontrib.properties" />
+								<fail message="Generated test files are missing.">
+									<condition>
+										<not>
+											<resourcecount count="6">
+												<fileset id="fs" dir="${project.build.directory}/generated-test-sources/contracts/com/example/fraud/" includes="BinaryTest.java,FraudnameTest.java,FraudTest.java,MessagingTest.java,MultipartTest.java,TestTest.java"/>
+											</resourcecount>
+										</not>
+									</condition>
+								</fail>
+								<fail message="Generated test files are missing.">
+									<condition>
+										<not>
+											<resourcecount count="2">
+												<fileset id="fs" dir="${project.build.directory}/generated-test-sources/contracts/com/example/fraud/yml" includes="FraudnameTest.java,FraudTest.java"/>
+											</resourcecount>
+										</not>
+									</condition>
+								</fail>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>ant-contrib</groupId>
+						<artifactId>ant-contrib</artifactId>
+						<version>20020829</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 		<pluginManagement>

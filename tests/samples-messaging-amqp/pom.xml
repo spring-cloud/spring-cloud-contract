@@ -13,10 +13,6 @@
 	<packaging>jar</packaging>
 	<name>Spring Cloud Contract Sample Spring Amqp</name>
 	<description>Spring Cloud Contract Sample Spring Amqp Rabbit</description>
-	<properties>
-		<!-- TODO: remove -->
-		<skipTests>true</skipTests>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -36,13 +32,13 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.spockframework</groupId>
-			<artifactId>spock-spring</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
+			<groupId>org.awaitility</groupId>
+			<artifactId>awaitility</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -51,6 +47,10 @@
 			<plugin>
 				<groupId>org.codehaus.gmavenplus</groupId>
 				<artifactId>gmavenplus-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>

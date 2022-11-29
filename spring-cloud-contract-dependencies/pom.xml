@@ -15,7 +15,7 @@
 	<name>spring-cloud-contract-dependencies</name>
 	<description>Spring Cloud Contract Dependencies</description>
 	<properties>
-		<wiremock.version>2.33.2</wiremock.version>
+		<wiremock.version>2.35.0</wiremock.version>
 		<jsonassert.version>0.6.2</jsonassert.version>
 	</properties>
 	<dependencyManagement>
@@ -53,11 +53,6 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-converters</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-contract-pact</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

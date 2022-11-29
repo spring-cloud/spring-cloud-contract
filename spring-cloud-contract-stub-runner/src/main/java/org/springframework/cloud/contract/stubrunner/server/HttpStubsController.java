@@ -18,11 +18,11 @@ package org.springframework.cloud.contract.stubrunner.server;
 
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.stubrunner.StubRunning;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,17 +36,16 @@ public class HttpStubsController {
 
 	private final StubRunning stubRunning;
 
-	@Autowired
 	public HttpStubsController(StubRunning stubRunning) {
 		this.stubRunning = stubRunning;
 	}
 
-	@RequestMapping
+	@GetMapping
 	public Map<String, Integer> stubs() {
 		return this.stubRunning.runStubs().toIvyToPortMapping();
 	}
 
-	@RequestMapping(path = "/{ivy:.*}")
+	@GetMapping(path = "/{ivy:.*}")
 	public ResponseEntity<Integer> consumer(@PathVariable String ivy) {
 		Integer port = this.stubRunning.runStubs().getPort(ivy);
 		if (port != null) {

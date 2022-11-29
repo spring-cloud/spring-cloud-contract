@@ -22,18 +22,28 @@ import java.util.Map;
 import org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 
 interface StubRunnerRuleOptions {
 
 	/**
-	 * Pass the {@link MessageVerifier} that this rule should use. If you don't pass
+	 * Pass the {@link MessageVerifierSender} that this rule should use. If you don't pass
 	 * anything a {@link ExceptionThrowingMessageVerifier} will be used. That means that
 	 * an exception will be thrown whenever you try to do sth messaging related.
 	 * @param messageVerifier message verifier implementation
 	 * @return the rule
 	 */
-	StubRunnerRule messageVerifier(MessageVerifier messageVerifier);
+	StubRunnerRule messageVerifierSender(MessageVerifierSender messageVerifier);
+
+	/**
+	 * Pass the {@link MessageVerifierReceiver} that this rule should use. If you don't
+	 * pass anything a {@link ExceptionThrowingMessageVerifier} will be used. That means
+	 * that an exception will be thrown whenever you try to do sth messaging related.
+	 * @param messageVerifier message verifier implementation
+	 * @return the rule
+	 */
+	StubRunnerRule messageVerifierReceiver(MessageVerifierReceiver messageVerifier);
 
 	/**
 	 * Override all options.

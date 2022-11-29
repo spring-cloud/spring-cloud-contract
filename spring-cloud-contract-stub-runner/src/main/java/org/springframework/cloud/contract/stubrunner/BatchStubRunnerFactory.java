@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 
 /**
@@ -32,22 +32,22 @@ public class BatchStubRunnerFactory {
 
 	private final StubDownloader stubDownloader;
 
-	private final MessageVerifier<?> contractVerifierMessaging;
+	private final MessageVerifierSender<?> contractVerifierMessaging;
 
 	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions) {
-		this(stubRunnerOptions, new NoOpStubMessages());
+		this(stubRunnerOptions, new NoOpStubMessages<>());
 	}
 
-	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, MessageVerifier verifier) {
+	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, MessageVerifierSender<?> verifier) {
 		this(stubRunnerOptions, aetherStubDownloader(stubRunnerOptions), verifier);
 	}
 
 	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, StubDownloader stubDownloader) {
-		this(stubRunnerOptions, stubDownloader, new NoOpStubMessages());
+		this(stubRunnerOptions, stubDownloader, new NoOpStubMessages<>());
 	}
 
 	public BatchStubRunnerFactory(StubRunnerOptions stubRunnerOptions, StubDownloader stubDownloader,
-			MessageVerifier<?> contractVerifierMessaging) {
+			MessageVerifierSender<?> contractVerifierMessaging) {
 		this.stubRunnerOptions = stubRunnerOptions;
 		this.stubDownloader = stubDownloader;
 		this.contractVerifierMessaging = contractVerifierMessaging;

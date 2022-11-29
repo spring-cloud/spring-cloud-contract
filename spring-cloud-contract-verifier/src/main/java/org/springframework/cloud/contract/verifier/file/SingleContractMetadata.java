@@ -29,7 +29,6 @@ import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.DslProperty;
 import org.springframework.cloud.contract.spec.internal.Header;
 import org.springframework.cloud.contract.spec.internal.Headers;
-import org.springframework.cloud.contract.spec.internal.Input;
 import org.springframework.cloud.contract.spec.internal.OutputMessage;
 import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.spec.internal.Response;
@@ -183,12 +182,11 @@ public class SingleContractMetadata {
 
 	private DslProperty<?> inputBody(Contract contract) {
 		return Optional.ofNullable(contract.getRequest()).map(Request::getBody).map(DslProperty.class::cast)
-				.orElseGet(() -> Optional.ofNullable(contract.getInput()).map(Input::getMessageBody).orElse(null));
+				.orElse(null);
 	}
 
 	private Headers inputHeaders(Contract contract) {
-		return Optional.ofNullable(contract.getRequest()).map(Request::getHeaders)
-				.orElseGet(() -> Optional.ofNullable(contract.getInput()).map(Input::getMessageHeaders).orElse(null));
+		return Optional.ofNullable(contract.getRequest()).map(Request::getHeaders).orElse(null);
 	}
 
 	private DslProperty<?> outputBody(Contract contract) {

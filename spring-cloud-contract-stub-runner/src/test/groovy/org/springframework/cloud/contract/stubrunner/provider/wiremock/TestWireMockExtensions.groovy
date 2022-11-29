@@ -22,8 +22,10 @@ import com.github.tomakehurst.wiremock.extension.Parameters
 import com.github.tomakehurst.wiremock.extension.ResponseTransformer
 import com.github.tomakehurst.wiremock.http.ChunkedDribbleDelay
 import com.github.tomakehurst.wiremock.http.HttpHeader
+import com.github.tomakehurst.wiremock.http.HttpHeaders
 import com.github.tomakehurst.wiremock.http.Request
 import com.github.tomakehurst.wiremock.http.Response
+import groovy.transform.CompileStatic
 
 import org.springframework.cloud.contract.verifier.dsl.wiremock.DefaultResponseTransformer
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions
@@ -31,16 +33,15 @@ import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensio
 /**
  * Extension that registers the default response transformer and a custom one too
  */
+@CompileStatic
 class TestWireMockExtensions implements WireMockExtensions {
 	@Override
 	List<Extension> extensions() {
-		return [
-				new DefaultResponseTransformer(),
-				new CustomExtension()
-		]
+		return [ new DefaultResponseTransformer(), new CustomExtension() ] as List<Extension>
 	}
 }
 
+@CompileStatic
 class CustomExtension extends ResponseTransformer {
 
 	/**
@@ -57,10 +58,18 @@ class CustomExtension extends ResponseTransformer {
 	 */
 	@Override
 	Response transform(Request request, Response response, FileSource files, Parameters parameters) {
-		def headers = response.headers + new HttpHeader("X-My-Header", "surprise!")
-		return new Response(response.status, response.statusMessage,
-				response.body, headers, response.wasConfigured(), response.fault,
-				response.initialDelay, new ChunkedDribbleDelay(0, 0), response.fromProxy)
+		HttpHeaders headers = response.headers + new HttpHeader("X-My-Header", "surprise!")
+		return Response.response()
+		.status(response.status)
+		.statusMessage(response.statusMessage)
+		.body(response.body)
+		.headers(headers)
+		.configured(response.wasConfigured())
+		.fault(response.fault)
+		.incrementInitialDelay(response.initialDelay)
+		.chunkedDribbleDelay(response.chunkedDribbleDelay)
+		.fromProxy(response.fromProxy)
+		.build()
 	}
 
 	/**

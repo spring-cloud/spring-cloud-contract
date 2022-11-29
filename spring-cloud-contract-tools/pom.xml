@@ -19,7 +19,6 @@
 
 	<modules>
 		<module>spring-cloud-contract-converters</module>
-		<module>spring-cloud-contract-pact</module>
 		<module>spring-cloud-contract-maven-plugin</module>
 		<module>spring-cloud-contract-gradle-plugin</module>
 		<module>spring-cloud-contract-gradle-portal-plugin</module>

@@ -16,12 +16,18 @@
 
 package org.springframework.cloud.contract.verifier.messaging.stream;
 
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import org.jetbrains.annotations.Nullable;
+
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpContractVerifierAutoConfiguration;
@@ -43,9 +49,10 @@ import org.springframework.util.Assert;
 public class ContractVerifierStreamAutoConfiguration {
 
 	@Bean
-	@ConditionalOnMissingBean
-	public ContractVerifierMessaging<?> contractVerifierMessagingConverter(MessageVerifier<Message<?>> exchange) {
-		return new ContractVerifierHelper(exchange);
+	@ConditionalOnMissingBean(ContractVerifierMessaging.class)
+	public ContractVerifierMessaging<?> streamContractVerifierMessaging(MessageVerifierSender<Message<?>> sender,
+			MessageVerifierReceiver<Message<?>> receiver) {
+		return new ContractVerifierHelper(sender, receiver);
 	}
 
 	@Configuration(proxyBeanMethods = false)
@@ -53,24 +60,43 @@ public class ContractVerifierStreamAutoConfiguration {
 	static class InputDestinationConfiguration {
 
 		@Bean
-		@ConditionalOnMissingBean
-		MessageVerifier<Message<?>> contractVerifierMessageExchangeWithDestinations(ApplicationContext context) {
-			return new StreamStubMessages(new StreamInputDestinationMessageSender(context),
+		@ConditionalOnMissingBean(MessageVerifierSender.class)
+		MessageVerifierSender<Message<?>> streamContractVerifierMessageSenderExchangeWithDestinations(
+				ApplicationContext context) {
+			StreamStubMessages stubMessages = new StreamStubMessages(new StreamInputDestinationMessageSender(context),
 					new StreamOutputDestinationMessageReceiver(context));
+			return new MessageVerifierSender<>() {
+				@Override
+				public void send(Message<?> message, String destination, @Nullable YamlContract contract) {
+					stubMessages.send(message, destination, contract);
+				}
+
+				@Override
+				public <T> void send(T payload, Map<String, Object> headers, String destination,
+						@Nullable YamlContract contract) {
+					stubMessages.send(payload, headers, destination, contract);
+				}
+			};
 		}
 
-	}
-
-	@Configuration(proxyBeanMethods = false)
-	@ConditionalOnMissingClass({ "org.springframework.cloud.stream.binder.test.InputDestination" })
-	static class NoOpStreamClassConfiguration {
-
 		@Bean
-		@ConditionalOnMissingBean
-		MessageVerifier<Message<?>> contractVerifierMessageExchangeWithNoMessageCollector(
-				ApplicationContext applicationContext) {
-			return new StreamStubMessages(new StreamStubMessageSender(applicationContext),
-					new StreamPollableChannelMessageReceiver(applicationContext));
+		@ConditionalOnMissingBean(MessageVerifierReceiver.class)
+		MessageVerifierReceiver<Message<?>> streamContractVerifierMessageReceiverExchangeWithDestinations(
+				ApplicationContext context) {
+			StreamStubMessages stubMessages = new StreamStubMessages(new StreamInputDestinationMessageSender(context),
+					new StreamOutputDestinationMessageReceiver(context));
+			return new MessageVerifierReceiver<>() {
+				@Override
+				public Message<?> receive(String destination, long timeout, TimeUnit timeUnit,
+						@Nullable YamlContract contract) {
+					return stubMessages.receive(destination, timeout, timeUnit, contract);
+				}
+
+				@Override
+				public Message<?> receive(String destination, YamlContract contract) {
+					return stubMessages.receive(destination, contract);
+				}
+			};
 		}
 
 	}
@@ -79,8 +105,8 @@ public class ContractVerifierStreamAutoConfiguration {
 
 class ContractVerifierHelper extends ContractVerifierMessaging<Message<?>> {
 
-	ContractVerifierHelper(MessageVerifier<Message<?>> exchange) {
-		super(exchange);
+	ContractVerifierHelper(MessageVerifierSender<Message<?>> sender, MessageVerifierReceiver<Message<?>> receiver) {
+		super(sender, receiver);
 	}
 
 	@Override

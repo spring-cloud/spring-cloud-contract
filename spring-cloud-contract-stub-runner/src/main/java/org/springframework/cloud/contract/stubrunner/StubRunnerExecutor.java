@@ -41,7 +41,7 @@ import org.springframework.cloud.contract.stubrunner.AvailablePortScanner.PortCa
 import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStub;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.converter.YamlContractConverter;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessageMetadata;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.cloud.contract.verifier.util.BodyExtractor;
@@ -57,7 +57,7 @@ class StubRunnerExecutor implements StubFinder {
 
 	private final AvailablePortScanner portScanner;
 
-	private final MessageVerifier<?> contractVerifierMessaging;
+	private final MessageVerifierSender<?> messageVerifierSender;
 
 	private final List<HttpServerStub> serverStubs;
 
@@ -65,10 +65,10 @@ class StubRunnerExecutor implements StubFinder {
 
 	private final YamlContractConverter yamlContractConverter = new YamlContractConverter();
 
-	StubRunnerExecutor(AvailablePortScanner portScanner, MessageVerifier<?> contractVerifierMessaging,
+	StubRunnerExecutor(AvailablePortScanner portScanner, MessageVerifierSender<?> messageVerifierSender,
 			List<HttpServerStub> serverStubs) {
 		this.portScanner = portScanner;
-		this.contractVerifierMessaging = contractVerifierMessaging;
+		this.messageVerifierSender = messageVerifierSender;
 		this.serverStubs = serverStubs;
 	}
 
@@ -249,7 +249,7 @@ class StubRunnerExecutor implements StubFinder {
 		YamlContract contract = yamlContracts.get(0);
 		setMessageType(contract, ContractVerifierMessageMetadata.MessageType.OUTPUT);
 		// TODO: Json is harcoded here
-		this.contractVerifierMessaging.send(
+		this.messageVerifierSender.send(
 				JsonOutput
 						.toJson(BodyExtractor.extractClientValueFromBody(body == null ? null : body.getClientValue())),
 				headers == null ? null : headers.asStubSideMap(), outputMessage.getSentTo().getClientValue(), contract);

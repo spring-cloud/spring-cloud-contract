@@ -22,6 +22,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>17</java.version>
 		<spring-cloud-contract.version>4.0.0-SNAPSHOT</spring-cloud-contract.version>
+		<spring-cloud-stream.version>4.0.0-SNAPSHOT</spring-cloud-stream.version>
 	</properties>
 
 	<dependencies>
@@ -34,17 +35,25 @@
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-stream-rabbit</artifactId>
+			<version>${spring-cloud-stream.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream</artifactId>
+			<version>${spring-cloud-stream.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 			<classifier>test-binder</classifier>

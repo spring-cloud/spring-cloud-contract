@@ -64,11 +64,8 @@ class YamlContractConverterSpec extends Specification {
 	@Shared
 	File ymlWithRest3 = new File(ymlUrl3.toURI())
 	URL ymlMsgUrl = YamlContractConverterSpec.getResource("/yml/contract_message.yml")
-	File ymlMessaging = new File(ymlMsgUrl.toURI())
 	URL ymlMsgMethodUrl = YamlContractConverterSpec.getResource("/yml/contract_message_method.yml")
 	File ymlMessagingMethod = new File(ymlMsgMethodUrl.toURI())
-	URL ymlMsgMsgUrl = YamlContractConverterSpec.getResource("/yml/contract_message_input_message.yml")
-	File ymlMessagingMsg = new File(ymlMsgMsgUrl.toURI())
 	URL ymlBodyFile = YamlContractConverterSpec.getResource("/yml/contract_from_file.yml")
 	File ymlBody = new File(ymlBodyFile.toURI())
 	URL ymlReferenceFile = YamlContractConverterSpec.getResource("/yml/contract_reference_request.yml")
@@ -413,38 +410,7 @@ class YamlContractConverterSpec extends Specification {
 			Collection<Contract> contracts = converter.convertFrom(ymlMessagingMatchers)
 		then:
 			contracts.size() == 1
-			Contract contract = contracts.first()
-			contract.input.messageHeaders.entries.find {
-				it.name == "contentType" &&
-						((Pattern) it.clientValue).pattern() == "application/json.*" && it.serverValue == "application/json"
-			}
-			contract.input.bodyMatchers.matchers[0].path() == '$.duck'
-			contract.input.bodyMatchers.matchers[0].matchingType() == REGEX
-			contract.input.bodyMatchers.matchers[0].value().pattern() == '[0-9]{3}'
-			contract.input.bodyMatchers.matchers[1].path() == '$.duck'
-			contract.input.bodyMatchers.matchers[1].matchingType() == EQUALITY
-			contract.input.bodyMatchers.matchers[2].path() == '$.alpha'
-			contract.input.bodyMatchers.matchers[2].matchingType() == REGEX
-			contract.input.bodyMatchers.matchers[2].value().pattern() == RegexPatterns.onlyAlphaUnicode().pattern()
-			contract.input.bodyMatchers.matchers[3].path() == '$.alpha'
-			contract.input.bodyMatchers.matchers[3].matchingType() == EQUALITY
-			contract.input.bodyMatchers.matchers[4].path() == '$.number'
-			contract.input.bodyMatchers.matchers[4].matchingType() == REGEX
-			contract.input.bodyMatchers.matchers[4].value().pattern() == RegexPatterns.number().pattern()
-			contract.input.bodyMatchers.matchers[5].path() == '$.aBoolean'
-			contract.input.bodyMatchers.matchers[5].matchingType() == REGEX
-			contract.input.bodyMatchers.matchers[5].value().pattern() == RegexPatterns.anyBoolean().pattern()
-			contract.input.bodyMatchers.matchers[6].path() == '$.date'
-			contract.input.bodyMatchers.matchers[6].matchingType() == DATE
-			contract.input.bodyMatchers.matchers[6].value().pattern() == RegexPatterns.isoDate().pattern()
-			contract.input.bodyMatchers.matchers[7].path() == '$.dateTime'
-			contract.input.bodyMatchers.matchers[7].matchingType() == TIMESTAMP
-			contract.input.bodyMatchers.matchers[7].value().pattern() == RegexPatterns.isoDateTime().pattern()
-			contract.input.bodyMatchers.matchers[8].path() == '$.time'
-			contract.input.bodyMatchers.matchers[8].matchingType() == TIME
-			contract.input.bodyMatchers.matchers[8].value().pattern() == RegexPatterns.isoTime().pattern()
-			contract.input.bodyMatchers.matchers[9].path() == "\$.['key'].['complex.key']"
-			contract.input.bodyMatchers.matchers[9].matchingType() == EQUALITY
+			Contract contract = contracts[0]
 		and:
 			contract.outputMessage.bodyMatchers.matchers[0].path() == '$.duck'
 			contract.outputMessage.bodyMatchers.matchers[0].matchingType() == REGEX
@@ -534,51 +500,6 @@ class YamlContractConverterSpec extends Specification {
 			contract.response.status.serverValue == 200
 	}
 
-	def "should convert YAML with messaging to DSL"() {
-		given:
-			assert converter.isAccepted(ymlMessaging)
-		when:
-			Collection<Contract> contracts = converter.convertFrom(ymlMessaging)
-		then:
-			contracts.size() == 1
-			Contract contract = contracts.first()
-			contract.description == "Some description"
-			contract.name == "some name"
-			contract.label == "some_label"
-			contract.ignored == true
-			contract.input.assertThat.toString() == "bar()"
-			contract.input.messageFrom.serverValue == "foo"
-			contract.input.triggeredBy.toString() == "foo()"
-			contract.input.messageHeaders.entries.find {
-				it.name == "foo" &&
-						((Pattern) it.clientValue).pattern() == "bar" && it.serverValue == "bar"
-			}
-			contract.input.messageBody.clientValue == [foo: "bar"]
-			contract.input.bodyMatchers.matchers[0].path() == '$.bar'
-			contract.input.bodyMatchers.matchers[0].matchingType() == REGEX
-			contract.input.bodyMatchers.matchers[0].value().pattern() == 'bar'
-		and:
-			contract.outputMessage.assertThat.toString() == "baz()"
-			contract.outputMessage.headers.entries.find {
-				it.name == "foo2" &&
-						((Pattern) it.serverValue).pattern() == "bar" && it.clientValue == "bar"
-			}
-			contract.outputMessage.headers.entries.find {
-				it.name == "foo3" &&
-						((ExecutionProperty) it.serverValue).insertValue('foo') == "andMeToo(foo)"
-			}
-			contract.outputMessage.headers.entries.find {
-				it.name == "fooRes" &&
-						it.clientValue == "baz"
-			}
-			contract.outputMessage.body.clientValue == [foo2: "bar", foo3: "baz"]
-			contract.outputMessage.bodyMatchers.matchers[0].path() == '$.foo2'
-			contract.outputMessage.bodyMatchers.matchers[0].matchingType() == REGEX
-			contract.outputMessage.bodyMatchers.matchers[0].value().pattern() == 'bar'
-			contract.outputMessage.bodyMatchers.matchers[1].path() == '$.foo3'
-			contract.outputMessage.bodyMatchers.matchers[1].matchingType() == COMMAND
-			contract.outputMessage.bodyMatchers.matchers[1].value() == new ExecutionProperty('executeMe($it)')
-	}
 
 	def "should convert YAML with messaging triggered by a method to DSL"() {
 		given:
@@ -591,30 +512,6 @@ class YamlContractConverterSpec extends Specification {
 			contract.description == "Some description"
 			contract.label == "some_label"
 			contract.input.triggeredBy.toString() == "bookReturnedTriggered()"
-		and:
-			contract.outputMessage.sentTo.clientValue == "output"
-			contract.outputMessage.headers.entries.find {
-				it.name == "BOOK-NAME" && it.clientValue == "foo"
-			}
-			contract.outputMessage.body.clientValue == [bookName: "foo"]
-	}
-
-	def "should convert YAML with messaging triggered by a message to DSL"() {
-		given:
-			assert converter.isAccepted(ymlMessagingMsg)
-		when:
-			Collection<Contract> contracts = converter.convertFrom(ymlMessagingMsg)
-		then:
-			contracts.size() == 1
-			Contract contract = contracts.first()
-			contract.description == "Some description"
-			contract.label == "some_label"
-			contract.input.messageFrom.serverValue == "input"
-			contract.input.messageHeaders.entries.find {
-				it.name == "sample" &&
-						it.serverValue == "header"
-			}
-			contract.input.messageBody.clientValue == [bookName: "foo"]
 		and:
 			contract.outputMessage.sentTo.clientValue == "output"
 			contract.outputMessage.headers.entries.find {
@@ -646,8 +543,6 @@ class YamlContractConverterSpec extends Specification {
 		then:
 			contracts.size() == 1
 			Contract contract = contracts.first()
-			contract.input.messageBody.clientValue instanceof FromFileProperty
-			((FromFileProperty) contract.input.messageBody.clientValue).type == byte[]
 		and:
 			contract.outputMessage.body.clientValue instanceof FromFileProperty
 			((FromFileProperty) contract.outputMessage.body.clientValue).type == byte[]
@@ -800,8 +695,10 @@ metadata: {}
 			)]
 	}
 
-	def "should parse messaging contract for [#file]"() {
+	def "should parse messaging contract for messaging scenario 1"() {
 		given:
+			URI uri = YamlContractConverterSpec.getResource("/yml/contract_message_scenario1.yml").toURI()
+			File file = new File(uri)
 			assert converter.isAccepted(file)
 		when:
 			Collection<Contract> contracts = converter.convertFrom(file)
@@ -809,10 +706,6 @@ metadata: {}
 			contracts.size() == 1
 		and:
 			contracts.first().input != null || contracts.first().outputMessage != null
-		where:
-			file << [1, 2, 3].collect {
-				new File(YamlContractConverterSpec.getResource("/yml/contract_message_scenario${it}.yml").toURI())
-			}
 	}
 
 	def "should convert HTTP DSL to YAML"() {
@@ -949,59 +842,6 @@ metadata: {}
 			yamlContract.outputMessage.headers == ["BOOK-NAME": "foo"]
 	}
 
-	def "should convert Messaging DSL with input and output message to YAML"() {
-		given:
-			List<Contract> contracts = [Contract.make {
-				input {
-					messageFrom("jms:input")
-					messageBody([bookName: 'foo'])
-					messageHeaders {
-						header("sample", "header")
-					}
-				}
-				outputMessage {
-					sentTo("output")
-					body([bookName: "foo"])
-					headers {
-						header("BOOK-NAME", "foo")
-					}
-				}
-			}]
-		when:
-			Collection<YamlContract> yamlContracts = converter.convertTo(contracts)
-		then:
-			yamlContracts.size() == 1
-			YamlContract yamlContract = yamlContracts.first()
-			yamlContract.input.messageFrom == "jms:input"
-			yamlContract.input.messageBody == [bookName: 'foo']
-			yamlContract.input.messageHeaders == ["sample": "header"]
-			yamlContract.outputMessage.sentTo == "output"
-			yamlContract.outputMessage.body == [bookName: "foo"]
-			yamlContract.outputMessage.headers == ["BOOK-NAME": "foo"]
-	}
-
-	def "should convert Messaging DSL with only input message to YAML"() {
-		given:
-			List<Contract> contracts = [Contract.make {
-				input {
-					messageFrom("jms:input")
-					messageBody([bookName: 'foo'])
-					messageHeaders {
-						header("sample", "header")
-					}
-					assertThat("bookWasDeleted()")
-				}
-			}]
-		when:
-			Collection<YamlContract> yamlContracts = converter.convertTo(contracts)
-		then:
-			yamlContracts.size() == 1
-			YamlContract yamlContract = yamlContracts.first()
-			yamlContract.input.messageFrom == "jms:input"
-			yamlContract.input.messageBody == [bookName: 'foo']
-			yamlContract.input.messageHeaders == ["sample": "header"]
-			yamlContract.input.assertThat == "bookWasDeleted()"
-	}
 
 	def "should convert Messaging with a message DSL to YAML"() {
 		given:
@@ -1013,35 +853,7 @@ metadata: {}
 				ignored()
 				inProgress()
 				input {
-					messageFrom("input")
-					messageBody([
-							duck                : 123,
-							alpha               : "abc",
-							number              : 123,
-							aBoolean            : true,
-							date                : "2017-01-01",
-							dateTime            : "2017-01-01T01:23:45",
-							time                : "01:02:34",
-							valueWithoutAMatcher: "foo",
-							valueWithTypeMatch  : "string",
-							key                 : ["complex.key": 'foo']
-					])
-					bodyMatchers {
-						jsonPath('$.duck', byRegex("[0-9]{3}"))
-						jsonPath('$.duck', byEquality())
-						jsonPath('$.alpha', byRegex(onlyAlphaUnicode()))
-						jsonPath('$.alpha', byEquality())
-						jsonPath('$.number', byRegex(number()))
-						jsonPath('$.aBoolean', byRegex(anyBoolean()))
-						jsonPath('$.date', byDate())
-						jsonPath('$.dateTime', byTimestamp())
-						jsonPath('$.time', byTime())
-						jsonPath("\$.['key'].['complex.key']", byEquality())
-					}
-					messageHeaders {
-						header("sample", $(c(regex("foo.*")), p("foo")))
-						messagingContentType(applicationJson())
-					}
+					triggeredBy("foo()")
 				}
 				outputMessage {
 					sentTo("channel")
@@ -1121,67 +933,8 @@ metadata: {}
 			yamlContract.name == "fooo"
 			yamlContract.ignored == true
 			yamlContract.inProgress == true
+			yamlContract.input.triggeredBy == "foo()"
 			yamlContract.label == "card_rejected"
-			yamlContract.input.messageFrom == "input"
-			yamlContract.input.messageBody == [
-					duck                : 123,
-					alpha               : "abc",
-					number              : 123,
-					aBoolean            : true,
-					date                : "2017-01-01",
-					dateTime            : "2017-01-01T01:23:45",
-					time                : "01:02:34",
-					valueWithoutAMatcher: "foo",
-					valueWithTypeMatch  : "string",
-					key                 : ["complex.key": 'foo']
-			]
-			yamlContract.input.messageHeaders == [
-					sample     : 'foo',
-					contentType: "application/json"
-			]
-			yamlContract.input.matchers.headers == [
-					new YamlContract.KeyValueMatcher(
-							key: "sample", regex: "foo.*", regexType: YamlContract.RegexType.as_string)
-			]
-			yamlContract.input.matchers.body == [
-					new YamlContract.BodyStubMatcher(
-							path: '$.duck',
-							type: YamlContract.StubMatcherType.by_regex,
-							value: "[0-9]{3}"),
-					new YamlContract.BodyStubMatcher(
-							path: '$.duck',
-							type: YamlContract.StubMatcherType.by_equality),
-					new YamlContract.BodyStubMatcher(
-							path: '$.alpha',
-							type: YamlContract.StubMatcherType.by_regex,
-							value: "[\\p{L}]*"),
-					new YamlContract.BodyStubMatcher(
-							path: '$.alpha',
-							type: YamlContract.StubMatcherType.by_equality),
-					new YamlContract.BodyStubMatcher(
-							path: '$.number',
-							type: YamlContract.StubMatcherType.by_regex,
-							value: "-?(\\d*\\.\\d+|\\d+)"),
-					new YamlContract.BodyStubMatcher(
-							path: '$.aBoolean',
-							type: YamlContract.StubMatcherType.by_regex,
-							value: "(true|false)"),
-					new YamlContract.BodyStubMatcher(
-							path: '$.date',
-							type: YamlContract.StubMatcherType.by_date,
-							value: "(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])"),
-					new YamlContract.BodyStubMatcher(
-							path: '$.dateTime',
-							type: YamlContract.StubMatcherType.by_timestamp,
-							value: "([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])"),
-					new YamlContract.BodyStubMatcher(
-							path: '$.time',
-							type: YamlContract.StubMatcherType.by_time,
-							value: "(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])"),
-					new YamlContract.BodyStubMatcher(
-							path: "\$.['key'].['complex.key']",
-							type: YamlContract.StubMatcherType.by_equality),
-			]
 			yamlContract.outputMessage.sentTo == "channel"
 			yamlContract.outputMessage.body == [duck                : 123,
 												alpha               : "abc",

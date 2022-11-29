@@ -214,7 +214,7 @@ controller setup or messaging test setup).
 The following example, from `pom.xml`, shows how to specify the base test class:
 
 ====
-[src,xml]
+[source,xml,indent=0]
 ----
 <build>
         <plugins>
@@ -446,13 +446,13 @@ The following example shows a Camel messaging contract:
 [source,groovy,indent=0,role="primary"]
 .groovy
 ----
-include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_no_output_dsl]
+include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_method_dsl]
 ----
 
 [source,yaml,indent=0,role="secondary"]
 .yaml
 ----
-include::{verifier_core_path}/src/test/resources/yml/contract_message_scenario3.yml[indent=0]
+include::{verifier_core_path}/src/test/resources/yml/contract_message_scenario1.yml[indent=0]
 ----
 ====
 
@@ -591,7 +591,7 @@ contain all the setup necessary information needed to run them (for example,
 The following example, from `pom.xml`, shows how to specify the base test class:
 
 ====
-[src,xml]
+[source,xml,indent=0]
 ----
 <build>
         <plugins>
@@ -618,7 +618,7 @@ of a `configuration` element within `spring-cloud-contract-maven-plugin`.
 The following example shows a minimal (but functional) base test class:
 
 ====
-[src,Java]
+[source,java, indent=0]
 ----
 package com.example.contractTest;
 
@@ -643,7 +643,7 @@ Now we can move on to the implementation. For that, we first need a data class, 
 then use in our controller. The following listing shows the data class:
 
 ====
-[src,Java]
+[source,java, indent=0]
 ----
 package com.example.Test;
 
@@ -682,7 +682,7 @@ client ID in the contract is called `client.id`, we need to use the
 Now we can move along to the controller, which the following listing shows:
 
 ====
-[src,Java]
+[source,java, indent=0]
 ----
 package com.example.docTest;
 

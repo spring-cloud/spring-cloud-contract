@@ -22,9 +22,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -33,7 +33,8 @@ import org.springframework.messaging.PollableChannel;
 /**
  * @author Marcin Grzejszczak
  */
-public class SpringIntegrationStubMessages implements MessageVerifier<Message<?>> {
+public class SpringIntegrationStubMessages
+		implements MessageVerifierSender<Message<?>>, MessageVerifierReceiver<Message<?>> {
 
 	private static final Log log = LogFactory.getLog(SpringIntegrationStubMessages.class);
 
@@ -41,7 +42,6 @@ public class SpringIntegrationStubMessages implements MessageVerifier<Message<?>
 
 	private final ContractVerifierIntegrationMessageBuilder builder = new ContractVerifierIntegrationMessageBuilder();
 
-	@Autowired
 	public SpringIntegrationStubMessages(ApplicationContext context) {
 		this.context = context;
 	}

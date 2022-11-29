@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.messaging.jms;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
@@ -27,13 +28,16 @@ import jakarta.jms.StreamMessage;
 import jakarta.jms.TextMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jetbrains.annotations.Nullable;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.contract.verifier.messaging.integration.ContractVerifierIntegrationConfiguration;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
@@ -52,16 +56,49 @@ import org.springframework.jms.core.JmsTemplate;
 public class ContractVerifierJmsConfiguration {
 
 	@Bean
-	@ConditionalOnMissingBean
-	MessageVerifier<Message> contractVerifierJmsMessageExchange(ObjectProvider<JmsTemplate> jmsTemplateProvider) {
+	@ConditionalOnMissingBean(MessageVerifierSender.class)
+	MessageVerifierSender<Message> contractVerifierJmsMessageSender(ObjectProvider<JmsTemplate> jmsTemplateProvider) {
 		JmsTemplate jmsTemplate = jmsTemplateProvider.getIfAvailable(JmsTemplate::new);
-		return new JmsStubMessages(jmsTemplate);
+		JmsStubMessages jmsStubMessages = new JmsStubMessages(jmsTemplate);
+		return new MessageVerifierSender<>() {
+			@Override
+			public void send(Message message, String destination, @Nullable YamlContract contract) {
+				jmsStubMessages.send(message, destination, contract);
+			}
+
+			@Override
+			public <T> void send(T payload, Map<String, Object> headers, String destination,
+					@Nullable YamlContract contract) {
+				jmsStubMessages.send(payload, headers, destination, contract);
+			}
+		};
 	}
 
 	@Bean
-	@ConditionalOnMissingBean
-	ContractVerifierMessaging<Message> contractVerifierJmsMessaging(MessageVerifier<Message> exchange) {
-		return new ContractVerifierJmsHelper(exchange);
+	@ConditionalOnMissingBean(MessageVerifierReceiver.class)
+	MessageVerifierReceiver<Message> contractVerifierJmsMessageReceiver(
+			ObjectProvider<JmsTemplate> jmsTemplateProvider) {
+		JmsTemplate jmsTemplate = jmsTemplateProvider.getIfAvailable(JmsTemplate::new);
+		JmsStubMessages jmsStubMessages = new JmsStubMessages(jmsTemplate);
+		return new MessageVerifierReceiver<>() {
+			@Override
+			public Message receive(String destination, long timeout, TimeUnit timeUnit,
+					@Nullable YamlContract contract) {
+				return jmsStubMessages.receive(destination, timeout, timeUnit, contract);
+			}
+
+			@Override
+			public Message receive(String destination, YamlContract contract) {
+				return jmsStubMessages.receive(destination, contract);
+			}
+		};
+	}
+
+	@Bean
+	@ConditionalOnMissingBean(ContractVerifierMessaging.class)
+	ContractVerifierMessaging<Message> contractVerifierJmsMessaging(MessageVerifierSender<Message> sender,
+			MessageVerifierReceiver<Message> receiver) {
+		return new ContractVerifierJmsHelper(sender, receiver);
 	}
 
 }
@@ -70,8 +107,8 @@ class ContractVerifierJmsHelper extends ContractVerifierMessaging<Message> {
 
 	private static final Log log = LogFactory.getLog(ContractVerifierJmsHelper.class);
 
-	ContractVerifierJmsHelper(MessageVerifier<Message> exchange) {
-		super(exchange);
+	ContractVerifierJmsHelper(MessageVerifierSender<Message> sender, MessageVerifierReceiver<Message> receiver) {
+		super(sender, receiver);
 	}
 
 	@Override

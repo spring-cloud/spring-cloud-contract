@@ -36,7 +36,8 @@ import org.springframework.cloud.contract.stubrunner.StubFinder;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 
 /**
  * JUnit class rule that allows you to download the provided stubs.
@@ -54,7 +55,9 @@ public class StubRunnerRule implements TestRule, StubFinder, StubRunnerRuleOptio
 
 	BatchStubRunner stubFinder;
 
-	MessageVerifier verifier = new ExceptionThrowingMessageVerifier();
+	MessageVerifierSender verifierSender = new ExceptionThrowingMessageVerifier();
+
+	MessageVerifierReceiver verifierReceiver = new ExceptionThrowingMessageVerifier();
 
 	StubRunnerRule delegate = this;
 
@@ -76,14 +79,20 @@ public class StubRunnerRule implements TestRule, StubFinder, StubRunnerRuleOptio
 			}
 
 			private void before() {
-				stubFinder(new BatchStubRunnerFactory(builder().build(), verifier()).buildBatchStubRunner());
+				stubFinder(new BatchStubRunnerFactory(builder().build(), verifierSender()).buildBatchStubRunner());
 				StubRunnerRule.this.stubFinder().runStubs();
 			}
 		};
 	}
 
 	@Override
-	public StubRunnerRule messageVerifier(MessageVerifier messageVerifier) {
+	public StubRunnerRule messageVerifierSender(MessageVerifierSender messageVerifier) {
+		verifier(messageVerifier);
+		return this.delegate;
+	}
+
+	@Override
+	public StubRunnerRule messageVerifierReceiver(MessageVerifierReceiver messageVerifier) {
 		verifier(messageVerifier);
 		return this.delegate;
 	}
@@ -270,12 +279,20 @@ public class StubRunnerRule implements TestRule, StubFinder, StubRunnerRuleOptio
 		this.delegate.stubFinder = stubFinder;
 	}
 
-	MessageVerifier verifier() {
-		return this.delegate.verifier;
+	MessageVerifierSender verifierSender() {
+		return this.delegate.verifierSender;
 	}
 
-	void verifier(MessageVerifier verifier) {
-		this.delegate.verifier = verifier;
+	MessageVerifierReceiver verifierReceiver() {
+		return this.delegate.verifierReceiver;
+	}
+
+	void verifier(MessageVerifierSender verifier) {
+		this.delegate.verifierSender = verifier;
+	}
+
+	void verifier(MessageVerifierReceiver verifier) {
+		this.delegate.verifierReceiver = verifier;
 	}
 
 	StubRunnerOptionsBuilder builder() {

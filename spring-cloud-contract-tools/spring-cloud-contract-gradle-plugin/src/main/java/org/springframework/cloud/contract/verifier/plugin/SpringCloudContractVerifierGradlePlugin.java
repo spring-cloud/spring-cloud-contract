@@ -361,8 +361,8 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 												.dir("src/test/resources/contracts");
 										if (legacyContractsDslDir.getAsFile().exists()) {
 											logger.warn(
-													"Spring Cloud Contract Verifier Plugin: Falling back to legacy contracts directory in 'test' source set. Please switch to 'contractTest' source set as this will be removed in a future release.");
-											return legacyContractsDslDir;
+													"Spring Cloud Contract Verifier Plugin: Locating contracts in <src/test/resources/contracts> has been removed. Please move them to <src/contractTest/resources/contracts>. This warning message will be removed in a future release.");
+											return contractsDslDir;
 										}
 										else {
 											return null;

@@ -30,7 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.cloud.contract.spec.Contract;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.util.StringUtils;
@@ -56,11 +56,11 @@ public class StubRunner implements StubRunning {
 
 	public StubRunner(StubRunnerOptions stubRunnerOptions, String repositoryPath,
 			StubConfiguration stubsConfiguration) {
-		this(stubRunnerOptions, repositoryPath, stubsConfiguration, new NoOpStubMessages());
+		this(stubRunnerOptions, repositoryPath, stubsConfiguration, new NoOpStubMessages<>());
 	}
 
 	public StubRunner(StubRunnerOptions stubRunnerOptions, String repositoryPath, StubConfiguration stubsConfiguration,
-			MessageVerifier<?> contractVerifierMessaging) {
+			MessageVerifierSender<?> contractVerifierMessaging) {
 		this.stubsConfiguration = stubsConfiguration;
 		this.stubRunnerOptions = stubRunnerOptions;
 		List<HttpServerStub> serverStubs = SpringFactoriesLoader.loadFactories(HttpServerStub.class, null);

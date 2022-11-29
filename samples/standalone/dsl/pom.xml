@@ -23,8 +23,8 @@
 	</properties>
 
 	<modules>
-<!--		<module>http-server</module>-->
-<!--		<module>http-client</module>-->
+		<module>http-server</module>
+		<module>http-client</module>
 	</modules>
 
 	<build>

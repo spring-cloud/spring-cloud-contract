@@ -12,7 +12,7 @@
 	</parent>
 
 	<prerequisites>
-		<maven>3.8</maven>
+		<maven>3.6</maven>
 	</prerequisites>
 
 	<artifactId>spring-cloud-contract-maven-plugin</artifactId>
@@ -376,11 +376,6 @@
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-contract-pact</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

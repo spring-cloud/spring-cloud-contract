@@ -21,11 +21,7 @@ import org.springframework.cloud.contract.spec.Contract
 Contract.make {
 	label("positive")
 	input {
-		messageFrom("bytes_input")
-		messageBody(fileAsBytes("input.pdf"))
-		messageHeaders {
-			messagingContentType(applicationOctetStream())
-		}
+		triggeredBy("createBinaryPayload()")
 	}
 	outputMessage {
 		sentTo("bytes_output")

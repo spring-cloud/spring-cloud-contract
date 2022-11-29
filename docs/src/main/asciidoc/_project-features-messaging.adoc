@@ -13,7 +13,6 @@ The DSL for messaging looks a little bit different than the one that focuses on 
 following sections explain the differences:
 
 * <<contract-dsl-output-triggered-method>>
-* <<contract-dsl-output-triggered-message>>
 * <<contract-dsl-consumer-producer>>
 * <<contract-dsl-messaging-common>>
 
@@ -42,31 +41,6 @@ In the previous example case, the output message is sent to `output` if a method
 test that calls that method to trigger the message. On the consumer side, you can use
 `some_label` to trigger the message.
 
-[[contract-dsl-output-triggered-message]]
-==== Output Triggered by a Message
-
-The output message can be triggered by receiving a message, as shown in the following
-example:
-
-====
-[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.Groovy
-----
-include::{tests_path}/samples-messaging-integration/src/test/groovy/com/example/IntegrationMessagingApplicationSpec.groovy[tags=message_trigger,indent=0]
-----
-
-[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
-.YAML
-----
-include::{verifier_core_path}/src/test/resources/yml/contract_message_input_message.yml[indent=0]
-----
-====
-
-In the preceding example, the output message is sent to `output` if a proper message is
-received on the `input` destination. On the message publisher's side, the engine
-generates a test that sends the input message to the defined destination. On the
-consumer side, you can either send a message to the input destination or use a label
-(`some_label` in the example) to trigger the message.
 
 [[contract-dsl-consumer-producer]]
 ==== Consumer/Producer
@@ -75,16 +49,9 @@ IMPORTANT: This section is valid only for the Groovy DSL.
 
 In HTTP, you have a notion of `client`/`stub and `server`/`test` notation. You can also
 use those paradigms in messaging. In addition, Spring Cloud Contract Verifier also
-provides the `consumer` and `producer` methods, as presented in the following example
+provides the `consumer` and `producer` methods
 (note that you can use either `$` or `value` methods to provide `consumer` and `producer`
-parts):
-
-====
-[source,groovy]
-----
-include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=consumer_producer]
-----
-====
+parts).
 
 [[contract-dsl-messaging-common]]
 ==== Common
@@ -97,14 +64,12 @@ in the generated test.
 [[features-messaging-integrations]]
 === Integrations
 
-You can use one of the following four integration configurations:
+You can use one of the following integration configurations:
 
 * Apache Camel
 * Spring Integration
 * Spring Cloud Stream
-* Spring AMQP
-* Spring JMS (requires embedded broker)
-* Spring Kafka (requires embedded broker)
+* Spring JMS
 
 Since we use Spring Boot, if you have added one of these libraries to the classpath, all
 the messaging configuration is automatically set up.
@@ -143,9 +108,8 @@ testImplementation(group: 'org.springframework.cloud', name: 'spring-cloud-strea
 ==== Manual Integration Testing
 
 The main interface used by the tests is
-`org.springframework.cloud.contract.verifier.messaging.MessageVerifier`.
-It defines how to send and receive messages. You can create your own implementation to
-achieve the same goal.
+`org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender` and `org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver`.
+It defines how to send and receive messages.
 
 In a test, you can inject a `ContractVerifierMessageExchange` to send and receive
 messages that follow the contract. Then add `@AutoConfigureMessageVerifier` to your test.
@@ -176,21 +140,11 @@ Having the `input` or `outputMessage` sections in your DSL results in creation o
 on the publisher's side. By default, JUnit 4 tests are created. However, there is also a
 possibility to create JUnit 5, TestNG, or Spock tests.
 
-There are three main scenarios that we should take into consideration:
-
-* Scenario 1: There is no input message that produces an output message. The output
-message  is triggered by a component inside the application (for example, a scheduler).
-* Scenario 2: The input message triggers an output message.
-* Scenario 3: The input message is consumed, and there is no output message.
-
 IMPORTANT: The destination passed to `messageFrom` or `sentTo` can have different
 meanings for different messaging implementations. For Stream and Integration, it is
 first resolved as a `destination` of a channel. Then, if there is no such `destination`,
 it is resolved as a channel name. For Camel, that's a certain component (for example,
 `jms`).
-
-[[features-messaging-scenario1]]
-==== Scenario 1: No Input Message
 
 Consider the following contract:
 
@@ -222,76 +176,6 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 .Spock
 ----
 include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_method_test]
-----
-====
-
-[[features-messaging-scenario2]]
-==== Scenario 2: Output Triggered by Input
-
-Consider the following contract:
-
-=====
-[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.Groovy
-----
-include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_message_dsl]
-----
-
-[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
-.YAML
-----
-include::{verifier_core_path}/src/test/resources/yml/contract_message_scenario2.yml[indent=0]
-----
-=====
-
-For the preceding contract, the following test would be created:
-
-====
-[source,java,indent=0,subs="verbatim,attributes",role="primary"]
-.JUnit
-----
-include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_message_junit]
-----
-
-[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
-.Spock
-----
-include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_message_spock]
-----
-====
-
-[[features-messaging-scenario3]]
-==== Scenario 3: No Output Message
-
-Consider the following contract:
-
-====
-[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.Groovy
-----
-include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_no_output_dsl]
-----
-
-[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
-.YAML
-----
-include::{verifier_core_path}/src/test/resources/yml/contract_message_scenario3.yml[indent=0]
-----
-====
-
-For the preceding contract, the following test would be created:
-
-====
-[source,java,indent=0,subs="verbatim,attributes",role="primary"]
-.JUnit
-----
-include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_no_output_junit]
-----
-
-[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
-.Spock
-----
-include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_no_output_spock]
 ----
 ====
 
@@ -418,7 +302,7 @@ Assume that we have the following Maven repository with deployed stubs for the
 ----
 ====
 
-Further assume that the stubs contain the following structure:
+Further, assume that the stubs contain the following structure:
 
 ====
 [source,bash,indent=0]
@@ -427,107 +311,33 @@ Further assume that the stubs contain the following structure:
 │   └── MANIFEST.MF
 └── repository
     ├── accurest
-    │   ├── bookDeleted.groovy
-    │   ├── bookReturned1.groovy
-    │   └── bookReturned2.groovy
+    │   └── bookReturned1.groovy
     └── mappings
 ----
 ====
 
-Now consider the following contracts (we number them 1 and 2):
+Now consider the following contract:
 
 ====
 [source,groovy]
 ----
-include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=sample_dsl,indent=0]
-----
-
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=sample_dsl_2,indent=0]
+include::{tests_path}/samples-messaging-camel/src/test/groovy/com/example/CamelMessagingApplicationSpec.groovy[tags=sample_dsl,indent=0]
 ----
 ====
-
-These examples lend themselves to three scenarios:
-
-. <<features-messaging-stub-runner-camel-scenario1>>
-. <<features-messaging-stub-runner-camel-scenario2>>
-. <<features-messaging-stub-runner-camel-scenario3>>
-
-[[features-messaging-stub-runner-camel-scenario1]]
-===== Scenario 1 (No Input Message)
 
 To trigger a message from the `return_book_1` label, we use the `StubTrigger` interface, as follows:
 
 ====
 [source,groovy]
 ----
-include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=client_trigger,indent=0]
+stubFinder.trigger("return_book_1")
 ----
 ====
 
-Next, we want to listen to the output of the message sent to `{output_name}`:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=client_trigger_receive,indent=0]
-----
-====
-
-The received message would then pass the following assertions:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=client_trigger_message,indent=0]
-----
-====
-
-[[features-messaging-stub-runner-camel-scenario2]]
-===== Scenario 2 (Output Triggered by Input)
-
-Since the route is set for you, you can send a message to the `{output_name}` destination.
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=client_send,indent=0]
-----
-====
-
-Next, we want to listen to the output of the message sent to `{output_name}`, as follows:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=client_receive,indent=0]
-----
-====
-
-The received message would pass the following assertions:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=client_receive_message,indent=0]
-----
-====
-
-[[features-messaging-stub-runner-camel-scenario3]]
-===== Scenario 3 (Input with No Output)
-
-Since the route is set for you, you can send a message to the `{output_name}` destination, as follows:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-camel/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/camel/CamelStubRunnerSpec.groovy[tags=trigger_no_output,indent=0]
-----
+That will send out a message to the destination described in the output message of the contract.
 
 :input_name: input
 :output_name: output
-====
 
 [[features-messaging-stub-runner-integration]]
 === Consumer Side Messaging with Spring Integration
@@ -581,24 +391,17 @@ Further assume the stubs contain the following structure:
 │   └── MANIFEST.MF
 └── repository
     ├── accurest
-    │   ├── bookDeleted.groovy
-    │   ├── bookReturned1.groovy
-    │   └── bookReturned2.groovy
+    │   └── bookReturned1.groovy
     └── mappings
 ----
 ====
 
-Consider the following contracts (numbered 1 and 2):
+Consider the following contract:
 
 ====
 [source,groovy]
 ----
 include::{tests_path}/spring-cloud-contract-stub-runner-integration/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/integration/IntegrationStubRunnerSpec.groovy[tags=sample_dsl,indent=0]
-----
-
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-integration/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/integration/IntegrationStubRunnerSpec.groovy[tags=sample_dsl_2,indent=0]
 ----
 ====
 
@@ -611,15 +414,6 @@ include::{tests_path}/spring-cloud-contract-stub-runner-integration/src/test/res
 ----
 ====
 
-These examples lend themselves to three scenarios:
-
-. <<features-messaging-stub-runner-integration-scenario1>>
-. <<features-messaging-stub-runner-integration-scenario2>>
-. <<features-messaging-stub-runner-integration-scenario3>>
-
-[[features-messaging-stub-runner-integration-scenario1]]
-===== Scenario 1 (No Input Message)
-
 To trigger a message from the `return_book_1` label, use the `StubTrigger` interface, as
 follows:
 
@@ -630,66 +424,7 @@ include::{tests_path}/spring-cloud-contract-stub-runner-integration/src/test/gro
 ----
 ====
 
-The following listing shows how to listen to the output of the message sent to `{output_name}`:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-integration/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/integration/IntegrationStubRunnerSpec.groovy[tags=client_trigger_receive,indent=0]
-----
-====
-
-The received message would pass the following assertions:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-integration/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/integration/IntegrationStubRunnerSpec.groovy[tags=client_trigger_message,indent=0]
-----
-====
-
-[[features-messaging-stub-runner-integration-scenario2]]
-===== Scenario 2 (Output Triggered by Input)
-
-Since the route is set for you, you can send a message to the `{output_name}`
-destination, as follows:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-integration/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/integration/IntegrationStubRunnerSpec.groovy[tags=client_send,indent=0]
-----
-====
-
-The following listing shows how to listen to the output of the message sent to `{output_name}`:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-integration/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/integration/IntegrationStubRunnerSpec.groovy[tags=client_receive,indent=0]
-----
-====
-
-The received message passes the following assertions:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-integration/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/integration/IntegrationStubRunnerSpec.groovy[tags=client_receive_message,indent=0]
-----
-====
-
-[[features-messaging-stub-runner-integration-scenario3]]
-===== Scenario 3 (Input with No Output)
-
-Since the route is set for you, you can send a message to the `{input_name}` destination, as follows:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-integration/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/integration/IntegrationStubRunnerSpec.groovy[tags=trigger_no_output,indent=0]
-----
-====
+That will send out a message to the destination described in the output message of the contract.
 
 [[features-messaging-stub-runner-stream]]
 === Consumer Side Messaging With Spring Cloud Stream
@@ -773,24 +508,26 @@ Further assume the stubs contain the following structure:
 │   └── MANIFEST.MF
 └── repository
     ├── accurest
-    │   ├── bookDeleted.groovy
-    │   ├── bookReturned1.groovy
-    │   └── bookReturned2.groovy
+    │   └── bookReturned1.groovy
     └── mappings
 ----
 ====
 
-Consider the following contracts (numbered 1 and 2):
+Consider the following contract:
 
 ====
 [source,groovy]
 ----
 include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=sample_dsl,indent=0]
 ----
+====
 
+Now consider the following Spring Cloud Stream function configuration:
+
+====
 [source,groovy]
 ----
-include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=sample_dsl_2,indent=0]
+include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=setup,indent=0]
 ----
 ====
 
@@ -803,15 +540,6 @@ include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/resource
 ----
 ====
 
-These examples lend themselves to three scenarios:
-
-* <<features-messaging-stub-runner-stream-scenario1>>
-* <<features-messaging-stub-runner-stream-scenario2>>
-* <<features-messaging-stub-runner-stream-scenario3>>
-
-[[features-messaging-stub-runner-stream-scenario1]]
-===== Scenario 1 (No Input Message)
-
 To trigger a message from the `return_book_1` label, use the `StubTrigger` interface as
 follows:
 
@@ -822,220 +550,8 @@ include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/o
 ----
 ====
 
-The following example shows how to listen to the output of the message sent to a channel whose `destination` is
-`returnBook`:
 
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=client_trigger_receive,indent=0]
-----
-====
-
-The received message passes the following assertions:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=client_trigger_message,indent=0]
-----
-====
-
-[[features-messaging-stub-runner-stream-scenario2]]
-===== Scenario 2 (Output Triggered by Input)
-
-Since the route is set for you, you can send a message to the `bookStorage`
-`destination`, as follows:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=client_send,indent=0]
-----
-====
-
-The following example shows how to listen to the output of the message sent to `returnBook`:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=client_receive,indent=0]
-----
-====
-
-The received message passes the following assertions:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=client_receive_message,indent=0]
-----
-====
-
-[[features-messaging-stub-runner-stream-scenario3]]
-===== Scenario 3 (Input with No Output)
-
-Since the route is set for you, you can send a message to the `{output_name}`
-destination, as follows:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/stream/StreamStubRunnerSpec.groovy[tags=trigger_no_output,indent=0]
-----
-====
-
-[[features-messaging-stub-runner-amqp]]
-=== Consumer Side Messaging With Spring AMQP
-
-Spring Cloud Contract Stub Runner's messaging module provides an easy way to
-integrate with Spring AMQP's Rabbit Template. For the provided artifacts, it
-automatically downloads the stubs and registers the required routes.
-
-The integration tries to work standalone (that is, without interaction with a running
-RabbitMQ message broker). It expects a `RabbitTemplate` on the application context and
-uses it as a Spring Boot test named `@SpyBean`. As a result, it can use the Mockito spy
-functionality to verify and inspect messages sent by the application.
-
-On the message consumer side, the stub runner considers all `@RabbitListener`-annotated
-endpoints and all `SimpleMessageListenerContainer` objects on the application context.
-
-As messages are usually sent to exchanges in AMQP, the message contract contains the
-exchange name as the destination. Message listeners on the other side are bound to
-queues. Bindings connect an exchange to a queue. If message contracts are triggered, the
-Spring AMQP stub runner integration looks for bindings on the application context that
-matches this exchange. Then it collects the queues from the Spring exchanges and tries to
-find message listeners bound to these queues. The message is triggered for all matching
-message listeners.
-
-If you need to work with routing keys, you can pass them by using the `amqp_receivedRoutingKey`
-messaging header.
-
-[[features-messaging-stub-runner-amqp-adding]]
-==== Adding the Runner to the Project
-
-You can have both Spring AMQP and Spring Cloud Contract Stub Runner on the classpath and
-set the property `stubrunner.amqp.enabled=true`. Remember to annotate your test class
-with `@AutoConfigureStubRunner`.
-
-IMPORTANT: If you already have Stream and Integration on the classpath, you need
-to explicitly disable them by setting the  `stubrunner.stream.enabled=false` and
-`stubrunner.integration.enabled=false` properties.
-
-[[features-messaging-stub-runner-amqp-example]]
-==== Examples
-
-Assume that you have the following Maven repository with a deployed stubs for the
-`spring-cloud-contract-amqp-test` application:
-
-====
-[source,bash,indent=0]
-----
-└── .m2
-    └── repository
-        └── com
-            └── example
-                └── spring-cloud-contract-amqp-test
-                    ├── 0.4.0-SNAPSHOT
-                    │   ├── spring-cloud-contract-amqp-test-0.4.0-SNAPSHOT.pom
-                    │   ├── spring-cloud-contract-amqp-test-0.4.0-SNAPSHOT-stubs.jar
-                    │   └── maven-metadata-local.xml
-                    └── maven-metadata-local.xml
-----
-====
-
-Further assume that the stubs contain the following structure:
-
-====
-[source,bash,indent=0]
-----
-├── META-INF
-│   └── MANIFEST.MF
-└── contracts
-    └── shouldProduceValidPersonData.groovy
-----
-====
-
-Then consider the following contract:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-amqp/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/amqp/AmqpStubRunnerSpec.groovy[tags=amqp_contract,indent=0]
-----
-====
-
-Now consider the following Spring configuration:
-
-====
-[source,yaml]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-amqp/src/test/resources/application.yml[]
-----
-====
-
-[[features-messaging-stub-runner-amqp-triggering]]
-===== Triggering the Message
-
-To trigger a message using the contract in the preceding section, use the `StubTrigger` interface, as
-follows:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-amqp/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/amqp/AmqpStubRunnerSpec.groovy[tags=client_trigger,indent=0]
-----
-====
-
-The message has a destination of `contract-test.exchange`, so the Spring AMQP stub runner
-integration looks for bindings related to this exchange, as the following example shows:
-
-====
-[source,java]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-amqp/src/main/java/org/springframework/cloud/contract/stubrunner/messaging/amqp/AmqpMessagingApplication.java[tags=amqp_binding,indent=0]
-----
-====
-
-The binding definition binds the queue called `test.queue`. As a result, the following listener
-definition is matched and invoked with the contract message:
-
-====
-[source,java]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-amqp/src/main/java/org/springframework/cloud/contract/stubrunner/messaging/amqp/AmqpMessagingApplication.java[tags=amqp_listener,indent=0]
-----
-====
-
-Also, the following annotated listener matches and is invoked:
-
-====
-[source,java]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-amqp/src/main/java/org/springframework/cloud/contract/stubrunner/messaging/amqp/MessageSubscriberRabbitListener.java[tags=amqp_annotated_listener,indent=0]
-----
-====
-
-NOTE: The message is directly handed over to the `onMessage` method of the
-`MessageListener` associated with the matching `SimpleMessageListenerContainer`.
-
-[[features-messaging-stub-runner-amqp-configuration]]
-===== Spring AMQP Test Configuration
-
-To avoid Spring AMQP trying to connect to a running broker during our tests, we
-configure a mock `ConnectionFactory`.
-
-To disable the mocked `ConnectionFactory`, set the following property:
-`stubrunner.amqp.mockConnection=false`, as follows:
-
-====
-[source,yaml]
-----
-stubrunner:
-  amqp:
-    mockConnection: false
-----
-====
+That will send out a message to the destination described in the output message of the contract.
 
 [[features-messaging-stub-runner-jms]]
 === Consumer Side Messaging With Spring JMS
@@ -1043,7 +559,7 @@ stubrunner:
 Spring Cloud Contract Stub Runner's messaging module provides an easy way to
 integrate with Spring JMS.
 
-The integration assumes that you have a running instance of a JMS broker (such as an `activemq` embedded broker).
+The integration assumes that you have a running instance of a JMS broker.
 
 [[features-messaging-stub-runner-jms-adding]]
 ==== Adding the Runner to the Project
@@ -1063,9 +579,7 @@ Assume that the stub structure looks as follows:
 [source,bash,indent=0]
 ----
 ├── stubs
-    ├── bookDeleted.groovy
-    ├── bookReturned1.groovy
-    └── bookReturned2.groovy
+    └── bookReturned1.groovy
 
 ----
 ====
@@ -1088,22 +602,14 @@ spring:
 ----
 ====
 
-Now consider the following contracts (we number them 1 and 2):
+Now consider the following contract:
 
 ====
 [source,groovy]
 ----
 include::{tests_path}/spring-cloud-contract-stub-runner-jms/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/jms/JmsStubRunnerSpec.groovy[tags=sample_dsl,indent=0]
 ----
-
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-jms/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/jms/JmsStubRunnerSpec.groovy[tags=sample_dsl_2,indent=0]
-----
 ====
-
-[[features-messaging-stub-runner-jms-scenario1]]
-===== Scenario 1 (No Input Message)
 
 To trigger a message from the `return_book_1` label, we use the `StubTrigger` interface, as follows:
 
@@ -1114,213 +620,4 @@ include::{tests_path}/spring-cloud-contract-stub-runner-jms/src/test/groovy/org/
 ----
 ====
 
-Next, we want to listen to the output of the message sent to `{output_name}`:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-jms/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/jms/JmsStubRunnerSpec.groovy[tags=client_trigger_receive,indent=0]
-----
-====
-
-The received message would then pass the following assertions:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-jms/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/jms/JmsStubRunnerSpec.groovy[tags=client_trigger_message,indent=0]
-----
-====
-
-[[features-messaging-stub-runner-jms-scenario2]]
-===== Scenario 2 (Output Triggered by Input)
-
-Since the route is set for you, you can send a message to the `{output_name}` destination.
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-jms/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/jms/JmsStubRunnerSpec.groovy[tags=client_send,indent=0]
-----
-====
-
-Next, we want to listen to the output of the message sent to `{output_name}`, as follows:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-jms/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/jms/JmsStubRunnerSpec.groovy[tags=client_receive,indent=0]
-----
-====
-
-The received message would pass the following assertions:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-jms/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/jms/JmsStubRunnerSpec.groovy[tags=client_receive_message,indent=0]
-----
-====
-
-[[features-messaging-stub-runner-jms-scenario3]]
-===== Scenario 3 (Input with No Output)
-
-Since the route is set for you, you can send a message to the `{output_name}` destination, as follows:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-jms/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/jms/JmsStubRunnerSpec.groovy[tags=trigger_no_output,indent=0]
-----
-====
-
-[[features-messaging-stub-runner-kafka]]
-=== Consumer Side Messaging With Spring Kafka
-
-Spring Cloud Contract Stub Runner's messaging module provides an easy way to
-integrate with Spring Kafka.
-
-The integration assumes that you have a running instance of an embedded Kafka broker (through the `spring-kafka-test` dependency).
-
-[[features-messaging-stub-runner-kafka-adding]]
-==== Adding the Runner to the Project
-
-You need to have Spring Kafka, Spring Kafka Test (to run the `@EmbeddedBroker`), and Spring Cloud Contract Stub Runner on the classpath. Remember to annotate your test class
-with `@AutoConfigureStubRunner`.
-
-With Kafka integration, in order to poll for a single message, we need to register a consumer upon Spring context startup. That may lead to a situation that, when you are on the consumer side, Stub Runner can register an additional consumer for the same group ID and topic. That could lead to a situation that only one of the components would actually poll for the message. Since, on the consumer side, you have both the Spring Cloud Contract Stub Runner and Spring Cloud Contract Verifier classpath, we need to be able to switch off such behavior. That is done automatically through the `stubrunner.kafka.initializer.enabled` flag, which disables the Contact Verifier consumer registration. If your application is both the consumer and the producer of a Kafka message, you might need to manually toggle that property to `false` in the base class of your generated tests.
-
-If you have multiple `KafkaTemplate` beans, you can provide your own bean of `Supplier<KafkaTemplate>` type that returns the `KafkaTemplate` of your chosing.
-
-:input_name: input
-:output_name: output
-
-[[features-messaging-stub-runner-kafka-example]]
-==== Examples
-
-Assume that the stub structure looks as follows:
-
-====
-[source,bash,indent=0]
-----
-├── stubs
-    ├── bookDeleted.groovy
-    ├── bookReturned1.groovy
-    └── bookReturned2.groovy
-
-----
-====
-
-Further assume the following test configuration (notice the `spring.kafka.bootstrap-servers` pointing to the embedded broker's IP via `${spring.embedded.kafka.brokers}`):
-
-====
-[source,yml,indent=0]
-----
-stubrunner:
-  repository-root: stubs:classpath:/stubs/
-  ids: my:stubs
-  stubs-mode: remote
-spring:
-  kafka:
-    bootstrap-servers: ${spring.embedded.kafka.brokers}
-    producer:
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      properties:
-        "spring.json.trusted.packages": "*"
-    consumer:
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        "spring.json.trusted.packages": "*"
-      group-id: groupId
-----
-====
-
-NOTE: If your application uses non-integer record keys you will need to set the `spring.kafka.producer.key-serializer`
-and `spring.kafka.consumer.key-deserializer` properties accordingly because the Kafka de/serialization expects non-null
-record keys to be of integer type.
-
-Now consider the following contracts (we number them 1 and 2):
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-kafka/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/kafka/KafkaStubRunnerSpec.groovy[tags=sample_dsl,indent=0]
-----
-
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-kafka/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/kafka/KafkaStubRunnerSpec.groovy[tags=sample_dsl_2,indent=0]
-----
-====
-
-[[features-messaging-stub-runner-kafka-scenario1]]
-===== Scenario 1 (No Input Message)
-
-To trigger a message from the `return_book_1` label, we use the `StubTrigger` interface, as follows:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-kafka/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/kafka/KafkaStubRunnerSpec.groovy[tags=client_trigger,indent=0]
-----
-====
-
-Next, we want to listen to the output of the message sent to `{output_name}`:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-kafka/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/kafka/KafkaStubRunnerSpec.groovy[tags=client_trigger_receive,indent=0]
-----
-====
-
-The received message would then pass the following assertions:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-kafka/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/kafka/KafkaStubRunnerSpec.groovy[tags=client_trigger_message,indent=0]
-----
-====
-
-[[features-messaging-stub-runner-kafka-scenario2]]
-===== Scenario 2 (Output Triggered by Input)
-
-Since the route is set for you, you can send a message to the `{output_name}` destination.
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-kafka/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/kafka/KafkaStubRunnerSpec.groovy[tags=client_send,indent=0]
-----
-====
-
-Next, we want to listen to the output of the message sent to `{output_name}`, as follows:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-kafka/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/kafka/KafkaStubRunnerSpec.groovy[tags=client_receive,indent=0]
-----
-====
-
-The received message would pass the following assertions:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-kafka/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/kafka/KafkaStubRunnerSpec.groovy[tags=client_receive_message,indent=0]
-----
-====
-
-[[features-messaging-stub-runner-kafka-scenario3]]
-===== Scenario 3 (Input with No Output)
-
-Since the route is set for you, you can send a message to the `{output_name}` destination, as follows:
-
-====
-[source,groovy]
-----
-include::{tests_path}/spring-cloud-contract-stub-runner-kafka/src/test/groovy/org/springframework/cloud/contract/stubrunner/messaging/kafka/KafkaStubRunnerSpec.groovy[tags=trigger_no_output,indent=0]
-----
-====
+That will send out a message to the destination described in the output message of the contract.

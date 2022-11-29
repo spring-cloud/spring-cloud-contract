@@ -47,7 +47,6 @@ import org.springframework.restdocs.operation.Operation;
 import org.springframework.restdocs.operation.OperationRequest;
 import org.springframework.restdocs.operation.OperationRequestPart;
 import org.springframework.restdocs.operation.OperationResponse;
-import org.springframework.restdocs.operation.Parameters;
 import org.springframework.restdocs.operation.RequestCookie;
 import org.springframework.restdocs.operation.ResponseCookie;
 
@@ -262,11 +261,6 @@ public class WireMockSnippetTests {
 			}
 
 			@Override
-			public Parameters getParameters() {
-				return null;
-			}
-
-			@Override
 			public Collection<OperationRequestPart> getParts() {
 				return null;
 			}
@@ -307,11 +301,6 @@ public class WireMockSnippetTests {
 			@Override
 			public HttpMethod getMethod() {
 				return HttpMethod.POST;
-			}
-
-			@Override
-			public Parameters getParameters() {
-				return null;
 			}
 
 			@Override
@@ -358,11 +347,6 @@ public class WireMockSnippetTests {
 			}
 
 			@Override
-			public Parameters getParameters() {
-				return null;
-			}
-
-			@Override
 			public Collection<OperationRequestPart> getParts() {
 				return null;
 			}
@@ -401,11 +385,6 @@ public class WireMockSnippetTests {
 			@Override
 			public HttpMethod getMethod() {
 				return HttpMethod.POST;
-			}
-
-			@Override
-			public Parameters getParameters() {
-				return null;
 			}
 
 			@Override
@@ -450,13 +429,6 @@ public class WireMockSnippetTests {
 			}
 
 			@Override
-			public Parameters getParameters() {
-				Parameters parameters = new Parameters();
-				parameters.put("myParam", Collections.singletonList(""));
-				return parameters;
-			}
-
-			@Override
 			public Collection<OperationRequestPart> getParts() {
 				return null;
 			}
@@ -495,11 +467,6 @@ public class WireMockSnippetTests {
 			@Override
 			public HttpMethod getMethod() {
 				return HttpMethod.GET;
-			}
-
-			@Override
-			public Parameters getParameters() {
-				return null;
 			}
 
 			@Override

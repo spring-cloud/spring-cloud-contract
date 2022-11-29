@@ -272,6 +272,11 @@ public class ContractResultHandler extends WireMockVerifyHelper<MvcResult, Contr
 			public Optional<Request> getOriginalRequest() {
 				return Optional.absent();
 			}
+
+			@Override
+			public String getProtocol() {
+				return result.getRequest().getProtocol();
+			}
 		};
 	}
 

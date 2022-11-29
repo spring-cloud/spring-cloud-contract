@@ -18,7 +18,8 @@ package org.springframework.cloud.contract.stubrunner.spring.cloud
 
 import java.util.function.Function
 
-import spock.lang.Specification
+import org.assertj.core.api.BDDAssertions
+import org.junit.jupiter.api.Test
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -28,7 +29,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.cloud.contract.stubrunner.StubFinder
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver
 import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -47,7 +48,7 @@ import org.springframework.test.context.ActiveProfiles
         stubsMode = StubRunnerProperties.StubsMode.REMOTE,
         stubsPerConsumer = true)
 @ActiveProfiles("streamconsumer")
-class StubRunnerStubsPerConsumerWithConsumerNameSpec extends Specification {
+class StubRunnerStubsPerConsumerWithConsumerNameSpec {
 // end::test[]
 
 	@Autowired
@@ -55,40 +56,41 @@ class StubRunnerStubsPerConsumerWithConsumerNameSpec extends Specification {
 	@Autowired
 	Environment environment
 	@Autowired
-	MessageVerifier<Message<?>> messaging
+	MessageVerifierReceiver<Message<?>> messaging
 
 	TestRestTemplate template = new TestRestTemplate()
 
-	def 'should start http stub servers for foo-consumer only'() {
+	@Test
+	void 'should start http stub servers for foo-consumer only'() {
 		given:
 			URL stubUrl = stubFinder.findStubUrl('producerWithMultipleConsumers')
 		when:
 			ResponseEntity entity = template.getForEntity("${stubUrl}/foo-consumer", String)
 		then:
-			entity.statusCode.value() == 200
+			assert entity.statusCode.value() == 200
 		when:
 			entity = template.getForEntity("${stubUrl}/bar-consumer", String)
 		then:
-			entity.statusCode.value() == 404
+			assert entity.statusCode.value() == 404
 	}
 
-	def 'should trigger a message by label from proper consumer'() {
+	@Test
+	void 'should trigger a message by label from proper consumer'() {
 		when:
 			stubFinder.trigger('return_book_for_foo')
 		then:
 			Message<?> receivedMessage = messaging.receive('output')
 		and:
-			receivedMessage != null
-			receivedMessage.payload == '''{"bookName":"foo_for_foo"}'''.bytes
-			receivedMessage.headers.get('BOOK-NAME') == 'foo_for_foo'
+			assert receivedMessage != null
+			assert receivedMessage.payload == '''{"bookName":"foo_for_foo"}'''.bytes
+			assert receivedMessage.headers.get('BOOK-NAME') == 'foo_for_foo'
 	}
 
-	def 'should not trigger a message by the not matching consumer'() {
+	@Test
+	void 'should not trigger a message by the not matching consumer'() {
 		when:
-			stubFinder.trigger('return_book_for_bar')
-		then:
-			IllegalArgumentException e = thrown(IllegalArgumentException)
-			e.message.contains("No label with name [return_book_for_bar] was found")
+		BDDAssertions.thenThrownBy(() -> stubFinder.trigger('return_book_for_bar')).isInstanceOf(IllegalArgumentException)
+		.hasMessageContaining("No label with name [return_book_for_bar] was found")
 	}
 
 	@Configuration

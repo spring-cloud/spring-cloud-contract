@@ -16,11 +16,12 @@
 
 package org.springframework.cloud.contract.wiremock;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -30,6 +31,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+
+import static org.apache.hc.client5.http.ssl.NoopHostnameVerifier.INSTANCE;
 
 /**
  * @author Dave Syer
@@ -54,10 +57,16 @@ public class WireMockRestTemplateConfiguration {
 
 			private HttpClient createSslHttpClient() {
 				try {
-					SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(
-							new SSLContextBuilder().loadTrustMaterial(null, TrustSelfSignedStrategy.INSTANCE).build(),
-							NoopHostnameVerifier.INSTANCE);
-					return HttpClients.custom().setSSLSocketFactory(socketFactory).build();
+
+					SSLConnectionSocketFactoryBuilder sslConnectionSocketFactoryBuilder = SSLConnectionSocketFactoryBuilder
+							.create();
+					sslConnectionSocketFactoryBuilder
+							.setSslContext(new SSLContextBuilder()
+									.loadTrustMaterial(null, TrustSelfSignedStrategy.INSTANCE).build())
+							.setHostnameVerifier(INSTANCE);
+					PoolingHttpClientConnectionManager connectionManager = PoolingHttpClientConnectionManagerBuilder
+							.create().setSSLSocketFactory(sslConnectionSocketFactoryBuilder.build()).build();
+					return HttpClients.custom().setConnectionManager(connectionManager).build();
 				}
 				catch (Exception ex) {
 					throw new IllegalStateException("Unable to create SSL HttpClient", ex);

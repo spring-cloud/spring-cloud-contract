@@ -733,21 +733,9 @@ public class YamlContract {
 
 	public static class Input {
 
-		public String messageFrom;
-
 		public String triggeredBy;
 
-		public Map<String, Object> messageHeaders = new LinkedHashMap<String, Object>();
-
-		public Object messageBody;
-
-		public String messageBodyFromFile;
-
-		public String messageBodyFromFileAsBytes;
-
 		public String assertThat;
-
-		public StubMatchers matchers = new StubMatchers();
 
 		@Override
 		public boolean equals(Object o) {
@@ -758,26 +746,17 @@ public class YamlContract {
 				return false;
 			}
 			Input input = (Input) o;
-			return Objects.equals(messageFrom, input.messageFrom) && Objects.equals(triggeredBy, input.triggeredBy)
-					&& Objects.equals(messageHeaders, input.messageHeaders)
-					&& Objects.equals(messageBody, input.messageBody)
-					&& Objects.equals(messageBodyFromFile, input.messageBodyFromFile)
-					&& Objects.equals(messageBodyFromFileAsBytes, input.messageBodyFromFileAsBytes)
-					&& Objects.equals(assertThat, input.assertThat) && Objects.equals(matchers, input.matchers);
+			return Objects.equals(triggeredBy, input.triggeredBy) && Objects.equals(assertThat, input.assertThat);
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(messageFrom, triggeredBy, messageHeaders, messageBody, messageBodyFromFile,
-					messageBodyFromFileAsBytes, assertThat, matchers);
+			return Objects.hash(triggeredBy, assertThat);
 		}
 
 		@Override
 		public String toString() {
-			return "Input{" + "messageFrom='" + messageFrom + '\'' + ", triggeredBy='" + triggeredBy + '\''
-					+ ", messageHeaders=" + messageHeaders + ", messageBody=" + messageBody + ", messageBodyFromFile='"
-					+ messageBodyFromFile + '\'' + ", messageBodyFromFileAsBytes='" + messageBodyFromFileAsBytes + '\''
-					+ ", assertThat='" + assertThat + '\'' + ", matchers=" + matchers + '}';
+			return "Input{" + "triggeredBy='" + triggeredBy + '\'' + ", assertThat='" + assertThat + '\'' + '}';
 		}
 
 	}

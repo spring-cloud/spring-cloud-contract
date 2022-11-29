@@ -101,65 +101,6 @@ class ContractSpec extends Specification {
 			ex.message.contains("Status is missing for HTTP contract")
 	}
 
-	def 'should work for messaging'() {
-		when:
-			Contract.make {
-				input {
-					messageFrom('input')
-					messageBody([
-							foo: 'bar'
-					])
-					messageHeaders {
-						header([
-								foo: 'bar'
-						])
-					}
-				}
-				outputMessage {
-					sentTo('output')
-					body([
-							foo2: 'bar'
-					])
-					headers {
-						header([
-								foo2: 'bar'
-						])
-					}
-				}
-			}
-		then:
-			noExceptionThrown()
-	}
-
-	def 'should work for messaging with pattern properties'() {
-		when:
-			Contract.make {
-				input {
-					messageFrom('input')
-					messageBody([
-							foo: anyNonBlankString()
-					])
-					messageHeaders {
-						header([
-								foo: anyNumber()
-						])
-					}
-				}
-				outputMessage {
-					sentTo('output')
-					body([
-							foo2: anyNonEmptyString()
-					])
-					headers {
-						header([
-								foo2: anyIpAddress()
-						])
-					}
-				}
-			}
-		then:
-			noExceptionThrown()
-	}
 
 	def 'should set a description'() {
 		given:

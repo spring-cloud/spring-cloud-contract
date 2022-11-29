@@ -17,13 +17,7 @@
 package org.springframework.cloud.contract.spec.internal;
 
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.regex.Pattern;
-
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents an input for messaging. The input can be a message or some action inside the
@@ -35,48 +29,11 @@ import org.apache.commons.logging.LogFactory;
  */
 public class Input extends Common implements RegexCreatingProperty<ClientDslProperty> {
 
-	private static final Log log = LogFactory.getLog(Input.class);
-
 	private ClientPatternValueDslProperty property = new ClientPatternValueDslProperty();
-
-	private DslProperty<String> messageFrom;
 
 	private ExecutionProperty triggeredBy;
 
-	private Headers messageHeaders = new Headers();
-
-	private BodyType messageBody;
-
 	private ExecutionProperty assertThat;
-
-	private BodyMatchers bodyMatchers;
-
-	public Input() {
-	}
-
-	public Input(Input input) {
-		this.messageFrom = input.getMessageFrom();
-		this.messageHeaders = input.getMessageHeaders();
-		this.messageBody = input.getMessageBody();
-	}
-
-	/**
-	 * Name of a destination from which message would come to trigger action in the
-	 * system.
-	 * @param messageFrom message destination
-	 */
-	public void messageFrom(String messageFrom) {
-		this.messageFrom = new DslProperty<>(messageFrom);
-	}
-
-	/**
-	 * Name of a destination from which message would come to trigger action in the
-	 * system.
-	 * @param messageFrom message destination
-	 */
-	public void messageFrom(DslProperty messageFrom) {
-		this.messageFrom = messageFrom;
-	}
 
 	/**
 	 * Function that needs to be executed to trigger action in the system.
@@ -84,11 +41,6 @@ public class Input extends Common implements RegexCreatingProperty<ClientDslProp
 	 */
 	public void triggeredBy(String triggeredBy) {
 		this.triggeredBy = new ExecutionProperty(triggeredBy);
-	}
-
-	public BodyType messageBody(Object bodyAsValue) {
-		this.messageBody = new BodyType(bodyAsValue);
-		return this.messageBody;
 	}
 
 	public DslProperty value(ClientDslProperty client) {
@@ -129,14 +81,6 @@ public class Input extends Common implements RegexCreatingProperty<ClientDslProp
 		this.property = property;
 	}
 
-	public DslProperty<String> getMessageFrom() {
-		return messageFrom;
-	}
-
-	public void setMessageFrom(DslProperty<String> messageFrom) {
-		this.messageFrom = messageFrom;
-	}
-
 	public ExecutionProperty getTriggeredBy() {
 		return triggeredBy;
 	}
@@ -145,36 +89,12 @@ public class Input extends Common implements RegexCreatingProperty<ClientDslProp
 		this.triggeredBy = triggeredBy;
 	}
 
-	public Headers getMessageHeaders() {
-		return messageHeaders;
-	}
-
-	public void setMessageHeaders(Headers messageHeaders) {
-		this.messageHeaders = messageHeaders;
-	}
-
-	public BodyType getMessageBody() {
-		return messageBody;
-	}
-
-	public void setMessageBody(BodyType messageBody) {
-		this.messageBody = messageBody;
-	}
-
 	public ExecutionProperty getAssertThat() {
 		return assertThat;
 	}
 
 	public void setAssertThat(ExecutionProperty assertThat) {
 		this.assertThat = assertThat;
-	}
-
-	public BodyMatchers getBodyMatchers() {
-		return bodyMatchers;
-	}
-
-	public void setBodyMatchers(BodyMatchers bodyMatchers) {
-		this.bodyMatchers = bodyMatchers;
 	}
 
 	@Override
@@ -282,44 +202,6 @@ public class Input extends Common implements RegexCreatingProperty<ClientDslProp
 		return property.anyOf(values);
 	}
 
-	/**
-	 * The message headers part of the contract.
-	 * @param consumer function to manipulate the message headers
-	 */
-	public void messageHeaders(Consumer<Headers> consumer) {
-		this.messageHeaders = new Headers();
-		consumer.accept(this.messageHeaders);
-	}
-
-	/**
-	 * The stub matchers part of the contract.
-	 * @param consumer function to manipulate the message headers
-	 */
-	public void bodyMatchers(Consumer<BodyMatchers> consumer) {
-		this.bodyMatchers = new BodyMatchers();
-		consumer.accept(this.bodyMatchers);
-	}
-
-	/**
-	 * The message headers part of the contract.
-	 * @param consumer function to manipulate the message headers
-	 */
-	public void messageHeaders(@DelegatesTo(Headers.class) Closure consumer) {
-		this.messageHeaders = new Headers();
-		consumer.setDelegate(this.messageHeaders);
-		consumer.call();
-	}
-
-	/**
-	 * The stub matchers part of the contract.
-	 * @param consumer function to manipulate the message headers
-	 */
-	public void bodyMatchers(@DelegatesTo(BodyMatchers.class) Closure consumer) {
-		this.bodyMatchers = new BodyMatchers();
-		consumer.setDelegate(this.bodyMatchers);
-		consumer.call();
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -329,34 +211,18 @@ public class Input extends Common implements RegexCreatingProperty<ClientDslProp
 			return false;
 		}
 		Input input = (Input) o;
-		return Objects.equals(messageFrom, input.messageFrom) && Objects.equals(triggeredBy, input.triggeredBy)
-				&& Objects.equals(messageHeaders, input.messageHeaders)
-				&& Objects.equals(messageBody, input.messageBody) && Objects.equals(assertThat, input.assertThat)
-				&& Objects.equals(bodyMatchers, input.bodyMatchers);
+		return Objects.equals(triggeredBy, input.triggeredBy) && Objects.equals(assertThat, input.assertThat);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(messageFrom, triggeredBy, messageHeaders, messageBody, assertThat, bodyMatchers);
+		return Objects.hash(triggeredBy, assertThat);
 	}
 
 	@Override
 	public String toString() {
-		return "Input{\n\tmessageFrom=" + messageFrom + ", \n\ttriggeredBy=" + triggeredBy + ", \n\tmessageHeaders="
-				+ messageHeaders + ", \n\tmessageBody=" + messageBody + ", \n\tassertThat=" + assertThat
-				+ ", \n\tbodyMatchers=" + bodyMatchers + "} \n\t" + super.toString();
-	}
-
-	public static class BodyType extends DslProperty {
-
-		public BodyType(Object clientValue, Object serverValue) {
-			super(clientValue, serverValue);
-		}
-
-		public BodyType(Object singleValue) {
-			super(singleValue);
-		}
-
+		return "Input{\n\t" + ", \n\ttriggeredBy=" + triggeredBy + ", \n\tassertThat=" + assertThat + "} \n\t"
+				+ super.toString();
 	}
 
 	private class ClientPatternValueDslProperty extends PatternValueDslProperty<ClientDslProperty> {

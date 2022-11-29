@@ -19,18 +19,21 @@ package com.example.loan;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubTrigger;
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
+import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Marius Bogoevici
  */
-@SpringBootTest(webEnvironment = WebEnvironment.NONE, properties = "spring.cloud.stream.bindings.input.destination=sensor-data")
+@SpringBootTest(webEnvironment = WebEnvironment.NONE, properties = "spring.cloud.stream.bindings.input.destination=sensor-data", classes = {MessageConsumedTests.Config.class, Application.class})
 @AutoConfigureStubRunner(ids = "com.example:http-server-dsl:0.0.1", stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 public class MessageConsumedTests {
 
@@ -47,4 +50,9 @@ public class MessageConsumedTests {
 		assertThat(this.listener.getCount()).isEqualTo(count + 1);
 	}
 
+	@TestConfiguration
+	@ImportAutoConfiguration(TestChannelBinderConfiguration.class)
+	static class Config {
+
+	}
 }

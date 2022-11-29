@@ -27,11 +27,11 @@ import jakarta.jms.Message;
 import jakarta.jms.Session;
 
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessagePostProcessor;
 
-class JmsStubMessages implements MessageVerifier<Message> {
+class JmsStubMessages implements org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender<Message>,
+		org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver<Message> {
 
 	private final JmsTemplate jmsTemplate;
 

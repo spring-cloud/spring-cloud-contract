@@ -20,15 +20,16 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
 
 /**
  * @author Marcin Grzejszczak
  */
-public class NoOpStubMessages implements MessageVerifier<Object> {
+public class NoOpStubMessages<U>
+		implements org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender<U>,
+		org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver<U> {
 
 	@Override
-	public void send(Object message, String destination, YamlContract contract) {
+	public void send(U message, String destination, YamlContract contract) {
 	}
 
 	@Override
@@ -36,12 +37,12 @@ public class NoOpStubMessages implements MessageVerifier<Object> {
 	}
 
 	@Override
-	public Object receive(String destination, long timeout, TimeUnit timeUnit, YamlContract contract) {
+	public U receive(String destination, long timeout, TimeUnit timeUnit, YamlContract contract) {
 		return null;
 	}
 
 	@Override
-	public Object receive(String destination, YamlContract contract) {
+	public U receive(String destination, YamlContract contract) {
 		return null;
 	}
 

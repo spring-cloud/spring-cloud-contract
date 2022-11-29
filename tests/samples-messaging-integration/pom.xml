@@ -13,10 +13,6 @@
 	<packaging>jar</packaging>
 	<name>Spring Cloud Contract Sample Spring Integration</name>
 	<description>Spring Cloud Contract Sample Spring Integration</description>
-	<properties>
-		<!-- TODO: remove -->
-		<skipTests>true</skipTests>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

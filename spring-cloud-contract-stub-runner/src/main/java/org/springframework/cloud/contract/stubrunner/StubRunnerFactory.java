@@ -36,7 +36,7 @@ import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockH
 import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter;
 import org.springframework.cloud.contract.verifier.converter.StubGenerator;
 import org.springframework.cloud.contract.verifier.converter.StubGeneratorProvider;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.contract.verifier.wiremock.DslToWireMockClientConverter;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.SpringFactoriesLoader;
@@ -53,10 +53,10 @@ class StubRunnerFactory {
 
 	private final StubDownloader stubDownloader;
 
-	private final MessageVerifier<?> contractVerifierMessaging;
+	private final MessageVerifierSender<?> contractVerifierMessaging;
 
 	StubRunnerFactory(StubRunnerOptions stubRunnerOptions, StubDownloader stubDownloader,
-			MessageVerifier<?> contractVerifierMessaging) {
+			MessageVerifierSender<?> contractVerifierMessaging) {
 		this.stubRunnerOptions = stubRunnerOptions;
 		this.stubDownloader = stubDownloader;
 		this.contractVerifierMessaging = contractVerifierMessaging;

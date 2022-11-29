@@ -20,8 +20,10 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import spock.lang.Issue
-import spock.lang.Specification
+import org.assertj.core.api.BDDAssertions
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -44,131 +46,137 @@ import org.springframework.test.context.ActiveProfiles
 // Not necessary if Spring Cloud is used. TODO: make it work without this.
 // tag::test[]
 @SpringBootTest(classes = Config, properties = [" stubrunner.cloud.enabled=false",
-        'foo=${stubrunner.runningstubs.fraudDetectionServer.port}',
-        'fooWithGroup=${stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port}'])
+		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}',
+		'fooWithGroup=${stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port}'])
 // tag::annotation[]
 @AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/",
-        httpServerStubConfigurer = HttpsForFraudDetection)
+		httpServerStubConfigurer = HttpsForFraudDetection)
 // end::annotation[]
 @ActiveProfiles("test")
-class StubRunnerConfigurationSpec extends Specification {
+class StubRunnerConfigurationSpec {
 
-    @Autowired
-    StubFinder stubFinder
-    @Autowired
-    Environment environment
-    @StubRunnerPort("fraudDetectionServer")
-    int fraudDetectionServerPort
-    @StubRunnerPort("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")
-    int fraudDetectionServerPortWithGroupId
-    @Value('${foo}')
-    Integer foo
+	@Autowired
+	StubFinder stubFinder
+	@Autowired
+	Environment environment
+	@StubRunnerPort("fraudDetectionServer")
+	int fraudDetectionServerPort
+	@StubRunnerPort("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")
+	int fraudDetectionServerPortWithGroupId
+	@Value('${foo}')
+	Integer foo
 
-    void setupSpec() {
-        System.clearProperty("stubrunner.repository.root")
-        System.clearProperty("stubrunner.classifier")
-        WireMockHttpServerStubAccessor.clear()
-    }
+	@BeforeAll
+	static void setupSpec() {
+		System.clearProperty("stubrunner.repository.root")
+		System.clearProperty("stubrunner.classifier")
+		WireMockHttpServerStubAccessor.clear()
+	}
 
-    void cleanupSpec() {
-        setupSpec()
-    }
+	@AfterAll
+	static void cleanupSpec() {
+		setupSpec()
+	}
 
-    def 'should mark all ports as random'() {
-        expect:
-        WireMockHttpServerStubAccessor.everyPortRandom()
-    }
+	@Test
+	void 'should mark all ports as random'() {
+		expect:
+		WireMockHttpServerStubAccessor.everyPortRandom()
+	}
 
-    def 'should start WireMock servers'() {
-        expect: 'WireMocks are running'
-        stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs', 'loanIssuance') != null
-        stubFinder.findStubUrl('loanIssuance') != null
-        stubFinder.findStubUrl('loanIssuance') == stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs', 'loanIssuance')
-        stubFinder.findStubUrl('loanIssuance') == stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs:loanIssuance')
-        stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs:loanIssuance:0.0.1-SNAPSHOT') == stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs:loanIssuance:0.0.1-SNAPSHOT:stubs')
-        stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer') != null
-        and:
-        stubFinder.findAllRunningStubs().isPresent('loanIssuance')
-        stubFinder.findAllRunningStubs().isPresent('org.springframework.cloud.contract.verifier.stubs', 'fraudDetectionServer')
-        stubFinder.findAllRunningStubs().isPresent('org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer')
-        and: 'Stubs were registered'
-        "${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
-        "${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
-        and: 'Fraud Detection is an HTTPS endpoint'
-        stubFinder.findStubUrl('fraudDetectionServer').toString().startsWith("https")
-    }
+	@Test
+	void 'should start WireMock servers'() {
+		expect: 'WireMocks are running'
+		assert stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs', 'loanIssuance') != null
+		assert stubFinder.findStubUrl('loanIssuance') != null
+		assert stubFinder.findStubUrl('loanIssuance') == stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs', 'loanIssuance')
+		assert stubFinder.findStubUrl('loanIssuance') == stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs:loanIssuance')
+		assert stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs:loanIssuance:0.0.1-SNAPSHOT') == stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs:loanIssuance:0.0.1-SNAPSHOT:stubs')
+		assert stubFinder.findStubUrl('org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer') != null
+		and:
+		assert stubFinder.findAllRunningStubs().isPresent('loanIssuance')
+		assert stubFinder.findAllRunningStubs().isPresent('org.springframework.cloud.contract.verifier.stubs', 'fraudDetectionServer')
+		assert stubFinder.findAllRunningStubs().isPresent('org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer')
+		and: 'Stubs were registered'
+		assert "${stubFinder.findStubUrl('loanIssuance').toString()}/name".toURL().text == 'loanIssuance'
+		assert "${stubFinder.findStubUrl('fraudDetectionServer').toString()}/name".toURL().text == 'fraudDetectionServer'
+		and: 'Fraud Detection is an HTTPS endpoint'
+		assert stubFinder.findStubUrl('fraudDetectionServer').toString().startsWith("https")
+	}
 
-    def 'should throw an exception when stub is not found'() {
-        when:
-        stubFinder.findStubUrl('nonExistingService')
-        then:
-        thrown(StubNotFoundException)
-        when:
-        stubFinder.findStubUrl('nonExistingGroupId', 'nonExistingArtifactId')
-        then:
-        thrown(StubNotFoundException)
-    }
+	@Test
+	void 'should throw an exception when stub is not found'() {
+		when:
+			BDDAssertions.thenThrownBy(() -> stubFinder.findStubUrl('nonExistingService')).isInstanceOf(StubNotFoundException)
+		when:
+			BDDAssertions.thenThrownBy(() -> stubFinder.findStubUrl('nonExistingGroupId', 'nonExistingArtifactId'))
+		.isInstanceOf(StubNotFoundException)
+	}
 
-    def 'should register started servers as environment variables'() {
-        expect:
-        environment.getProperty("stubrunner.runningstubs.loanIssuance.port") != null
-        stubFinder.findAllRunningStubs().getPort("loanIssuance") == (environment.getProperty("stubrunner.runningstubs.loanIssuance.port") as Integer)
-        and:
-        environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") != null
-        stubFinder.findAllRunningStubs().getPort("fraudDetectionServer") == (environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") as Integer)
-        and:
-        environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") != null
-        stubFinder.findAllRunningStubs().getPort("fraudDetectionServer") == (environment.getProperty("stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port") as Integer)
-    }
+	@Test
+	void 'should register started servers as environment variables'() {
+		expect:
+		assert environment.getProperty("stubrunner.runningstubs.loanIssuance.port") != null
+		assert stubFinder.findAllRunningStubs().getPort("loanIssuance") == (environment.getProperty("stubrunner.runningstubs.loanIssuance.port") as Integer)
+		and:
+		assert environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") != null
+		assert stubFinder.findAllRunningStubs().getPort("fraudDetectionServer") == (environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") as Integer)
+		and:
+		assert environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") != null
+		assert stubFinder.findAllRunningStubs().getPort("fraudDetectionServer") == (environment.getProperty("stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port") as Integer)
+	}
 
-    def 'should be able to interpolate a running stub in the passed test property'() {
-        given:
-        int fraudPort = stubFinder.findAllRunningStubs().getPort("fraudDetectionServer")
-        expect:
-        fraudPort > 0
-        environment.getProperty("foo", Integer) == fraudPort
-        environment.getProperty("fooWithGroup", Integer) == fraudPort
-        foo == fraudPort
-    }
+	@Test
+	void 'should be able to interpolate a running stub in the passed test property'() {
+		given:
+		int fraudPort = stubFinder.findAllRunningStubs().getPort("fraudDetectionServer")
+		expect:
+		assert fraudPort > 0
+		assert environment.getProperty("foo", Integer) == fraudPort
+		assert environment.getProperty("fooWithGroup", Integer) == fraudPort
+		assert foo == fraudPort
+	}
 
-    @Issue("#573")
-    def 'should be able to retrieve the port of a running stub via an annotation'() {
-        given:
-        int fraudPort = stubFinder.findAllRunningStubs().getPort("fraudDetectionServer")
-        expect:
-        fraudPort > 0
-        fraudDetectionServerPort == fraudPort
-        fraudDetectionServerPortWithGroupId == fraudPort
-    }
+//	@Issue("#573")
+	@Test
+	void 'should be able to retrieve the port of a running stub via an annotation'() {
+		given:
+		int fraudPort = stubFinder.findAllRunningStubs().getPort("fraudDetectionServer")
+		expect:
+		assert fraudPort > 0
+		assert fraudDetectionServerPort == fraudPort
+		assert fraudDetectionServerPortWithGroupId == fraudPort
+	}
 
-    def 'should dump all mappings to a file'() {
-        when:
-        def url = stubFinder.findStubUrl("fraudDetectionServer")
-        then:
-        new File("target/outputmappings/", "fraudDetectionServer_${url.port}").exists()
-    }
+	@Test
+	void 'should dump all mappings to a file'() {
+		when:
+		def url = stubFinder.findStubUrl("fraudDetectionServer")
+		then:
+		assert new File("target/outputmappings/", "fraudDetectionServer_${url.port}").exists()
+	}
 
-    @Configuration
-    @EnableAutoConfiguration
-    static class Config {}
+	@Configuration
+	@EnableAutoConfiguration
+	static class Config {}
 
-    // tag::wireMockHttpServerStubConfigurer[]
-    @CompileStatic
-    static class HttpsForFraudDetection extends WireMockHttpServerStubConfigurer {
+	// tag::wireMockHttpServerStubConfigurer[]
+	@CompileStatic
+	static class HttpsForFraudDetection extends WireMockHttpServerStubConfigurer {
 
-        private static final Log log = LogFactory.getLog(HttpsForFraudDetection)
+		private static final Log log = LogFactory.getLog(HttpsForFraudDetection)
 
-        @Override
-        WireMockConfiguration configure(WireMockConfiguration httpStubConfiguration, HttpServerStubConfiguration httpServerStubConfiguration) {
-            if (httpServerStubConfiguration.stubConfiguration.artifactId == "fraudDetectionServer") {
-                int httpsPort = TestSocketUtils.findAvailableTcpPort()
-                log.info("Will set HTTPs port [" + httpsPort + "] for fraud detection server")
-                return httpStubConfiguration
-                        .httpsPort(httpsPort)
-            }
-            return httpStubConfiguration
-        }
-    }
-    // end::wireMockHttpServerStubConfigurer[]
+		@Override
+		WireMockConfiguration configure(WireMockConfiguration httpStubConfiguration, HttpServerStubConfiguration httpServerStubConfiguration) {
+			if (httpServerStubConfiguration.stubConfiguration.artifactId == "fraudDetectionServer") {
+				int httpsPort = TestSocketUtils.findAvailableTcpPort()
+				log.info("Will set HTTPs port [" + httpsPort + "] for fraud detection server")
+				return httpStubConfiguration
+						.httpsPort(httpsPort)
+			}
+			return httpStubConfiguration
+		}
+	}
+	// end::wireMockHttpServerStubConfigurer[]
 }
 // end::test[]

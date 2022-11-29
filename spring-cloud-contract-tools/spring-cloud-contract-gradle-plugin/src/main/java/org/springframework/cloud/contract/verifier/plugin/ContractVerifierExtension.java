@@ -171,7 +171,7 @@ public class ContractVerifierExtension implements Serializable {
 
 	/**
 	 * A package that contains all the base clases for generated tests. If your contract
-	 * resides in a location {@code src/test/resources/contracts/com/example/v1/} and you
+	 * resides in a location {@code src/contractTest/resources/contracts/com/example/v1/} and you
 	 * provide the {@code packageWithBaseClasses} value to
 	 * {@code com.example.contracts.base} then we will search for a test source file that
 	 * will have the package {@code com.example.contracts.base} and name

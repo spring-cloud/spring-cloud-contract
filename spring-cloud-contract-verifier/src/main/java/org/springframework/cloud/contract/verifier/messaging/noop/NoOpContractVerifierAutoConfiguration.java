@@ -16,12 +16,18 @@
 
 package org.springframework.cloud.contract.verifier.messaging.noop;
 
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jetbrains.annotations.Nullable;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
 import org.springframework.context.annotation.Bean;
@@ -38,15 +44,47 @@ import org.springframework.core.Ordered;
 public class NoOpContractVerifierAutoConfiguration {
 
 	@Bean
-	@ConditionalOnMissingBean(MessageVerifier.class)
-	public MessageVerifier<?> contractVerifierMessageExchange() {
-		return new NoOpStubMessages();
+	@ConditionalOnMissingBean(MessageVerifierSender.class)
+	public MessageVerifierSender<Object> noOpContractVerifierMessageSender() {
+		NoOpStubMessages<Object> noOpStubMessages = new NoOpStubMessages<>();
+		return new MessageVerifierSender<>() {
+
+			@Override
+			public void send(Object message, String destination, @Nullable YamlContract contract) {
+				noOpStubMessages.send(message, destination, contract);
+			}
+
+			@Override
+			public <T> void send(T payload, Map<String, Object> headers, String destination,
+					@Nullable YamlContract contract) {
+				noOpStubMessages.send(payload, headers, destination, contract);
+			}
+		};
+	}
+
+	@Bean
+	@ConditionalOnMissingBean(MessageVerifierReceiver.class)
+	public MessageVerifierReceiver<Object> noOpContractVerifierMessageReceiver() {
+		NoOpStubMessages<Object> noOpStubMessages = new NoOpStubMessages<>();
+		return new MessageVerifierReceiver<>() {
+
+			@Override
+			public Object receive(String destination, long timeout, TimeUnit timeUnit,
+					@Nullable YamlContract contract) {
+				return noOpStubMessages.receive(destination, timeout, timeUnit, contract);
+			}
+
+			@Override
+			public Object receive(String destination, YamlContract contract) {
+				return noOpStubMessages.receive(destination, contract);
+			}
+		};
 	}
 
 	@Bean
 	@ConditionalOnMissingBean(ContractVerifierMessaging.class)
-	public ContractVerifierMessaging<?> contractVerifierMessaging(MessageVerifier<?> exchange) {
-		return new ContractVerifierMessaging<>(exchange);
+	public ContractVerifierMessaging<Object> contractVerifierMessaging() {
+		return new ContractVerifierMessaging<>(new NoOpStubMessages<>(), new NoOpStubMessages<>());
 	}
 
 	@Bean

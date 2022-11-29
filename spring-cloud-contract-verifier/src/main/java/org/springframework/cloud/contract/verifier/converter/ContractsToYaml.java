@@ -367,7 +367,6 @@ class ContractsToYaml {
 	protected void input(Contract contract, YamlContract yamlContract) {
 		Input input = contract.getInput();
 		if (input != null) {
-			ContentType contentType = evaluateClientSideContentType(input.getMessageHeaders(), input.getMessageBody());
 			yamlContract.input = new YamlContract.Input();
 			yamlContract.input.assertThat = Optional.ofNullable(input.getAssertThat())
 					.map(assertThat -> MapConverter
@@ -377,26 +376,6 @@ class ContractsToYaml {
 					.map(triggeredBy -> MapConverter
 							.getTestSideValues(triggeredBy.toString(), MapConverter.JSON_PARSING_FUNCTION).toString())
 					.orElse(null);
-			yamlContract.input.messageHeaders = input.getMessageHeaders().asTestSideMap();
-			yamlContract.input.messageBody = MapConverter.getTestSideValues(input.getMessageBody(),
-					MapConverter.JSON_PARSING_FUNCTION);
-			yamlContract.input.messageFrom = Optional
-					.ofNullable(input.getMessageFrom()).map(messageFrom -> MapConverter
-							.getTestSideValues(messageFrom, MapConverter.JSON_PARSING_FUNCTION).toString())
-					.orElse(null);
-			Optional.ofNullable(input.getBodyMatchers()).map(BodyMatchers::matchers)
-					.ifPresent(bodyMatchers -> bodyMatchers.forEach(bodyMatcher -> {
-						YamlContract.BodyStubMatcher bodyStubMatcher = new YamlContract.BodyStubMatcher();
-						bodyStubMatcher.path = bodyMatcher.path();
-						bodyStubMatcher.type = stubMatcherType(bodyMatcher.matchingType());
-						bodyStubMatcher.value = Optional.ofNullable(bodyMatcher.value()).map(Object::toString)
-								.orElse(null);
-						yamlContract.input.matchers.body.add(bodyStubMatcher);
-					}));
-			if (XML != contentType) {
-				setInputBodyMatchers(input.getMessageBody(), yamlContract.input.matchers.body);
-			}
-			setInputHeadersMatchers(input.getMessageHeaders(), yamlContract.input.matchers.headers);
 		}
 	}
 

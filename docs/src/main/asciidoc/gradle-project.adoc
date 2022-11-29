@@ -112,7 +112,7 @@ buildscript {
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}"
-        // here you can also pass additional dependencies such as Pact or Kotlin spec e.g.:
+        // here you can also pass additional dependencies such as Kotlin spec e.g.:
         // classpath "org.springframework.cloud:spring-cloud-contract-spec-kotlin:${verifier_version}"
 	}
 }

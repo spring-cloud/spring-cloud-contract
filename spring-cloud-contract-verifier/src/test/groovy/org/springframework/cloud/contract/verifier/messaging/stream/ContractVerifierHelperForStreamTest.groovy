@@ -25,7 +25,7 @@ class ContractVerifierHelperForStreamTest extends Specification {
 
 	def 'should throw exception when a null payload was sent'() {
 		given:
-			ContractVerifierHelper helper = new ContractVerifierHelper(null)
+			ContractVerifierHelper helper = new ContractVerifierHelper(null, null)
 		when:
 			helper.convert(null)
 		then:

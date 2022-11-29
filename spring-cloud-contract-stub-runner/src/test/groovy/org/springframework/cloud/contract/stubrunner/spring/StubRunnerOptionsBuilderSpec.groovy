@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.contract.stubrunner.spring
 
-import spock.lang.Specification
+import org.junit.jupiter.api.Test
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -30,7 +30,7 @@ import org.springframework.test.context.ActiveProfiles
 @SpringBootTest(classes = Config, properties = ['some.property1=org.springframework.cloud.contract.verifier.stubs:loanIssuance'])
 @AutoConfigureStubRunner
 @ActiveProfiles("test-with-placeholders")
-class StubRunnerOptionsBuilderSpec extends Specification {
+class StubRunnerOptionsBuilderSpec {
 
 	@StubRunnerPort("fraudDetectionServer")
 	int fraudDetectionServerPort
@@ -41,12 +41,13 @@ class StubRunnerOptionsBuilderSpec extends Specification {
 	@Value('${stub.port}')
 	int stubPort
 
-	def 'should resolve placeholders'() {
+	@Test
+	void 'should resolve placeholders'() {
 		expect:
-			fraudDetectionServerPort > 1000
-			loanIssuancePort > 1000
+			assert fraudDetectionServerPort > 1000
+			assert loanIssuancePort > 1000
 		and:
-			stubPort == fraudDetectionServerPort
+			assert stubPort == fraudDetectionServerPort
 	}
 
 	@Configuration

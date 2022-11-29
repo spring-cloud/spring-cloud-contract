@@ -27,8 +27,8 @@ import spock.lang.Specification
 import org.springframework.cloud.contract.stubrunner.junit.StubRunnerRule
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.cloud.contract.verifier.converter.YamlContract
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier
-
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender
 /**
  * @author Marcin Grzejszczak
  */
@@ -47,7 +47,8 @@ class StubRunnerRuleCustomMsgVerifierSpec extends Specification {
 			.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
 			.repoRoot(StubRunnerRuleCustomMsgVerifierSpec.getResource("/m2repo/repository").toURI().toString())
 			.downloadStub("org.springframework.cloud.contract.verifier.stubs", "bootService")
-			.messageVerifier(new MyMessageVerifier())
+			.messageVerifierSender(new MyMessageVerifier())
+			.messageVerifierReceiver(new MyMessageVerifier())
 
 	def 'should use the provided message verifier in the junit rule'() {
 		when:
@@ -67,7 +68,7 @@ class StubRunnerRuleCustomMsgVerifierSpec extends Specification {
 			e.message.contains("Failed to send a message with headers")
 	}
 
-	static class MyMessageVerifier implements MessageVerifier {
+	static class MyMessageVerifier implements MessageVerifierSender, MessageVerifierReceiver {
 
 		@Override
 		void send(Object message, String destination, YamlContract contract) {

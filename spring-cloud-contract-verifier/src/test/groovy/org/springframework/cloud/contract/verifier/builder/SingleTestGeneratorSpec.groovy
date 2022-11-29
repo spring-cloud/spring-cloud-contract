@@ -331,13 +331,7 @@ class SingleTestGeneratorSpec extends Specification {
 						  ignored()
 						  label 'some_label'
 						  input {
-							messageFrom('delete')
-							messageBody([
-								bookName: 'foo'
-							])
-							messageHeaders {
-							  header('sample', 'header')
-							}
+							triggeredBy("hashCode()")
 							assertThat('hashCode()')
 						  }
 						}
