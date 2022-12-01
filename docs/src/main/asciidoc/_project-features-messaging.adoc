@@ -446,19 +446,17 @@ If you want to use Spring Cloud Stream, remember to add a dependency on
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Maven
 ----
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-stream</artifactId>
-    <type>test-jar</type>
-    <scope>test</scope>
-    <classifier>test-binder</classifier>
-</dependency>
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-stream-test-binder</artifactId>
+        <scope>test</scope>
+    </dependency>
 ----
 
 [source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
 .Gradle
 ----
-testImplementation(group: 'org.springframework.cloud', name: 'spring-cloud-stream', classifier: 'test-binder')
+testImplementation('org.springframework.cloud:spring-cloud-stream-test-binder')
 ----
 ====
 =====
