@@ -39,7 +39,7 @@ dependencies {
 	implementation("org.springframework.cloud:spring-cloud-starter-stream-rabbit")
 
 	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
-	testImplementation(group: 'org.springframework.cloud', name: 'spring-cloud-stream', classifier: 'test-binder')
+	testImplementation(group: 'org.springframework.cloud', name: 'spring-cloud-stream-test-binder')
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude(group: 'org.junit.vintage', module: 'junit-vintage-engine')
 	}
