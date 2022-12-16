@@ -17,6 +17,10 @@
 	<name>Spring Cloud Contract Stub Runner Docker</name>
 	<description>Spring Cloud Contract Stub Runner Docker</description>
 
+	<properties>
+		<thin.repo>https://repo.spring.io/snapshot</thin.repo>
+	</properties>
+
 	<dependencies>
 		<!-- Required, otherwise the docker image generation fails for GA -->
 		<dependency>
@@ -156,6 +160,13 @@
 			<artifactId>spring-cloud-starter-contract-stub-runner-jetty</artifactId>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot.experimental</groupId>
+			<artifactId>spring-boot-thin-launcher</artifactId>
+			<version>${thin-jar.version}</version>
+			<classifier>exec</classifier>
+			<scope>compile</scope>
+		</dependency>
 
 		<!-- Otherwise dependency is provided and class is missing -->
 		<dependency>
@@ -242,6 +253,9 @@
 					<tag>${project.version}</tag>
 					<username>${env.DOCKER_HUB_USERNAME}</username>
 					<password>${env.DOCKER_HUB_PASSWORD}</password>
+					<buildArgs>
+						<THIN_REPO>${thin.repo}</THIN_REPO>
+					</buildArgs>
 				</configuration>
 				<dependencies>
 					<dependency>
@@ -253,4 +267,18 @@
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>milestone</id>
+			<properties>
+				<thin.repo>https://repo.spring.io/milestone</thin.repo>
+			</properties>
+		</profile>
+		<profile>
+			<id>central</id>
+			<properties>
+				<thin.repo>https://repo.maven.apache.org/maven2</thin.repo>
+			</properties>
+		</profile>
+	</profiles>
 </project>
