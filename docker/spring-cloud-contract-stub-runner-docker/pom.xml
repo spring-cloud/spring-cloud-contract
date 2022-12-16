@@ -75,6 +75,20 @@
 			<type>pom</type>
 			<scope>runtime</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-dependencies-parent</artifactId>
+			<version>${spring-cloud-build.version}</version>
+			<type>pom</type>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-build-dependencies</artifactId>
+			<version>${spring-cloud-build.version}</version>
+			<type>pom</type>
+			<scope>runtime</scope>
+		</dependency>
 
 
 		<dependency>
