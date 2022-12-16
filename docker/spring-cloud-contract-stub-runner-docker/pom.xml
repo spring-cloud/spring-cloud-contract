@@ -70,7 +70,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-build-dependencies</artifactId>
+			<artifactId>spring-cloud-build</artifactId>
 			<version>${spring-cloud-build.version}</version>
 			<type>pom</type>
 			<scope>runtime</scope>
