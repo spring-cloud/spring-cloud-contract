@@ -21,7 +21,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<gradle.task>build</gradle.task>
 		<build-helper-maven-plugin.phase>package</build-helper-maven-plugin.phase>
-		<gradle.publish-plugins.task>build</gradle.publish-plugins.task> <!--TODO: Fix me-->
+		<gradle.publish-plugins.task>publishPlugins</gradle.publish-plugins.task>
 	</properties>
 
 	<dependencies>
