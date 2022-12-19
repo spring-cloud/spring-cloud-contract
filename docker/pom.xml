@@ -28,8 +28,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 		</profile>
-		<!-- TODO: Fix me -->
-		<!--<profile>
+		<profile>
 			<id>integration</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
@@ -48,7 +47,7 @@
 				<module>spring-cloud-contract-docker</module>
 				<module>spring-cloud-contract-stub-runner-docker</module>
 			</modules>
-		</profile>-->
+		</profile>
 	</profiles>
 
 	<build>
