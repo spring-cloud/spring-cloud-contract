@@ -36,6 +36,7 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessageMetadata;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
 import org.springframework.cloud.contract.verifier.messaging.kafka.KafkaMetadata;
+import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -76,7 +77,7 @@ public class MessagingAutoConfig {
 	MessageVerifierReceiver<Message> manualMessageVerifier(ConsumerTemplate consumerTemplate) {
 		return new MessageVerifierReceiver<Message>() {
 
-			private final Logger log = LoggerFactory.getLogger(MessageVerifier.class);
+			private final Logger log = LoggerFactory.getLogger(MessageVerifierReceiver.class);
 
 			@Override
 			public Message receive(String destination, long timeout, TimeUnit timeUnit, YamlContract yamlContract) {
