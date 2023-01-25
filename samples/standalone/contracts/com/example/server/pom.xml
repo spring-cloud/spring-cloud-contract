@@ -14,15 +14,15 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.1</version>
+		<version>3.0.2</version>
 		<relativePath/>
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>17</java.version>
-		<spring-cloud-contract.version>4.0.1-SNAPSHOT</spring-cloud-contract.version>
-		<spring-cloud-release.version>2022.0.1-SNAPSHOT</spring-cloud-release.version>
+		<spring-cloud-contract.version>4.0.2-SNAPSHOT</spring-cloud-contract.version>
+		<spring-cloud-release.version>2022.0.2-SNAPSHOT</spring-cloud-release.version>
 		<excludeBuildFolders>true</excludeBuildFolders>
 	</properties>
 
