@@ -28,13 +28,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import groovy.json.JsonOutput;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.DslProperty;
+import org.springframework.cloud.contract.spec.internal.FromFileProperty;
 import org.springframework.cloud.contract.spec.internal.Headers;
 import org.springframework.cloud.contract.spec.internal.OutputMessage;
 import org.springframework.cloud.contract.stubrunner.AvailablePortScanner.PortCallback;
@@ -248,11 +248,22 @@ class StubRunnerExecutor implements StubFinder {
 		List<YamlContract> yamlContracts = yamlContractConverter.convertTo(Collections.singleton(groovyDsl));
 		YamlContract contract = yamlContracts.get(0);
 		setMessageType(contract, ContractVerifierMessageMetadata.MessageType.OUTPUT);
-		// TODO: Json is harcoded here
-		this.messageVerifierSender.send(
-				JsonOutput
-						.toJson(BodyExtractor.extractClientValueFromBody(body == null ? null : body.getClientValue())),
-				headers == null ? null : headers.asStubSideMap(), outputMessage.getSentTo().getClientValue(), contract);
+
+		Object payload = null;
+		if (body.getClientValue() instanceof FromFileProperty fromFile) {
+			if (fromFile.isByte()) {
+				payload = fromFile.asBytes();
+			}
+			else {
+				payload = fromFile.asString();
+			}
+		}
+		else {
+			payload = BodyExtractor.extractClientValueFromBody(body == null ? null : body.getClientValue());
+		}
+
+		this.messageVerifierSender.send(payload, headers == null ? null : headers.asStubSideMap(),
+				outputMessage.getSentTo().getClientValue(), contract);
 	}
 
 	private void setMessageType(YamlContract contract, ContractVerifierMessageMetadata.MessageType output) {
