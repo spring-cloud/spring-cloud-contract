@@ -28,20 +28,20 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import groovy.json.JsonOutput;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.DslProperty;
+import org.springframework.cloud.contract.spec.internal.FromFileProperty;
 import org.springframework.cloud.contract.spec.internal.Headers;
 import org.springframework.cloud.contract.spec.internal.OutputMessage;
 import org.springframework.cloud.contract.stubrunner.AvailablePortScanner.PortCallback;
 import org.springframework.cloud.contract.stubrunner.provider.wiremock.WireMockHttpServerStub;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.converter.YamlContractConverter;
-import org.springframework.cloud.contract.verifier.messaging.MessageVerifier;
+import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessageMetadata;
 import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages;
 import org.springframework.cloud.contract.verifier.util.BodyExtractor;
@@ -57,7 +57,7 @@ class StubRunnerExecutor implements StubFinder {
 
 	private final AvailablePortScanner portScanner;
 
-	private final MessageVerifier<?> contractVerifierMessaging;
+	private final MessageVerifierSender<?> messageVerifierSender;
 
 	private final List<HttpServerStub> serverStubs;
 
@@ -65,10 +65,10 @@ class StubRunnerExecutor implements StubFinder {
 
 	private final YamlContractConverter yamlContractConverter = new YamlContractConverter();
 
-	StubRunnerExecutor(AvailablePortScanner portScanner, MessageVerifier<?> contractVerifierMessaging,
+	StubRunnerExecutor(AvailablePortScanner portScanner, MessageVerifierSender<?> messageVerifierSender,
 			List<HttpServerStub> serverStubs) {
 		this.portScanner = portScanner;
-		this.contractVerifierMessaging = contractVerifierMessaging;
+		this.messageVerifierSender = messageVerifierSender;
 		this.serverStubs = serverStubs;
 	}
 
@@ -248,11 +248,23 @@ class StubRunnerExecutor implements StubFinder {
 		List<YamlContract> yamlContracts = yamlContractConverter.convertTo(Collections.singleton(groovyDsl));
 		YamlContract contract = yamlContracts.get(0);
 		setMessageType(contract, ContractVerifierMessageMetadata.MessageType.OUTPUT);
-		// TODO: Json is harcoded here
-		this.contractVerifierMessaging.send(
-				JsonOutput
-						.toJson(BodyExtractor.extractClientValueFromBody(body == null ? null : body.getClientValue())),
-				headers == null ? null : headers.asStubSideMap(), outputMessage.getSentTo().getClientValue(), contract);
+
+		Object payload = null;
+		if (body.getClientValue() instanceof FromFileProperty) {
+			FromFileProperty fromFile = (FromFileProperty) body.getClientValue();
+			if (fromFile.isByte()) {
+				payload = fromFile.asBytes();
+			}
+			else {
+				payload = fromFile.asString();
+			}
+		}
+		else {
+			payload = BodyExtractor.extractClientValueFromBody(body == null ? null : body.getClientValue());
+		}
+
+		this.messageVerifierSender.send(payload, headers == null ? null : headers.asStubSideMap(),
+				outputMessage.getSentTo().getClientValue(), contract);
 	}
 
 	private void setMessageType(YamlContract contract, ContractVerifierMessageMetadata.MessageType output) {
