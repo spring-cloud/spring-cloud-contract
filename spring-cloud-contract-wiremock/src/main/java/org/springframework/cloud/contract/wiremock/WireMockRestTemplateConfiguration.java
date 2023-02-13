@@ -63,7 +63,8 @@ public class WireMockRestTemplateConfiguration {
 					Field requestFactoryField = ReflectionUtils.findField(RestTemplate.class, "requestFactory");
 					if (requestFactoryField != null) {
 						requestFactoryField.setAccessible(true);
-						ClientHttpRequestFactory requestFactory = (ClientHttpRequestFactory) ReflectionUtils.getField(requestFactoryField, restTemplate);
+						ClientHttpRequestFactory requestFactory = (ClientHttpRequestFactory) ReflectionUtils
+								.getField(requestFactoryField, restTemplate);
 						if (requestFactory instanceof HttpComponentsClientHttpRequestFactory factory) {
 							factory.setHttpClient(createSslHttpClient());
 						}

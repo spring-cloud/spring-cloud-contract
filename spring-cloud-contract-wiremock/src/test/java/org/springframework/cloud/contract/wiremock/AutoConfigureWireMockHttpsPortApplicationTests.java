@@ -70,7 +70,6 @@ public class AutoConfigureWireMockHttpsPortApplicationTests {
 		assertThat(this.service.goWithApacheClientAndAdditonalInterceptor()).isEqualTo("Hello World!");
 	}
 
-
 	@Test
 	public void portsAreFixed() {
 		boolean httpPortDynamic = this.wireMockProperties.getServer().isPortDynamic();

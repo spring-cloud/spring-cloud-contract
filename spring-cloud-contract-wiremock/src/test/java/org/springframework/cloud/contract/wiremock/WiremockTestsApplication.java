@@ -45,7 +45,7 @@ import org.springframework.web.client.RestTemplate;
  */
 @Configuration
 @EnableAutoConfiguration
-@Import( Service.class )
+@Import(Service.class)
 public class WiremockTestsApplication {
 
 	public static void main(String[] args) {
@@ -60,16 +60,15 @@ public class WiremockTestsApplication {
 
 	@Bean
 	public RestTemplate apacheHttpClient(RestTemplateBuilder builder) {
-		return builder.requestFactory(() -> new HttpComponentsClientHttpRequestFactory())
-				.build();
+		return builder.requestFactory(() -> new HttpComponentsClientHttpRequestFactory()).build();
 	}
 
 	@Bean
 	public RestTemplate apacheHttpClientWithInterceptor(RestTemplateBuilder builder) {
 		return builder.requestFactory(() -> new HttpComponentsClientHttpRequestFactory())
-				.additionalInterceptors(new BasicAuthenticationInterceptor("u","p"))
-				.build();
+				.additionalInterceptors(new BasicAuthenticationInterceptor("u", "p")).build();
 	}
+
 }
 
 @Component
@@ -86,8 +85,7 @@ class Service {
 
 	private RestTemplate apacheHttpClientWithInterceptor;
 
-	Service(RestTemplate restTemplate,
-			@Qualifier("apacheHttpClient") RestTemplate apacheHttpClient,
+	Service(RestTemplate restTemplate, @Qualifier("apacheHttpClient") RestTemplate apacheHttpClient,
 			@Qualifier("apacheHttpClientWithInterceptor") RestTemplate apacheHttpClientWithInterceptor) {
 		this.restTemplate = restTemplate;
 		this.apacheHttpClient = apacheHttpClient;
