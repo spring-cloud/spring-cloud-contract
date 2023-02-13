@@ -72,7 +72,6 @@
 
 		<javadoc.failOnError>false</javadoc.failOnError>
 		<javadoc.failOnWarnings>false</javadoc.failOnWarnings>
-		<spring-cloud-build.version>4.0.2-SNAPSHOT</spring-cloud-build.version>
 	</properties>
 
 	<modules>
