@@ -134,6 +134,12 @@
 			<version>${dependency-management-plugin.version}</version>
 			<scope>runtime</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-build</artifactId>
+			<version>${spring-cloud-build.version}</version>
+			<type>pom</type>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -148,7 +154,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>3.1.2</version>
 				<executions>
 					<execution>
 						<id>copy-dependencies</id>
