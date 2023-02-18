@@ -18,6 +18,10 @@ package org.springframework.cloud.contract.maven.verifier;
 
 import java.io.File;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.junit.Test;
 
@@ -324,6 +328,23 @@ public class PluginUnitTest extends AbstractMojoTest {
 				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/common_repo_with_inclusion/kafka_topics/coupon_sent/src/main/resources/contracts/rule_engine_daemon/MessagingTest.java");
 		assertFilesPresent(basedir,
 				"target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/common_repo_with_inclusion/reward_rules/src/main/resources/contracts/reward_rules/rest/admin/V1Test.java");
+	}
+
+	@Test
+	public void shouldAttachUpToDateStubs() throws Exception {
+		File basedir = getBasedir("generatedStubs");
+
+		MavenSession firstSession = prepareMavenSession(basedir);
+		MavenProject firstProject = firstSession.getCurrentProject();
+		Artifact stubArtifact = new DefaultArtifact(firstProject.getGroupId(), firstProject.getArtifactId(),
+				firstProject.getVersion(), "", "jar", "stubs", firstProject.getArtifact().getArtifactHandler());
+
+		executeMojo(firstSession, "generateStubs");
+		then(firstSession.getCurrentProject().getAttachedArtifacts()).contains(stubArtifact);
+
+		MavenSession secondSession = prepareMavenSession(basedir);
+		executeMojo(secondSession, "generateStubs");
+		then(secondSession.getCurrentProject().getAttachedArtifacts()).contains(stubArtifact);
 	}
 
 }

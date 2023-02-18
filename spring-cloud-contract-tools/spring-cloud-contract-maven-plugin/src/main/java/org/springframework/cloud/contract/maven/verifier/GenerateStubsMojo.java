@@ -120,21 +120,22 @@ public class GenerateStubsMojo extends AbstractMojo {
 			throw new MojoExecutionException("Stubs could not be found: [" + this.outputDirectory.getAbsolutePath()
 					+ "] .\nPlease make sure that spring-cloud-contract:convert was invoked");
 		}
+		File stubsJarFile = getStubJarDestFile();
 		if (this.incrementalContractStubsJar && !inputFilesChangeDetected(outputDirectory, mojoExecution, session)) {
 			getLog().info("Nothing to generate - stubs jar is up to date");
-			return;
 		}
-		File stubsJarFile = createStubJar(this.outputDirectory);
+		else {
+			fillStubJar(this.outputDirectory, stubsJarFile);
+		}
 		this.projectHelper.attachArtifact(this.project, "jar", this.classifier, stubsJarFile);
 	}
 
-	private File createStubJar(File stubsOutputDir) throws MojoFailureException, MojoExecutionException {
-		if (!stubsOutputDir.exists()) {
-			throw new MojoExecutionException("Stubs could not be found: [" + stubsOutputDir.getAbsolutePath()
-					+ "] .\nPlease make sure that spring-cloud-contract:convert was invoked");
-		}
+	private File getStubJarDestFile() {
 		String stubArchiveName = this.projectFinalName + "-" + this.classifier + ".jar";
-		File stubsJarFile = new File(this.projectBuildDirectory, stubArchiveName);
+		return new File(this.projectBuildDirectory, stubArchiveName);
+	}
+
+	private void fillStubJar(File stubsOutputDir, File stubsJarFile) throws MojoFailureException {
 		String[] excludes = excludes();
 		getLog().info(
 				"Files matching this pattern will be excluded from " + "stubs generation " + Arrays.toString(excludes));
@@ -149,7 +150,6 @@ public class GenerateStubsMojo extends AbstractMojo {
 		catch (Exception e) {
 			throw new MojoFailureException("Exception while packaging " + this.classifier + " jar.", e);
 		}
-		return stubsJarFile;
 	}
 
 	private boolean stubsOutputMissing(File stubsOutputDir) {
