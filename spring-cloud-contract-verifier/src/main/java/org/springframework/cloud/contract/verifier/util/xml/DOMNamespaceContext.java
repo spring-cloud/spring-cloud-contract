@@ -53,8 +53,13 @@ public class DOMNamespaceContext implements NamespaceContext {
 	}
 
 	private void addNamespaces(Node element) {
-		if (element.getParentNode() != null) {
-			addNamespaces(element.getParentNode());
+		if (element.getChildNodes() != null) {
+			// loops through child Element Nodes and check for namespace attributes
+			for (int i = 0; i < element.getChildNodes().length(); i ++) {
+				if (element.getChildNodes().item(i) instanceof Element) {
+					addNamespaces(element.getChildNodes().item(i));
+				}
+			}
 		}
 		if (element instanceof Element) {
 			Element el = (Element) element;
@@ -62,7 +67,7 @@ public class DOMNamespaceContext implements NamespaceContext {
 			for (int x = 0; x < map.getLength(); x++) {
 				Attr attr = (Attr) map.item(x);
 				if ("xmlns".equals(attr.getPrefix())) {
-					namespaceMap.put(attr.getLocalName(), attr.getValue());
+					namespaceMap.putIfAbsent(attr.getLocalName(), attr.getValue());
 				}
 			}
 		}
