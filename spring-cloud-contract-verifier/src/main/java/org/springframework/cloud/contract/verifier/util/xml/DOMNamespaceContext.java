@@ -55,7 +55,7 @@ public class DOMNamespaceContext implements NamespaceContext {
 	private void addNamespaces(Node element) {
 		if (element.getChildNodes() != null) {
 			// loops through child Element Nodes and check for namespace attributes
-			for (int i = 0; i < element.getChildNodes().length(); i ++) {
+			for (int i = 0; i < element.getChildNodes().getLength(); i ++) {
 				if (element.getChildNodes().item(i) instanceof Element) {
 					addNamespaces(element.getChildNodes().item(i));
 				}
