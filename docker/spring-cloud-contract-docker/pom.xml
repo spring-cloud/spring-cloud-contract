@@ -54,6 +54,12 @@
 			<version>${dependency-management-plugin.version}</version>
 			<scope>runtime</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-build</artifactId>
+			<version>${spring-cloud-build.version}</version>
+			<type>pom</type>
+		</dependency>
 	</dependencies>
 
 	<build>
