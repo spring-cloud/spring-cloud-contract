@@ -50,6 +50,27 @@ class DslToYamlContractConverterSpec extends Specification {
 
 	YamlContractConverter converter = new YamlContractConverter()
 
+	def "should convert rest DSL without request headers to YAML"() {
+		given:
+			List<Contract> contracts = [Contract.make {
+				request {
+					method 'GET'
+					urlPath '/get'
+				}
+				response {
+					status(OK())
+				}
+			}]
+		when:
+			Collection<YamlContract> yamlContracts = converter.convertTo(contracts)
+		then:
+			yamlContracts.size() == 1
+			YamlContract yamlContract = yamlContracts.first()
+			yamlContract.request.method == "GET"
+			yamlContract.request.urlPath == "/get"
+			yamlContract.request.headers == null
+	}
+
 	def "should convert rest DSL to YAML"() {
 		given:
 			List<Contract> contracts = [Contract.make {
