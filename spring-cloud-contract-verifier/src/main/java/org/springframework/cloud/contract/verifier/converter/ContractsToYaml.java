@@ -275,13 +275,13 @@ class ContractsToYaml {
 	}
 
 	private void mapRequestHeaders(YamlContract.Request yamlContractRequest, Request request) {
-		yamlContractRequest.headers = request.getHeaders().asMap((headerName, prop) -> {
+		yamlContractRequest.headers = request.getHeaders() != null ? request.getHeaders().asMap((headerName, prop) -> {
 			Object testSideValue = MapConverter.getTestSideValues(prop);
 			if (testSideValue instanceof ExecutionProperty) {
 				return MapConverter.getStubSideValuesForNonBody(prop).toString();
 			}
 			return testSideValue.toString();
-		});
+		}) : null;
 	}
 
 	private void mapRequestMatchersQueryParameters(YamlContract.Request yamlContractRequest, Url requestUrl) {
