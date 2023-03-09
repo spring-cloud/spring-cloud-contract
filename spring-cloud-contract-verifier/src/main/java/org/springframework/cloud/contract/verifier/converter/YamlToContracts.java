@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -681,8 +682,9 @@ class YamlToContracts {
 	}
 
 	private Headers yamlHeadersToContractHeaders(Map<String, Object> headers) {
-		Set<Header> convertedHeaders = headers.keySet().stream()
-				.map(header -> Header.build(header, headers.get(header))).collect(toSet());
+		Set<Header> convertedHeaders = headers != null
+				? headers.keySet().stream().map(header -> Header.build(header, headers.get(header))).collect(toSet())
+				: new HashSet<>();
 		Headers contractHeaders = new Headers();
 		contractHeaders.headers(convertedHeaders);
 		return contractHeaders;
