@@ -47,6 +47,28 @@ class RecursiveFilesConverterSpec extends Specification {
 	@Rule
 	public TemporaryFolder tmpFolder = new TemporaryFolder()
 
+	def "should recursively convert all matching files with stubs"() {
+		given:
+		File originalSourceRootDirectory = new File(this.getClass()
+				.getResource("/converter/dir3").toURI())
+		File contractsDslDir = tmpFolder.newFolder("source")
+		File stubsOutputDir = tmpFolder.newFolder("target")
+		FileSystemUtils
+				.copyRecursively(originalSourceRootDirectory, contractsDslDir)
+		and:
+		RecursiveFilesConverter recursiveFilesConverter = new RecursiveFilesConverter(stubsOutputDir, contractsDslDir, new ArrayList<>(), ".*", false)
+		when:
+		recursiveFilesConverter.processFiles()
+		then:
+		Collection<File> createdFiles = [] as List
+		stubsOutputDir.
+				eachFileRecurse(FileType.FILES) { createdFiles << it }
+		Set<String> relativizedCreatedFiles =
+				getRelativePathsForFilesInDirectory(createdFiles, stubsOutputDir)
+		relativizedCreatedFiles == [Paths.get("Account creating.json"),
+									Paths.get("Test route.json")] as Set<Path>
+	}
+
 	def "should recursively convert all matching files"() {
 		given:
 			File originalSourceRootDirectory = new File(this.getClass()
