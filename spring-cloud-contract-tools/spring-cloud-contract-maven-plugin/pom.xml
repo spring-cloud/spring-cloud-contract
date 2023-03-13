@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-tools</artifactId>
-		<version>3.1.6-SNAPSHOT</version>
+		<version>3.1.7-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
@@ -62,7 +62,39 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>**/PluginUnitTest.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
+				<dependencies>
+					<!-- let JUnit vintage engine run JUnit 3 or JUnit 4 tests -->
+					<dependency>
+						<groupId>org.junit.jupiter</groupId>
+						<artifactId>junit-jupiter-engine</artifactId>
+						<version>${junit-jupiter.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.junit.vintage</groupId>
+						<artifactId>junit-vintage-engine</artifactId>
+						<version>${junit-vintage.version}</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<reportFormat>plain</reportFormat>
+					<failIfNoTests>true</failIfNoTests>
+					<junitPlatformArtifactName>
+						org.junit.jupiter:junit-vintage-engine
+					</junitPlatformArtifactName>
+					<includes>
+						<include>**/PluginUnitTest.java</include>
+					</includes>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>

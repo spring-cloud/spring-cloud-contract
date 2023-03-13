@@ -7,13 +7,13 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-docker-parent</artifactId>
-		<version>3.1.6-SNAPSHOT</version>
+		<version>3.1.7-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
 	<artifactId>spring-cloud-contract-stub-runner-docker</artifactId>
 	<packaging>pom</packaging>
-	<version>3.1.6-SNAPSHOT</version>
+	<version>3.1.7-SNAPSHOT</version>
 	<name>Spring Cloud Contract Stub Runner Docker</name>
 	<description>Spring Cloud Contract Stub Runner Docker</description>
 
@@ -88,6 +88,12 @@
 			<version>${spring-cloud-stream.version}</version>
 			<type>pom</type>
 			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-build</artifactId>
+			<version>${spring-cloud-build.version}</version>
+			<type>pom</type>
 		</dependency>
 
 

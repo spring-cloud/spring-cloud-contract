@@ -63,10 +63,18 @@ public abstract class AbstractMojoTest {
 		return new File(this.tmpFolder, name);
 	}
 
-	protected void executeMojo(File baseDir, String goal, Xpp3Dom... parameters) throws Exception {
+	protected MavenSession prepareMavenSession(File baseDir) throws Exception {
 		MavenProject mavenProject = rule.readMavenProject(baseDir);
-		MavenSession mavenSession = rule.newMavenSession(mavenProject);
-		rule.executeMojo(mavenSession, mavenProject, goal, parameters);
+		return rule.newMavenSession(mavenProject);
+	}
+
+	protected void executeMojo(File baseDir, String goal, Xpp3Dom... parameters) throws Exception {
+		MavenSession mavenSession = prepareMavenSession(baseDir);
+		executeMojo(mavenSession, goal, parameters);
+	}
+
+	protected void executeMojo(MavenSession mavenSession, String goal, Xpp3Dom... parameters) throws Exception {
+		rule.executeMojo(mavenSession, mavenSession.getCurrentProject(), goal, parameters);
 	}
 
 	protected void assertFilesPresent(File file, String name) {
