@@ -99,6 +99,54 @@ class StubRunnerExecutorSpec extends Specification {
 			executor.shutdown()
 	}
 
+	def 'should ensure that triggered contracts have properly parsed message body from file as bytes when a message is sent'() {
+		given:
+			StubRunnerExecutor executor = new StubRunnerExecutor(portScanner, new AssertingStubMessages(), [])
+			executor.runStubs(stubRunnerOptions, repository, stub)
+		when:
+			executor.trigger('send_order_bin')
+		then:
+			noExceptionThrown()
+		cleanup:
+			executor.shutdown()
+	}
+
+	def 'should ensure that triggered contracts have properly parsed message body from file as json when a message is sent'() {
+		given:
+			StubRunnerExecutor executor = new StubRunnerExecutor(portScanner, new AssertingStubMessages(), [])
+			executor.runStubs(stubRunnerOptions, repository, stub)
+		when:
+			executor.trigger('send_order_json')
+		then:
+			noExceptionThrown()
+		cleanup:
+			executor.shutdown()
+	}
+
+	def 'should ensure that triggered contracts have properly parsed message body from file as xml when a message is sent'() {
+		given:
+			StubRunnerExecutor executor = new StubRunnerExecutor(portScanner, new AssertingStubMessages(), [])
+			executor.runStubs(stubRunnerOptions, repository, stub)
+		when:
+			executor.trigger('send_order_xml')
+		then:
+			noExceptionThrown()
+		cleanup:
+			executor.shutdown()
+	}
+
+	def 'should ensure that triggered contracts have properly parsed message body from file as text when a message is sent'() {
+		given:
+			StubRunnerExecutor executor = new StubRunnerExecutor(portScanner, new AssertingStubMessages(), [])
+			executor.runStubs(stubRunnerOptions, repository, stub)
+		when:
+			executor.trigger('send_order_csv')
+		then:
+			noExceptionThrown()
+		cleanup:
+			executor.shutdown()
+	}
+
 	def 'should match stub with empty classifier'() {
 		given:
 			def stubConf = new StubConfiguration('groupX', 'artifactX', 'versionX', '')
@@ -208,7 +256,9 @@ class StubRunnerExecutorSpec extends Specification {
 
 		@Override
 		<T> void send(T payload, Map<String, Object> headers, String destination, YamlContract contract) {
-			assert !(JsonOutput.toJson(payload).contains("serverValue"))
+			if(payload instanceof String) {
+				assert !(JsonOutput.toJson(payload).contains("serverValue"))
+			}
 			assert headers.entrySet().every { !(it.value.toString().contains("serverValue")) }
 		}
 
