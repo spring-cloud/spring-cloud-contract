@@ -255,12 +255,14 @@ class StubRunnerExecutor implements StubFinder {
 			FromFileProperty fromFile = (FromFileProperty) body.getClientValue();
 			if (fromFile.isByte()) {
 				payload = fromFile.asBytes();
-			} else {
+			}
+			else {
 				payload = fromFile.asString();
 			}
 		}
 		else {
-			payload = JsonOutput.toJson(BodyExtractor.extractClientValueFromBody(body == null ? null : body.getClientValue()));
+			payload = JsonOutput
+					.toJson(BodyExtractor.extractClientValueFromBody(body == null ? null : body.getClientValue()));
 		}
 
 		this.messageVerifierSender.send(payload, headers == null ? null : headers.asStubSideMap(),
