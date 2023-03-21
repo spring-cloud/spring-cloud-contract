@@ -22,22 +22,30 @@ import java.util.stream.Stream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * @author Dave Syer
+ * @author Nikola Kološnjaji
+ *
+ */
 @Configuration
 @EnableAutoConfiguration
-@Import({ Service.class, Controller.class })
+@Import(Service.class)
 public class WiremockTestsApplication {
 
 	public static void main(String[] args) {
@@ -45,24 +53,20 @@ public class WiremockTestsApplication {
 	}
 
 	@Bean
+	@Primary
 	public RestTemplate restTemplate() {
 		return new RestTemplate();
 	}
 
-}
-
-@RestController
-class Controller {
-
-	private final Service service;
-
-	Controller(Service service) {
-		this.service = service;
+	@Bean
+	public RestTemplate apacheHttpClient(RestTemplateBuilder builder) {
+		return builder.requestFactory(() -> new HttpComponentsClientHttpRequestFactory()).build();
 	}
 
-	@RequestMapping("/")
-	public String home() {
-		return this.service.go();
+	@Bean
+	public RestTemplate apacheHttpClientWithInterceptor(RestTemplateBuilder builder) {
+		return builder.requestFactory(() -> new HttpComponentsClientHttpRequestFactory())
+				.additionalInterceptors(new BasicAuthenticationInterceptor("u", "p")).build();
 	}
 
 }
@@ -77,14 +81,33 @@ class Service {
 
 	private RestTemplate restTemplate;
 
-	Service(RestTemplate restTemplate) {
+	private RestTemplate apacheHttpClient;
+
+	private RestTemplate apacheHttpClientWithInterceptor;
+
+	Service(RestTemplate restTemplate, @Qualifier("apacheHttpClient") RestTemplate apacheHttpClient,
+			@Qualifier("apacheHttpClientWithInterceptor") RestTemplate apacheHttpClientWithInterceptor) {
 		this.restTemplate = restTemplate;
+		this.apacheHttpClient = apacheHttpClient;
+		this.apacheHttpClientWithInterceptor = apacheHttpClientWithInterceptor;
 	}
 
 	public String go() {
 		String requestUrl = this.base + "/test";
 		log.info("Will send a request to [" + requestUrl + "]");
 		return this.restTemplate.getForEntity(requestUrl, String.class).getBody();
+	}
+
+	public String goWithApacheClient() {
+		String requestUrl = this.base + "/test";
+		log.info("Will send a request to [" + requestUrl + "]");
+		return this.apacheHttpClient.getForEntity(requestUrl, String.class).getBody();
+	}
+
+	public String goWithApacheClientAndAdditonalInterceptor() {
+		String requestUrl = this.base + "/test";
+		log.info("Will send a request to [" + requestUrl + "]");
+		return this.apacheHttpClientWithInterceptor.getForEntity(requestUrl, String.class).getBody();
 	}
 
 	public String link() {

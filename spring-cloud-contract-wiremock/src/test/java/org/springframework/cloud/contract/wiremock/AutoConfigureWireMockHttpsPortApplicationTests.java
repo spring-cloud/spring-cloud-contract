@@ -30,6 +30,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * @author Dave Syer
+ * @author Nikola Kološnjaji
+ *
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = WiremockTestsApplication.class,
 		properties = "app.baseUrl=https://localhost:${wiremock.server.https-port}",
@@ -48,6 +53,20 @@ public class AutoConfigureWireMockHttpsPortApplicationTests {
 		stubFor(get(urlEqualTo("/test"))
 				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 		assertThat(this.service.go()).isEqualTo("Hello World!");
+	}
+
+	@Test
+	public void contextLoadsWithApacheClient() throws Exception {
+		stubFor(get(urlEqualTo("/test"))
+				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
+		assertThat(this.service.goWithApacheClient()).isEqualTo("Hello World!");
+	}
+
+	@Test
+	public void contextLoadsWithApacheClientAndAdditonalInterceptor() throws Exception {
+		stubFor(get(urlEqualTo("/test"))
+				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
+		assertThat(this.service.goWithApacheClientAndAdditonalInterceptor()).isEqualTo("Hello World!");
 	}
 
 	@Test

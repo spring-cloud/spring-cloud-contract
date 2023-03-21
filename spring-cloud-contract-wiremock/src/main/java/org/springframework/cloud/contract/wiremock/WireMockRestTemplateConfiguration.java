@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.wiremock;
 
+import java.lang.reflect.Field;
+
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
@@ -29,13 +31,17 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.client.RestTemplateCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.InterceptingClientHttpRequestFactory;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import static org.apache.hc.client5.http.ssl.NoopHostnameVerifier.INSTANCE;
 
 /**
  * @author Dave Syer
+ * @author Nikola Kološnjaji
  *
  */
 @Configuration(proxyBeanMethods = false)
@@ -48,10 +54,19 @@ public class WireMockRestTemplateConfiguration {
 		return new RestTemplateCustomizer() {
 			@Override
 			public void customize(RestTemplate restTemplate) {
-				if (restTemplate.getRequestFactory() instanceof HttpComponentsClientHttpRequestFactory) {
-					HttpComponentsClientHttpRequestFactory factory = (HttpComponentsClientHttpRequestFactory) restTemplate
-							.getRequestFactory();
+				if (restTemplate.getRequestFactory() instanceof HttpComponentsClientHttpRequestFactory factory) {
 					factory.setHttpClient(createSslHttpClient());
+				}
+				else if (restTemplate.getRequestFactory() instanceof InterceptingClientHttpRequestFactory) {
+					Field requestFactoryField = ReflectionUtils.findField(RestTemplate.class, "requestFactory");
+					if (requestFactoryField != null) {
+						requestFactoryField.setAccessible(true);
+						ClientHttpRequestFactory requestFactory = (ClientHttpRequestFactory) ReflectionUtils
+								.getField(requestFactoryField, restTemplate);
+						if (requestFactory instanceof HttpComponentsClientHttpRequestFactory factory) {
+							factory.setHttpClient(createSslHttpClient());
+						}
+					}
 				}
 			}
 
