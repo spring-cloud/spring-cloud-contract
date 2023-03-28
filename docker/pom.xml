@@ -28,16 +28,16 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 		</profile>
-		<profile>
-			<id>integration</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<modules>
-				<module>spring-cloud-contract-docker</module>
-				<module>spring-cloud-contract-stub-runner-docker</module>
-			</modules>
-		</profile>
+<!--		<profile>-->
+<!--			<id>integration</id>-->
+<!--			<activation>-->
+<!--				<activeByDefault>false</activeByDefault>-->
+<!--			</activation>-->
+<!--			<modules>-->
+<!--				<module>spring-cloud-contract-docker</module>-->
+<!--				<module>spring-cloud-contract-stub-runner-docker</module>-->
+<!--			</modules>-->
+<!--		</profile>-->
 		<profile>
 			<id>deploy</id>
 			<activation>
