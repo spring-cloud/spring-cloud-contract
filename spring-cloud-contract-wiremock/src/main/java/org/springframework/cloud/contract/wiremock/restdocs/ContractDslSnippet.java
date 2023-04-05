@@ -84,11 +84,15 @@ public class ContractDslSnippet extends TemplatedSnippet {
 	@Override
 	public void document(Operation operation) throws IOException {
 		TemplateEngine templateEngine = (TemplateEngine) operation.getAttributes().get(TemplateEngine.class.getName());
-		String renderedContract = templateEngine.compileTemplate("default-dsl-contract-only")
+		String renderedContract = templateEngine.compileTemplate(getTemplate())
 				.render(createModelForContract(operation));
 		this.model.put("contract", renderedContract);
 		storeDslContract(operation, renderedContract);
 		super.document(operation);
+	}
+
+	protected String getTemplate() {
+		return "default-dsl-contract-only";
 	}
 
 	private void insertResponseModel(Operation operation, Map<String, Object> model) {
@@ -152,7 +156,16 @@ public class ContractDslSnippet extends TemplatedSnippet {
 		Map<String, Object> modelForContract = new HashMap<>();
 		insertRequestModel(operation, modelForContract);
 		insertResponseModel(operation, modelForContract);
+		insertAdditionalModel(operation, modelForContract);
 		return modelForContract;
+	}
+
+	protected void insertAdditionalModel(Operation operation, Map<String, Object> modelForContract) {
+		boolean hasPriority = getAttributes().containsKey("priority");
+		modelForContract.put("priority_present", hasPriority);
+		if (hasPriority) {
+			modelForContract.put("priority", getAttributes().get("priority"));
+		}
 	}
 
 	private void storeDslContract(Operation operation, String content) throws IOException {

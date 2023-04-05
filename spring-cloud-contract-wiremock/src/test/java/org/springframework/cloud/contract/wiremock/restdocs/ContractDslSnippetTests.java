@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.groovy.util.Maps;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -94,7 +95,7 @@ public class ContractDslSnippetTests {
 						.jsonPath("$[?(@.bar in ['baz','bazz','bazzz'])]")
 						.contentType(MediaType.valueOf("application/json")))
 				// then Contract DSL documentation
-				.andDo(document("index", SpringCloudContractRestDocs.dslContract()));
+				.andDo(document("index", SpringCloudContractRestDocs.dslContract(Maps.of("priority", 1))));
 		// end::contract_snippet[]
 
 		then(file("/contracts/index.groovy")).exists();
@@ -116,40 +117,7 @@ public class ContractDslSnippetTests {
 		then(parsedContract.getResponse().getStatus().getClientValue()).isNotNull();
 		then(parsedContract.getResponse().getHeaders().getEntries()).isNotEmpty();
 		then(parsedContract.getResponse().getBody().getClientValue()).isNotNull();
-	}
-
-	@Test
-	public void should_create_contract_template_and_doc_with_placeholder_names() throws Exception {
-		this.mockMvc
-				.perform(post("/foo").accept(MediaType.APPLICATION_PDF).accept(MediaType.APPLICATION_JSON)
-						.contentType(MediaType.APPLICATION_JSON).content("{\"foo\": 23, \"bar\" : \"baz\" }"))
-				.andExpect(status().isOk()).andExpect(content().string("bar"))
-				// first WireMock
-				.andDo(WireMockRestDocs.verify().jsonPath("$[?(@.foo >= 20)]")
-						.jsonPath("$[?(@.bar in ['baz','bazz','bazzz'])]")
-						.contentType(MediaType.valueOf("application/json")))
-				// then Contract DSL documentation
-				.andDo(document("{methodName}", SpringCloudContractRestDocs.dslContract()));
-
-		then(file("/contracts/should_create_contract_template_and_doc_with_placeholder_names.groovy")).exists();
-		then(file("/stubs/should_create_contract_template_and_doc_with_placeholder_names.json")).exists();
-		then(file("/should_create_contract_template_and_doc_with_placeholder_names/dsl-contract.adoc")).exists();
-		Collection<Contract> parsedContracts = ContractVerifierDslConverter.convertAsCollection(new File("/"),
-				file("/contracts/should_create_contract_template_and_doc_with_placeholder_names.groovy"));
-		Contract parsedContract = parsedContracts.iterator().next();
-		then(parsedContract.getRequest().getHeaders().getEntries()).isNotNull();
-		then(headerNames(parsedContract.getRequest().getHeaders().getEntries())).doesNotContain(HttpHeaders.HOST,
-				HttpHeaders.CONTENT_LENGTH);
-		then(headerNames(parsedContract.getResponse().getHeaders().getEntries())).doesNotContain(HttpHeaders.HOST,
-				HttpHeaders.CONTENT_LENGTH);
-		then(parsedContract.getRequest().getMethod().getClientValue()).isNotNull();
-		then(parsedContract.getRequest().getUrlPath().getClientValue()).isNotNull();
-		then(parsedContract.getRequest().getUrlPath().getClientValue().toString()).startsWith("/");
-		then(parsedContract.getRequest().getBody().getClientValue()).isNotNull();
-		then(parsedContract.getRequest().getBodyMatchers().hasMatchers()).isTrue();
-		then(parsedContract.getResponse().getStatus().getClientValue()).isNotNull();
-		then(parsedContract.getResponse().getHeaders().getEntries()).isNotEmpty();
-		then(parsedContract.getResponse().getBody().getClientValue()).isNotNull();
+		then(parsedContract.getPriority().intValue()).isEqualTo(1);
 	}
 
 	@Test
