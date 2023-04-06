@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.groovy.util.Maps;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -94,7 +95,7 @@ public class ContractDslSnippetTests {
 						.jsonPath("$[?(@.bar in ['baz','bazz','bazzz'])]")
 						.contentType(MediaType.valueOf("application/json")))
 				// then Contract DSL documentation
-				.andDo(document("index", SpringCloudContractRestDocs.dslContract()));
+				.andDo(document("index", SpringCloudContractRestDocs.dslContract(Maps.of("priority", 1))));
 		// end::contract_snippet[]
 
 		then(file("/contracts/index.groovy")).exists();
@@ -116,6 +117,7 @@ public class ContractDslSnippetTests {
 		then(parsedContract.getResponse().getStatus().getClientValue()).isNotNull();
 		then(parsedContract.getResponse().getHeaders().getEntries()).isNotEmpty();
 		then(parsedContract.getResponse().getBody().getClientValue()).isNotNull();
+		then(parsedContract.getPriority().intValue()).isEqualTo(1);
 	}
 
 	@Test
