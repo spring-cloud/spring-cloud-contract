@@ -544,6 +544,62 @@ Contract.make {
 The generated document (formatted in Asciidoc in this case) contains a formatted
 contract. The location of this file would be `index/dsl-contract.adoc`.
 
+[[features-restdocs-priority-attribute]]
+==== Specifying the priority attribute
+
+The method `SpringCloudContractRestDocs.dslContract()` takes an optional Map parameter that allows you to specify additional attributes in the template.
+
+One of these attributes is the <<contract-dsl-http-top-level-elements,priority>> field that you may specify as follows:
+
+[source,java,indent=0]
+----
+SpringCloudContractRestDocs.dslContract(Map.of("priority", 1))
+----
+
+[[features-restdocs-override]]
+==== Overriding the DSL contract template
+
+By default, the output of the contract is based on a file named `default-dsl-contract-only.snippet`.
+
+You may provide a custom template file instead by overriding the getTemplate() method as follows:
+
+[source,java,indent=0]
+----
+new ContractDslSnippet(){
+    @Override
+    protected String getTemplate() {
+        return "custom-dsl-contract";
+    }
+}));
+----
+
+so the example above showing this line
+[source,java,indent=0]
+----
+.andDo(document("index", SpringCloudContractRestDocs.dslContract()));
+----
+
+should be changed to:
+[source,java,indent=0]
+----
+.andDo(document("index", new ContractDslSnippet(){
+                            @Override
+                            protected String getTemplate() {
+                                return "custom-dsl-template";
+                            }
+                        }));
+----
+
+Templates are resolved by looking for resources on the classpath. The following locations are checked in order:
+
+* `org/springframework/restdocs/templates/${templateFormatId}/${name}.snippet`
+* `org/springframework/restdocs/templates/${name}.snippet`
+* `org/springframework/restdocs/templates/${templateFormatId}/default-${name}.snippet`
+
+Therefore in the example above you should place a file named custom-dsl-template.snippet in  `src/test/resources/org/springframework/restdocs/templates/custom-dsl-template.snippet`
+
+
+
 [[features-graphql]]
 === GraphQL
 
