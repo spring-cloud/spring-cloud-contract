@@ -16,6 +16,12 @@
 
 package org.springframework.cloud.contract.verifier.plugin;
 
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import javax.inject.Inject;
+
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -24,7 +30,9 @@ import org.gradle.api.attributes.Bundling;
 import org.gradle.api.attributes.Category;
 import org.gradle.api.attributes.LibraryElements;
 import org.gradle.api.attributes.Usage;
-import org.gradle.api.file.*;
+import org.gradle.api.file.Directory;
+import org.gradle.api.file.FileCollection;
+import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.internal.HasConvention;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
@@ -33,6 +41,8 @@ import org.gradle.api.plugins.GroovyPlugin;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JvmTestSuitePlugin;
+import org.gradle.api.plugins.jvm.JvmTestSuite;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
@@ -43,10 +53,9 @@ import org.gradle.api.tasks.SourceSetOutput;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.api.tasks.testing.Test;
+import org.gradle.testing.base.TestingExtension;
+import org.gradle.util.GradleVersion;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
-
-import javax.inject.Inject;
-import java.io.File;
 
 /**
  * Gradle plugin for Spring Cloud Contract Verifier that from the DSL contract can
@@ -108,46 +117,72 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 	public void apply(Project project) {
 		this.project = project;
 		project.getPlugins().apply(JavaPlugin.class);
+		project.getPlugins().apply(JvmTestSuitePlugin.class);
 		ContractVerifierExtension extension = project.getExtensions().create(EXTENSION_NAME,
 				ContractVerifierExtension.class);
 
-		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
-		SourceSet contractTestSourceSet = configureSourceSets(extension, javaConvention);
-		configureConfigurations();
-		registerContractTestTask(contractTestSourceSet);
-
-		TaskProvider<ContractsCopyTask> copyContracts = createAndConfigureCopyContractsTask(extension);
-		TaskProvider<GenerateClientStubsFromDslTask> generateClientStubs = createAndConfigureGenerateClientStubs(
+		TaskProvider<ContractsCopyTask> copyContracts = registerCopyContractsTask(extension);
+		TaskProvider<GenerateClientStubsFromDslTask> generateClientStubs = registerGenerateClientStubsTask(
 				extension, copyContracts);
 
-		createAndConfigureStubsJarTasks(extension, generateClientStubs);
-		createGenerateTestsTask(extension, contractTestSourceSet, copyContracts);
-		createAndConfigurePublishStubsToScmTask(extension, generateClientStubs);
+		registerStubsJarTask(extension, generateClientStubs);
+		TaskProvider<GenerateServerTestsTask> generateServerTestsTaskProvider =
+				registerGenerateServerTestsTask(extension, copyContracts);
+		registerPublishStubsToScmTask(extension, generateClientStubs);
+
+
+		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
+		TestingExtension testing = project.getExtensions().getByType(TestingExtension.class);
+		testing.getSuites().register("contractTest", JvmTestSuite.class, contractTestSuite -> {
+			contractTestSuite.useJUnitJupiter();
+
+			contractTestSuite.dependencies(dependencies -> {
+				if (GradleVersion.current().compareTo(GradleVersion.version("7.6")) < 0) {
+					try {
+						Method implementation = dependencies.getClass().getMethod("implementation", Object.class);
+						implementation.invoke(dependencies, project);
+					} catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+						throw new RuntimeException("Unable to add project dependencies", e);
+					}
+				} else {
+					dependencies.getImplementation().add(dependencies.project());
+				}
+			});
+
+			contractTestSuite.sources(sourceSet -> {
+				configureSourceSets(extension, javaConvention, sourceSet);
+
+				project.getTasks().named(sourceSet.getProcessResourcesTaskName(), processContractTestResourcesTask -> {
+					processContractTestResourcesTask.dependsOn(generateServerTestsTaskProvider);
+				});
+				project.getTasks().named(sourceSet.getCompileJavaTaskName(), compileContractTestJava -> compileContractTestJava.dependsOn(generateServerTestsTaskProvider));
+				project.getPlugins().withType(GroovyPlugin.class, groovyPlugin -> {
+					project.getTasks().named(sourceSet.getCompileTaskName("groovy"), compileContractTestGroovy -> {
+						compileContractTestGroovy.dependsOn(generateServerTestsTaskProvider);
+					});
+				});
+				project.getPlugins().withId("kotlin", kotlinPlugin -> {
+					project.getTasks().named(sourceSet.getCompileTaskName("kotlin"), compileContractTestKotlin -> {
+						compileContractTestKotlin.dependsOn(generateServerTestsTaskProvider);
+					});
+				});
+				project.getPlugins().withId("org.jetbrains.kotlin.jvm", kotlinJvmPlugin -> {
+					project.getTasks().named(sourceSet.getCompileTaskName("kotlin"), compileContractTestKotlin -> {
+						compileContractTestKotlin.dependsOn(generateServerTestsTaskProvider);
+					});
+				});
+			});
+
+			contractTestSuite.getTargets().all(testSuiteTarget -> configureTestTask(testSuiteTarget.getTestTask()));
+		});
+
+		configureConfigurations();
 
 		project.getDependencies().add(CONTRACT_TEST_GENERATOR_RUNTIME_CLASSPATH_CONFIGURATION_NAME, "org.springframework.cloud:spring-cloud-contract-converters:" + SPRING_CLOUD_VERSION);
-
-		project.afterEvaluate(inner -> {
-			if (extension.getTestFramework().get() == TestFramework.SPOCK) {
-				DirectoryProperty generatedTestSourcesDir = extension.getGeneratedTestGroovySourcesDir();
-				if (generatedTestSourcesDir.isPresent()) {
-					project.getPlugins().withType(GroovyPlugin.class, groovyPlugin -> {
-						GroovySourceSet groovy = ((HasConvention) contractTestSourceSet).getConvention()
-								.getPlugin(GroovySourceSet.class);
-						groovy.getGroovy().srcDirs(generatedTestSourcesDir);
-					});
-				}
-			} else {
-				DirectoryProperty generatedTestSourcesDir = extension.getGeneratedTestJavaSourcesDir();
-				if (generatedTestSourcesDir.isPresent()) {
-					contractTestSourceSet.getJava().srcDirs(generatedTestSourcesDir);
-				}
-			}
-		});
 	}
 
-	private SourceSet configureSourceSets(ContractVerifierExtension extension, JavaPluginConvention javaConvention) {
+	private SourceSet configureSourceSets(ContractVerifierExtension extension, JavaPluginConvention javaConvention, SourceSet contractTest) {
 		SourceSetContainer sourceSets = javaConvention.getSourceSets();
-		SourceSet contractTest = sourceSets.create(CONTRACT_TEST_SOURCE_SET_NAME);
 		contractTest.getJava().srcDirs(extension.getGeneratedTestJavaSourcesDir());
 		project.getPlugins().withType(GroovyPlugin.class, groovyPlugin -> {
 			GroovySourceSet groovy = ((HasConvention) contractTest).getConvention().getPlugin(GroovySourceSet.class);
@@ -195,21 +230,18 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 		});
 	}
 
-	private void registerContractTestTask(SourceSet contractTestSourceSet) {
-		TaskProvider<Test> contractTestTask = project.getTasks().register(CONTRACT_TEST_TASK_NAME, Test.class,
-				contractTest -> {
-					contractTest.setDescription("Runs the contract tests");
-					contractTest.setGroup(GROUP_NAME);
-					contractTest.setTestClassesDirs(contractTestSourceSet.getOutput().getClassesDirs());
-					contractTest.setClasspath(contractTestSourceSet.getRuntimeClasspath());
+	private void configureTestTask(TaskProvider<Test> contractTestTaskProvider) {
+		contractTestTaskProvider.configure(contractTest -> {
+			contractTest.setDescription("Runs the contract tests");
+			contractTest.setGroup(GROUP_NAME);
 
-					contractTest.mustRunAfter(project.getTasks().named(JavaPlugin.TEST_TASK_NAME));
-				});
+			contractTest.shouldRunAfter(project.getTasks().named(JavaPlugin.TEST_TASK_NAME));
+		});
 
-		project.getTasks().named(JavaBasePlugin.CHECK_TASK_NAME, check -> check.dependsOn(contractTestTask));
+		project.getTasks().named(JavaBasePlugin.CHECK_TASK_NAME, check -> check.dependsOn(contractTestTaskProvider));
 	}
 
-	private void createGenerateTestsTask(ContractVerifierExtension extension, SourceSet contractTestSourceSet,
+	private TaskProvider<GenerateServerTestsTask> registerGenerateServerTestsTask(ContractVerifierExtension extension,
 			TaskProvider<ContractsCopyTask> copyContracts) {
 		TaskProvider<GenerateServerTestsTask> task = project.getTasks().register(GenerateServerTestsTask.TASK_NAME,
 				GenerateServerTestsTask.class);
@@ -252,28 +284,10 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 
 			generateServerTestsTask.dependsOn(copyContracts);
 		});
-		project.getTasks().named(contractTestSourceSet.getProcessResourcesTaskName(), processContractTestResourcesTask -> {
-			processContractTestResourcesTask.dependsOn(task);
-		});
-		project.getTasks().named(contractTestSourceSet.getCompileJavaTaskName(), compileContractTestJava -> compileContractTestJava.dependsOn(task));
-		project.getPlugins().withType(GroovyPlugin.class, groovyPlugin -> {
-			project.getTasks().named(contractTestSourceSet.getCompileTaskName("groovy"), compileContractTestGroovy -> {
-				compileContractTestGroovy.dependsOn(task);
-			});
-		});
-		project.getPlugins().withId("kotlin", kotlinPlugin -> {
-			project.getTasks().named(contractTestSourceSet.getCompileTaskName("kotlin"), compileContractTestKotlin -> {
-				compileContractTestKotlin.dependsOn(task);
-			});
-		});
-		project.getPlugins().withId("org.jetbrains.kotlin.jvm", kotlinJvmPlugin -> {
-			project.getTasks().named(contractTestSourceSet.getCompileTaskName("kotlin"), compileContractTestKotlin -> {
-				compileContractTestKotlin.dependsOn(task);
-			});
-		});
+		return task;
 	}
 
-	private void createAndConfigurePublishStubsToScmTask(ContractVerifierExtension extension,
+	private void registerPublishStubsToScmTask(ContractVerifierExtension extension,
 			TaskProvider<GenerateClientStubsFromDslTask> generateClientStubs) {
 		TaskProvider<PublishStubsToScmTask> task = project.getTasks().register(PublishStubsToScmTask.TASK_NAME,
 				PublishStubsToScmTask.class);
@@ -305,7 +319,7 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 		});
 	}
 
-	private TaskProvider<GenerateClientStubsFromDslTask> createAndConfigureGenerateClientStubs(
+	private TaskProvider<GenerateClientStubsFromDslTask> registerGenerateClientStubsTask(
 			ContractVerifierExtension extension, TaskProvider<ContractsCopyTask> copyContracts) {
 		TaskProvider<GenerateClientStubsFromDslTask> task = project.getTasks().register(
 				GenerateClientStubsFromDslTask.TASK_NAME, GenerateClientStubsFromDslTask.class, generateClientStubs -> {
@@ -327,7 +341,7 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 		return task;
 	}
 
-	private void createAndConfigureStubsJarTasks(ContractVerifierExtension extension,
+	private void registerStubsJarTask(ContractVerifierExtension extension,
 			TaskProvider<GenerateClientStubsFromDslTask> generateClientStubs) {
 		TaskProvider<Jar> verifierStubsJar = project.getTasks().register(VERIFIER_STUBS_JAR_TASK_NAME, Jar.class);
 		verifierStubsJar.configure(stubsJar -> {
@@ -342,7 +356,7 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 		project.artifacts(artifactHandler -> artifactHandler.add("archives", verifierStubsJar));
 	}
 
-	private TaskProvider<ContractsCopyTask> createAndConfigureCopyContractsTask(ContractVerifierExtension extension) {
+	private TaskProvider<ContractsCopyTask> registerCopyContractsTask(ContractVerifierExtension extension) {
 		TaskProvider<ContractsCopyTask> task = project.getTasks().register(ContractsCopyTask.TASK_NAME,
 				ContractsCopyTask.class, contractsCopyTask -> {
 					contractsCopyTask.setGroup(GROUP_NAME);
