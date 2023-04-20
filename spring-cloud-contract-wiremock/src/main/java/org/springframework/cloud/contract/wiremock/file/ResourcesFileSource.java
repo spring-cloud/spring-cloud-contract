@@ -27,6 +27,8 @@ import com.github.tomakehurst.wiremock.common.ClasspathFileSource;
 import com.github.tomakehurst.wiremock.common.FileSource;
 import com.github.tomakehurst.wiremock.common.SingleRootFileSource;
 import com.github.tomakehurst.wiremock.common.TextFile;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
@@ -41,6 +43,8 @@ import static java.util.Arrays.asList;
  * @author Hunhee Jung
  */
 public class ResourcesFileSource implements FileSource {
+
+	private static final Log log = LogFactory.getLog(ResourcesFileSource.class);
 
 	private final FileSource[] sources;
 
@@ -109,6 +113,9 @@ public class ResourcesFileSource implements FileSource {
 	@Override
 	public BinaryFile getBinaryFileNamed(String name) {
 		for (FileSource resource : this.sources) {
+			if (log.isDebugEnabled()) {
+				log.debug("Trying FileSource with path " + resource.getPath());
+			}
 			try {
 				if (resource instanceof ClasspathFileSource) {
 					ClasspathFileSource classpathFileSource = (ClasspathFileSource) resource;
@@ -125,25 +132,36 @@ public class ResourcesFileSource implements FileSource {
 				}
 			}
 			catch (RuntimeException e) {
-				// Ignore - find next stub file
+				if (log.isDebugEnabled()) {
+					log.debug("Caught exception while trying to create file handle for file " + name
+							+ ", trying next FileSource", e);
+				}
 			}
 			catch (IOException e) {
-				// Ignore - find next stub file
+				if (log.isDebugEnabled()) {
+					log.debug("Caught exception while trying to create file handle for file " + name
+							+ ", trying next FileSource", e);
+				}
 			}
 		}
-		throw new IllegalStateException("Cannot create file for " + name);
+		throw new IllegalStateException("Cannot create file handler for " + name);
 	}
 
 	@Override
 	public TextFile getTextFileNamed(String name) {
 		for (FileSource resource : this.sources) {
+			if (log.isDebugEnabled()) {
+				log.debug("Trying FileSource with path " + resource.getPath());
+			}
 			TextFile file = resource.getTextFileNamed(name);
 			try {
 				file.readContentsAsString();
 				return file;
 			}
 			catch (RuntimeException e) {
-				// Ignore
+				if (log.isDebugEnabled()) {
+					log.debug("Caught exception while trying to create file handler for " + name, e);
+				}
 			}
 		}
 		return null;
@@ -158,6 +176,9 @@ public class ResourcesFileSource implements FileSource {
 	public FileSource child(String subDirectoryName) {
 		List<FileSource> childSources = new ArrayList<>();
 		for (FileSource resource : this.sources) {
+			if (log.isDebugEnabled()) {
+				log.debug("Trying FileSource with path " + resource.getPath());
+			}
 			try {
 				UrlResource uri = new UrlResource(resource.child(subDirectoryName).getUri());
 				if (uri.exists()) {
@@ -166,7 +187,10 @@ public class ResourcesFileSource implements FileSource {
 				}
 			}
 			catch (IOException e) {
-				// Ignore
+				if (log.isDebugEnabled()) {
+					log.debug("Caught exception while trying to create file source for " + subDirectoryName
+							+ ", continuing with next source", e);
+				}
 			}
 		}
 		if (!childSources.isEmpty()) {
@@ -178,6 +202,9 @@ public class ResourcesFileSource implements FileSource {
 	@Override
 	public String getPath() {
 		for (FileSource resource : this.sources) {
+			if (log.isDebugEnabled()) {
+				log.debug("Trying FileSource with path " + resource.getPath());
+			}
 			try {
 				UrlResource uri = new UrlResource(resource.getUri());
 				if (uri.exists()) {
@@ -185,7 +212,10 @@ public class ResourcesFileSource implements FileSource {
 				}
 			}
 			catch (IOException e) {
-				// Ignore
+				if (log.isDebugEnabled()) {
+					log.debug("Caught exception while trying to create URL file handler for " + resource.getPath()
+							+ ", continuing with next source", e);
+				}
 			}
 		}
 		return this.sources[0].getPath();
@@ -194,6 +224,9 @@ public class ResourcesFileSource implements FileSource {
 	@Override
 	public URI getUri() {
 		for (FileSource resource : this.sources) {
+			if (log.isDebugEnabled()) {
+				log.debug("Trying FileSource with path " + resource.getPath());
+			}
 			try {
 				UrlResource uri = new UrlResource(resource.getUri());
 				if (uri.exists()) {
@@ -201,7 +234,10 @@ public class ResourcesFileSource implements FileSource {
 				}
 			}
 			catch (IOException e) {
-				// Ignore
+				if (log.isDebugEnabled()) {
+					log.debug("Caught exception while trying to create URL file handler for " + resource.getPath()
+							+ ", continuing with next source", e);
+				}
 			}
 		}
 		return this.sources[0].getUri();
