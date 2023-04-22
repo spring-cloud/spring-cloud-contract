@@ -37,12 +37,8 @@ public class Part {
 	private final DslProperty contentTransferEncoding;
 
 	public Part(Map<String, Object> properties) {
-		this(
-			value(properties, "filename"),
-			value(properties, "value"),
-			value(properties, "contentType"),
-			value(properties, "contentTransferEncoding")
-		);
+		this(value(properties, "filename"), value(properties, "value"), value(properties, "contentType"),
+				value(properties, "contentTransferEncoding"));
 	}
 
 	public Part(Object value) {
@@ -58,22 +54,14 @@ public class Part {
 	}
 
 	public Part(Object filename, Object value, Object contentType, Object contentTransferEncoding) {
-		this.filename = new DslProperty<>(
-			ContractUtils.CLIENT_VALUE.apply(filename),
-			ContractUtils.SERVER_VALUE.apply(filename)
-		);
-		this.value = new DslProperty<>(
-				ContractUtils.CLIENT_VALUE.apply(value),
-				ContractUtils.SERVER_VALUE.apply(value)
-		);
-		this.contentType = new DslProperty<>(
-				ContractUtils.CLIENT_VALUE.apply(contentType),
-				ContractUtils.SERVER_VALUE.apply(contentType)
-		);
-		this.contentTransferEncoding = new DslProperty<>(
-				ContractUtils.CLIENT_VALUE.apply(contentTransferEncoding),
-				ContractUtils.SERVER_VALUE.apply(contentTransferEncoding)
-		);
+		this.filename = new DslProperty<>(ContractUtils.CLIENT_VALUE.apply(filename),
+				ContractUtils.SERVER_VALUE.apply(filename));
+		this.value = new DslProperty<>(ContractUtils.CLIENT_VALUE.apply(value),
+				ContractUtils.SERVER_VALUE.apply(value));
+		this.contentType = new DslProperty<>(ContractUtils.CLIENT_VALUE.apply(contentType),
+				ContractUtils.SERVER_VALUE.apply(contentType));
+		this.contentTransferEncoding = new DslProperty<>(ContractUtils.CLIENT_VALUE.apply(contentTransferEncoding),
+				ContractUtils.SERVER_VALUE.apply(contentTransferEncoding));
 	}
 
 	private static Object value(Map<String, Object> map, String key) {
@@ -105,8 +93,7 @@ public class Part {
 			return false;
 		}
 		Part part = (Part) o;
-		return Objects.equals(filename, part.filename)
-				&& Objects.equals(value, part.value)
+		return Objects.equals(filename, part.filename) && Objects.equals(value, part.value)
 				&& Objects.equals(contentType, part.contentType)
 				&& Objects.equals(contentTransferEncoding, part.contentTransferEncoding);
 	}
@@ -118,12 +105,8 @@ public class Part {
 
 	@Override
 	public String toString() {
-		return "Part{"
-				+ "filename=" + filename
-				+ ", value=" + value
-				+ ", contentType=" + contentType
-				+ ", contentTransferEncoding=" + contentTransferEncoding
-				+ '}';
+		return "Part{" + "filename=" + filename + ", value=" + value + ", contentType=" + contentType
+				+ ", contentTransferEncoding=" + contentTransferEncoding + '}';
 	}
 
 }

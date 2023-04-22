@@ -36,8 +36,8 @@ class SpockExplicitMultipartGiven implements Given, ExplicitAcceptor {
 
 	private String getMultipartParameterLine(SingleContractMetadata metadata, Map.Entry<String, Object> parameter) {
 		if (parameter.getValue() instanceof Part) {
-			return ".multiPart(" + getMultipartFileParameterContent(metadata, parameter.getKey(),
-					(Part) parameter.getValue()) + ")";
+			return ".multiPart("
+					+ getMultipartFileParameterContent(metadata, parameter.getKey(), (Part) parameter.getValue()) + ")";
 		}
 		return getParameterString(parameter);
 	}

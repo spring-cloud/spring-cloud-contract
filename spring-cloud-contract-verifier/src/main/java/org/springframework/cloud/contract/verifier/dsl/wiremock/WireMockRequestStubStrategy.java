@@ -290,41 +290,31 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 
 					Object filename = part.getFilename().getClientValue();
 					if (!Objects.isNull(filename)) {
-						String contentDispositionHeader = String.format(
-							"form-data; name=\"%s\"; filename=\"%s\"",
-							it.getKey(),
-							filename
-						);
-						builder.withHeader(
-							HttpHeaders.CONTENT_DISPOSITION,
-							containsPattern(filename)
-								? new RegexPattern(contentDispositionHeader)
-								: new EqualToPattern(contentDispositionHeader)
-						);
+						String contentDispositionHeader = String.format("form-data; name=\"%s\"; filename=\"%s\"",
+								it.getKey(), filename);
+						builder.withHeader(HttpHeaders.CONTENT_DISPOSITION,
+								containsPattern(filename) ? new RegexPattern(contentDispositionHeader)
+										: new EqualToPattern(contentDispositionHeader));
 					}
 
 					Object contentType = part.getContentType().getClientValue();
 					if (!Objects.isNull(contentType)) {
-						builder.withHeader(
-							HttpHeaders.CONTENT_TYPE,
-							containsPattern(contentType)
-								? new RegexPattern(contentType.toString())
-								: new EqualToPattern(contentType.toString())
-						);
+						builder.withHeader(HttpHeaders.CONTENT_TYPE,
+								containsPattern(contentType) ? new RegexPattern(contentType.toString())
+										: new EqualToPattern(contentType.toString()));
 					}
 
 					Object contentTransferEncoding = part.getContentTransferEncoding().getClientValue();
 					if (!Objects.isNull(contentTransferEncoding)) {
-						builder.withHeader(
-							HttpHeaders.CONTENT_TYPE,
-							containsPattern(contentTransferEncoding)
-								? new RegexPattern(contentTransferEncoding.toString())
-								: new EqualToPattern(contentTransferEncoding.toString())
-						);
+						builder.withHeader(HttpHeaders.CONTENT_TYPE,
+								containsPattern(contentTransferEncoding)
+										? new RegexPattern(contentTransferEncoding.toString())
+										: new EqualToPattern(contentTransferEncoding.toString()));
 					}
 
 					builder.withBody(convertToValuePattern(part.getValue()));
-				} else {
+				}
+				else {
 					builder.withBody(convertToValuePattern(it.getValue()));
 				}
 				return builder;

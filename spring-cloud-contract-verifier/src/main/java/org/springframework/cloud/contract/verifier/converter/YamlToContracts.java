@@ -316,8 +316,7 @@ class YamlToContracts {
 														: new ExecutionProperty(fileContentCommand)),
 						new DslProperty<>(contentTypeValue, contentTypeCommand != null
 								? new ExecutionProperty(contentTypeCommand) : namedParam.contentType),
-						null)
-				);
+						null));
 			});
 			dslContractRequest.multipart(multipartMap);
 		}
