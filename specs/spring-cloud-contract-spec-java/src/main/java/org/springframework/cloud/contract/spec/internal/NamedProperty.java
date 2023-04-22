@@ -17,7 +17,6 @@
 package org.springframework.cloud.contract.spec.internal;
 
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Represents a property that has name and content. Used together with multipart requests.
@@ -63,22 +62,6 @@ public class NamedProperty extends Part {
 		}
 
 		return new DslProperty(o);
-	}
-
-	public DslProperty getName() {
-		return maybeDslProperty(super.getFilename());
-	}
-
-	public DslProperty getValue() {
-		return maybeDslProperty(super.getValue());
-	}
-
-	public DslProperty getContentType() {
-		return maybeDslProperty(super.getContentType());
-	}
-
-	private static DslProperty maybeDslProperty(DslProperty property) {
-		return Objects.isNull(property.getClientValue()) && Objects.isNull(property.getServerValue()) ? null : property;
 	}
 
 	@Override

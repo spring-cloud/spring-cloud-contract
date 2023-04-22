@@ -716,24 +716,26 @@ then:
 
 			assertThat(multipartData["file1"]).isInstanceOf(NamedProperty::class.java)
 			namedProperty = multipartData["file1"] as NamedProperty
-			assertThat(((namedProperty.name as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
-			assertThat((namedProperty.name as DslProperty<Any>).serverValue as String).isEqualTo("filename1")
+			assertThat(((namedProperty.filename as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
+			assertThat((namedProperty.filename as DslProperty<Any>).serverValue as String).isEqualTo("filename1")
 			assertThat(((namedProperty.value as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
 			assertThat((namedProperty.value as DslProperty<Any>).serverValue as String).isEqualTo("content1")
-			assertThat(namedProperty.contentType).isNull()
+			assertThat(namedProperty.contentType.serverValue).isNull()
+			assertThat(namedProperty.contentType.clientValue).isNull()
 
 			assertThat(multipartData["file2"]).isInstanceOf(NamedProperty::class.java)
 			namedProperty = multipartData["file2"] as NamedProperty
-			assertThat(((namedProperty.name as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
-			assertThat((namedProperty.name as DslProperty<Any>).serverValue as String).isEqualTo("filename2")
+			assertThat(((namedProperty.filename as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
+			assertThat((namedProperty.filename as DslProperty<Any>).serverValue as String).isEqualTo("filename2")
 			assertThat(((namedProperty.value as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
 			assertThat((namedProperty.value as DslProperty<Any>).serverValue as String).isEqualTo("content2")
-			assertThat(namedProperty.contentType).isNull()
+			assertThat(namedProperty.contentType.serverValue).isNull()
+			assertThat(namedProperty.contentType.clientValue).isNull()
 
 			assertThat(multipartData["test"]).isInstanceOf(NamedProperty::class.java)
 			namedProperty = multipartData["test"] as NamedProperty
-			assertThat(((namedProperty.name as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
-			assertThat((namedProperty.name as DslProperty<Any>).serverValue as String).isEqualTo("filename3")
+			assertThat(((namedProperty.filename as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
+			assertThat((namedProperty.filename as DslProperty<Any>).serverValue as String).isEqualTo("filename3")
 			assertThat(((namedProperty.value as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
 			assertThat(((namedProperty.value as DslProperty<Any>).serverValue as FromFileProperty).fileName()).isEqualTo("test.json")
 			assertThat((namedProperty.contentType as DslProperty<Any>).clientValue).isEqualTo("application/json")
