@@ -46,7 +46,7 @@ public class Part {
 	}
 
 	public Part(Object value, Object contentType) {
-		this(value, contentType, null);
+		this(null, value, contentType);
 	}
 
 	public Part(Object filename, Object value, Object contentType) {
