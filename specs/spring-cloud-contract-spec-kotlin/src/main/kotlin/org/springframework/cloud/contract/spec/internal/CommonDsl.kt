@@ -222,6 +222,18 @@ open class CommonDsl {
         }
     }
 
+	fun part(value: Any) = Part(value)
+
+	fun part(value: Any, contentType: Any) = Part(value, contentType)
+
+	fun part(filename: Any, value: Any, contentType: Any) = Part(filename, value, contentType)
+
+	fun part(filename: Any, value: Any, contentType: Any, contentTransferEncoding: Any) = Part(
+		filename, value, contentType, contentTransferEncoding
+	)
+
+	fun part(properties: Map<String, Any>) = Part(properties)
+
     fun named(name: DslProperty<Any>, value: DslProperty<Any>) = NamedProperty(name, value)
 
     fun named(name: DslProperty<Any>, value: DslProperty<Any>,
