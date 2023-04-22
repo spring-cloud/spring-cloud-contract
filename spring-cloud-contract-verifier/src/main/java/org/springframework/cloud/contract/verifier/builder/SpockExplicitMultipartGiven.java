@@ -2,7 +2,7 @@ package org.springframework.cloud.contract.verifier.builder;
 
 import java.util.Map;
 
-import org.springframework.cloud.contract.spec.internal.NamedProperty;
+import org.springframework.cloud.contract.spec.internal.Part;
 import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
@@ -35,9 +35,9 @@ class SpockExplicitMultipartGiven implements Given, ExplicitAcceptor {
 	}
 
 	private String getMultipartParameterLine(SingleContractMetadata metadata, Map.Entry<String, Object> parameter) {
-		if (parameter.getValue() instanceof NamedProperty) {
+		if (parameter.getValue() instanceof Part) {
 			return ".multiPart(" + getMultipartFileParameterContent(metadata, parameter.getKey(),
-					(NamedProperty) parameter.getValue()) + ")";
+					(Part) parameter.getValue()) + ")";
 		}
 		return getParameterString(parameter);
 	}
@@ -48,7 +48,7 @@ class SpockExplicitMultipartGiven implements Given, ExplicitAcceptor {
 	}
 
 	private String getMultipartFileParameterContent(SingleContractMetadata metadata, String propertyName,
-			NamedProperty propertyValue) {
+			Part propertyValue) {
 		return ContentUtils.getGroovyMultipartFileParameterContent(propertyName, propertyValue,
 				fileProp -> this.bodyReader.readBytesFromFileString(metadata, fileProp, CommunicationType.REQUEST));
 	}

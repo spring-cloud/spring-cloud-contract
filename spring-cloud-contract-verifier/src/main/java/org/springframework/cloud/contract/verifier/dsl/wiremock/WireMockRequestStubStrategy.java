@@ -51,8 +51,8 @@ import org.springframework.cloud.contract.spec.internal.DslProperty;
 import org.springframework.cloud.contract.spec.internal.FromFileProperty;
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy;
 import org.springframework.cloud.contract.spec.internal.MatchingType;
-import org.springframework.cloud.contract.spec.internal.NamedProperty;
 import org.springframework.cloud.contract.spec.internal.OptionalProperty;
+import org.springframework.cloud.contract.spec.internal.Part;
 import org.springframework.cloud.contract.spec.internal.PathBodyMatcher;
 import org.springframework.cloud.contract.spec.internal.QueryParameters;
 import org.springframework.cloud.contract.spec.internal.RegexPatterns;
@@ -278,12 +278,12 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			List<StringValuePattern> multipartPattern = ((Map<?, ?>) request.getMultipart()
 					.getClientValue())
 							.entrySet().stream().map(
-									it -> it.getValue() instanceof NamedProperty
+									it -> it.getValue() instanceof Part
 											? WireMock.matching(RegexPatterns.multipartFile(it.getKey(),
-													((NamedProperty) it.getValue()).getName().getClientValue(),
-													((NamedProperty) it.getValue()).getValue().getClientValue(),
+													((Part) it.getValue()).getFilename().getClientValue(),
+													((Part) it.getValue()).getValue().getClientValue(),
 													Optional.ofNullable(
-															((NamedProperty) it.getValue()).getContentType())
+															((Part) it.getValue()).getContentType())
 															.map(DslProperty::getClientValue).orElse(null)))
 											: WireMock.matching(RegexPatterns.multipartParam(it.getKey(),
 													MapConverter.getStubSideValuesForNonBody(it.getValue()))))

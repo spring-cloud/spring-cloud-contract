@@ -36,9 +36,9 @@ import org.springframework.cloud.contract.spec.internal.Input;
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy;
 import org.springframework.cloud.contract.spec.internal.MatchingType;
 import org.springframework.cloud.contract.spec.internal.Multipart;
-import org.springframework.cloud.contract.spec.internal.NamedProperty;
 import org.springframework.cloud.contract.spec.internal.NotToEscapePattern;
 import org.springframework.cloud.contract.spec.internal.OutputMessage;
+import org.springframework.cloud.contract.spec.internal.Part;
 import org.springframework.cloud.contract.spec.internal.QueryParameter;
 import org.springframework.cloud.contract.spec.internal.RegexProperty;
 import org.springframework.cloud.contract.spec.internal.Request;
@@ -146,12 +146,12 @@ class ContractsToYaml {
 			yamlContractRequest.matchers.multipart = new YamlContract.MultipartStubMatcher();
 			Map<String, Object> map = (Map<String, Object>) MapConverter.getStubSideValues(multipart);
 			map.forEach((key, value) -> {
-				if (value instanceof NamedProperty) {
-					Object fileName = Optional.ofNullable(((NamedProperty) value).getName())
+				if (value instanceof Part) {
+					Object fileName = Optional.ofNullable(((Part) value).getFilename())
 							.map(DslProperty::getClientValue).orElse(null);
-					Object fileContent = Optional.ofNullable(((NamedProperty) value).getValue())
+					Object fileContent = Optional.ofNullable(((Part) value).getValue())
 							.map(DslProperty::getClientValue).orElse(null);
-					Object contentType = Optional.ofNullable(((NamedProperty) value).getContentType())
+					Object contentType = Optional.ofNullable(((Part) value).getContentType())
 							.map(DslProperty::getClientValue).orElse(null);
 					if (fileName instanceof RegexProperty || fileContent instanceof RegexProperty
 							|| contentType instanceof RegexProperty) {
@@ -223,16 +223,16 @@ class ContractsToYaml {
 			yamlContractRequest.multipart = new YamlContract.Multipart();
 			Map<String, Object> map = (Map<String, Object>) MapConverter.getTestSideValues(multipart);
 			map.forEach((key, value) -> {
-				if (value instanceof NamedProperty) {
-					Object fileName = Optional.ofNullable(((NamedProperty) value).getName())
+				if (value instanceof Part) {
+					Object fileName = Optional.ofNullable(((Part) value).getFilename())
 							.map(DslProperty::getServerValue).orElse(null);
-					Object contentType = Optional.ofNullable(((NamedProperty) value).getContentType())
+					Object contentType = Optional.ofNullable(((Part) value).getContentType())
 							.map(DslProperty::getServerValue).orElse(null);
-					Object fileContent = Optional.ofNullable(((NamedProperty) value).getValue())
+					Object fileContent = Optional.ofNullable(((Part) value).getValue())
 							.map(DslProperty::getServerValue).orElse(null);
 					YamlContract.Named named = new YamlContract.Named();
 					named.paramName = key;
-					named.fileName = fileName instanceof String ? Optional.ofNullable(((NamedProperty) value).getName())
+					named.fileName = fileName instanceof String ? Optional.ofNullable(((Part) value).getFilename())
 							.map(DslProperty::getServerValue).map(Object::toString).orElse(null) : null;
 					named.fileContent = (String) Optional.ofNullable(fileContent).filter(f -> f instanceof String)
 							.orElse(null);

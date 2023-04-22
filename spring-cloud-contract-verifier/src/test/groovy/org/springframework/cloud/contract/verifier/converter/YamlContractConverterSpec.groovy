@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.converter
 
+import org.springframework.cloud.contract.spec.internal.Part
+
 import java.util.regex.Pattern
 
 import groovy.json.JsonSlurper
@@ -28,7 +30,6 @@ import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
-import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.QueryParameters
 import org.springframework.cloud.contract.spec.internal.RegexPatterns
 import org.springframework.cloud.contract.spec.internal.Url
@@ -492,10 +493,10 @@ class YamlContractConverterSpec extends Specification {
 			def testSide = MapConverter.getTestSideValues(contract.request.multipart)
 			testSide.formParameter == '"formParameterValue"'
 			testSide.someBooleanParameter == "true"
-			((NamedProperty) testSide.file).name.serverValue == "filename.csv"
-			((NamedProperty) testSide.file).name.clientValue.pattern() == RegexPatterns.nonEmpty().pattern()
-			((NamedProperty) testSide.file).value.serverValue == "file content"
-			((NamedProperty) testSide.file).value.clientValue.pattern() == RegexPatterns.nonEmpty().pattern()
+			((Part) testSide.file).filename.serverValue == "filename.csv"
+			((Part) testSide.file).filename.clientValue.pattern() == RegexPatterns.nonEmpty().pattern()
+			((Part) testSide.file).value.serverValue == "file content"
+			((Part) testSide.file).value.clientValue.pattern() == RegexPatterns.nonEmpty().pattern()
 		and:
 			contract.response.status.serverValue == 200
 	}

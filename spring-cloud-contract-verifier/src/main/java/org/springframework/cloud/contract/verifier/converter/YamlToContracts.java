@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.apache.commons.collections.MapUtils;
+import org.springframework.cloud.contract.spec.internal.Part;
 import org.yaml.snakeyaml.Yaml;
 
 import org.springframework.cloud.contract.spec.Contract;
@@ -50,7 +51,6 @@ import org.springframework.cloud.contract.spec.internal.Header;
 import org.springframework.cloud.contract.spec.internal.Headers;
 import org.springframework.cloud.contract.spec.internal.Input;
 import org.springframework.cloud.contract.spec.internal.MatchingTypeValue;
-import org.springframework.cloud.contract.spec.internal.NamedProperty;
 import org.springframework.cloud.contract.spec.internal.OutputMessage;
 import org.springframework.cloud.contract.spec.internal.RegexPatterns;
 import org.springframework.cloud.contract.spec.internal.Request;
@@ -305,7 +305,7 @@ class YamlToContracts {
 					contentTypeValue = matcher.contentType.regex != null ? Pattern.compile(matcher.contentType.regex)
 							: predefinedToPattern(matcher.contentType.predefined);
 				}
-				multipartMap.put(namedParam.paramName, new NamedProperty(
+				multipartMap.put(namedParam.paramName, new Part(
 						new DslProperty<>(fileNameValue,
 								fileNameCommand != null ? new ExecutionProperty(fileNameCommand) : namedParam.fileName),
 						new DslProperty<>(fileContentValue,
@@ -315,7 +315,9 @@ class YamlToContracts {
 												: fileContentAsBytes != null ? fileContentAsBytes.getBytes()
 														: new ExecutionProperty(fileContentCommand)),
 						new DslProperty<>(contentTypeValue, contentTypeCommand != null
-								? new ExecutionProperty(contentTypeCommand) : namedParam.contentType)));
+								? new ExecutionProperty(contentTypeCommand) : namedParam.contentType),
+						null)
+				);
 			});
 			dslContractRequest.multipart(multipartMap);
 		}
