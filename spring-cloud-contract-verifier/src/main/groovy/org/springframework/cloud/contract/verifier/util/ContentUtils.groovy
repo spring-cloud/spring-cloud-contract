@@ -607,13 +607,17 @@ class ContentUtils {
 	}
 
 	static String partName(Part property, String quote) {
-		return property.filename.serverValue instanceof ExecutionProperty ?
-				property.filename.serverValue.toString() : quote +
-				escapeJava(property.filename.serverValue.toString()) + quote
+		if (Objects.isNull(property.filename.serverValue)) {
+			return null;
+		} else if (property.filename.serverValue instanceof ExecutionProperty) {
+			return property.filename.serverValue.toString();
+		} else {
+			return quote + escapeJava(property.filename.serverValue.toString()) + quote;
+		}
 	}
 
 	static String partContentTypeNameIfPresent(Part property, String quote) {
-		if (!property.contentType) {
+		if (Objects.isNull(property.contentType.serverValue)) {
 			return ""
 		}
 		String contentType = property.contentType.serverValue instanceof ExecutionProperty ?
