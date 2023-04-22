@@ -308,7 +308,7 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 										: new EqualToPattern(contentTransferEncoding.toString()));
 					}
 
-					builder.withBody(convertToValuePattern(part.getValue()));
+					builder.withBody(convertToValuePattern(part.getBody()));
 				}
 				else {
 					builder.withBody(convertToValuePattern(it.getValue()));

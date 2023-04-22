@@ -149,7 +149,7 @@ class ContractsToYaml {
 				if (value instanceof Part) {
 					Object fileName = Optional.ofNullable(((Part) value).getFilename()).map(DslProperty::getClientValue)
 							.orElse(null);
-					Object fileContent = Optional.ofNullable(((Part) value).getValue()).map(DslProperty::getClientValue)
+					Object fileContent = Optional.ofNullable(((Part) value).getBody()).map(DslProperty::getClientValue)
 							.orElse(null);
 					Object contentType = Optional.ofNullable(((Part) value).getContentType())
 							.map(DslProperty::getClientValue).orElse(null);
@@ -228,7 +228,7 @@ class ContractsToYaml {
 							.orElse(null);
 					Object contentType = Optional.ofNullable(((Part) value).getContentType())
 							.map(DslProperty::getServerValue).orElse(null);
-					Object fileContent = Optional.ofNullable(((Part) value).getValue()).map(DslProperty::getServerValue)
+					Object fileContent = Optional.ofNullable(((Part) value).getBody()).map(DslProperty::getServerValue)
 							.orElse(null);
 					YamlContract.Named named = new YamlContract.Named();
 					named.paramName = key;

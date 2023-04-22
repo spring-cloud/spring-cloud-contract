@@ -718,8 +718,8 @@ then:
 			namedProperty = multipartData["file1"] as NamedProperty
 			assertThat(((namedProperty.filename as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
 			assertThat((namedProperty.filename as DslProperty<Any>).serverValue as String).isEqualTo("filename1")
-			assertThat(((namedProperty.value as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
-			assertThat((namedProperty.value as DslProperty<Any>).serverValue as String).isEqualTo("content1")
+			assertThat(((namedProperty.body as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
+			assertThat((namedProperty.body as DslProperty<Any>).serverValue as String).isEqualTo("content1")
 			assertThat(namedProperty.contentType.serverValue).isNull()
 			assertThat(namedProperty.contentType.clientValue).isNull()
 
@@ -727,8 +727,8 @@ then:
 			namedProperty = multipartData["file2"] as NamedProperty
 			assertThat(((namedProperty.filename as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
 			assertThat((namedProperty.filename as DslProperty<Any>).serverValue as String).isEqualTo("filename2")
-			assertThat(((namedProperty.value as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
-			assertThat((namedProperty.value as DslProperty<Any>).serverValue as String).isEqualTo("content2")
+			assertThat(((namedProperty.body as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
+			assertThat((namedProperty.body as DslProperty<Any>).serverValue as String).isEqualTo("content2")
 			assertThat(namedProperty.contentType.serverValue).isNull()
 			assertThat(namedProperty.contentType.clientValue).isNull()
 
@@ -736,8 +736,8 @@ then:
 			namedProperty = multipartData["test"] as NamedProperty
 			assertThat(((namedProperty.filename as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
 			assertThat((namedProperty.filename as DslProperty<Any>).serverValue as String).isEqualTo("filename3")
-			assertThat(((namedProperty.value as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
-			assertThat(((namedProperty.value as DslProperty<Any>).serverValue as FromFileProperty).fileName()).isEqualTo("test.json")
+			assertThat(((namedProperty.body as DslProperty<Any>).clientValue as RegexProperty).pattern()).isEqualTo("[\\S\\s]+")
+			assertThat(((namedProperty.body as DslProperty<Any>).serverValue as FromFileProperty).fileName()).isEqualTo("test.json")
 			assertThat((namedProperty.contentType as DslProperty<Any>).clientValue).isEqualTo("application/json")
 			assertThat((namedProperty.contentType as DslProperty<Any>).serverValue).isEqualTo("application/json")
 		}

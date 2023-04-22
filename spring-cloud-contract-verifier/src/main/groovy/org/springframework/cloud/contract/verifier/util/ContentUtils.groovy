@@ -627,15 +627,15 @@ class ContentUtils {
 	}
 
 	static String groovyPartPropertyValue(Part property, String quote, Closure<String> bytesFromFile) {
-		if (property.value.serverValue instanceof ExecutionProperty) {
-			return property.value.serverValue.toString()
+		if (property.body.serverValue instanceof ExecutionProperty) {
+			return property.body.serverValue.toString()
 		}
-		else if (property.value.serverValue instanceof byte[]) {
-			byte[] bytes = (byte[]) property.value.serverValue
+		else if (property.body.serverValue instanceof byte[]) {
+			byte[] bytes = (byte[]) property.body.serverValue
 			return "[" + bytes.collect { it }.join(", ") + "] as byte[]"
 		}
-		else if (property.value.serverValue instanceof FromFileProperty) {
-			FromFileProperty fromFileProperty = (FromFileProperty) property.value.serverValue
+		else if (property.body.serverValue instanceof FromFileProperty) {
+			FromFileProperty fromFileProperty = (FromFileProperty) property.body.serverValue
 			if (fromFileProperty.isByte()) {
 				return bytesFromFile(fromFileProperty)
 			}
@@ -643,19 +643,19 @@ class ContentUtils {
 					join(", ") + "] as byte[]"
 		}
 		return quote +
-				escapeJava(property.value.serverValue.toString()) + quote + ".bytes"
+				escapeJava(property.body.serverValue.toString()) + quote + ".bytes"
 	}
 
 	static String javaPartPropertyValue(Part property, String quote, Closure<String> bytesFromFile) {
-		if (property.value.serverValue instanceof ExecutionProperty) {
-			return property.value.serverValue.toString()
+		if (property.body.serverValue instanceof ExecutionProperty) {
+			return property.body.serverValue.toString()
 		}
-		else if (property.value.serverValue instanceof byte[]) {
-			byte[] bytes = (byte[]) property.value.serverValue
+		else if (property.body.serverValue instanceof byte[]) {
+			byte[] bytes = (byte[]) property.body.serverValue
 			return "new byte[] {" + bytes.collect { it }.join(", ") + "}"
 		}
-		else if (property.value.serverValue instanceof FromFileProperty) {
-			FromFileProperty fromFileProperty = (FromFileProperty) property.value.serverValue
+		else if (property.body.serverValue instanceof FromFileProperty) {
+			FromFileProperty fromFileProperty = (FromFileProperty) property.body.serverValue
 			if (fromFileProperty.isByte()) {
 				return bytesFromFile(fromFileProperty)
 			}
@@ -663,7 +663,7 @@ class ContentUtils {
 					join(", ") + "}"
 		}
 		return quote +
-				escapeJava(property.value.serverValue.toString()) + quote + ".getBytes()"
+				escapeJava(property.body.serverValue.toString()) + quote + ".getBytes()"
 	}
 
 	static ContentType evaluateClientSideContentType(Headers contractHeaders, Object body) {

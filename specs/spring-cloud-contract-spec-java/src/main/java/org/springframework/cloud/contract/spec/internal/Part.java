@@ -30,34 +30,33 @@ public class Part {
 
 	private final DslProperty filename;
 
-	private final DslProperty value;
+	private final DslProperty body;
 
 	private final DslProperty contentType;
 
 	private final DslProperty contentTransferEncoding;
 
 	public Part(Map<String, Object> properties) {
-		this(value(properties, "filename"), value(properties, "value"), value(properties, "contentType"),
+		this(value(properties, "filename"), value(properties, "body"), value(properties, "contentType"),
 				value(properties, "contentTransferEncoding"));
 	}
 
-	public Part(Object value) {
-		this(value, null);
+	public Part(Object body) {
+		this(body, null);
 	}
 
-	public Part(Object value, Object contentType) {
-		this(null, value, contentType);
+	public Part(Object body, Object contentType) {
+		this(null, body, contentType);
 	}
 
-	public Part(Object filename, Object value, Object contentType) {
-		this(filename, value, contentType, null);
+	public Part(Object filename, Object body, Object contentType) {
+		this(filename, body, contentType, null);
 	}
 
-	public Part(Object filename, Object value, Object contentType, Object contentTransferEncoding) {
+	public Part(Object filename, Object body, Object contentType, Object contentTransferEncoding) {
 		this.filename = new DslProperty<>(ContractUtils.CLIENT_VALUE.apply(filename),
 				ContractUtils.SERVER_VALUE.apply(filename));
-		this.value = new DslProperty<>(ContractUtils.CLIENT_VALUE.apply(value),
-				ContractUtils.SERVER_VALUE.apply(value));
+		this.body = new DslProperty<>(ContractUtils.CLIENT_VALUE.apply(body), ContractUtils.SERVER_VALUE.apply(body));
 		this.contentType = new DslProperty<>(ContractUtils.CLIENT_VALUE.apply(contentType),
 				ContractUtils.SERVER_VALUE.apply(contentType));
 		this.contentTransferEncoding = new DslProperty<>(ContractUtils.CLIENT_VALUE.apply(contentTransferEncoding),
@@ -72,8 +71,8 @@ public class Part {
 		return filename;
 	}
 
-	public DslProperty getValue() {
-		return value;
+	public DslProperty getBody() {
+		return body;
 	}
 
 	public DslProperty getContentType() {
@@ -93,19 +92,19 @@ public class Part {
 			return false;
 		}
 		Part part = (Part) o;
-		return Objects.equals(filename, part.filename) && Objects.equals(value, part.value)
+		return Objects.equals(filename, part.filename) && Objects.equals(body, part.body)
 				&& Objects.equals(contentType, part.contentType)
 				&& Objects.equals(contentTransferEncoding, part.contentTransferEncoding);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(filename, value, contentType, contentTransferEncoding);
+		return Objects.hash(filename, body, contentType, contentTransferEncoding);
 	}
 
 	@Override
 	public String toString() {
-		return "Part{" + "filename=" + filename + ", value=" + value + ", contentType=" + contentType
+		return "Part{" + "filename=" + filename + ", value=" + body + ", contentType=" + contentType
 				+ ", contentTransferEncoding=" + contentTransferEncoding + '}';
 	}
 

@@ -66,7 +66,7 @@ public class NamedProperty extends Part {
 
 	@Override
 	public String toString() {
-		return "NamedProperty{" + "name=" + super.getFilename() + ", value=" + super.getValue() + ", contentType="
+		return "NamedProperty{" + "name=" + super.getFilename() + ", value=" + super.getBody() + ", contentType="
 				+ super.getContentType() + '}';
 	}
 

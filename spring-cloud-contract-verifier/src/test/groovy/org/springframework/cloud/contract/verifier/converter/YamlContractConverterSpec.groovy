@@ -495,8 +495,8 @@ class YamlContractConverterSpec extends Specification {
 			testSide.someBooleanParameter == "true"
 			((Part) testSide.file).filename.serverValue == "filename.csv"
 			((Part) testSide.file).filename.clientValue.pattern() == RegexPatterns.nonEmpty().pattern()
-			((Part) testSide.file).value.serverValue == "file content"
-			((Part) testSide.file).value.clientValue.pattern() == RegexPatterns.nonEmpty().pattern()
+			((Part) testSide.file).body.serverValue == "file content"
+			((Part) testSide.file).body.clientValue.pattern() == RegexPatterns.nonEmpty().pattern()
 		and:
 			contract.response.status.serverValue == 200
 	}
