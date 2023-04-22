@@ -16,9 +16,6 @@
 
 package org.springframework.cloud.contract.verifier.dsl.wiremock;
 
-import com.github.tomakehurst.wiremock.matching.EqualToPattern;
-import com.github.tomakehurst.wiremock.matching.MultipartValuePatternBuilder;
-import com.github.tomakehurst.wiremock.matching.RegexPattern;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -39,6 +36,9 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.extension.Parameters;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.matching.ContentPattern;
+import com.github.tomakehurst.wiremock.matching.EqualToPattern;
+import com.github.tomakehurst.wiremock.matching.MultipartValuePatternBuilder;
+import com.github.tomakehurst.wiremock.matching.RegexPattern;
 import com.github.tomakehurst.wiremock.matching.RequestPattern;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
@@ -46,12 +46,10 @@ import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import groovy.lang.GString;
 import org.apache.commons.text.StringEscapeUtils;
 
-import org.apache.kafka.common.protocol.types.Field.Str;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.Body;
 import org.springframework.cloud.contract.spec.internal.BodyMatcher;
 import org.springframework.cloud.contract.spec.internal.BodyMatchers;
-import org.springframework.cloud.contract.spec.internal.ClientDslProperty;
 import org.springframework.cloud.contract.spec.internal.DslProperty;
 import org.springframework.cloud.contract.spec.internal.FromFileProperty;
 import org.springframework.cloud.contract.spec.internal.HttpHeaders;
@@ -61,7 +59,6 @@ import org.springframework.cloud.contract.spec.internal.OptionalProperty;
 import org.springframework.cloud.contract.spec.internal.Part;
 import org.springframework.cloud.contract.spec.internal.PathBodyMatcher;
 import org.springframework.cloud.contract.spec.internal.QueryParameters;
-import org.springframework.cloud.contract.spec.internal.RegexPatterns;
 import org.springframework.cloud.contract.spec.internal.RegexProperty;
 import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.spec.internal.Url;
@@ -78,7 +75,6 @@ import org.springframework.cloud.contract.verifier.util.MethodBufferingJsonVerif
 import org.springframework.cloud.contract.verifier.util.xml.XmlToXPathsConverter;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import scala.concurrent.impl.FutureConvertersImpl.P;
 
 import static org.springframework.cloud.contract.spec.internal.MatchingStrategy.Type.BINARY_EQUAL_TO;
 import static org.springframework.cloud.contract.spec.internal.MatchingType.EQUALITY;

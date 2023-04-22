@@ -41,7 +41,6 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.apache.commons.collections.MapUtils;
-import org.springframework.cloud.contract.spec.internal.Part;
 import org.yaml.snakeyaml.Yaml;
 
 import org.springframework.cloud.contract.spec.Contract;
@@ -52,6 +51,7 @@ import org.springframework.cloud.contract.spec.internal.Headers;
 import org.springframework.cloud.contract.spec.internal.Input;
 import org.springframework.cloud.contract.spec.internal.MatchingTypeValue;
 import org.springframework.cloud.contract.spec.internal.OutputMessage;
+import org.springframework.cloud.contract.spec.internal.Part;
 import org.springframework.cloud.contract.spec.internal.RegexPatterns;
 import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.spec.internal.Response;
