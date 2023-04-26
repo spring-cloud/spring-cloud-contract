@@ -929,7 +929,7 @@ class YamlToContracts {
 	protected String file(String relativePath) {
 		URL resource = Thread.currentThread().getContextClassLoader().getResource(relativePath);
 		if (resource == null) {
-			throw new IllegalStateException("File [\"+relativePath+\"] is not present");
+			throw new IllegalStateException("File [" + relativePath + "] is not present");
 		}
 		try {
 			return String.join("\n", Files.readAllLines(Paths.get(resource.toURI())));
