@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.docs;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,8 +94,16 @@ public class Main {
 		mapper.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
 		StringBuilder sb = new StringBuilder();
 		for (Class metadatum : metadata) {
-			SpringCloudContractMetadata newInstance = (SpringCloudContractMetadata) metadatum
-					.getDeclaredConstructors()[0].newInstance();
+			Constructor constructor = null;
+			try {
+				constructor = metadatum.getDeclaredConstructor(null);
+			}
+			catch (Exception ex) {
+				log.warn("Failed to find a no-args constructor for matadatum [" + metadatum + "]", ex);
+				continue;
+			}
+			Object instance = constructor.newInstance();
+			SpringCloudContractMetadata newInstance = (SpringCloudContractMetadata) instance;
 			String description = newInstance.description();
 			String key = newInstance.key();
 			List<Class> additionalClasses = classesToLookAt(metadatum, newInstance);
