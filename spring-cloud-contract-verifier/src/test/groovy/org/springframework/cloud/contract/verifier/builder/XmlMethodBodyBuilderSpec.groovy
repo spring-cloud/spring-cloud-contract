@@ -181,6 +181,64 @@ class XmlMethodBodyBuilderSpec extends Specification {
 	}
 
 	@Unroll
+	def 'should generate correct verification from xml with namespace [#methodBuilderName]'() {
+		given:
+			Contract contractDsl =
+					Contract.make {
+						request {
+							method GET()
+							urlPath '/get'
+							headers {
+								contentType(applicationXml())
+							}
+						}
+						response {
+							status(OK())
+							headers {
+								contentType(applicationXml())
+							}
+							body """
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        <soap:Body>
+            <ns2:Res xmlns:ns2="http://*******/****/****/******/schema">
+                <ns2:ID>1</ns2:ID>
+            </ns2:Res>
+        </soap:Body>
+    </soap:Envelope>"""
+						}
+					}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			test.contains('assertThat(valueFromXPath(parsedXml, "/soap:Envelope/soap:Body/ns2:Res/ns2:ID/text()")).isEqualTo("1")')
+			test.contains('assertThat(valueFromXPath(parsedXml, "/soap:Envelope/namespace::soap")).isEqualTo("http://schemas.xmlsoap.org/soap/envelope/")')
+			test.contains('valueFromXPath(parsedXml, "/soap:Envelope/soap:Body/ns2:Res/namespace::ns2")).isEqualTo("http://*******/****/****/******/schema"')
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | {
+				properties.testFramework = TestFramework.SPOCK
+			}
+			"testng"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
+			"junit"           | {
+				properties.testMode = TestMode.MOCKMVC
+			}
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"webclient"       | {
+				properties.testMode = TestMode.WEBTESTCLIENT
+			}
+	}
+
+	@Unroll
 	def 'should generate correct verification from named xml with body matchers  [#methodBuilderName]'() {
 		given:
 			Contract contractDsl =
