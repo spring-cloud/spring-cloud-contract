@@ -27,6 +27,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.cloud.contract.spec.ContractTemplate;
 import org.springframework.cloud.contract.spec.internal.BodyMatchers;
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty;
+import org.springframework.cloud.contract.spec.internal.FromFileProperty;
 import org.springframework.cloud.contract.verifier.config.TestFramework;
 import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
 import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor;
@@ -195,6 +196,10 @@ class GenericJsonBodyThen implements Then {
 
 	@Override
 	public boolean accept(SingleContractMetadata metadata) {
+		Object responseBody = this.bodyParser.responseBody(metadata).getServerValue();
+		if (responseBody instanceof FromFileProperty) {
+			return !((FromFileProperty) responseBody).isByte();
+		}
 		ContentType outputTestContentType = metadata.getOutputTestContentType();
 		return JSON == outputTestContentType || mostLikelyJson(outputTestContentType, metadata);
 	}

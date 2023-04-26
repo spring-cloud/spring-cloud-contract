@@ -1682,4 +1682,117 @@ public class FooTest {
 }
 """
 	}
+
+	@Issue('#1701')
+	def "should generate output for message whose body is json and contains string that looks like json [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = org.springframework.cloud.contract.spec.Contract.make {
+				name "foo"
+				description 'issue #650'
+				label 'trigger'
+				input {
+					triggeredBy('toString()')
+				}
+				outputMessage {
+					sentTo("foo")
+					headers {
+						messagingContentType(applicationJson())
+					}
+					body(fileAsBytes('messageResponse.json'))
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			!test.contains('cursor')
+			!test.contains('REGEXP>>')
+			test.trim() == expectedTest.trim()
+		where:
+			methodBuilderName | methodBuilder                                      | expectedTest
+			"spock"           | { properties.testFramework = TestFramework.SPOCK } | """\
+package com.example
+
+import com.jayway.jsonpath.DocumentContext
+import com.jayway.jsonpath.JsonPath
+import spock.lang.Specification
+import javax.inject.Inject
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
+
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes
+
+@SuppressWarnings("rawtypes")
+class FooSpec extends Specification {
+	@Inject ContractVerifierMessaging contractVerifierMessaging
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+
+	def validate_foo() throws Exception {
+		when:
+			toString()
+
+		then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive("foo",
+					contract(this, "foo.yml"))
+			response != null
+
+		and:
+			response.getHeader("contentType") != null
+			response.getHeader("contentType").toString() == 'application/json'
+
+		and:
+			response.getPayloadAsByteArray() == fileToBytes(this, "foo_response_messageResponse.json")
+	}
+
+}
+"""
+			"junit"           | { properties.testFramework = TestFramework.JUNIT } | """\
+package com.example;
+
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import org.junit.Test;
+import org.junit.Rule;
+import javax.inject.Inject;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
+import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
+
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*;
+import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;
+import static org.springframework.cloud.contract.verifier.messaging.util.ContractVerifierMessagingUtil.headers;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.fileToBytes;
+
+@SuppressWarnings("rawtypes")
+public class FooTest {
+	@Inject ContractVerifierMessaging contractVerifierMessaging;
+	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+
+	@Test
+	public void validate_foo() throws Exception {
+		// when:
+			toString();
+
+		// then:
+			ContractVerifierMessage response = contractVerifierMessaging.receive("foo",
+					contract(this, "foo.yml"));
+			assertThat(response).isNotNull();
+
+		// and:
+			assertThat(response.getHeader("contentType")).isNotNull();
+			assertThat(response.getHeader("contentType").toString()).isEqualTo("application/json");
+
+		// and:
+			assertThat(response.getPayloadAsByteArray()).isEqualTo(fileToBytes(this, "foo_response_messageResponse.json"));
+	}
+
+}
+"""
+	}
 }
