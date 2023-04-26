@@ -23,4 +23,5 @@ class StubRunnerPropertiesTests {
 	@Test
 	void should_resolve_resource_when_using_windows_paths() {
 	}
+
 }
