@@ -34,9 +34,7 @@ import org.springframework.cloud.contract.spec.internal.ExecutionProperty
 import org.springframework.cloud.contract.spec.internal.MatchingType
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
 import org.springframework.cloud.contract.spec.internal.RegexProperty
-import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.util.SerializationUtils
-
 /**
  * I would like to apologize to anyone who is reading this class. Since JSON is a hectic structure
  * this class is also hectic. The idea is to traverse the JSON structure and build a set of
@@ -157,7 +155,6 @@ class JsonToJsonPathsConverter {
 					containsOnlyEmptyElements(object)
 					&& isNotRootArray(matcherPath)) {
 				String pathToDelete = pathToDelete(pathWithoutAnyArray)
-				context.delete(pathToDelete)
 				if (pathToDelete.contains(DESCENDANT_OPERATOR)) {
 					Object root = context.read('$')
 					if (rootContainsEmptyContainers(root)) {
@@ -166,6 +163,8 @@ class JsonToJsonPathsConverter {
 						return false
 					}
 					return false
+				} else {
+					context.delete(pathToDelete)
 				}
 				return removeTrailingContainers(pathToDelete, context)
 			}

@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.docs;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,33 +94,35 @@ public class Main {
 		mapper.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
 		StringBuilder sb = new StringBuilder();
 		for (Class metadatum : metadata) {
+			Constructor constructor = null;
 			try {
-				SpringCloudContractMetadata newInstance = (SpringCloudContractMetadata) metadatum
-						.getDeclaredConstructor(null).newInstance();
-				String description = newInstance.description();
-				String key = newInstance.key();
-				List<Class> additionalClasses = classesToLookAt(metadatum, newInstance);
-				// @formatter:off
-				sb
-						.append("[[metadata-").append(key).append("]]\n")
-						.append("##### Metadata `").append(key).append("`\n\n")
-						.append("* key: `").append(key).append("`").append("\n")
-						.append("* description:\n\n").append(description).append("\n\n")
-						.append("Example:\n\n")
-						.append("```yaml\n").append(mapper.writeValueAsString(newInstance)).append("\n```\n\n")
-						// To make the schema collapsable
-						.append("+++ <details><summary> +++\nClick here to expand the JSON schema:\n+++ </summary><div> +++\n")
-						.append("```json\n").append(generateJsonSchemaForClass(metadatum)).append("\n```\n")
-						.append("+++ </div></details> +++\n\n")
-						.append("If you are interested in learning more about the types and its properties, check out the following classes:\n\n")
-						.append(additionalClasses.stream().map(aClass -> "* `" + aClass.getName() + "`").collect(Collectors.joining("\n")))
-						.append("\n\n");
-				// @formatter:on
+				constructor = metadatum.getDeclaredConstructor(null);
 			}
-			catch (Exception exception) {
-				log.error("Exception occurred while trying to parse [" + metadatum + "]");
-				throw exception;
+			catch (Exception ex) {
+				log.warn("Failed to find a no-args constructor for matadatum [" + metadatum + "]", ex);
+				continue;
 			}
+			Object instance = constructor.newInstance();
+			SpringCloudContractMetadata newInstance = (SpringCloudContractMetadata) instance;
+			String description = newInstance.description();
+			String key = newInstance.key();
+			List<Class> additionalClasses = classesToLookAt(metadatum, newInstance);
+			// @formatter:off
+			sb
+					.append("[[metadata-").append(key).append("]]\n")
+					.append("##### Metadata `").append(key).append("`\n\n")
+					.append("* key: `").append(key).append("`").append("\n")
+					.append("* description:\n\n").append(description).append("\n\n")
+					.append("Example:\n\n")
+					.append("```yaml\n").append(mapper.writeValueAsString(newInstance)).append("\n```\n\n")
+					// To make the schema collapsable
+					.append("+++ <details><summary> +++\nClick here to expand the JSON schema:\n+++ </summary><div> +++\n")
+					.append("```json\n").append(generateJsonSchemaForClass(metadatum)).append("\n```\n")
+					.append("+++ </div></details> +++\n\n")
+					.append("If you are interested in learning more about the types and its properties, check out the following classes:\n\n")
+					.append(additionalClasses.stream().map(aClass -> "* `" + aClass.getName() + "`").collect(Collectors.joining("\n")))
+					.append("\n\n");
+			// @formatter:on
 		}
 		return sb;
 	}
