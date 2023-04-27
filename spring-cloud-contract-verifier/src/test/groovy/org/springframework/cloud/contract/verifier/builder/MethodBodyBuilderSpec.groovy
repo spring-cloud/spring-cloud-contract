@@ -21,6 +21,7 @@ import org.junit.Rule
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.util.environment.RestoreSystemProperties
 
 import org.springframework.boot.test.system.OutputCaptureRule
 import org.springframework.cloud.contract.spec.Contract
@@ -1670,6 +1671,76 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 				}
 				response {
 					status OK()
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+			!test.contains('''[value:123]''')
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName | methodBuilder
+			"spock"           | {
+				properties.testFramework = TestFramework.SPOCK
+			}
+			"mockmvc"         | {
+				properties.testMode = TestMode.MOCKMVC
+			}
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}
+	}
+
+	@Issue("#1803")
+	@RestoreSystemProperties
+	def "should work with arrays that have same key-value element [#methodBuilderName]"() {
+		given:
+			System.setProperty('spring.cloud.contract.verifier.assert.size', 'true')
+			Contract contractDsl = Contract.make {
+				description "should return all profiles"
+
+				request {
+					url "/profiles"
+					method GET()
+				}
+
+				response {
+					status OK()
+					headers {
+						contentType applicationJson()
+					}
+
+					body (
+						[
+							[
+								id: 1,
+								name: "Joseph",
+								age: 22,
+								email: "jose@gmail.com",
+								dob: "2000-01-01",
+								a: 1,
+								b: "two"
+							],
+							[
+								id: 2,
+								name: "Sam",
+								age: 32,
+								email: "sam@gmail.com",
+								dob: "2000-01-01",
+								a: 1,
+								b: "two"
+							]
+						]
+					)
 				}
 			}
 			methodBuilder()

@@ -55,6 +55,8 @@ class JsonToJsonPathsConverter {
 	 */
 	private static final String SIZE_ASSERTION_SYSTEM_PROP = "spring.cloud.contract.verifier.assert.size"
 
+	private static final String WITH_ORDER_ASSERTION_SYSTEM_PROP = "spring.cloud.contract.verifier.assert.with-order"
+
 	private static final Boolean SERVER_SIDE = false
 	private static final Boolean CLIENT_SIDE = true
 	private static final Pattern ANY_ARRAY_NOTATION_IN_JSONPATH = ~/\[(.*?)\]/
