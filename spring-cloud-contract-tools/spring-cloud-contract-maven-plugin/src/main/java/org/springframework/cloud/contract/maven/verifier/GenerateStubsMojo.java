@@ -53,7 +53,7 @@ public class GenerateStubsMojo extends AbstractMojo {
 	private String projectFinalName;
 
 	@Parameter(property = "stubsDirectory", defaultValue = "${project.build.directory}/stubs")
-	private File outputDirectory;
+	private File stubsDirectory;
 
 	/**
 	 * Set this to "true" to bypass the whole Verifier execution.
@@ -111,21 +111,21 @@ public class GenerateStubsMojo extends AbstractMojo {
 					+ this.skip + ", spring.cloud.contract.verifier.jar.skip=" + this.jarSkip);
 			return;
 		}
-		else if (stubsOutputMissing(this.outputDirectory) && !this.failOnNoContracts) {
+		else if (stubsOutputMissing(this.stubsDirectory) && !this.failOnNoContracts) {
 			getLog().warn(
 					"The stubs output directory is missing, the flag to fail on no stubs if off - will continue without throwing an exception");
 			return;
 		}
-		else if (stubsOutputMissing(this.outputDirectory) && this.failOnNoContracts) {
-			throw new MojoExecutionException("Stubs could not be found: [" + this.outputDirectory.getAbsolutePath()
+		else if (stubsOutputMissing(this.stubsDirectory) && this.failOnNoContracts) {
+			throw new MojoExecutionException("Stubs could not be found: [" + this.stubsDirectory.getAbsolutePath()
 					+ "] .\nPlease make sure that spring-cloud-contract:convert was invoked");
 		}
 		File stubsJarFile = getStubJarDestFile();
-		if (this.incrementalContractStubsJar && !inputFilesChangeDetected(outputDirectory, mojoExecution, session)) {
+		if (this.incrementalContractStubsJar && !inputFilesChangeDetected(stubsDirectory, mojoExecution, session)) {
 			getLog().info("Nothing to generate - stubs jar is up to date");
 		}
 		else {
-			fillStubJar(this.outputDirectory, stubsJarFile);
+			fillStubJar(this.stubsDirectory, stubsJarFile);
 		}
 		this.projectHelper.attachArtifact(this.project, "jar", this.classifier, stubsJarFile);
 	}
