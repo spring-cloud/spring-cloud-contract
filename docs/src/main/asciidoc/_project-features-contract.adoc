@@ -774,6 +774,11 @@ define the parameter name with `paramName`. Then you can pass the
 parametrization of either `fileName` or `fileContent` in a
 `regex` or in a `predefined` regular expression.
 
+IMPORTANT: For the `named(...)` section you always have to add a pair of
+`value(producer(...), consumer(...))` calls. Just setting DSL properties such
+as just `value(producer(...))` or just `file(...)` will not work.
+Check this https://github.com/spring-cloud/spring-cloud-contract/issues/1886[issue] for more information.
+
 From the contract in the preceding example, the generated test and stub look as follows:
 
 ====
