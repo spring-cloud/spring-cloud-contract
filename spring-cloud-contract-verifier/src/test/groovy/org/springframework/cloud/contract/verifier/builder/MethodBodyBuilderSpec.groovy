@@ -1699,6 +1699,52 @@ class MethodBodyBuilderSpec extends Specification implements WireMockStubVerifie
 			}
 	}
 
+	@Issue("#1790")
+	def "should work with escaped values in headers and body [#methodBuilderName]"() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					name("test")
+					method 'GET'
+					urlPath('/test')
+				}
+				response {
+					status OK()
+					body( 'test': "\"escaped-body\"")
+					headers {
+						contentType('application/json')
+						header('Escaped-Header',  "\"escaped-header\"")
+					}
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompileWithoutCompileStatic(methodBuilderName, test)
+			expectedHeaderAssertion(test)
+			test.contains("""assertThatJson(parsedJson).field("['test']").isEqualTo("\\\"escaped-body\\\"")""")
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName | methodBuilder | expectedHeaderAssertion
+			"spock"           | {
+				properties.testFramework = TestFramework.SPOCK
+			} | { String testCode -> assert testCode.contains("""response.header("Escaped-Header") == '''\\"escaped-header\\"'''"""); return true }
+			"mockmvc"         | {
+				properties.testMode = TestMode.MOCKMVC
+			} | { String testCode -> assert testCode.contains("""assertThat(response.header("Escaped-Header")).isEqualTo("\\\"escaped-header\\\"")"""); return true }
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			} | { String testCode -> assert testCode.contains("""response.header("Escaped-Header") == '''\\"escaped-header\\"'''"""); return true }
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			} | { String testCode -> assert testCode.contains("""assertThat(response.header("Escaped-Header")).isEqualTo("\\\"escaped-header\\\"")"""); return true }
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			} | { String testCode -> assert testCode.contains("""assertThat(response.header("Escaped-Header")).isEqualTo("\\\"escaped-header\\\"")"""); return true }
+	}
+
 	@Issue("#1052")
 	def "should work with large numbers [#methodBuilderName]"() {
 		given:
