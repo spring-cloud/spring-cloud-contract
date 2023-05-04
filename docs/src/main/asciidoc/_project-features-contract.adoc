@@ -1377,7 +1377,7 @@ dynamic parts of a contract.
 You can use the `bodyMatchers` section for two reasons:
 
 * Define the dynamic values that should end up in a stub.
-You can set it in the `request` or `inputMessage` part of your contract.
+You can set it in the `request` part of your contract.
 * Verify the result of your test.
 This section is present in the `response` or `outputMessage` side of the
 contract.
