@@ -469,7 +469,6 @@ In the next listing, you can find:
 - A JAX-RS client with the `JAXRS` test mode
 - A `WebTestClient`-based test (this is particularly recommended while working with
 Reactive, `Web-Flux`-based applications) set with the `WEBTESTCLIENT` test mode
-- A Spock-based test with the `testFramework` property set to `SPOCK`
 
 NOTE: You need only one of these test frameworks. MockMvc is the default. To use one
 of the other frameworks, add its library to your classpath.
@@ -559,23 +558,6 @@ public class FooTest {
 			DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
 			assertThatJson(parsedJson).field("['status']").isEqualTo("NOT_OK");
 	}
-----
-
-[source,groovy,indent=0,role="secondary"]
-.spock
-----
-given:
-	 ContractVerifierMessage inputMessage = contractVerifierMessaging.create(
-		\'\'\'{"bookName":"foo"}\'\'\',
-		['sample': 'header']
-	)
-
-when:
-	 contractVerifierMessaging.send(inputMessage, 'jms:delete')
-
-then:
-	 noExceptionThrown()
-	 bookWasDeleted()
 ----
 ====
 
