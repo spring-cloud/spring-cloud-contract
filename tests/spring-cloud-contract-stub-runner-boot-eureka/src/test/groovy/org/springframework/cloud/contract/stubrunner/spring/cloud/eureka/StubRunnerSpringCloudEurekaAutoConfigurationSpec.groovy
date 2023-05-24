@@ -16,6 +16,10 @@
 
 package org.springframework.cloud.contract.stubrunner.spring.cloud.eureka
 
+import org.springframework.cloud.netflix.eureka.http.EurekaClientHttpRequestFactorySupplier
+import org.springframework.cloud.netflix.eureka.http.RestTemplateDiscoveryClientOptionalArgs
+import org.springframework.cloud.netflix.eureka.http.RestTemplateTransportClientFactories
+
 import java.util.concurrent.TimeUnit
 
 import groovy.util.logging.Slf4j
@@ -53,6 +57,7 @@ import org.springframework.web.client.RestTemplate
         properties = ["stubrunner.cloud.eureka.enabled=true",
                 "stubrunner.cloud.stubbed.discovery.enabled=false",
                 "eureka.client.enabled=true",
+				"debug=true",
                 "eureka.instance.leaseRenewalIntervalInSeconds=1"])
 @AutoConfigureStubRunner(ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
  "org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer", "org.springframework.cloud.contract.verifier.stubs:bootService"] ,
@@ -129,6 +134,18 @@ class StubRunnerSpringCloudEurekaAutoConfigurationSpec {
 				}
 			}
 			return template
+		}
+
+		// because eureka server has JerseyClient, need these beans for eureka client in same jvm to work
+		@Bean
+		RestTemplateDiscoveryClientOptionalArgs restTemplateDiscoveryClientOptionalArgs(EurekaClientHttpRequestFactorySupplier eurekaClientHttpRequestFactorySupplier) {
+			return new RestTemplateDiscoveryClientOptionalArgs(eurekaClientHttpRequestFactorySupplier);
+		}
+
+		@Bean
+		RestTemplateTransportClientFactories restTemplateTransportClientFactories(
+				RestTemplateDiscoveryClientOptionalArgs optionalArgs) {
+			return new RestTemplateTransportClientFactories(optionalArgs);
 		}
 	}
 
