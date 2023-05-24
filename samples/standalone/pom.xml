@@ -7,13 +7,13 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-samples</artifactId>
-		<version>4.0.3</version>
+		<version>4.0.3-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
 	<artifactId>spring-cloud-contract-samples-standalone</artifactId>
 	<packaging>pom</packaging>
-	<version>4.0.3</version>
+	<version>4.0.3-SNAPSHOT</version>
 	<name>Spring Cloud Contract Standalone Test Samples</name>
 	<description>Spring Cloud Contract Standalone Test Samples used for end to end tests
 	</description>
