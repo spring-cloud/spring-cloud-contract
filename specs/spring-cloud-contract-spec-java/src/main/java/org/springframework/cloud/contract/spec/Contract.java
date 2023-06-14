@@ -151,7 +151,7 @@ public class Contract {
 		if (dsl.getRequest() != null) {
 			if (dsl.request.getUrl() == null && dsl.request.getUrlPath() == null) {
 				throw new IllegalStateException(
-						"URL is missing for HTTP contract(exclude = { TraceWebClientAutoConfiguration.class })");
+						"URL is missing for HTTP contract");
 			}
 			if (dsl.request.getMethod() == null) {
 				throw new IllegalStateException("Method is missing for HTTP contract");
