@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = WiremockTestsApplication.class,
 		properties = "app.baseUrl=http://localhost:${wiremock.server.port}", webEnvironment = WebEnvironment.NONE)
-@AutoConfigureWireMock(port = 12345)
+@AutoConfigureWireMock(port = 26384)
 public class AutoConfigureWireMockApplicationTests {
 
 	@Autowired

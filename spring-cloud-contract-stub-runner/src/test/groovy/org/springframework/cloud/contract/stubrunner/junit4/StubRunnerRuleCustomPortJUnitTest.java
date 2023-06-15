@@ -40,8 +40,8 @@ public class StubRunnerRuleCustomPortJUnitTest {
 	@ClassRule
 	public static StubRunnerRule rule = new StubRunnerRule().repoRoot(repoRoot())
 			.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
-			.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance").withPort(12345)
-			.downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:12346");
+			.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance").withPort(35465)
+			.downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:35466");
 
 	@BeforeClass
 	@AfterClass
@@ -80,8 +80,8 @@ public class StubRunnerRuleCustomPortJUnitTest {
 		then(httpGet(rule.findStubUrl("fraudDetectionServer").toString() + "/name")).isEqualTo("fraudDetectionServer");
 		// and: 'The port is fixed'
 		// tag::test_with_port[]
-		then(rule.findStubUrl("loanIssuance")).isEqualTo(URI.create("http://localhost:12345").toURL());
-		then(rule.findStubUrl("fraudDetectionServer")).isEqualTo(URI.create("http://localhost:12346").toURL());
+		then(rule.findStubUrl("loanIssuance")).isEqualTo(URI.create("http://localhost:35465").toURL());
+		then(rule.findStubUrl("fraudDetectionServer")).isEqualTo(URI.create("http://localhost:35466").toURL());
 		// end::test_with_port[]
 	}
 
