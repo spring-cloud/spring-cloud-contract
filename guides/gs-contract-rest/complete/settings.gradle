@@ -1,4 +1,0 @@
-rootProject.name = 'gs-contract-rest'
-
-include 'contract-rest-service'
-include 'contract-rest-client'
