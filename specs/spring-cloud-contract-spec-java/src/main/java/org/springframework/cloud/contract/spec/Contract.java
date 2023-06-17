@@ -150,8 +150,7 @@ public class Contract {
 	public static void assertContract(Contract dsl) {
 		if (dsl.getRequest() != null) {
 			if (dsl.request.getUrl() == null && dsl.request.getUrlPath() == null) {
-				throw new IllegalStateException(
-						"URL is missing for HTTP contract");
+				throw new IllegalStateException("URL is missing for HTTP contract");
 			}
 			if (dsl.request.getMethod() == null) {
 				throw new IllegalStateException("Method is missing for HTTP contract");
