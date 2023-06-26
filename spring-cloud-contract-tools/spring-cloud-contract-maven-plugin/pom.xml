@@ -40,7 +40,7 @@
 		<maven-site-plugin.version>3.9.1</maven-site-plugin.version>
 		<maven-plugin-testing-harness.version>3.3.0</maven-plugin-testing-harness.version>
 		<maven-shared-incremental.version>1.1</maven-shared-incremental.version>
-		<slf4j-api.version>2.0.5</slf4j-api.version>
+		<slf4j-api.version>1.7.36</slf4j-api.version>
 	</properties>
 
 	<inceptionYear>2016</inceptionYear>
