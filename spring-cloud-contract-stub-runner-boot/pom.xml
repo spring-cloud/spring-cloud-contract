@@ -13,9 +13,6 @@
 	<packaging>jar</packaging>
 	<name>Spring Cloud Contract Stub Runner Boot</name>
 	<description>Spring Cloud Contract Stub Runner Boot</description>
-	<properties>
-		<thin-jar.version>1.0.27.RELEASE</thin-jar.version>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
