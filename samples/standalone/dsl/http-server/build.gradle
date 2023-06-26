@@ -46,13 +46,10 @@ dependencies {
 }
 
 contractTest {
-	doFirst { // https://github.com/spring-cloud/spring-cloud-contract/issues/1910
-		useJUnitPlatform()
-	}
 	systemProperty 'spring.profiles.active', 'gradle'
-	 testLogging {
-	 	exceptionFormat = 'full'
-	 }
+	testLogging {
+		exceptionFormat = 'full'
+	}
 	afterSuite { desc, result ->
 		if (!desc.parent) {
 			println "Results: (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
