@@ -63,8 +63,8 @@ test {
 }
 
 task stubsJar(type: Jar, dependsOn: ['copySnippets', 'copySources', 'copyClasses']) {
-	baseName = project.name
-	classifier = 'stubs'
+	archiveBaseName = project.name
+	archiveClassifier = 'stubs'
 	from project.file("${project.buildDir}/stubs")
 }
 
@@ -83,6 +83,13 @@ task copyClasses(type: Copy) {
 	from "${project.buildDir}/classes/main/"
 	include '**/model/Fraud*.*'
 	into "${project.buildDir}/stubs/"
+}
+
+
+project.tasks.named("verifierStubsJar").get().dependsOn('copySnippets', 'copySources', 'stubsJar') // TODO: We need to fix this
+project.tasks.named("copyContracts").get().dependsOn('stubsJar')  // TODO: We need to fix this
+afterEvaluate {
+	project.tasks.matching { it.name.contains("publish") }.each { it.dependsOn('verifierStubsJar') } // TODO: We need to fix this
 }
 
 publishing {
