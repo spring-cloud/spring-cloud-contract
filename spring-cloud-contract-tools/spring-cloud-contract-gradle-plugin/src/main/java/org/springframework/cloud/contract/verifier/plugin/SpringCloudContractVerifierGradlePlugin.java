@@ -103,7 +103,7 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 		TaskProvider<GenerateClientStubsFromDslTask> generateClientStubs = createAndConfigureGenerateClientStubs(
 				extension, copyContracts);
 
-		createAndConfigureStubsJarTasks(extension, generateClientStubs);
+		createAndConfigureStubsJarTasks(extension, copyContracts, generateClientStubs);
 		createGenerateTestsTask(extension, contractTestSourceSet, copyContracts);
 		createAndConfigurePublishStubsToScmTask(extension, generateClientStubs);
 
@@ -308,6 +308,7 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 	}
 
 	private void createAndConfigureStubsJarTasks(ContractVerifierExtension extension,
+			TaskProvider<ContractsCopyTask> copyContracts,
 			TaskProvider<GenerateClientStubsFromDslTask> generateClientStubs) {
 		TaskProvider<Jar> verifierStubsJar = project.getTasks().register(VERIFIER_STUBS_JAR_TASK_NAME, Jar.class);
 		verifierStubsJar.configure(stubsJar -> {
@@ -317,6 +318,7 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 			stubsJar.getArchiveClassifier().convention(extension.getStubsSuffix());
 			stubsJar.from(extension.getStubsOutputDir());
 
+			stubsJar.dependsOn(copyContracts);
 			stubsJar.dependsOn(generateClientStubs);
 		});
 		project.artifacts(artifactHandler -> artifactHandler.add("archives", verifierStubsJar));
