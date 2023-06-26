@@ -113,30 +113,7 @@ public class RecursiveFilesConverter {
 								"Stub Generators [" + stubGenerators + "] will convert contents of [" + entryKey + "]");
 					}
 
-					for (StubGenerator stubGenerator : stubGenerators) {
-						Map<Contract, String> convertedContent = stubGenerator
-								.convertContents(last(entryKey).toString(), contract);
-						if (convertedContent == null || convertedContent.isEmpty()) {
-							continue;
-						}
-						Set<Map.Entry<Contract, String>> entrySet = convertedContent.entrySet();
-						Iterator<Map.Entry<Contract, String>> iterator = entrySet.iterator();
-						int index = 0;
-						while (iterator.hasNext()) {
-							Map.Entry<Contract, String> content = iterator.next();
-							Contract dsl = content.getKey();
-							String converted = content.getValue();
-							if (StringUtils.hasText(converted)) {
-								Path absoluteTargetPath = createAndReturnTargetDirectory(sourceFile);
-								File newJsonFile = createTargetFileWithProperName(stubGenerator, absoluteTargetPath,
-										sourceFile, contractsSize, index, dsl);
-								Files.write(newJsonFile.toPath(), Collections.singletonList(converted),
-										StandardCharsets.UTF_8);
-							}
-							index = index + 1;
-						}
-
-					}
+					processStubGenerators(contract, stubGenerators, entryKey, sourceFile, contractsSize);
 
 				}
 				catch (Exception e) {
@@ -148,6 +125,32 @@ public class RecursiveFilesConverter {
 
 		}
 
+	}
+
+	private void processStubGenerators(ContractMetadata contract, Collection<StubGenerator> stubGenerators,
+			Path entryKey, File sourceFile, int contractsSize) throws IOException {
+		for (StubGenerator stubGenerator : stubGenerators) {
+			Map<Contract, String> convertedContent = stubGenerator.convertContents(last(entryKey).toString(), contract);
+			if (convertedContent == null || convertedContent.isEmpty()) {
+				continue;
+			}
+			Set<Map.Entry<Contract, String>> entrySet = convertedContent.entrySet();
+			Iterator<Map.Entry<Contract, String>> iterator = entrySet.iterator();
+			int index = 0;
+			while (iterator.hasNext()) {
+				Map.Entry<Contract, String> content = iterator.next();
+				Contract dsl = content.getKey();
+				String converted = content.getValue();
+				if (StringUtils.hasText(converted)) {
+					Path absoluteTargetPath = createAndReturnTargetDirectory(sourceFile);
+					File newJsonFile = createTargetFileWithProperName(stubGenerator, absoluteTargetPath, sourceFile,
+							contractsSize, index, dsl);
+					Files.write(newJsonFile.toPath(), Collections.singletonList(converted), StandardCharsets.UTF_8);
+				}
+				index = index + 1;
+			}
+
+		}
 	}
 
 	private static <T> T last(Iterable<T> self) {
