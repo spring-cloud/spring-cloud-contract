@@ -39,7 +39,7 @@
 		<spock-spring.version>2.0-M5-groovy-3.0</spock-spring.version> <!-- @releaser:version-check-off -->
 		<hoverfly-junit.version>0.2.2</hoverfly-junit.version>
 		<commons-text.version>1.10.0</commons-text.version>
-		<handlebars.version>4.3.0</handlebars.version>
+		<handlebars.version>4.3.1</handlebars.version>
 		<jgit.version>5.13.1.202206130422-r</jgit.version>
 		<javax-inject.version>1</javax-inject.version>
 		<json-unit-assertj.version>2.27.0</json-unit-assertj.version>
