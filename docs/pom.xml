@@ -24,6 +24,7 @@
 		<maven-deploy-plugin-default.phase>none</maven-deploy-plugin-default.phase>
 		<!-- Aligned with Groovy in SC-Build -->
 		<groovy.version>2.5.14</groovy.version>
+		<index-link></index-link>
 	</properties>
 	<build>
 		<plugins>
