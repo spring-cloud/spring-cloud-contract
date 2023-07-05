@@ -28,6 +28,18 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>
+			<artifactId>kotlin-scripting-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jetbrains.kotlin</groupId>
+			<artifactId>kotlin-scripting-jvm</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jetbrains.kotlin</groupId>
+			<artifactId>kotlin-scripting-jvm-host</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jetbrains.kotlin</groupId>
 			<artifactId>kotlin-scripting-compiler-embeddable</artifactId>
 		</dependency>
 		<dependency>
