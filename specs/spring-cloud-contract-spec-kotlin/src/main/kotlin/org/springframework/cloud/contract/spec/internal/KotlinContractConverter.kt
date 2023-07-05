@@ -22,7 +22,14 @@ import org.springframework.cloud.contract.spec.ContractConverter
 import java.io.File
 import java.net.URLClassLoader.newInstance
 import java.util.concurrent.atomic.AtomicInteger
-import javax.script.ScriptEngineManager
+import kotlin.script.experimental.api.EvaluationResult
+import kotlin.script.experimental.api.ResultValue
+import kotlin.script.experimental.api.ResultWithDiagnostics
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
+import kotlin.script.experimental.host.toScriptSource
+import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
+import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 
 /**
  * Converter that will convert the Kotlin DSL to Java DSL.
@@ -32,62 +39,73 @@ import javax.script.ScriptEngineManager
  */
 class KotlinContractConverter : ContractConverter<List<Contract>> {
 
-    private val ext = "kts"
+	private val ext = "kts"
 
-    constructor() {
-        // Sets an {@code idea.use.native.fs.for.win} system property to {@code false}
-        // to disable a native engine discovery for Windows: may be resolved in the future Kotlin versions.
-        System.setProperty("idea.use.native.fs.for.win", "false")
-    }
+	constructor() {
+		// Sets an {@code idea.use.native.fs.for.win} system property to {@code false}
+		// to disable a native engine discovery for Windows: may be resolved in the future Kotlin versions.
+		System.setProperty("idea.use.native.fs.for.win", "false")
+	}
 
-    override fun isAccepted(file: File): Boolean {
-        return ext == file.extension
-    }
+	override fun isAccepted(file: File): Boolean {
+		return ext == file.extension
+	}
 
-    override fun convertFrom(file: File): Collection<Contract> {
-        val eval = withUpdatedClassloader(file) {
-            file.reader().use {
-                // Get a new engine every time we need to process a file.
-                // Reusing the script engine could leak context and will fail subsequent evals
-                ScriptEngineManager().getEngineByExtension(ext).eval(it)
-            }
-        }
-        val contracts = when (eval) {
-            is Contract -> listOf(eval)
-            is Iterable<*> -> eval.filterIsInstance(Contract::class.java)
-            is Array<*> -> eval.filterIsInstance(Contract::class.java)
-            else -> emptyList()
-        }
+	override fun convertFrom(file: File): Collection<Contract> {
+		val eval = withUpdatedClassloader(file) {
+			BasicJvmScriptingHost().eval(file.toScriptSource(), ScriptWithCurrentClasspathConfiguration(), null)
+		}
+		when (eval) {
+			is ResultWithDiagnostics.Success<*> -> {
+				val contracts = when (val parsedValue = ((eval.value as EvaluationResult).returnValue as ResultValue.Value).value) {
+					is Contract -> listOf(parsedValue)
+					is Iterable<*> -> parsedValue.filterIsInstance(Contract::class.java)
+					is Array<*> -> parsedValue.filterIsInstance(Contract::class.java)
+					else -> emptyList()
+				}
 
-        return withName(file, contracts)
-    }
+				return withName(file, contracts)
+			}
 
-    private fun withName(file: File, contracts: Collection<Contract>): Collection<Contract> {
-        val counter = AtomicInteger(0)
-        return contracts.onEach { contract ->
-            if (ObjectUtils.isEmpty(contract.name)) {
-                contract.name = defaultContractName(file, contracts, counter.get())
-            }
-            counter.incrementAndGet()
-        }
-    }
+			else -> throw IllegalStateException("Failed to parse kotlin script due to ${(eval as ResultWithDiagnostics.Failure).reports}")
+		}
+	}
 
-    private fun defaultContractName(file: File, contracts: Collection<*>, counter: Int): String {
-        val lastIndexOfDot = file.name.lastIndexOf(".")
-        val tillExtension = file.name.substring(0, lastIndexOfDot)
-        return tillExtension + if (counter > 0 || contracts.size > 1) "_$counter" else ""
-    }
+	private fun withName(file: File, contracts: Collection<Contract>): Collection<Contract> {
+		val counter = AtomicInteger(0)
+		return contracts.onEach { contract ->
+			if (ObjectUtils.isEmpty(contract.name)) {
+				contract.name = defaultContractName(file, contracts, counter.get())
+			}
+			counter.incrementAndGet()
+		}
+	}
 
-    override fun convertTo(contract: Collection<Contract>) = contract.toList()
+	private fun defaultContractName(file: File, contracts: Collection<*>, counter: Int): String {
+		val lastIndexOfDot = file.name.lastIndexOf(".")
+		val tillExtension = file.name.substring(0, lastIndexOfDot)
+		return tillExtension + if (counter > 0 || contracts.size > 1) "_$counter" else ""
+	}
 
-    private fun withUpdatedClassloader(file: File, block: ClassLoader.() -> Any): Any {
-        val currentClassLoader = Thread.currentThread().contextClassLoader
-        try {
-            val tempClassLoader = newInstance(arrayOf(file.parentFile.toURI().toURL()), currentClassLoader)
-            Thread.currentThread().contextClassLoader = tempClassLoader
-            return tempClassLoader.block()
-        } finally {
-            Thread.currentThread().contextClassLoader = currentClassLoader
-        }
-    }
+	override fun convertTo(contract: Collection<Contract>) = contract.toList()
+
+	private fun withUpdatedClassloader(file: File, block: ClassLoader.() -> Any): Any {
+		val currentClassLoader = Thread.currentThread().contextClassLoader
+		try {
+			val tempClassLoader = newInstance(arrayOf(file.parentFile.toURI().toURL()), currentClassLoader)
+			Thread.currentThread().contextClassLoader = tempClassLoader
+			return tempClassLoader.block()
+		} finally {
+			Thread.currentThread().contextClassLoader = currentClassLoader
+		}
+	}
+
+	class ScriptWithCurrentClasspathConfiguration : ScriptCompilationConfiguration(
+		{
+			jvm {
+				// Extract the whole classpath from context classloader and use it as dependencies
+				dependenciesFromCurrentContext(wholeClasspath = true)
+			}
+		}
+	)
 }

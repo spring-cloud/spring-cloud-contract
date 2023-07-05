@@ -67,7 +67,7 @@
 		<InMemoryJavaCompiler.version>1.3.0</InMemoryJavaCompiler.version>
 		<thin-jar.version>1.0.30.RELEASE</thin-jar.version>
 
-		<contract.kotlin.version>1.6.21</contract.kotlin.version>
+		<contract.kotlin.version>1.8.22</contract.kotlin.version>
 		<commons-beanutils.version>1.9.4</commons-beanutils.version>
 		<sisu-inject-plexus.version>2.6.0</sisu-inject-plexus.version>
 
