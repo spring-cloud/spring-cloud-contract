@@ -115,7 +115,8 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-resources-plugin</artifactId>
 					</plugin>
-					<plugin>
+					<!-- TODO: reenable -->
+					<!--<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
 						<executions>
@@ -144,7 +145,7 @@
 								</configuration>
 							</execution>
 						</executions>
-					</plugin>
+					</plugin>-->
 					<plugin>
 						<groupId>org.asciidoctor</groupId>
 						<artifactId>asciidoctor-maven-plugin</artifactId>
