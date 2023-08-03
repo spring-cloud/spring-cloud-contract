@@ -76,11 +76,13 @@ The Docker image requires some environment variables to point to
 your running application, to the Artifact manager instance, and so on.
 The following list describes the environment variables:
 
-include::{project-root}/docker/spring-cloud-contract-docker/target/adoc/props.adoc[indent=0]
+// TODO: reenable
+//include::{project-root}/docker/spring-cloud-contract-docker/target/adoc/props.adoc[indent=0]
 
 The following environment variables are used when tests are run:
 
-include::{project-root}/docker/spring-cloud-contract-docker/target/adoc/appProps.adoc[indent=0]
+// TODO: reenable
+//include::{project-root}/docker/spring-cloud-contract-docker/target/adoc/appProps.adoc[indent=0]
 
 ### Customizing the gradle build
 
