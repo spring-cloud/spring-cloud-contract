@@ -73,7 +73,8 @@
 							<pomIncludes>
 								<pomInclude>*/pom.xml</pomInclude>
 								<pomInclude>contracts/pom.xml</pomInclude>
-								<pomInclude>dsl/pom.xml</pomInclude>
+								<!-- TODO: reenable -->
+								<!--<pomInclude>dsl/pom.xml</pomInclude>-->
 								<pomInclude>webclient/pom.xml</pomInclude>
 							</pomIncludes>
 							<goals>

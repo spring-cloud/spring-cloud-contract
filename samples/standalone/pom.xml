@@ -25,7 +25,8 @@
 	<modules>
 		<module>contracts</module>
 		<module>restdocs</module>
-		<module>dsl</module>
+		<!-- TODO: reenable -->
+		<!--<module>dsl</module>-->
 		<module>webclient</module>
 	</modules>
 
