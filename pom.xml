@@ -77,7 +77,8 @@
 
 	<modules>
 		<module>spring-cloud-contract-dependencies</module>
-		<module>docker</module>
+		<!-- TODO: temporarily disable -->
+		<!--<module>docker</module>-->
 		<module>docs</module>
 		<module>spring-cloud-contract-shade</module>
 		<module>spring-cloud-contract-wiremock</module>
