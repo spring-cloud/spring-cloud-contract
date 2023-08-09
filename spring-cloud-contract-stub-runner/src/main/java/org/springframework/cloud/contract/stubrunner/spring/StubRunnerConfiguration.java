@@ -114,7 +114,7 @@ public class StubRunnerConfiguration {
 				.withDeleteStubsAfterTest(Boolean.parseBoolean(resolvePlaceholder(props.isDeleteStubsAfterTest())))
 				.withGenerateStubs(Boolean.parseBoolean(resolvePlaceholder(props.isGenerateStubs())))
 				.withProperties(props.getProperties()).withHttpServerStubConfigurer(props.getHttpServerStubConfigurer())
-				.withServerId(resolvePlaceholder(props.getServerId()));
+				.withServerId(resolvePlaceholder(props.getServerId())).withFailOnNoStubs(props.isFailOnNoStubs());
 	}
 
 	private String[] resolvePlaceholder(String[] string) {
