@@ -53,12 +53,19 @@ public class WireMockApplicationListener implements ApplicationListener<Applicat
 	private void registerPort(ConfigurableEnvironment environment) {
 		Integer httpPortProperty = environment.getProperty("wiremock.server.port", Integer.class);
 		// If the httpPortProperty is not found it means the AutoConfigureWireMock hasn't
-		// been initialised.
+		// been initialised or the default was used
 		if (httpPortProperty != null && isHttpDynamic(httpPortProperty)) {
 			registerPropertySourceForDynamicEntries(environment, "wiremock.server.port", 10000, 12500,
 					"wiremock.server.port-dynamic");
 			if (log.isDebugEnabled()) {
 				log.debug("Registered property source for dynamic http port");
+			}
+		}
+		else {
+			Map<String, Object> source = getWireMockSource(environment);
+			source.put("wiremock.server.port", 8080);
+			if (log.isDebugEnabled()) {
+				log.debug("Registered WireMock server port property to the default <8080> value");
 			}
 		}
 		int httpsPortProperty = environment.getProperty("wiremock.server.https-port", Integer.class, 0);
@@ -70,15 +77,20 @@ public class WireMockApplicationListener implements ApplicationListener<Applicat
 			}
 		}
 		else if (httpsPortProperty == -1) {
-			MutablePropertySources propertySources = environment.getPropertySources();
-			addPropertySource(propertySources);
-			Map<String, Object> source = ((MapPropertySource) propertySources.get("wiremock")).getSource();
+			Map<String, Object> source = getWireMockSource(environment);
 			source.put("wiremock.server.https-port-dynamic", true);
 			if (log.isDebugEnabled()) {
 				log.debug("Registered property source for dynamic https with https port property set to -1");
 			}
 		}
 
+	}
+
+	private Map<String, Object> getWireMockSource(ConfigurableEnvironment environment) {
+		MutablePropertySources propertySources = environment.getPropertySources();
+		addPropertySource(propertySources);
+		Map<String, Object> source = ((MapPropertySource) propertySources.get("wiremock")).getSource();
+		return source;
 	}
 
 	private boolean isHttpsDynamic(int httpsPortProperty) {
@@ -91,9 +103,7 @@ public class WireMockApplicationListener implements ApplicationListener<Applicat
 
 	private void registerPropertySourceForDynamicEntries(ConfigurableEnvironment environment, String portProperty,
 			int minPort, int maxPort, String dynamicPortProperty) {
-		MutablePropertySources propertySources = environment.getPropertySources();
-		addPropertySource(propertySources);
-		Map<String, Object> source = ((MapPropertySource) propertySources.get("wiremock")).getSource();
+		Map<String, Object> source = getWireMockSource(environment);
 		int port = TestSocketUtils.findAvailableTcpPort(minPort, maxPort);
 		source.put(portProperty, port);
 		if (log.isDebugEnabled()) {
