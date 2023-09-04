@@ -825,8 +825,7 @@ Social remarks
 discuss changes while going through the process.
 * CDC is all about communication.
 
-The {samples_code}/{standalone_samples_path}/http-server[server-side
-code is available here], and {samples_code}/{standalone_samples_path}/http-client[the client code  is available here].
+The server-side code is available under Spring Cloud Contract's repository `samples/standalone/dsl/http-server` path, and the client-side code is available under Spring Cloud Contract's repository `samples/standalone/dsl/http-client` path.
 
 TIP: In this case, the producer owns the contracts. Physically, all the contracts are
 in the producer's repository.
