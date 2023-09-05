@@ -24,13 +24,15 @@ import java.util.List;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
+import com.github.tomakehurst.wiremock.common.Notifier;
 import com.github.tomakehurst.wiremock.core.Options;
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import jakarta.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -319,6 +321,35 @@ public class WireMockConfiguration implements SmartLifecycle {
 	public void stop(Runnable callback) {
 		stop();
 		callback.run();
+	}
+
+	static class Slf4jNotifier implements Notifier {
+
+		private static final Logger log = LoggerFactory.getLogger("WireMock");
+
+		private final boolean verbose;
+
+		Slf4jNotifier(boolean verbose) {
+			this.verbose = verbose;
+		}
+
+		@Override
+		public void info(String message) {
+			if (verbose) {
+				log.info(message);
+			}
+		}
+
+		@Override
+		public void error(String message) {
+			log.error(message);
+		}
+
+		@Override
+		public void error(String message, Throwable t) {
+			log.error(message, t);
+		}
+
 	}
 
 }

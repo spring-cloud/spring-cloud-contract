@@ -16,12 +16,14 @@
 
 package org.springframework.cloud.contract.wiremock;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.system.OutputCaptureRule;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -36,6 +38,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureWireMock(port = 26384)
 public class AutoConfigureWireMockApplicationTests {
 
+	@Rule
+	public OutputCaptureRule output = new OutputCaptureRule();
+
 	@Autowired
 	private Service service;
 
@@ -47,6 +52,8 @@ public class AutoConfigureWireMockApplicationTests {
 		stubFor(get(urlEqualTo("/test"))
 				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 		assertThat(this.service.go()).isEqualTo("Hello World!");
+		assertThat(this.output.getOut()).as("Must contain debug logging for WireMock")
+				.contains("Matched response definition:");
 	}
 
 	@Test
