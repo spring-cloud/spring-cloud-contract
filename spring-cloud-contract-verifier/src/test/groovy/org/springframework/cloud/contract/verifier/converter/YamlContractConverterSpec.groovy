@@ -392,6 +392,41 @@ class YamlContractConverterSpec extends Specification {
 		urlPropertyName << ['url', 'urlPath']
 	}
 
+	@Issue('#1921')
+	def 'should convert YAML to Contract and back to YAML without losing url information'() {
+		given:
+		File ymlMatchers = File.createTempFile('contract_matchers_url', '.yml').with {
+			write YamlContractConverterSpec.getResource('/yml/contract_matchers_url.yml')
+					.text
+					return it
+		}
+		expect:
+			converter.isAccepted(ymlMatchers)
+		when:
+			Collection<Contract> contracts = converter.convertFrom(ymlMatchers)
+			List<YamlContract> convertedBack = converter.convertTo(contracts)
+		then:
+			convertedBack.size() == 1
+			convertedBack[0].request.matchers.url.regex == "/get/[0-9]"
+	}
+
+	@Issue('#1921')
+	def 'should convert YAML to Contract and back to YAML without exceptions'() {
+		given:
+		File ymlMatchers = File.createTempFile('contract_matchers', '.yml').with {
+			write YamlContractConverterSpec.getResource('/yml/contract_matchers.yml')
+					.text
+					return it
+		}
+		expect:
+			converter.isAccepted(ymlMatchers)
+		when:
+			Collection<Contract> contracts = converter.convertFrom(ymlMatchers)
+			List<YamlContract> convertedBack = converter.convertTo(contracts)
+		then:
+			convertedBack.size() == 1
+	}
+
 	protected Object assertQueryParam(QueryParameters queryParameters, String queryParamName, Object serverValue,
 			MatchingStrategy.Type clientType, Object clientValue) {
 		if (clientType == MatchingStrategy.Type.ABSENT) {
