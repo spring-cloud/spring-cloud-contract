@@ -104,6 +104,9 @@ interface BodyParser extends BodyThen {
 						.map(o -> convertUnicodeEscapesIfRequired(MapConverter.getTestSideValuesForText(o).toString()))
 						.collect(Collectors.joining("&")).toString();
 			}
+			else if (bodyValue instanceof String) {
+				return (String) bodyValue;
+			}
 		}
 		else {
 			return convertToJsonString(bodyValue);
