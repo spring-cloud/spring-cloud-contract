@@ -2233,4 +2233,52 @@ response:
 				properties.testFramework = TestFramework.TESTNG
 			}                                 | '\$'
 	}
+
+	@Issue("1808")
+	def "should correctly work with Form URL encoded request body"() {
+		given:
+			Contract contractDsl = Contract.make {
+					request {
+						method 'POST'
+						url '/exportData'
+						headers {
+						  header("Content-Type": 'application/x-www-form-urlencoded; charset=UTF-8')
+						}
+						body('fromDt=16-Aug-2023&toDt=25-Aug-2023')
+					}
+					response {
+						status 200
+					}
+				}
+
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		then:
+			testAssertion(test)
+		and:
+			stubMappingIsValidWireMockStub(contractDsl)
+		where:
+			methodBuilderName | methodBuilder | testAssertion
+			"spock"           | {
+				properties.testFramework = TestFramework.SPOCK
+			}                                 | { it -> it.contains(""".body('''fromDt=16-Aug-2023&toDt=25-Aug-2023''')""")}
+			"mockmvc"         | {
+				properties.testMode = TestMode.MOCKMVC
+			}                                 | { it -> it.contains(""".body("fromDt=16-Aug-2023&toDt=25-Aug-2023")""")}
+			"jaxrs-spock"     | {
+				properties.testFramework = TestFramework.SPOCK; properties.testMode = TestMode.JAXRSCLIENT
+			}                                 | { it -> it.contains('.build("POST", entity("fromDt=16-Aug-2023&toDt=25-Aug-2023", "application/x-www-form-urlencoded; charset=UTF-8"))')}
+			"jaxrs"           | {
+				properties.testFramework = TestFramework.JUNIT; properties.testMode = TestMode.JAXRSCLIENT
+			}                                 | { it -> it.contains('.build("POST", entity("fromDt=16-Aug-2023&toDt=25-Aug-2023", "application/x-www-form-urlencoded; charset=UTF-8"))')}
+			"webclient"       | {
+				properties.testMode = TestMode.WEBTESTCLIENT
+			}                                 | { it -> it.contains('.body("fromDt=16-Aug-2023&toDt=25-Aug-2023")') }
+			"testNG"          | {
+				properties.testFramework = TestFramework.TESTNG
+			}                                 | { it -> it.contains('.body("fromDt=16-Aug-2023&toDt=25-Aug-2023")') }
+	}
 }
