@@ -547,6 +547,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>flatten-maven-plugin</artifactId>
+					<version>1.5.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -614,15 +615,6 @@
 
 
 	<repositories>
-		<repository>
-			<!-- TODO: We're adding it only because a dependency is using http instead of https -->
-			<id>maven-restlet</id>
-			<name>Maven Restlet</name>
-			<url>https://maven.restlet.org</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
 		<!-- Rest Assured -->
 		<repository>
 			<id>sonatype-snapshots</id>
@@ -631,16 +623,6 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
-		<!-- FIXME: 4.0 -->
-		<!-- Netflix -->
-		<!--<repository>
-			<id>netflix-snapshots</id>
-			<name>Netflix Snapshots</name>
-			<url>https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-snapshots</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>-->
 		<repository>
 			<id>netflix-candidates</id>
 			<name>Netflix Candidates</name>
@@ -670,14 +652,6 @@
 					<id>spring-milestones</id>
 					<name>Spring Milestones</name>
 					<url>https://repo.spring.io/milestone</url>
-					<snapshots>
-						<enabled>false</enabled>
-					</snapshots>
-				</repository>
-				<repository>
-					<id>spring-releases</id>
-					<name>Spring Releases</name>
-					<url>https://repo.spring.io/release</url>
 					<snapshots>
 						<enabled>false</enabled>
 					</snapshots>
