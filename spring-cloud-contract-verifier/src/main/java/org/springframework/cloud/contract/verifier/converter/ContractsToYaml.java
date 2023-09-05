@@ -176,27 +176,19 @@ class ContractsToYaml {
 	}
 
 	private void mapRequestMatchersUrl(YamlContract.Request yamlContractRequest, Request request) {
-		Object url = Optional.ofNullable(request.getUrl()).map(Url::getClientValue).orElse(null);
+		Object url = Optional.ofNullable(request.getUrl()).map(Url::getClientValue)
+				.orElse(Optional.ofNullable(request.getUrlPath()).map(Url::getClientValue).orElse(null));
 		YamlContract.KeyValueMatcher keyValueMatcher = new YamlContract.KeyValueMatcher();
 		if (url instanceof RegexProperty) {
 			keyValueMatcher.regex = ((RegexProperty) url).pattern();
 			yamlContractRequest.matchers.url = keyValueMatcher;
 		}
+		else if (url instanceof Pattern) {
+			keyValueMatcher.regex = ((Pattern) url).pattern();
+			yamlContractRequest.matchers.url = keyValueMatcher;
+		}
 		else if (url instanceof ExecutionProperty) {
 			keyValueMatcher.command = url.toString();
-			yamlContractRequest.matchers.url = keyValueMatcher;
-		}
-		else {
-			yamlContractRequest.matchers.url = null;
-		}
-
-		Object urlPath = Optional.ofNullable(request.getUrlPath()).map(Url::getClientValue).orElse(null);
-		if (urlPath instanceof RegexProperty) {
-			keyValueMatcher.regex = ((RegexProperty) urlPath).pattern();
-			yamlContractRequest.matchers.url = keyValueMatcher;
-		}
-		else if (urlPath instanceof ExecutionProperty) {
-			keyValueMatcher.command = urlPath.toString();
 			yamlContractRequest.matchers.url = keyValueMatcher;
 		}
 		else {
@@ -557,7 +549,7 @@ class ContractsToYaml {
 
 	protected YamlContract.StubMatcherType stubMatcherType(MatchingType matchingType) {
 		if (matchingType == MatchingType.COMMAND || matchingType == MatchingType.TYPE) {
-			throw new UnsupportedOperationException("No type or command for client side");
+			return null;
 		}
 		return STUB_MATCHER_TYPE.getOrDefault(matchingType, null);
 	}
