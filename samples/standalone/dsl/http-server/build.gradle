@@ -19,8 +19,6 @@ repositories {
 }
 // end::deps_repos[]
 
-ext.set("rest-assured.version", "5.2.1") // TODO: Remove once upgraded in Boot
-
 dependencyManagement {
 	imports {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:$BOM_VERSION"

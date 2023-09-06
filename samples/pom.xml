@@ -72,9 +72,8 @@
 							</profiles>
 							<pomIncludes>
 								<pomInclude>contracts/pom.xml</pomInclude>
-								<!-- TODO: reenable -->
-								<!--<pomInclude>*/pom.xml</pomInclude>-->
-								<!--<pomInclude>dsl/pom.xml</pomInclude>-->
+								<pomInclude>*/pom.xml</pomInclude>
+								<pomInclude>dsl/pom.xml</pomInclude>
 								<pomInclude>restdocs/pom.xml </pomInclude>
 								<pomInclude>webclient/pom.xml</pomInclude>
 							</pomIncludes>
