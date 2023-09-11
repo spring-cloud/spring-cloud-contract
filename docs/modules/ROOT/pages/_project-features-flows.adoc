@@ -1,5 +1,4 @@
 [[feature-integrations]]
 = Integrations
 
-include::_attributes.adoc[]
 

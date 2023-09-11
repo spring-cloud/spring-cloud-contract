@@ -1,7 +1,6 @@
 [[features-wiremock]]
 = Spring Cloud Contract WireMock
 
-include::_attributes.adoc[]
 
 The Spring Cloud Contract WireMock modules let you use https://github.com/tomakehurst/wiremock[WireMock] in a
 Spring Boot application. For more detail, check out the

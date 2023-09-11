@@ -1,6 +1,5 @@
 [[features]]
 = Spring Cloud Contract Features
-include::_attributes.adoc[]
 
 This section dives into the details of {project-full-name}. Here you can learn about the key
 features that you may want to use and customize. If you have not already done so, you
@@ -8,15 +7,10 @@ might want to read the "<<getting-started.adoc#getting-started>>" and
 "<<using.adoc#using>>" sections, so that you have a good grounding in the
 basics.
 
-include::_project-features-contract.adoc[]
 
-include::_project-features-flows.adoc[]
 
-include::_project-features-messaging.adoc[]
 
-include::_project-features-stubrunner.adoc[]
 
-include::_project-features-wiremock.adoc[]
 
 [[features-build-tools]]
 == Build Tools Integration

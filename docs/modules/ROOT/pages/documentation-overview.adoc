@@ -1,6 +1,5 @@
 [[documentation]]
 = Spring Cloud Contract Documentation
-include::_attributes.adoc[]
 
 This section provides a brief overview of {project-full-name} reference documentation. It serves
 as a map for the rest of the document.

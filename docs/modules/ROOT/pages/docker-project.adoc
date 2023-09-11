@@ -1,6 +1,5 @@
 [[docker]]
 = Docker Project
-include::_attributes.adoc[]
 
 In this section, we publish a `springcloud/spring-cloud-contract` Docker image
 that contains a project that generates tests and runs them in `EXPLICIT` mode

@@ -1,6 +1,5 @@
 [[maven-project]]
 = Maven Project
-include::_attributes.adoc[]
 
 To learn how to set up the Maven project for Spring Cloud Contract Verifier, read the
 following sections:

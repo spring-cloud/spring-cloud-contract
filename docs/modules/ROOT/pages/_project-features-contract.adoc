@@ -1,7 +1,6 @@
 [[contract-dsl]]
 = Contract DSL
 
-include::_attributes.adoc[]
 
 Spring Cloud Contract supports DSLs written in the following languages:
 

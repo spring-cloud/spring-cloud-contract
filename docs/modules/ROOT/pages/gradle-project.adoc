@@ -1,6 +1,5 @@
 [[gradle-project]]
 = Gradle Project
-include::_attributes.adoc[]
 
 To learn how to set up the Gradle project for Spring Cloud Contract Verifier, read the
 following sections:

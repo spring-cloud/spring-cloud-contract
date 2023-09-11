@@ -3,7 +3,6 @@
 Adam Dudczak, Mathias Düsterhöft, Marcin Grzejszczak, Dennis Kieselhorst, Jakub Kubryński, Karol Lassak, Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer, Jay Bryant
 
 :docinfo: shared
-include::_attributes.adoc[]
 
 The reference documentation consists of the following sections:
 

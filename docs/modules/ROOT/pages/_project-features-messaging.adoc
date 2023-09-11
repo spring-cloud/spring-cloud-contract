@@ -1,7 +1,6 @@
 [[features-messaging]]
 = Messaging
 
-include::_attributes.adoc[]
 
 Spring Cloud Contract lets you verify applications that use messaging as a
 means of communication. All of the integrations shown in this document work with Spring,

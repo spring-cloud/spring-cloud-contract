@@ -1,6 +1,5 @@
 [[using]]
 = Using Spring Cloud Contract
-include::_attributes.adoc[]
 
 This section goes into more detail about how you should use {project-full-name}. It covers topics
 such as flows of how to work with {project-full-name}. We also
