@@ -1,5 +1,6 @@
 [[features-wiremock]]
-== Spring Cloud Contract WireMock
+= Spring Cloud Contract WireMock
+
 include::_attributes.adoc[]
 
 The Spring Cloud Contract WireMock modules let you use https://github.com/tomakehurst/wiremock[WireMock] in a
@@ -32,7 +33,7 @@ The registered WireMock server is reset after each test class.
 However, if you need to reset it after each test method, set the `wiremock.reset-mappings-after-each-test` property to `true`.
 
 [[features-wiremock-registering-stubs]]
-=== Registering Stubs Automatically
+== Registering Stubs Automatically
 
 If you use `@AutoConfigureWireMock`, it registers WireMock JSON stubs from the file
 system or classpath (by default, from `file:src/test/resources/mappings`). You can
@@ -82,7 +83,7 @@ include::{wiremock_tests}/src/test/java/org/springframework/cloud/contract/wirem
 ====
 
 [[features-wiremock-using-files]]
-=== Using Files to Specify the Stub Bodies
+== Using Files to Specify the Stub Bodies
 
 WireMock can read response bodies from files on the classpath or the file system. In the
 case of the file system, you can see in the JSON DSL that the response has a `bodyFileName` instead of a
@@ -102,7 +103,7 @@ NOTE: The value of `files` has no
 effect on the stubs loaded explicitly from the `stubs` attribute.
 
 [[features-wiremock-junit-rule]]
-=== Alternative: Using JUnit Rules
+== Alternative: Using JUnit Rules
 
 For a more conventional WireMock experience, you can use JUnit `@Rules` to start and stop
 the server. To do so, use the `WireMockSpring` convenience class to obtain an `Options`
@@ -120,7 +121,7 @@ The `@ClassRule` means that the server shuts down after all the methods in this 
 have been run.
 
 [[features-wiremock-relaxed-ssl]]
-=== Relaxed SSL Validation for Rest Template
+== Relaxed SSL Validation for Rest Template
 
 WireMock lets you stub a "`secure`" server with an `https` URL protocol. If your
 application wants to contact that stub server in an integration test, it finds that
@@ -174,7 +175,7 @@ To disable the custom `RestTemplateBuilder`, set the `wiremock.rest-template-ssl
 property to `false`.
 
 [[features-wiremock-spring-mvc-mocks]]
-=== WireMock and Spring MVC Mocks
+== WireMock and Spring MVC Mocks
 
 Spring Cloud Contract provides a convenience class that can load JSON WireMock stubs into
 a Spring `MockRestServiceServer`. The following code shows an example:

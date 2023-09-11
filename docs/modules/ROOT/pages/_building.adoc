@@ -1,8 +1,8 @@
 [[how-to-build-spring-cloud-contract]]
-== How to Build Spring Cloud Contract
+= How to Build Spring Cloud Contract
 
 [[cloning-the-repository-on-windows]]
-=== Cloning the repository on Windows
+== Cloning the repository on Windows
 
 While cloning this project on Windows, some files in the git repository may exceed the Windows maximum file path limit of 255 characters, which may
 result in an incorrectly (probably partially) checked out repository.
@@ -46,7 +46,7 @@ have Docker installed.
 IMPORTANT: If you want to run the build in offline mode, you must have Maven 3.5.2+ installed.
 
 [[project-structure]]
-=== Project structure
+== Project structure
 
 The following listing shows the Spring Cloud Contract folder structure:
 
@@ -86,7 +86,7 @@ The following list describes each of the top-level folders in the project struct
 - `tests`: Integration tests for different messaging technologies
 
 [[commands]]
-=== Commands
+== Commands
 
 To build the core functionality together with the Maven Plugin, you can run the following
 command:
@@ -107,7 +107,7 @@ cd spring-cloud-contract-tools/spring-cloud-contract-gradle-plugin
 ```
 
 [[helpful-scripts]]
-=== Helpful scripts
+== Helpful scripts
 
 We provide a couple of helpful scripts to build the project.
 

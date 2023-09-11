@@ -1,5 +1,5 @@
 [[features-stub-runner]]
-== Spring Cloud Contract Stub Runner
+= Spring Cloud Contract Stub Runner
 
 One of the issues that you might encounter while using Spring Cloud Contract Verifier is
 passing the generated WireMock JSON stubs from the server side to the client side (or to
@@ -10,7 +10,7 @@ question. That is why we introduced Spring Cloud Contract Stub Runner. It can
 automatically download and run the stubs for you.
 
 [[features-stub-runner-snapshot-versions]]
-=== Snapshot Versions
+== Snapshot Versions
 
 You can add the additional snapshot repository to your build file to use snapshot
 versions, which are automatically uploaded after every successful build, as follows:
@@ -30,7 +30,7 @@ include::{standalone_samples_path}/http-server/settings.gradle[tags=repos,indent
 ====
 
 [[features-stub-runner-publishing-stubs-as-jars]]
-=== Publishing Stubs as JARs
+== Publishing Stubs as JARs
 
 The easiest approach to publishing stubs as jars is to centralize the way stubs are kept.
 For example, you can keep them as jars in a Maven repository.
@@ -62,7 +62,7 @@ include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/resources/f
 ====
 
 [[features-stub-runner-core]]
-=== Stub Runner Core
+== Stub Runner Core
 
 The stub runner core runs stubs for service collaborators. Treating stubs as contracts of
 services lets you use stub-runner as an implementation of
@@ -73,7 +73,7 @@ pick those from the classpath), start WireMock servers for them, and feed them w
 stub definitions. For messaging, special stub routes are defined.
 
 [[features-stub-runner-retrieving]]
-==== Retrieving stubs
+=== Retrieving stubs
 
 You can pick from the following options of acquiring stubs:
 
@@ -84,7 +84,7 @@ You can pick from the following options of acquiring stubs:
 The latter example is described in the <<advanced.html#customization-custom-stub-runner, Custom Stub Runner>> section.
 
 [[features-stub-runner-downloading-stub]]
-===== Downloading Stubs
+==== Downloading Stubs
 
 You can control the downloading of stubs with the `stubsMode` switch. It picks value from the
 `StubRunnerProperties.StubsMode` enumeration. You can use the following options:
@@ -103,7 +103,7 @@ The following example picks stubs from a local location:
 ====
 
 [[features-stub-runner-classpath-scanning]]
-===== Classpath scanning
+==== Classpath scanning
 
 If you set the `stubsMode` property to `StubRunnerProperties.StubsMode.CLASSPATH`
 (or set nothing since `CLASSPATH` is the default value), the classpath is scanned.
@@ -222,7 +222,7 @@ By maintaining this structure, the classpath gets scanned and you can profit fro
 HTTP stubs without the need to download artifacts.
 
 [[features-stub-runner-configuring-http-server-stubs]]
-===== Configuring HTTP Server Stubs
+==== Configuring HTTP Server Stubs
 
 Stub Runner has a notion of a `HttpServerStub` that abstracts the underlying
 concrete implementation of the HTTP server (for example, WireMock is one of the implementations).
@@ -262,7 +262,7 @@ include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contra
 Whenever an HTTPS port is found, it takes precedence over the HTTP port.
 
 [[features-stub-runner-running-stubs]]
-==== Running stubs
+=== Running stubs
 
 This section describes how to run stubs. It contains the following topics:
 
@@ -271,7 +271,7 @@ This section describes how to run stubs. It contains the following topics:
 * <<features-stub-runner-messaging>>
 
 [[features-stub-runner-http-stubs]]
-===== HTTP Stubs
+==== HTTP Stubs
 
 Stubs are defined in JSON documents, whose syntax is defined in the http://wiremock.org/stubbing.html[WireMock documentation].
 
@@ -297,7 +297,7 @@ The following example defines a stub in JSON:
 ====
 
 [[features-stub-runner-viewing]]
-===== Viewing Registered Mappings
+==== Viewing Registered Mappings
 
 Every stubbed collaborator exposes a list of defined mappings under the `__/admin/` endpoint.
 
@@ -361,12 +361,12 @@ the mappings available for the given server:
 ====
 
 [[features-stub-runner-messaging]]
-===== Messaging Stubs
+==== Messaging Stubs
 
 Depending on the provided Stub Runner dependency and the DSL, the messaging routes are automatically set up.
 
 [[features-stub-runner-junit]]
-=== Stub Runner JUnit Rule and Stub Runner JUnit5 Extension
+== Stub Runner JUnit Rule and Stub Runner JUnit5 Extension
 
 Stub Runner comes with a JUnit rule that lets you can download and run stubs for a given
 group and artifact ID, as the following example shows:
@@ -434,21 +434,21 @@ IMPORTANT: To use the JUnit rule or JUnit 5 extension together with messaging, y
 If you do not do this, then, whenever you try to send a message, an exception is thrown.
 
 [[features-stub-runner-rule-maven-settings]]
-==== Maven Settings
+=== Maven Settings
 
 The stub downloader honors Maven settings for a different local repository folder.
 Authentication details for repositories and profiles are currently not taken into account,
 so you need to specify it by using the properties mentioned above.
 
 [[features-stub-runner-rule-fixed-ports]]
-==== Providing Fixed Ports
+=== Providing Fixed Ports
 
 You can also run your stubs on fixed ports. You can do it in two different ways.
 One is to pass it in the properties, and the other is to use the fluent API of
 JUnit rule.
 
 [[features-stub-runner-rule-fluent-api]]
-==== Fluent API
+=== Fluent API
 
 When using the `StubRunnerRule` or `StubRunnerExtension`, you can add a stub to download
 and then pass the port for the last downloaded stub. The following example shows how to do so:
@@ -470,7 +470,7 @@ include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contra
 ====
 
 [[features-stub-runner-rule-spring]]
-==== Stub Runner with Spring
+=== Stub Runner with Spring
 
 Stub Runner with Spring sets up Spring configuration of the Stub Runner project.
 
@@ -533,7 +533,7 @@ int thing2Port;
 ====
 
 [[features-stub-runner-cloud]]
-=== Stub Runner Spring Cloud
+== Stub Runner Spring Cloud
 
 Stub Runner can integrate with Spring Cloud.
 
@@ -543,7 +543,7 @@ For real life examples, see:
 - https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}/consumer_with_discovery[The consumer application sample]
 
 [[features-stub-runner-cloud-stubbing-discovery]]
-==== Stubbing Service Discovery
+=== Stubbing Service Discovery
 
 The most important feature of `Stub Runner Spring Cloud` is the fact that it stubs:
 
@@ -557,7 +557,7 @@ balanced `RestTemplate` or `DiscoveryClient` directly, to call those stubbed ser
 instead of calling the real Service Discovery tool.
 
 [[features-stub-runner-cloud-stubbing-profiles]]
-===== Test Profiles and Service Discovery
+==== Test Profiles and Service Discovery
 
 In your integration tests, you typically do not want to call either a discovery service (such as Eureka)
 or Config Server. That is why you create an additional test configuration in which you want to disable
@@ -579,7 +579,7 @@ in a static block such as the following example (for Eureka):
 ====
 
 [[features-stub-runner-additional-config]]
-==== Additional Configuration
+=== Additional Configuration
 
 You can match the `artifactId` of the stub with the name of your application by using the `stubrunner.idsToServiceIds:` map.
 
@@ -596,13 +596,13 @@ by setting the following system properties or by setting the corresponding envir
 - `org.apache.maven.global-settings`: Path to maven global settings location
 
 [[features-stub-runner-boot]]
-=== Using the Stub Runner Boot Application
+== Using the Stub Runner Boot Application
 
 Spring Cloud Contract Stub Runner Boot is a Spring Boot application that exposes REST endpoints to
 trigger the messaging labels and to access WireMock servers.
 
 [[features-stub-runner-boot-security]]
-==== Stub Runner Boot Security
+=== Stub Runner Boot Security
 
 The Stub Runner Boot application is not secured by design - securing it would require to add security to all
 stubs even if they don't actually require it. Since this is a testing utility - the server is **not intended**
@@ -612,7 +612,7 @@ IMPORTANT: It is expected that **only a trusted client** has access to the Stub 
 run this application as a Fat Jar or a link:docker-project.html#docker-stubrunner[Docker Image] in untrusted locations.
 
 [[features-stub-runner-boot-server]]
-==== Stub Runner Server
+=== Stub Runner Server
 
 To use the Stub Runner Server, add the following dependency:
 
@@ -628,7 +628,7 @@ Then annotate a class with `@EnableStubRunnerServer`, build a fat jar, and it is
 For the properties, see the <<features-stub-runner-rule-spring,Stub Runner Spring>> section.
 
 [[features-stub-runner-boot-how-fat-jar]]
-==== Stub Runner Server Fat Jar
+=== Stub Runner Server Fat Jar
 
 You can download a standalone JAR from Maven (for example, for version 2.0.1.RELEASE)
 by running the following commands:
@@ -642,7 +642,7 @@ $ java -jar stub-runner.jar --stubrunner.ids=... --stubrunner.repositoryRoot=...
 ====
 
 [[features-stub-runner-boot-how-cli]]
-==== Spring Cloud CLI
+=== Spring Cloud CLI
 
 Starting from the `1.4.0.RELEASE` version of the https://cloud.spring.io/spring-cloud-cli[Spring Cloud CLI]
 project, you can start Stub Runner Boot by running `spring cloud stubrunner`.
@@ -667,7 +667,7 @@ Then you can call `spring cloud stubrunner` from your terminal window to start
 the Stub Runner server. It is available at port `8750`.
 
 [[features-stub-runner-boot-endpoints]]
-==== Endpoints
+=== Endpoints
 
 Stub Runner Boot offers two endpoints:
 
@@ -675,7 +675,7 @@ Stub Runner Boot offers two endpoints:
 * <<features-stub-runner-boot-endpoints-messaging>>
 
 [[features-stub-runner-boot-endpoints-http]]
-===== HTTP
+==== HTTP
 
 For HTTP, Stub Runner Boot makes the following endpoints available:
 
@@ -683,7 +683,7 @@ For HTTP, Stub Runner Boot makes the following endpoints available:
 - GET `/stubs/{ivy}`: Returns a port for the given `ivy` notation (when calling the endpoint `ivy` can also be `artifactId` only)
 
 [[features-stub-runner-boot-endpoints-messaging]]
-===== Messaging
+==== Messaging
 
 For Messaging, Stub Runner Boot makes the following endpoints available:
 
@@ -693,7 +693,7 @@ For Messaging, Stub Runner Boot makes the following endpoints available:
 (when calling the endpoint, `ivy` can also be `artifactId` only)
 
 [[features-stub-runner-boot-endpoints-example]]
-==== Example
+=== Example
 
 The following example shows typical usage of Stub Runner Boot:
 
@@ -703,7 +703,7 @@ include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contra
 ----
 
 [[features-stub-runner-boot-service-discovery]]
-==== Stub Runner Boot with Service Discovery
+=== Stub Runner Boot with Service Discovery
 
 One way to use Stub Runner Boot is to use it as a feed of stubs for "`smoke tests`". What does that mean?
 Assume that you do not want to deploy 50 microservices to a test environment in order
@@ -727,7 +727,7 @@ likely to change. That way, you can provide only the list of stubs to download w
 the Stub Runner Boot.
 
 [[features-stub-runner-stubs-per-consumer]]
-=== Consumer-Driven Contracts: Stubs Per Consumer
+== Consumer-Driven Contracts: Stubs Per Consumer
 
 There are cases in which two consumers of the same endpoint want to have two different responses.
 
@@ -825,7 +825,7 @@ For more information about the reasons behind this change,
 see https://github.com/spring-cloud/spring-cloud-contract/issues/224[issue 224].
 
 [[features-stub-runner-stubs-protocol]]
-=== Fetching Stubs or Contract Definitions From A Location
+== Fetching Stubs or Contract Definitions From A Location
 
 Instead of picking the stubs or contract definitions from
 Artifactory, Nexus, or Git, you can point to
@@ -946,7 +946,7 @@ stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 ====
 
 [[features-stub-runner-generate-stubs-at-runtime]]
-=== Generating Stubs at Runtime
+== Generating Stubs at Runtime
 
 As a consumer, you might not want to wait for the producer to finish its implementation and then publish their stubs. A solution to this problem can be generation of stubs at runtime.
 
@@ -989,7 +989,7 @@ stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 ====
 
 [[features-stub-runner-fail-on-no-stubs]]
-=== Fail On No Stubs
+== Fail On No Stubs
 
 By default, Stub Runner will fail if no stubs are found. In order to change that behavior, set the `failOnNoStubs` property to `false` in the annotation or call the `withFailOnNoStubs(false)` method on a JUnit Rule or Extension. The following example shows how to do so:
 
@@ -1028,7 +1028,7 @@ stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 ====
 
 [[features-stub-runner-common]]
-=== Common Properties
+== Common Properties
 
 This section briefly describes common properties, including:
 
@@ -1036,7 +1036,7 @@ This section briefly describes common properties, including:
 * <<features-stub-runner-stub-runner-stub-ids>>
 
 [[features-stub-runner-common-properties-junit-spring]]
-==== Common Properties for JUnit and Spring
+=== Common Properties for JUnit and Spring
 
 You can set repetitive properties by using system properties or Spring configuration
 properties. The following table shows their names with their default values:
@@ -1061,7 +1061,7 @@ override the consumer name, change this value.
 |===============
 
 [[features-stub-runner-stub-runner-stub-ids]]
-==== Stub Runner Stubs IDs
+=== Stub Runner Stubs IDs
 
 You can set the stubs to download in the `stubrunner.ids` system property. They
 use the following pattern:

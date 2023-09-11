@@ -1,5 +1,5 @@
 [[on-the-producer-side]]
-== On the Producer Side
+= On the Producer Side
 
 To start working with Spring Cloud Contract, you can add files with REST or messaging contracts expressed in either Groovy DSL or YAML to the contracts directory, which is set by the contractsDslDir property. By default, it is $rootDir/src/test/resources/contracts.
 
@@ -57,7 +57,7 @@ INFO: The baseClassForTests element lets you specify your base test class. It mu
 Once the implementation and the test base class are in place, the tests pass, and both the application and the stub artifacts are built and installed in the local Maven repository. You can now merge the changes, and you can publish both the application and the stub artifacts in an online repository.
 
 [[on-the-consumer-side]]
-== On the Consumer Side
+= On the Consumer Side
 
 You can use Spring Cloud Contract Stub Runner in the integration tests to get a running WireMock instance or messaging route that simulates the actual service.
 

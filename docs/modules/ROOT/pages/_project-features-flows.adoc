@@ -1,9 +1,10 @@
 [[feature-integrations]]
-== Integrations
+= Integrations
+
 include::_attributes.adoc[]
 
 [[features-jax-rs]]
-=== JAX-RS
+== JAX-RS
 
 The Spring Cloud Contract supports the JAX-RS 2 Client API. The base class needs
 to define `protected WebTarget webTarget` and server initialization. The only option for
@@ -29,7 +30,7 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 ====
 
 [[feature-webflux]]
-=== WebFlux with WebTestClient
+== WebFlux with WebTestClient
 
 You can work with WebFlux by using WebTestClient. The following listing shows how to
 configure WebTestClient as the test mode:
@@ -82,7 +83,7 @@ public abstract class BeerRestBase {
 TIP: The `WebTestClient` mode is faster than the `EXPLICIT` mode.
 
 [[feature-webflux-explicit]]
-=== WebFlux with Explicit Mode
+== WebFlux with Explicit Mode
 
 You can also use WebFlux with the explicit mode in your generated tests
 to work with WebFlux. The following example shows how to configure using explicit mode:
@@ -128,7 +129,7 @@ include::{samples_url}/producer_webflux/src/test/java/com/example/BeerRestBase.j
 ====
 
 [[features-custom-mode]]
-=== Custom Mode
+== Custom Mode
 
 IMPORTANT: This mode is experimental and can change in the future.
 
@@ -232,7 +233,7 @@ public abstract class BeerRestBase {
 ====
 
 [[features-context-paths]]
-=== Working with Context Paths
+== Working with Context Paths
 
 Spring Cloud Contract supports context paths.
 
@@ -294,7 +295,7 @@ context path included (for example, `/my-context-path/url`).
 that information (for example, in the stubs, you have to call `/my-context-path/url`).
 
 [[features-rest-docs]]
-=== Working with REST Docs
+== Working with REST Docs
 
 You can use https://projects.spring.io/spring-restdocs[Spring REST Docs] to generate
 documentation (for example, in Asciidoc format) for an HTTP API with Spring MockMvc,
@@ -478,7 +479,7 @@ number of different ways, including by using
 document.
 
 [[features-rest-docs-contracts]]
-==== Generating Contracts with REST Docs
+=== Generating Contracts with REST Docs
 
 You can also generate Spring Cloud Contract DSL files and documentation with Spring REST
 Docs. If you do so in combination with Spring Cloud WireMock, you get both the contracts
@@ -545,7 +546,7 @@ The generated document (formatted in Asciidoc in this case) contains a formatted
 contract. The location of this file would be `index/dsl-contract.adoc`.
 
 [[features-restdocs-priority-attribute]]
-==== Specifying the priority attribute
+=== Specifying the priority attribute
 
 The method `SpringCloudContractRestDocs.dslContract()` takes an optional Map parameter that allows you to specify additional attributes in the template.
 
@@ -557,7 +558,7 @@ SpringCloudContractRestDocs.dslContract(Map.of("priority", 1))
 ----
 
 [[features-restdocs-override]]
-==== Overriding the DSL contract template
+=== Overriding the DSL contract template
 
 By default, the output of the contract is based on a file named `default-dsl-contract-only.snippet`.
 
@@ -601,7 +602,7 @@ Therefore in the example above you should place a file named custom-dsl-template
 
 
 [[features-graphql]]
-=== GraphQL
+== GraphQL
 
 Since https://graphql.org/[GraphQL] is essentially HTTP you can write a contract for it by creating a standard HTTP contract with an additional `metadata` entry with key `verifier` and a mapping `tool=graphql`.
 
@@ -694,7 +695,7 @@ metadata:
 Adding the metadata section will change the way the default, WireMock stub is built. It will now use the Spring Cloud Contract request matcher, so that e.g. the `query` part of the GraphQL request gets compared against the real request by ignoring whitespaces.
 
 [[features-graphql-producer]]
-==== Producer Side Setup
+=== Producer Side Setup
 
 On the producer side your configuration can look as follows.
 
@@ -747,7 +748,7 @@ public abstract class BaseClass {
 ====
 
 [[features-graphql-consumer]]
-==== Consumer Side Setup
+=== Consumer Side Setup
 
 Example of a consumer side test of the GraphQL API.
 
@@ -786,7 +787,7 @@ public class BeerControllerGraphQLTest {
 ====
 
 [[features-grpc]]
-=== GRPC
+== GRPC
 
 https://grpc.io/[GRPC] is an RPC framework built on top of HTTP/2 for which Spring Cloud Contract has basic support.
 
@@ -846,7 +847,7 @@ then:
 ====
 
 [[features-grpc-producer]]
-==== Producer Side Setup
+=== Producer Side Setup
 
 In order to leverage the HTTP/2 support you must set the `CUSTOM` test mode as follow.
 
@@ -917,7 +918,7 @@ public abstract class BeerRestBase {
 ====
 
 [[features-grpc-consumer]]
-==== Consumer Side Setup
+=== Consumer Side Setup
 
 Example of GRPC consumer side test. Due to the unusual behaviour of the GRPC server side, the stub is unable to return the `grpc-status` header in the proper moment. This is why we need to manually set the return status.
 

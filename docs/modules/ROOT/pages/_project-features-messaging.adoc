@@ -1,5 +1,6 @@
 [[features-messaging]]
-== Messaging
+= Messaging
+
 include::_attributes.adoc[]
 
 Spring Cloud Contract lets you verify applications that use messaging as a
@@ -7,7 +8,7 @@ means of communication. All of the integrations shown in this document work with
 but you can also create one of your own and use that.
 
 [[contract-dsl-messaging-top-level]]
-=== Messaging DSL Top-level Elements
+== Messaging DSL Top-level Elements
 
 The DSL for messaging looks a little bit different than the one that focuses on HTTP. The
 following sections explain the differences:
@@ -17,7 +18,7 @@ following sections explain the differences:
 * <<contract-dsl-messaging-common>>
 
 [[contract-dsl-output-triggered-method]]
-==== Output Triggered by a Method
+=== Output Triggered by a Method
 
 The output message can be triggered by calling a method (such as a `Scheduler` when a contract was
 started and when a message was sent), as shown in the following example:
@@ -43,7 +44,7 @@ test that calls that method to trigger the message. On the consumer side, you ca
 
 
 [[contract-dsl-consumer-producer]]
-==== Consumer/Producer
+=== Consumer/Producer
 
 IMPORTANT: This section is valid only for the Groovy DSL.
 
@@ -54,7 +55,7 @@ provides the `consumer` and `producer` methods
 parts).
 
 [[contract-dsl-messaging-common]]
-==== Common
+=== Common
 
 In the `input` or `outputMessage` section, you can call `assertThat` with the name
 of a `method` (for example, `assertThatMessageIsOnTheQueue()`) that you have defined in the
@@ -62,7 +63,7 @@ base class or in a static import. Spring Cloud Contract runs that method
 in the generated test.
 
 [[features-messaging-integrations]]
-=== Integrations
+== Integrations
 
 You can use one of the following integration configurations:
 
@@ -105,7 +106,7 @@ testImplementation(group: 'org.springframework.cloud', name: 'spring-cloud-strea
 =====
 
 [[features-messaging-manual]]
-==== Manual Integration Testing
+=== Manual Integration Testing
 
 The main interface used by the tests is
 `org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender` and `org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver`.
@@ -134,7 +135,7 @@ NOTE: If your tests require stubs as well, then `@AutoConfigureStubRunner` inclu
 messaging configuration, so you only need the one annotation.
 
 [[features-messaging-test-generation]]
-=== Producer Side  Messaging Test Generation
+== Producer Side  Messaging Test Generation
 
 Having the `input` or `outputMessage` sections in your DSL results in creation of tests
 on the publisher's side. By default, JUnit 4 tests are created. However, there is also a
@@ -180,7 +181,7 @@ include::{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract
 ====
 
 [[features-messaging-consumer]]
-=== Consumer Stub Generation
+== Consumer Stub Generation
 
 Unlike in the HTTP part, in messaging, we need to publish the contract definition inside the JAR with
 a stub. Then it is parsed on the consumer side, and proper stubbed routes are created.
@@ -192,7 +193,7 @@ on the classpath and that you want to use Spring AMQP. Then you need to set
 That way, the only remaining framework is Spring AMQP.
 
 [[features-messaging-stub-triggering]]
-==== Stub triggering
+=== Stub triggering
 
 To trigger a message, use the `StubTrigger` interface, as the following example shows:
 
@@ -214,7 +215,7 @@ or the other in your tests.
 * <<features-messaging-trigger-all-messages>>
 
 [[features-messaging-trigger-label]]
-==== Trigger by Label
+=== Trigger by Label
 
 The following example shows how to trigger a message with a label:
 
@@ -226,7 +227,7 @@ include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/o
 ====
 
 [[features-messaging-trigger-group-artifact-ids]]
-==== Trigger by Group and Artifact IDs
+=== Trigger by Group and Artifact IDs
 
 The following example shows how to trigger a message by group and artifact IDs:
 
@@ -238,7 +239,7 @@ include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/o
 ====
 
 [[features-messaging-trigger-artifact-ids]]
-==== Trigger by Artifact IDs
+=== Trigger by Artifact IDs
 
 The following example shows how to trigger a message from artifact IDs:
 
@@ -248,7 +249,7 @@ include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/o
 ----
 
 [[features-messaging-trigger-all-messages]]
-==== Trigger All Messages
+=== Trigger All Messages
 
 The following example shows how to trigger all messages:
 
@@ -261,25 +262,25 @@ include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/o
 :output_name: jms:output
 
 [[features-messaging-stub-runner-camel]]
-=== Consumer Side Messaging With Apache Camel
+== Consumer Side Messaging With Apache Camel
 
 Spring Cloud Contract Stub Runner's messaging module gives you an easy way to integrate with Apache Camel.
 For the provided artifacts, it automatically downloads the stubs and registers the required
 routes.
 
 [[features-messaging-stub-runner-camel-adding]]
-==== Adding Apache Camel to the Project
+=== Adding Apache Camel to the Project
 
 You can have both Apache Camel and Spring Cloud Contract Stub Runner on the classpath.
 Remember to annotate your test class with `@AutoConfigureStubRunner`.
 
 [[features-messaging-stub-runner-camel-disabling]]
-==== Disabling the Functionality
+=== Disabling the Functionality
 
 If you need to disable this functionality, set the `stubrunner.camel.enabled=false` property.
 
 [[features-messaging-stub-runner-camel-example]]
-==== Examples
+=== Examples
 
 Assume that we have the following Maven repository with deployed stubs for the
 `camelService` application:
@@ -340,26 +341,26 @@ That will send out a message to the destination described in the output message 
 :output_name: output
 
 [[features-messaging-stub-runner-integration]]
-=== Consumer Side Messaging with Spring Integration
+== Consumer Side Messaging with Spring Integration
 
 Spring Cloud Contract Stub Runner's messaging module gives you an easy way to
 integrate with Spring Integration. For the provided artifacts, it automatically downloads
 the stubs and registers the required routes.
 
 [[features-messaging-stub-runner-integration-adding]]
-==== Adding the Runner to the Project
+=== Adding the Runner to the Project
 
 You can have both Spring Integration and Spring Cloud Contract Stub Runner on the
 classpath. Remember to annotate your test class with `@AutoConfigureStubRunner`.
 
 [[features-messaging-stub-runner-integration-disabling]]
-==== Disabling the Functionality
+=== Disabling the Functionality
 
 If you need to disable this functionality, set the
 `stubrunner.integration.enabled=false` property.
 
 [[features-messaging-stub-runner-integration-example]]
-==== Examples
+=== Examples
 
 Assume that you have the following Maven repository with deployed stubs for the
 `integrationService` application:
@@ -427,7 +428,7 @@ include::{tests_path}/spring-cloud-contract-stub-runner-integration/src/test/gro
 That will send out a message to the destination described in the output message of the contract.
 
 [[features-messaging-stub-runner-stream]]
-=== Consumer Side Messaging With Spring Cloud Stream
+== Consumer Side Messaging With Spring Cloud Stream
 
 Spring Cloud Contract Stub Runner's messaging module gives you an easy way to
 integrate with Spring Stream. For the provided artifacts, it automatically downloads the
@@ -462,19 +463,19 @@ testImplementation('org.springframework.cloud:spring-cloud-stream-test-binder')
 =====
 
 [[features-messaging-stub-runner-stream-adding]]
-==== Adding the Runner to the Project
+=== Adding the Runner to the Project
 
 You can have both Spring Cloud Stream and Spring Cloud Contract Stub Runner on the
 classpath. Remember to annotate your test class with `@AutoConfigureStubRunner`.
 
 [[features-messaging-stub-runner-stream-disabling]]
-==== Disabling the Functionality
+=== Disabling the Functionality
 
 If you need to disable this functionality, set the `stubrunner.stream.enabled=false`
 property.
 
 [[features-messaging-stub-runner-stream-example]]
-==== Examples
+=== Examples
 
 Assume that you have the following Maven repository with deployed stubs for the
 `streamService` application:
@@ -552,7 +553,7 @@ include::{tests_path}/spring-cloud-contract-stub-runner-stream/src/test/groovy/o
 That will send out a message to the destination described in the output message of the contract.
 
 [[features-messaging-stub-runner-jms]]
-=== Consumer Side Messaging With Spring JMS
+== Consumer Side Messaging With Spring JMS
 
 Spring Cloud Contract Stub Runner's messaging module provides an easy way to
 integrate with Spring JMS.
@@ -560,7 +561,7 @@ integrate with Spring JMS.
 The integration assumes that you have a running instance of a JMS broker.
 
 [[features-messaging-stub-runner-jms-adding]]
-==== Adding the Runner to the Project
+=== Adding the Runner to the Project
 
 You need to have both Spring JMS and Spring Cloud Contract Stub Runner on the classpath. Remember to annotate your test class
 with `@AutoConfigureStubRunner`.
@@ -569,7 +570,7 @@ with `@AutoConfigureStubRunner`.
 :output_name: output
 
 [[features-messaging-stub-runner-jms-example]]
-==== Examples
+=== Examples
 
 Assume that the stub structure looks as follows:
 

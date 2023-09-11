@@ -1,5 +1,6 @@
 [[yml-schema]]
-== YML Schema
+= YML Schema
+
 include::_attributes.adoc[]
 
 Below you can find a JSON schema definition of a YAML contract.
