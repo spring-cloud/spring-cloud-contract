@@ -1,4 +1,0 @@
-# tag::extension[]
-org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions=\
-org.springframework.cloud.contract.verifier.dsl.wiremock.TestWireMockExtensions
-# end::extension[]

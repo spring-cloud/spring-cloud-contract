@@ -1,6 +1,0 @@
-# Application Listeners
-org.springframework.context.ApplicationListener=\
-org.springframework.cloud.contract.wiremock.WireMockApplicationListener
-# Test Execution Listeners
-org.springframework.test.context.TestExecutionListener=\
-org.springframework.cloud.contract.wiremock.WireMockTestExecutionListener

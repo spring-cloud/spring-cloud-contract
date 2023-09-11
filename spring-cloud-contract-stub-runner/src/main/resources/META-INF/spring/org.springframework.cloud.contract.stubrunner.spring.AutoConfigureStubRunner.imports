@@ -1,6 +1,0 @@
-org.springframework.cloud.contract.stubrunner.spring.StubRunnerConfiguration
-org.springframework.cloud.contract.stubrunner.spring.cloud.StubRunnerSpringCloudAutoConfiguration
-org.springframework.cloud.contract.stubrunner.spring.cloud.loadbalancer.SpringCloudLoadBalancerAutoConfiguration
-org.springframework.cloud.contract.stubrunner.spring.cloud.eureka.StubRunnerSpringCloudEurekaAutoConfiguration
-org.springframework.cloud.contract.stubrunner.spring.cloud.zookeeper.StubRunnerSpringCloudZookeeperAutoConfiguration
-org.springframework.cloud.contract.stubrunner.spring.cloud.consul.StubRunnerSpringCloudConsulAutoConfiguration

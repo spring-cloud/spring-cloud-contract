@@ -1,0 +1,885 @@
+[INFO] Scanning for projects...
+[INFO] Downloading from spring-releases: https://repo.spring.io/release/org/slf4j/slf4j-api/maven-metadata.xml
+[WARNING] Could not transfer metadata org.slf4j:slf4j-api/maven-metadata.xml from/to spring-releases (https://repo.spring.io/release): authentication failed for https://repo.spring.io/release/org/slf4j/slf4j-api/maven-metadata.xml, status: 401 Unauthorized
+[WARNING] org.slf4j:slf4j-api/maven-metadata.xmlfailed to transfer from https://repo.spring.io/release during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of spring-releases has elapsed or updates are forced. Original error: Could not transfer metadata org.slf4j:slf4j-api/maven-metadata.xml from/to spring-releases (https://repo.spring.io/release): authentication failed for https://repo.spring.io/release/org/slf4j/slf4j-api/maven-metadata.xml, status: 401 Unauthorized
+[WARNING] org.slf4j:slf4j-api/maven-metadata.xmlfailed to transfer from https://repo.spring.io/release during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of spring-releases has elapsed or updates are forced. Original error: Could not transfer metadata org.slf4j:slf4j-api/maven-metadata.xml from/to spring-releases (https://repo.spring.io/release): authentication failed for https://repo.spring.io/release/org/slf4j/slf4j-api/maven-metadata.xml, status: 401 Unauthorized
+[WARNING] org.slf4j:slf4j-api/maven-metadata.xmlfailed to transfer from https://repo.spring.io/release during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of spring-releases has elapsed or updates are forced. Original error: Could not transfer metadata org.slf4j:slf4j-api/maven-metadata.xml from/to spring-releases (https://repo.spring.io/release): authentication failed for https://repo.spring.io/release/org/slf4j/slf4j-api/maven-metadata.xml, status: 401 Unauthorized
+[INFO] Downloading from maven-default-http-blocker: http://0.0.0.0/org/slf4j/slf4j-api/maven-metadata.xml
+[WARNING] Could not transfer metadata org.slf4j:slf4j-api/maven-metadata.xml from/to maven-default-http-blocker (http://0.0.0.0/): transfer failed for http://0.0.0.0/org/slf4j/slf4j-api/maven-metadata.xml
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] Spring Cloud Contract RestDocs Http Server Sample                  [jar]
+[INFO] Spring Cloud Contract RestDocs Http Client Sample                  [jar]
+[INFO] Spring Cloud Contract Standalone Restdocs Test Samples             [pom]
+[INFO] 
+[INFO] ------------------< com.example:http-server-restdocs >------------------
+[INFO] Building Spring Cloud Contract RestDocs Http Server Sample 0.0.1   [1/3]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:3.3.1:clean (default-clean) @ http-server-restdocs ---
+[INFO] Deleting /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server/target
+[INFO] 
+[INFO] --- maven-resources-plugin:3.3.1:resources (default-resources) @ http-server-restdocs ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:compile (default-compile) @ http-server-restdocs ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 6 source files with javac [debug release 17] to target/classes
+[INFO] 
+[INFO] --- spring-cloud-contract-maven-plugin:4.1.0-SNAPSHOT:generateTests (default-generateTests) @ http-server-restdocs ---
+[INFO] Generating server tests source code for Spring Cloud Contract Verifier contract verification
+[INFO] Will use contracts provided in the folder [/home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server/src/test/resources/contracts]
+[INFO] Directory with contract is present at [/home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server/src/test/resources/contracts]
+[INFO] Test Source directory: /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server/target/generated-test-sources/contracts added.
+[INFO] Using [null] as base class for test classes, [null] as base package for tests, [null] as package with base classes, base class mappings [BaseClassMapping{contractPackageRegex='.*standalone.*', baseClassFQN='com.example.fraud.FraudBaseWithStandaloneSetup'}, BaseClassMapping{contractPackageRegex='.*webapp.*', baseClassFQN='com.example.fraud.FraudBaseWithWebAppSetup'}]
+[INFO] Creating new class file [/home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server/target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/StandaloneTest.java]
+[INFO] Creating new class file [/home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server/target/generated-test-sources/contracts/org/springframework/cloud/contract/verifier/tests/WebappTest.java]
+[INFO] Generated 2 test classes.
+[INFO] 
+[INFO] --- spring-cloud-contract-maven-plugin:4.1.0-SNAPSHOT:convert (default-convert) @ http-server-restdocs ---
+[INFO] Will use contracts provided in the folder [/home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server/src/test/resources/contracts]
+[INFO] Copying Spring Cloud Contract Verifier contracts to [/home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server/target/stubs/META-INF/com.example/http-server-restdocs/0.0.1/contracts]. Only files matching [.*] pattern will end up in the final JAR with stubs.
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 2 resources
+[INFO] Converting from Spring Cloud Contract Verifier contracts to WireMock stubs mappings
+[INFO]      Spring Cloud Contract Verifier contracts directory: /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server/src/test/resources/contracts
+[INFO] Stub Server stubs mappings directory: /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server/target/stubs/META-INF/com.example/http-server-restdocs/0.0.1/mappings
+[INFO] Creating new stub [/home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server/target/stubs/META-INF/com.example/http-server-restdocs/0.0.1/mappings/standalone/shouldMarkClientAsFraud.json]
+[INFO] Creating new stub [/home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server/target/stubs/META-INF/com.example/http-server-restdocs/0.0.1/mappings/webapp/shouldMarkClientAsNotFraud.json]
+[INFO] 
+[INFO] --- maven-resources-plugin:3.3.1:testResources (default-testResources) @ http-server-restdocs ---
+[INFO] Copying 2 resources from src/test/resources to target/test-classes
+[INFO] skip non existing resourceDirectory /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server/target/generated-test-resources/contracts
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:testCompile (default-testCompile) @ http-server-restdocs ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 6 source files with javac [debug release 17] to target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:3.1.2:test (default-test) @ http-server-restdocs ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running org.springframework.cloud.contract.verifier.tests.StandaloneTest
+14:30:25.281 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+14:30:25.282 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+14:30:25.285 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 2 ms
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.745 s -- in org.springframework.cloud.contract.verifier.tests.StandaloneTest
+[INFO] Running org.springframework.cloud.contract.verifier.tests.WebappTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::       (v3.2.0-SNAPSHOT)
+
+2023-09-06T14:30:25.709+02:00  INFO 208958 --- [           main] o.s.c.c.verifier.tests.WebappTest        : Starting WebappTest using Java 17.0.1 with PID 208958 (started by marcin in /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server)
+2023-09-06T14:30:25.710+02:00  INFO 208958 --- [           main] o.s.c.c.verifier.tests.WebappTest        : No active profile set, falling back to 1 default profile: "default"
+2023-09-06T14:30:26.723+02:00  INFO 208958 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint(s) beneath base path '/actuator'
+2023-09-06T14:30:26.777+02:00  INFO 208958 --- [           main] o.s.c.c.verifier.tests.WebappTest        : Started WebappTest in 1.195 seconds (process running for 2.369)
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+2023-09-06T14:30:27.357+02:00  INFO 208958 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2023-09-06T14:30:27.358+02:00  INFO 208958 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2023-09-06T14:30:27.358+02:00  INFO 208958 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.858 s -- in org.springframework.cloud.contract.verifier.tests.WebappTest
+[INFO] Running com.example.fraud.XmlStubGeneratorTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::       (v3.2.0-SNAPSHOT)
+
+2023-09-06T14:30:27.404+02:00  INFO 208958 --- [           main] c.example.fraud.XmlStubGeneratorTests    : Starting XmlStubGeneratorTests using Java 17.0.1 with PID 208958 (started by marcin in /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server)
+2023-09-06T14:30:27.404+02:00  INFO 208958 --- [           main] c.example.fraud.XmlStubGeneratorTests    : No active profile set, falling back to 1 default profile: "default"
+2023-09-06T14:30:27.748+02:00  INFO 208958 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2023-09-06T14:30:27.748+02:00  INFO 208958 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2023-09-06T14:30:27.753+02:00  INFO 208958 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint(s) beneath base path '/actuator'
+2023-09-06T14:30:27.756+02:00  INFO 208958 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 8 ms
+2023-09-06T14:30:27.775+02:00  INFO 208958 --- [           main] c.example.fraud.XmlStubGeneratorTests    : Started XmlStubGeneratorTests in 0.389 seconds (process running for 3.367)
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.713 s -- in com.example.fraud.XmlStubGeneratorTests
+[INFO] Running com.example.fraud.StubGeneratorTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::       (v3.2.0-SNAPSHOT)
+
+2023-09-06T14:30:28.132+02:00  INFO 208958 --- [           main] com.example.fraud.StubGeneratorTests     : Starting StubGeneratorTests using Java 17.0.1 with PID 208958 (started by marcin in /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server)
+2023-09-06T14:30:28.133+02:00  INFO 208958 --- [           main] com.example.fraud.StubGeneratorTests     : No active profile set, falling back to 1 default profile: "default"
+2023-09-06T14:30:28.371+02:00  INFO 208958 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2023-09-06T14:30:28.371+02:00  INFO 208958 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2023-09-06T14:30:28.374+02:00  INFO 208958 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint(s) beneath base path '/actuator'
+2023-09-06T14:30:28.376+02:00  INFO 208958 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 5 ms
+2023-09-06T14:30:28.385+02:00  INFO 208958 --- [           main] com.example.fraud.StubGeneratorTests     : Started StubGeneratorTests in 0.272 seconds (process running for 3.977)
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.356 s -- in com.example.fraud.StubGeneratorTests
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- maven-assembly-plugin:3.6.0:single (stub) @ http-server-restdocs ---
+[INFO] Reading assembly descriptor: /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server/src/assembly/stub.xml
+[INFO] Building jar: /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server/target/http-server-restdocs-0.0.1-stubs.jar
+[INFO] 
+[INFO] --- spring-cloud-contract-maven-plugin:4.1.0-SNAPSHOT:generateStubs (default-generateStubs) @ http-server-restdocs ---
+[INFO] Skipping Spring Cloud Contract Verifier execution: spring.cloud.contract.verifier.skip=false, spring.cloud.contract.verifier.jar.skip=true
+[INFO] 
+[INFO] --- maven-jar-plugin:3.3.0:jar (default-jar) @ http-server-restdocs ---
+[INFO] Building jar: /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server/target/http-server-restdocs-0.0.1.jar
+[INFO] 
+[INFO] --- spring-boot-maven-plugin:3.2.0-SNAPSHOT:repackage (repackage) @ http-server-restdocs ---
+[INFO] Replacing main artifact /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server/target/http-server-restdocs-0.0.1.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server/target/http-server-restdocs-0.0.1.jar.original
+[INFO] 
+[INFO] --- maven-install-plugin:3.1.1:install (default-install) @ http-server-restdocs ---
+[INFO] Installing /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server/pom.xml to /home/marcin/.m2/repository/com/example/http-server-restdocs/0.0.1/http-server-restdocs-0.0.1.pom
+[INFO] Installing /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server/target/http-server-restdocs-0.0.1.jar to /home/marcin/.m2/repository/com/example/http-server-restdocs/0.0.1/http-server-restdocs-0.0.1.jar
+[INFO] Installing /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-server/target/http-server-restdocs-0.0.1-stubs.jar to /home/marcin/.m2/repository/com/example/http-server-restdocs/0.0.1/http-server-restdocs-0.0.1-stubs.jar
+[INFO] 
+[INFO] ------------------< com.example:http-client-restdocs >------------------
+[INFO] Building Spring Cloud Contract RestDocs Http Client Sample 0.0.1   [2/3]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:3.3.1:clean (default-clean) @ http-client-restdocs ---
+[INFO] Deleting /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-client/target
+[INFO] 
+[INFO] --- maven-resources-plugin:3.3.1:resources (default-resources) @ http-client-restdocs ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:compile (default-compile) @ http-client-restdocs ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 9 source files with javac [debug release 17] to target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:3.3.1:testResources (default-testResources) @ http-client-restdocs ---
+[INFO] Copying 1 resource from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:testCompile (default-testCompile) @ http-client-restdocs ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 4 source files with javac [debug release 17] to target/test-classes
+[INFO] /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-client/src/test/java/com/example/loan/XmlServiceTests.java: Some input files use or override a deprecated API.
+[INFO] /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-client/src/test/java/com/example/loan/XmlServiceTests.java: Recompile with -Xlint:deprecation for details.
+[INFO] 
+[INFO] --- maven-surefire-plugin:3.1.2:test (default-test) @ http-client-restdocs ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.example.loan.XmlServiceTests
+14:30:29.967 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.example.loan.XmlServiceTests]: XmlServiceTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+14:30:30.022 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.example.loan.Application for test class com.example.loan.XmlServiceTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::       (v3.2.0-SNAPSHOT)
+
+2023-09-06T14:30:30.265+02:00  INFO 209310 --- [           main] com.example.loan.XmlServiceTests         : Starting XmlServiceTests using Java 17.0.1 with PID 209310 (started by marcin in /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-client)
+2023-09-06T14:30:30.266+02:00  INFO 209310 --- [           main] com.example.loan.XmlServiceTests         : No active profile set, falling back to 1 default profile: "default"
+2023-09-06T14:30:30.403+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockApplicationListener    : Registered property source for property [wiremock.server.port] with value [12341]
+2023-09-06T14:30:30.404+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockApplicationListener    : Registered property source for dynamic http port
+2023-09-06T14:30:30.404+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockApplicationListener    : Registered property source for property [wiremock.server.https-port] with value [13524]
+2023-09-06T14:30:30.404+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockApplicationListener    : Registered property source for dynamic https port
+2023-09-06T14:30:31.041+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Running initialization of the WireMock configuration
+2023-09-06T14:30:31.274+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Created new server [com.github.tomakehurst.wiremock.WireMockServer@7f8c3646] at http port [-1] and https port [-1]
+2023-09-06T14:30:31.396+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Server [com.github.tomakehurst.wiremock.WireMockServer@7f8c3646] is already running at http port [12341] / https port [13524]. It has [0] mappings registered
+2023-09-06T14:30:31.397+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Started server [com.github.tomakehurst.wiremock.WireMockServer@7f8c3646] at http port [12341] and https port [13524]
+2023-09-06T14:30:31.397+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : WireMock server has [0] stubs registered
+2023-09-06T14:30:31.398+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Will register [0] stub locations
+2023-09-06T14:30:31.398+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : WireMock server has [0] stubs registered
+2023-09-06T14:30:31.399+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Server [com.github.tomakehurst.wiremock.WireMockServer@7f8c3646] is already running at http port [12341] / https port [13524]. It has [0] mappings registered
+2023-09-06T14:30:31.399+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Registering WireMock [com.github.tomakehurst.wiremock.WireMockServer@7f8c3646] at http port [12341] and https port [13524]
+2023-09-06T14:30:31.399+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Server [com.github.tomakehurst.wiremock.WireMockServer@7f8c3646] is already running at http port [12341] / https port [13524]. It has [0] mappings registered
+2023-09-06T14:30:31.806+02:00  INFO 209310 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint(s) beneath base path '/actuator'
+2023-09-06T14:30:31.872+02:00  INFO 209310 --- [           main] com.example.loan.XmlServiceTests         : Started XmlServiceTests in 1.774 seconds (process running for 2.39)
+2023-09-06T14:30:31.918+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : WireMockConfiguration is missing [false]
+2023-09-06T14:30:31.923+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : Http port [12341] dynamic [true] https port [13524] dynamic [true]
+2023-09-06T14:30:31.924+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : Re-registering default mappings
+2023-09-06T14:30:31.925+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Server [com.github.tomakehurst.wiremock.WireMockServer@7f8c3646] is already running at http port [12341] / https port [13524]
+2023-09-06T14:30:31.925+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Server [com.github.tomakehurst.wiremock.WireMockServer@7f8c3646] is already running at http port [12341] / https port [13524]. It has [0] mappings registered
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+2023-09-06T14:30:32.551+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : HTTP POST http://localhost:12341/xmlfraud
+2023-09-06T14:30:32.571+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Accept=[application/xml, text/xml, application/json, application/*+xml, application/*+json]
+2023-09-06T14:30:32.577+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Writing [com.example.loan.XmlRequestBody@3dbb7bb] as "application/xml;charset=UTF-8"
+2023-09-06T14:30:32.715+02:00  INFO 209310 --- [tp2123686705-43] WireMock                                 : Request received:
+127.0.0.1 - POST /xmlfraud
+
+Accept: [application/xml, text/xml, application/json, application/*+xml, application/*+json]
+Content-Type: [application/xml;charset=UTF-8]
+User-Agent: [Java/17.0.1]
+Host: [localhost:12341]
+Connection: [keep-alive]
+Transfer-Encoding: [chunked]
+<XmlRequestBody><name></name></XmlRequestBody>
+
+
+Matched response definition:
+{
+  "status" : 200,
+  "body" : "<XmlResponseBody><status>EMPTY</status></XmlResponseBody>",
+  "headers" : {
+    "Content-Type" : "application/xml"
+  }
+}
+
+Response:
+HTTP/1.1 200
+Content-Type: [application/xml]
+Matched-Stub-Id: [76628d79-6dd9-4c36-b135-62488a8a6cc4]
+
+2023-09-06T14:30:32.718+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Response 200 OK
+2023-09-06T14:30:32.719+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Reading to [com.example.loan.XmlResponseBody]
+2023-09-06T14:30:32.763+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : WireMockConfiguration is missing [false]
+2023-09-06T14:30:32.776+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : HTTP POST http://localhost:12341/xmlfraud
+2023-09-06T14:30:32.778+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Accept=[application/xml, text/xml, application/json, application/*+xml, application/*+json]
+2023-09-06T14:30:32.779+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Writing [com.example.loan.XmlRequestBody@6cd65042] as "application/xml;charset=UTF-8"
+2023-09-06T14:30:32.796+02:00  INFO 209310 --- [tp2123686705-30] WireMock                                 : Request received:
+127.0.0.1 - POST /xmlfraud
+
+Accept: [application/xml, text/xml, application/json, application/*+xml, application/*+json]
+Content-Type: [application/xml;charset=UTF-8]
+User-Agent: [Java/17.0.1]
+Host: [localhost:12341]
+Connection: [keep-alive]
+Transfer-Encoding: [chunked]
+<XmlRequestBody><name>foo</name></XmlRequestBody>
+
+
+Matched response definition:
+{
+  "status" : 200,
+  "body" : "<XmlResponseBody><status>FULL</status></XmlResponseBody>",
+  "headers" : {
+    "Content-Type" : "application/xml"
+  }
+}
+
+Response:
+HTTP/1.1 200
+Content-Type: [application/xml]
+Matched-Stub-Id: [a8c3f1a1-e9a7-442b-b61f-5991387cfd68]
+
+2023-09-06T14:30:32.797+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Response 200 OK
+2023-09-06T14:30:32.797+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Reading to [com.example.loan.XmlResponseBody]
+2023-09-06T14:30:32.798+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : WireMockConfiguration is missing [false]
+2023-09-06T14:30:32.801+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : WireMockConfiguration is missing [false]
+2023-09-06T14:30:32.801+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : Http port [12341] dynamic [true] https port [13524] dynamic [true]
+2023-09-06T14:30:32.801+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : Resetting mappings for the next test to restart them. That's necessary when reusing the same context with new servers running on random ports
+2023-09-06T14:30:32.802+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Stopping server [com.github.tomakehurst.wiremock.WireMockServer@7f8c3646] at port [13524]
+2023-09-06T14:30:32.807+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Stopped WireMock [com.github.tomakehurst.wiremock.WireMockServer@7f8c3646] instance port [13524]
+2023-09-06T14:30:32.811+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Server [com.github.tomakehurst.wiremock.WireMockServer@7f8c3646] is already running at http port [12341] / https port [13524]. It has [2] mappings registered
+2023-09-06T14:30:32.811+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Started server [com.github.tomakehurst.wiremock.WireMockServer@7f8c3646] at http port [12341] and https port [13524]
+2023-09-06T14:30:32.811+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : WireMock server has [2] stubs registered
+2023-09-06T14:30:32.812+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Will register [0] stub locations
+2023-09-06T14:30:32.812+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : WireMock server has [0] stubs registered
+2023-09-06T14:30:32.812+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Server [com.github.tomakehurst.wiremock.WireMockServer@7f8c3646] is already running at http port [12341] / https port [13524]. It has [0] mappings registered
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.935 s -- in com.example.loan.XmlServiceTests
+[INFO] Running com.example.loan.LoanApplicationServiceusingStubRunnerTests
+2023-09-06T14:30:32.818+02:00  INFO 209310 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.example.loan.LoanApplicationServiceusingStubRunnerTests]: LoanApplicationServiceusingStubRunnerTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2023-09-06T14:30:32.822+02:00  INFO 209310 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.example.loan.Application for test class com.example.loan.LoanApplicationServiceusingStubRunnerTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::       (v3.2.0-SNAPSHOT)
+
+2023-09-06T14:30:32.840+02:00  INFO 209310 --- [           main] anApplicationServiceusingStubRunnerTests : Starting LoanApplicationServiceusingStubRunnerTests using Java 17.0.1 with PID 209310 (started by marcin in /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-client)
+2023-09-06T14:30:32.841+02:00  INFO 209310 --- [           main] anApplicationServiceusingStubRunnerTests : No active profile set, falling back to 1 default profile: "default"
+2023-09-06T14:30:32.842+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockApplicationListener    : Registered WireMock server port property to the default <8080> value
+2023-09-06T14:30:32.843+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockApplicationListener    : Registered property source for property [wiremock.server.https-port] with value [14957]
+2023-09-06T14:30:32.843+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockApplicationListener    : Registered property source for dynamic https port
+2023-09-06T14:30:33.085+02:00  WARN 209310 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.contract.stubrunner.spring.StubRunnerConfiguration' of type [org.springframework.cloud.contract.stubrunner.spring.StubRunnerConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [batchStubRunnerBeanPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2023-09-06T14:30:33.092+02:00  WARN 209310 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'stubrunner-org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties' of type [org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [batchStubRunnerBeanPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2023-09-06T14:30:33.099+02:00  INFO 209310 --- [           main] o.s.c.c.s.ClasspathStubProvider          : Will download stubs from classpath
+2023-09-06T14:30:33.154+02:00  INFO 209310 --- [           main] .s.c.c.s.ResourceResolvingStubDownloader : Unpacked files for [com.example:http-server-restdocs:+] to folder [/tmp/classpath-stubs-1694003433144-0]
+2023-09-06T14:30:33.882+02:00  INFO 209310 --- [qtp748921347-68] WireMock                                 : Admin request received:
+127.0.0.1 - POST /mappings
+
+Host: []
+Content-Length: [225]
+Content-Type: [text/plain; charset=UTF-8]
+Connection: [keep-alive]
+User-Agent: [Apache-HttpClient/5.1.3 (Java/17.0.1)]
+{
+  "id" : "08c875df-e386-49ae-b415-b7b4eec64826",
+  "request" : {
+    "url" : "/ping",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "OK"
+  },
+  "uuid" : "08c875df-e386-49ae-b415-b7b4eec64826"
+}
+
+2023-09-06T14:30:33.889+02:00  INFO 209310 --- [qtp748921347-61] WireMock                                 : Admin request received:
+127.0.0.1 - POST /mappings
+
+Host: []
+Content-Length: [227]
+Content-Type: [text/plain; charset=UTF-8]
+Connection: [keep-alive]
+User-Agent: [Apache-HttpClient/5.1.3 (Java/17.0.1)]
+{
+  "id" : "a264af16-06e2-41fc-9904-1cfaae08aa70",
+  "request" : {
+    "url" : "/health",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "OK"
+  },
+  "uuid" : "a264af16-06e2-41fc-9904-1cfaae08aa70"
+}
+
+2023-09-06T14:30:33.895+02:00  INFO 209310 --- [qtp748921347-67] WireMock                                 : Admin request received:
+127.0.0.1 - POST /mappings
+
+Host: []
+Content-Length: [721]
+Content-Type: [text/plain; charset=UTF-8]
+Connection: [keep-alive]
+User-Agent: [Apache-HttpClient/5.1.3 (Java/17.0.1)]
+{
+  "id" : "90be98a5-be99-4ac8-b1dd-33ce9149f402",
+  "request" : {
+    "url" : "/fraudcheck",
+    "method" : "PUT",
+    "headers" : {
+      "Content-Type" : {
+        "matches" : "application/vnd\\.fraud\\.v1\\+json.*"
+      }
+    },
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[?(@.['clientId'] =~ /[0-9]{10}/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.['loanAmount'] == 123.123)]"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"fraudCheckStatus\":\"OK\",\"rejectionReason\":null}",
+    "headers" : {
+      "Content-Type" : "application/vnd.fraud.v1+json"
+    },
+    "transformers" : [ "response-template", "spring-cloud-contract" ]
+  },
+  "uuid" : "90be98a5-be99-4ac8-b1dd-33ce9149f402"
+}
+
+2023-09-06T14:30:33.897+02:00  INFO 209310 --- [qtp748921347-66] WireMock                                 : Admin request received:
+127.0.0.1 - POST /mappings
+
+Host: []
+Content-Length: [622]
+Content-Type: [text/plain; charset=UTF-8]
+Connection: [keep-alive]
+User-Agent: [Apache-HttpClient/5.1.3 (Java/17.0.1)]
+{
+  "id" : "c121c0dc-3ad7-4147-a2f8-cdf7d0191b48",
+  "request" : {
+    "urlPath" : "/fraudcheck",
+    "method" : "PUT",
+    "headers" : {
+      "Content-Type" : {
+        "matches" : "\\Qapplication/vnd.fraud.v1+json\\E.*"
+      }
+    },
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$.clientId"
+    }, {
+      "matchesJsonPath" : "$[?(@.loanAmount <= 1000)]"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"fraudCheckStatus\":\"OK\",\"rejectionReason\":null}",
+    "headers" : {
+      "Content-Type" : "application/vnd.fraud.v1+json"
+    }
+  },
+  "uuid" : "c121c0dc-3ad7-4147-a2f8-cdf7d0191b48"
+}
+
+2023-09-06T14:30:33.900+02:00  INFO 209310 --- [qtp748921347-67] WireMock                                 : Admin request received:
+127.0.0.1 - POST /mappings
+
+Host: []
+Content-Length: [639]
+Content-Type: [text/plain; charset=UTF-8]
+Connection: [keep-alive]
+User-Agent: [Apache-HttpClient/5.1.3 (Java/17.0.1)]
+{
+  "id" : "b43b9b09-7e83-480c-a0b5-b2ecb28ec175",
+  "request" : {
+    "urlPath" : "/fraudcheck",
+    "method" : "PUT",
+    "headers" : {
+      "Content-Type" : {
+        "matches" : "\\Qapplication/vnd.fraud.v1+json\\E.*"
+      }
+    },
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$.clientId"
+    }, {
+      "matchesJsonPath" : "$[?(@.loanAmount > 1000)]"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"fraudCheckStatus\":\"FRAUD\",\"rejectionReason\":\"Amount too high\"}",
+    "headers" : {
+      "Content-Type" : "application/vnd.fraud.v1+json"
+    }
+  },
+  "uuid" : "b43b9b09-7e83-480c-a0b5-b2ecb28ec175"
+}
+
+2023-09-06T14:30:33.904+02:00  INFO 209310 --- [qtp748921347-66] WireMock                                 : Admin request received:
+127.0.0.1 - POST /mappings
+
+Host: []
+Content-Length: [737]
+Content-Type: [text/plain; charset=UTF-8]
+Connection: [keep-alive]
+User-Agent: [Apache-HttpClient/5.1.3 (Java/17.0.1)]
+{
+  "id" : "80f6005c-974f-4f9c-90bc-5b97a5214cae",
+  "request" : {
+    "url" : "/fraudcheck",
+    "method" : "PUT",
+    "headers" : {
+      "Content-Type" : {
+        "matches" : "application/vnd\\.fraud\\.v1\\+json.*"
+      }
+    },
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[?(@.['clientId'] =~ /[0-9]{10}/)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.['loanAmount'] == 99999)]"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"fraudCheckStatus\":\"FRAUD\",\"rejectionReason\":\"Amount too high\"}",
+    "headers" : {
+      "Content-Type" : "application/vnd.fraud.v1+json"
+    },
+    "transformers" : [ "response-template", "spring-cloud-contract" ]
+  },
+  "uuid" : "80f6005c-974f-4f9c-90bc-5b97a5214cae"
+}
+
+2023-09-06T14:30:33.909+02:00  INFO 209310 --- [qtp748921347-67] WireMock                                 : Admin request received:
+127.0.0.1 - POST /mappings
+
+Host: []
+Content-Length: [571]
+Content-Type: [text/plain; charset=UTF-8]
+Connection: [keep-alive]
+User-Agent: [Apache-HttpClient/5.1.3 (Java/17.0.1)]
+{
+  "id" : "a8c3f1a1-e9a7-442b-b61f-5991387cfd68",
+  "request" : {
+    "urlPath" : "/xmlfraud",
+    "method" : "POST",
+    "headers" : {
+      "Content-Type" : {
+        "equalTo" : "application/xml;charset=UTF-8"
+      }
+    },
+    "bodyPatterns" : [ {
+      "equalToXml" : "<XmlRequestBody><name>foo</name></XmlRequestBody>"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "<XmlResponseBody><status>FULL</status></XmlResponseBody>",
+    "headers" : {
+      "Content-Type" : "application/xml"
+    }
+  },
+  "uuid" : "a8c3f1a1-e9a7-442b-b61f-5991387cfd68"
+}
+
+2023-09-06T14:30:33.914+02:00  INFO 209310 --- [qtp748921347-62] WireMock                                 : Admin request received:
+127.0.0.1 - POST /mappings
+
+Host: []
+Content-Length: [569]
+Content-Type: [text/plain; charset=UTF-8]
+Connection: [keep-alive]
+User-Agent: [Apache-HttpClient/5.1.3 (Java/17.0.1)]
+{
+  "id" : "76628d79-6dd9-4c36-b135-62488a8a6cc4",
+  "request" : {
+    "urlPath" : "/xmlfraud",
+    "method" : "POST",
+    "headers" : {
+      "Content-Type" : {
+        "equalTo" : "application/xml;charset=UTF-8"
+      }
+    },
+    "bodyPatterns" : [ {
+      "equalToXml" : "<XmlRequestBody><name></name></XmlRequestBody>"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "<XmlResponseBody><status>EMPTY</status></XmlResponseBody>",
+    "headers" : {
+      "Content-Type" : "application/xml"
+    }
+  },
+  "uuid" : "76628d79-6dd9-4c36-b135-62488a8a6cc4"
+}
+
+2023-09-06T14:30:33.920+02:00  INFO 209310 --- [           main] o.s.c.contract.stubrunner.StubServer     : Started stub server for project [com.example:http-server-restdocs:+:stubs] on port 10622 with [6] mappings
+2023-09-06T14:30:33.922+02:00  INFO 209310 --- [           main] o.s.c.c.stubrunner.StubRunnerExecutor    : All stubs are now running RunningStubs [namesAndPorts={com.example:http-server-restdocs:+:stubs=10622}]
+2023-09-06T14:30:33.923+02:00  WARN 209310 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'batchStubRunner' of type [org.springframework.cloud.contract.stubrunner.BatchStubRunner] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [batchStubRunnerBeanPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2023-09-06T14:30:34.031+02:00  INFO 209310 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint(s) beneath base path '/actuator'
+2023-09-06T14:30:34.036+02:00  INFO 209310 --- [           main] o.s.c.c.v.m.i.ContractVerifierMessaging  : The message verifier sender implementation is of type [class org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages]
+2023-09-06T14:30:34.037+02:00  INFO 209310 --- [           main] o.s.c.c.v.m.i.ContractVerifierMessaging  : The message verifier receiver implementation is of type [class org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages]
+2023-09-06T14:30:34.048+02:00  INFO 209310 --- [           main] anApplicationServiceusingStubRunnerTests : Started LoanApplicationServiceusingStubRunnerTests in 1.223 seconds (process running for 4.565)
+2023-09-06T14:30:34.049+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : WireMockConfiguration is missing [true]
+2023-09-06T14:30:34.064+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : HTTP PUT http://localhost:10622/fraudcheck
+2023-09-06T14:30:34.071+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Accept=[application/xml, text/xml, application/json, application/*+xml, application/*+json]
+2023-09-06T14:30:34.072+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Writing [com.example.loan.model.FraudServiceRequest@450b99f2] as "application/vnd.fraud.v1+json"
+2023-09-06T14:30:34.129+02:00  INFO 209310 --- [qtp748921347-67] WireMock                                 : Request received:
+127.0.0.1 - PUT /fraudcheck
+
+Accept: [application/xml, text/xml, application/json, application/*+xml, application/*+json]
+Content-Type: [application/vnd.fraud.v1+json]
+Accept-Encoding: [gzip, x-gzip, deflate]
+Transfer-Encoding: [chunked]
+Host: [localhost:10622]
+Connection: [keep-alive]
+User-Agent: [Apache-HttpClient/5.2.1 (Java/17.0.1)]
+{"clientId":"1234567890","loanAmount":123.123}
+
+
+Matched response definition:
+{
+  "status" : 200,
+  "body" : "{\"fraudCheckStatus\":\"OK\",\"rejectionReason\":null}",
+  "headers" : {
+    "Content-Type" : "application/vnd.fraud.v1+json"
+  }
+}
+
+Response:
+HTTP/1.1 200
+Content-Type: [application/vnd.fraud.v1+json]
+Matched-Stub-Id: [c121c0dc-3ad7-4147-a2f8-cdf7d0191b48]
+
+2023-09-06T14:30:34.136+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Response 200 OK
+2023-09-06T14:30:34.138+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Reading to [com.example.loan.model.FraudServiceResponse]
+2023-09-06T14:30:34.146+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : WireMockConfiguration is missing [true]
+2023-09-06T14:30:34.150+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : HTTP PUT http://localhost:10622/fraudcheck
+2023-09-06T14:30:34.150+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Accept=[application/xml, text/xml, application/json, application/*+xml, application/*+json]
+2023-09-06T14:30:34.151+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Writing [com.example.loan.model.FraudServiceRequest@404a7c61] as "application/vnd.fraud.v1+json"
+2023-09-06T14:30:34.201+02:00  INFO 209310 --- [qtp748921347-66] WireMock                                 : Request received:
+127.0.0.1 - PUT /fraudcheck
+
+Accept: [application/xml, text/xml, application/json, application/*+xml, application/*+json]
+Content-Type: [application/vnd.fraud.v1+json]
+Accept-Encoding: [gzip, x-gzip, deflate]
+Transfer-Encoding: [chunked]
+Host: [localhost:10622]
+Connection: [keep-alive]
+User-Agent: [Apache-HttpClient/5.2.1 (Java/17.0.1)]
+{"clientId":"1234567890","loanAmount":99999.0}
+
+
+Matched response definition:
+{
+  "status" : 200,
+  "body" : "{\"fraudCheckStatus\":\"FRAUD\",\"rejectionReason\":\"Amount too high\"}",
+  "headers" : {
+    "Content-Type" : "application/vnd.fraud.v1+json"
+  },
+  "transformers" : [ "response-template", "spring-cloud-contract" ]
+}
+
+Response:
+HTTP/1.1 200
+Content-Type: [application/vnd.fraud.v1+json]
+Matched-Stub-Id: [80f6005c-974f-4f9c-90bc-5b97a5214cae]
+
+2023-09-06T14:30:34.202+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Response 200 OK
+2023-09-06T14:30:34.202+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Reading to [com.example.loan.model.FraudServiceResponse]
+2023-09-06T14:30:34.203+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : WireMockConfiguration is missing [true]
+2023-09-06T14:30:34.205+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : WireMockConfiguration is missing [true]
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.390 s -- in com.example.loan.LoanApplicationServiceusingStubRunnerTests
+[INFO] Running com.example.loan.LoanApplicationServiceTests
+2023-09-06T14:30:34.210+02:00  INFO 209310 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.example.loan.LoanApplicationServiceTests]: LoanApplicationServiceTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2023-09-06T14:30:34.211+02:00  INFO 209310 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.example.loan.Application for test class com.example.loan.LoanApplicationServiceTests
+2023-09-06T14:30:34.213+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : WireMockConfiguration is missing [false]
+2023-09-06T14:30:34.213+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : Http port [12341] dynamic [true] https port [13524] dynamic [true]
+2023-09-06T14:30:34.213+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : Re-registering default mappings
+2023-09-06T14:30:34.213+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Server [com.github.tomakehurst.wiremock.WireMockServer@7f8c3646] is already running at http port [12341] / https port [13524]
+2023-09-06T14:30:34.214+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Server [com.github.tomakehurst.wiremock.WireMockServer@7f8c3646] is already running at http port [12341] / https port [13524]. It has [0] mappings registered
+2023-09-06T14:30:34.218+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : HTTP PUT http://localhost:12341/fraudcheck
+2023-09-06T14:30:34.219+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Accept=[application/xml, text/xml, application/json, application/*+xml, application/*+json]
+2023-09-06T14:30:34.220+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Writing [com.example.loan.model.FraudServiceRequest@f9d7d3f] as "application/vnd.fraud.v1+json"
+2023-09-06T14:30:34.226+02:00  INFO 209310 --- [tp2123686705-72] WireMock                                 : Request received:
+127.0.0.1 - PUT /fraudcheck
+
+Accept: [application/xml, text/xml, application/json, application/*+xml, application/*+json]
+Content-Type: [application/vnd.fraud.v1+json]
+Accept-Encoding: [gzip, x-gzip, deflate]
+Transfer-Encoding: [chunked]
+Host: [localhost:12341]
+Connection: [keep-alive]
+User-Agent: [Apache-HttpClient/5.2.1 (Java/17.0.1)]
+{"clientId":"1234567890","loanAmount":123.123}
+
+
+Matched response definition:
+{
+  "status" : 200,
+  "body" : "{\"fraudCheckStatus\":\"OK\",\"rejectionReason\":null}",
+  "headers" : {
+    "Content-Type" : "application/vnd.fraud.v1+json"
+  },
+  "transformers" : [ "response-template", "spring-cloud-contract" ]
+}
+
+Response:
+HTTP/1.1 200
+Content-Type: [application/vnd.fraud.v1+json]
+Matched-Stub-Id: [90be98a5-be99-4ac8-b1dd-33ce9149f402]
+
+2023-09-06T14:30:34.227+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Response 200 OK
+2023-09-06T14:30:34.228+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Reading to [com.example.loan.model.FraudServiceResponse]
+2023-09-06T14:30:34.229+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : WireMockConfiguration is missing [false]
+2023-09-06T14:30:34.235+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : HTTP PUT http://localhost:12341/fraudcheck
+2023-09-06T14:30:34.235+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Accept=[application/xml, text/xml, application/json, application/*+xml, application/*+json]
+2023-09-06T14:30:34.235+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Writing [com.example.loan.model.FraudServiceRequest@5b1e5366] as "application/vnd.fraud.v1+json"
+2023-09-06T14:30:34.239+02:00  INFO 209310 --- [tp2123686705-45] WireMock                                 : Request received:
+127.0.0.1 - PUT /fraudcheck
+
+Accept: [application/xml, text/xml, application/json, application/*+xml, application/*+json]
+Content-Type: [application/vnd.fraud.v1+json]
+Accept-Encoding: [gzip, x-gzip, deflate]
+Transfer-Encoding: [chunked]
+Host: [localhost:12341]
+Connection: [keep-alive]
+User-Agent: [Apache-HttpClient/5.2.1 (Java/17.0.1)]
+{"clientId":"1234567890","loanAmount":99999.0}
+
+
+Matched response definition:
+{
+  "status" : 200,
+  "body" : "{\"fraudCheckStatus\":\"FRAUD\",\"rejectionReason\":\"Amount too high\"}",
+  "headers" : {
+    "Content-Type" : "application/vnd.fraud.v1+json"
+  },
+  "transformers" : [ "response-template", "spring-cloud-contract" ]
+}
+
+Response:
+HTTP/1.1 200
+Content-Type: [application/vnd.fraud.v1+json]
+Matched-Stub-Id: [80f6005c-974f-4f9c-90bc-5b97a5214cae]
+
+2023-09-06T14:30:34.240+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Response 200 OK
+2023-09-06T14:30:34.240+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Reading to [com.example.loan.model.FraudServiceResponse]
+2023-09-06T14:30:34.241+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : WireMockConfiguration is missing [false]
+2023-09-06T14:30:34.242+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : WireMockConfiguration is missing [false]
+2023-09-06T14:30:34.243+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : Http port [12341] dynamic [true] https port [13524] dynamic [true]
+2023-09-06T14:30:34.243+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : Resetting mappings for the next test to restart them. That's necessary when reusing the same context with new servers running on random ports
+2023-09-06T14:30:34.243+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Stopping server [com.github.tomakehurst.wiremock.WireMockServer@7f8c3646] at port [13524]
+2023-09-06T14:30:34.245+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Stopped WireMock [com.github.tomakehurst.wiremock.WireMockServer@7f8c3646] instance port [13524]
+2023-09-06T14:30:34.250+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Server [com.github.tomakehurst.wiremock.WireMockServer@7f8c3646] is already running at http port [12341] / https port [13524]. It has [2] mappings registered
+2023-09-06T14:30:34.250+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Started server [com.github.tomakehurst.wiremock.WireMockServer@7f8c3646] at http port [12341] and https port [13524]
+2023-09-06T14:30:34.250+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : WireMock server has [2] stubs registered
+2023-09-06T14:30:34.252+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Will register [0] stub locations
+2023-09-06T14:30:34.252+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : WireMock server has [0] stubs registered
+2023-09-06T14:30:34.252+02:00 DEBUG 209310 --- [           main] o.s.c.c.wiremock.WireMockConfiguration   : Server [com.github.tomakehurst.wiremock.WireMockServer@7f8c3646] is already running at http port [12341] / https port [13524]. It has [0] mappings registered
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.044 s -- in com.example.loan.LoanApplicationServiceTests
+[INFO] Running com.example.loan.XmlServiceUsingStubRunnerTests
+2023-09-06T14:30:34.255+02:00  INFO 209310 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.example.loan.XmlServiceUsingStubRunnerTests]: XmlServiceUsingStubRunnerTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2023-09-06T14:30:34.258+02:00  INFO 209310 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.example.loan.Application for test class com.example.loan.XmlServiceUsingStubRunnerTests
+2023-09-06T14:30:34.260+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : WireMockConfiguration is missing [true]
+2023-09-06T14:30:34.266+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : HTTP POST http://localhost:10622/xmlfraud
+2023-09-06T14:30:34.267+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Accept=[application/xml, text/xml, application/json, application/*+xml, application/*+json]
+2023-09-06T14:30:34.268+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Writing [com.example.loan.XmlRequestBody@530e500c] as "application/xml;charset=UTF-8"
+2023-09-06T14:30:34.293+02:00  INFO 209310 --- [qtp748921347-62] WireMock                                 : Request received:
+127.0.0.1 - POST /xmlfraud
+
+Accept: [application/xml, text/xml, application/json, application/*+xml, application/*+json]
+Content-Type: [application/xml;charset=UTF-8]
+User-Agent: [Java/17.0.1]
+Host: [localhost:10622]
+Connection: [keep-alive]
+Transfer-Encoding: [chunked]
+<XmlRequestBody><name></name></XmlRequestBody>
+
+
+Matched response definition:
+{
+  "status" : 200,
+  "body" : "<XmlResponseBody><status>EMPTY</status></XmlResponseBody>",
+  "headers" : {
+    "Content-Type" : "application/xml"
+  }
+}
+
+Response:
+HTTP/1.1 200
+Content-Type: [application/xml]
+Matched-Stub-Id: [76628d79-6dd9-4c36-b135-62488a8a6cc4]
+
+2023-09-06T14:30:34.294+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Response 200 OK
+2023-09-06T14:30:34.294+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Reading to [com.example.loan.XmlResponseBody]
+2023-09-06T14:30:34.295+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : WireMockConfiguration is missing [true]
+2023-09-06T14:30:34.302+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : HTTP POST http://localhost:10622/xmlfraud
+2023-09-06T14:30:34.303+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Accept=[application/xml, text/xml, application/json, application/*+xml, application/*+json]
+2023-09-06T14:30:34.304+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Writing [com.example.loan.XmlRequestBody@14f05ca0] as "application/xml;charset=UTF-8"
+2023-09-06T14:30:34.330+02:00  INFO 209310 --- [qtp748921347-66] WireMock                                 : Request received:
+127.0.0.1 - POST /xmlfraud
+
+Accept: [application/xml, text/xml, application/json, application/*+xml, application/*+json]
+Content-Type: [application/xml;charset=UTF-8]
+User-Agent: [Java/17.0.1]
+Host: [localhost:10622]
+Connection: [keep-alive]
+Transfer-Encoding: [chunked]
+<XmlRequestBody><name>foo</name></XmlRequestBody>
+
+
+Matched response definition:
+{
+  "status" : 200,
+  "body" : "<XmlResponseBody><status>FULL</status></XmlResponseBody>",
+  "headers" : {
+    "Content-Type" : "application/xml"
+  }
+}
+
+Response:
+HTTP/1.1 200
+Content-Type: [application/xml]
+Matched-Stub-Id: [a8c3f1a1-e9a7-442b-b61f-5991387cfd68]
+
+2023-09-06T14:30:34.331+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Response 200 OK
+2023-09-06T14:30:34.331+02:00 DEBUG 209310 --- [           main] o.s.web.client.RestTemplate              : Reading to [com.example.loan.XmlResponseBody]
+2023-09-06T14:30:34.332+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : WireMockConfiguration is missing [true]
+2023-09-06T14:30:34.334+02:00 DEBUG 209310 --- [           main] o.s.c.c.w.WireMockTestExecutionListener  : WireMockConfiguration is missing [true]
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.081 s -- in com.example.loan.XmlServiceUsingStubRunnerTests
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- exec-maven-plugin:1.6.0:exec (gradle) @ http-client-restdocs ---
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :clean
+> Task :compileJava
+> Task :compileGroovy NO-SOURCE
+> Task :processResources
+> Task :classes
+> Task :resolveMainClassName
+> Task :bootJar
+> Task :jar
+> Task :assemble
+> Task :check
+> Task :build
+> Task :publishToMavenLocal UP-TO-DATE
+
+BUILD SUCCESSFUL in 7s
+6 actionable tasks: 6 executed
+[INFO] 
+[INFO] --- maven-jar-plugin:3.3.0:jar (default-jar) @ http-client-restdocs ---
+[INFO] Building jar: /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-client/target/http-client-restdocs-0.0.1.jar
+[INFO] 
+[INFO] --- spring-boot-maven-plugin:3.2.0-SNAPSHOT:repackage (repackage) @ http-client-restdocs ---
+[INFO] Replacing main artifact /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-client/target/http-client-restdocs-0.0.1.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-client/target/http-client-restdocs-0.0.1.jar.original
+[INFO] 
+[INFO] --- maven-install-plugin:3.1.1:install (default-install) @ http-client-restdocs ---
+[INFO] Installing /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-client/pom.xml to /home/marcin/.m2/repository/com/example/http-client-restdocs/0.0.1/http-client-restdocs-0.0.1.pom
+[INFO] Installing /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/http-client/target/http-client-restdocs-0.0.1.jar to /home/marcin/.m2/repository/com/example/http-client-restdocs/0.0.1/http-client-restdocs-0.0.1.jar
+[INFO] 
+[INFO] --< org.springframework.cloud:spring-cloud-contract-samples-restdocs >--
+[INFO] Building Spring Cloud Contract Standalone Restdocs Test Samples 4.1.0-SNAPSHOT [3/3]
+[INFO] --------------------------------[ pom ]---------------------------------
+[WARNING] org.slf4j:slf4j-api/maven-metadata.xmlfailed to transfer from http://0.0.0.0/ during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of maven-default-http-blocker has elapsed or updates are forced. Original error: Could not transfer metadata org.slf4j:slf4j-api/maven-metadata.xml from/to maven-default-http-blocker (http://0.0.0.0/): transfer failed for http://0.0.0.0/org/slf4j/slf4j-api/maven-metadata.xml
+[INFO] 
+[INFO] --- maven-clean-plugin:3.1.0:clean (default-clean) @ spring-cloud-contract-samples-restdocs ---
+[INFO] Deleting /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/target
+[INFO] 
+[INFO] --- spring-javaformat-maven-plugin:0.0.35:apply (default) @ spring-cloud-contract-samples-restdocs ---
+[INFO] 
+[INFO] --- spring-javaformat-maven-plugin:0.0.35:validate (default) @ spring-cloud-contract-samples-restdocs ---
+[INFO] 
+[INFO] --- maven-checkstyle-plugin:3.1.2:check (checkstyle-validation) @ spring-cloud-contract-samples-restdocs ---
+[INFO] Starting audit...
+Audit done.
+[INFO] You have 0 Checkstyle violations.
+[INFO] 
+[INFO] --- maven-checkstyle-plugin:3.1.2:check (no-http-checkstyle-validation) @ spring-cloud-contract-samples-restdocs ---
+[INFO] 
+[INFO] --- maven-javadoc-plugin:3.3.1:jar (javadoc) @ spring-cloud-contract-samples-restdocs ---
+[INFO] Not executing Javadoc as the project is not a Java classpath-capable package
+[INFO] 
+[INFO] >>> maven-source-plugin:3.2.1:jar (attach-sources) > generate-sources @ spring-cloud-contract-samples-restdocs >>>
+[INFO] 
+[INFO] --- spring-javaformat-maven-plugin:0.0.35:apply (default) @ spring-cloud-contract-samples-restdocs ---
+[INFO] 
+[INFO] --- spring-javaformat-maven-plugin:0.0.35:validate (default) @ spring-cloud-contract-samples-restdocs ---
+[INFO] 
+[INFO] --- maven-checkstyle-plugin:3.1.2:check (checkstyle-validation) @ spring-cloud-contract-samples-restdocs ---
+[INFO] Starting audit...
+Audit done.
+[INFO] You have 0 Checkstyle violations.
+[INFO] 
+[INFO] --- maven-checkstyle-plugin:3.1.2:check (no-http-checkstyle-validation) @ spring-cloud-contract-samples-restdocs ---
+[INFO] 
+[INFO] <<< maven-source-plugin:3.2.1:jar (attach-sources) < generate-sources @ spring-cloud-contract-samples-restdocs <<<
+[INFO] 
+[INFO] 
+[INFO] --- maven-source-plugin:3.2.1:jar (attach-sources) @ spring-cloud-contract-samples-restdocs ---
+[INFO] 
+[INFO] --- maven-invoker-plugin:3.2.1:run (integration) @ spring-cloud-contract-samples-restdocs ---
+[INFO] No projects were selected for execution.
+[INFO] 
+[INFO] --- maven-install-plugin:2.4:install (default-install) @ spring-cloud-contract-samples-restdocs ---
+[INFO] Installing /home/marcin/repo/spring-cloud-contract/samples/standalone/restdocs/interpolated-pom.xml to /home/marcin/.m2/repository/org/springframework/cloud/spring-cloud-contract-samples-restdocs/4.1.0-SNAPSHOT/spring-cloud-contract-samples-restdocs-4.1.0-SNAPSHOT.pom
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] Spring Cloud Contract RestDocs Http Server Sample 0.0.1 SUCCESS [  6.657 s]
+[INFO] Spring Cloud Contract RestDocs Http Client Sample 0.0.1 SUCCESS [ 13.280 s]
+[INFO] Spring Cloud Contract Standalone Restdocs Test Samples 4.1.0-SNAPSHOT SUCCESS [  0.903 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  22.343 s
+[INFO] Finished at: 2023-09-06T14:30:43+02:00
+[INFO] ------------------------------------------------------------------------

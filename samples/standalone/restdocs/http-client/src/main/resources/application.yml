@@ -1,6 +1,0 @@
-server.port: 8097
-logging:
-  level:
-    org.springframework.cloud.contract.wiremock: debug
-    org.springframework.web.client: debug
-    com.github.tomakehurst.wiremock: trace

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.springframework.cloud:spring-cloud-contract-verifier:4.0.1-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/cloud/spring-cloud-contract-verifier/4.0.1-SNAPSHOT/spring-cloud-contract-verifier-4.0.1-20230119.142139-66.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/cloud/spring-cloud-contract-verifier/4.0.1-SNAPSHOT/spring-cloud-contract-verifier-4.0.1-20230119.142139-66-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/cloud/spring-cloud-contract-verifier/4.0.1-SNAPSHOT/spring-cloud-contract-verifier-4.0.1-20230119.142139-66-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

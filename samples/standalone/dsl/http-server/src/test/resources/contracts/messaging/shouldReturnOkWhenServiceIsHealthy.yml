@@ -1,6 +1,0 @@
-description: Should return 200 for /foo
-request:
-  url: /foo
-  method: GET
-response:
-  status: 200

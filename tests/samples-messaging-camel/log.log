@@ -1,0 +1,164 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----< org.springframework.cloud:spring-cloud-contract-sample-camel >----
+[INFO] Building Spring Cloud Contract Sample Camel 4.0.0-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ spring-cloud-contract-sample-camel ---
+[WARNING] The artifact xml-apis:xml-apis:jar:2.0.2 has been relocated to xml-apis:xml-apis:jar:1.0.b2
+[INFO] org.springframework.cloud:spring-cloud-contract-sample-camel:jar:4.0.0-SNAPSHOT
+[INFO] +- org.apache.camel.springboot:camel-amqp-starter:jar:3.19.0:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter:jar:3.0.0-SNAPSHOT:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot:jar:3.0.0-SNAPSHOT:compile
+[INFO] |  |  |  \- org.springframework:spring-context:jar:6.0.0-RC4:compile
+[INFO] |  |  |     +- org.springframework:spring-aop:jar:6.0.0-RC4:compile
+[INFO] |  |  |     \- org.springframework:spring-expression:jar:6.0.0-RC4:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-autoconfigure:jar:3.0.0-SNAPSHOT:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:3.0.0-SNAPSHOT:compile
+[INFO] |  |  |  +- ch.qos.logback:logback-classic:jar:1.4.4:compile
+[INFO] |  |  |  |  \- ch.qos.logback:logback-core:jar:1.4.4:compile
+[INFO] |  |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.19.0:compile
+[INFO] |  |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.19.0:compile
+[INFO] |  |  |  \- org.slf4j:jul-to-slf4j:jar:2.0.3:compile
+[INFO] |  |  \- jakarta.annotation:jakarta.annotation-api:jar:2.1.1:compile
+[INFO] |  +- org.apache.camel:camel-amqp:jar:3.19.0:compile
+[INFO] |  |  +- org.apache.camel:camel-jms:jar:3.19.0:compile
+[INFO] |  |  |  +- org.apache.camel:camel-spring:jar:3.19.0:compile
+[INFO] |  |  |  +- org.springframework:spring-jms:jar:6.0.0-RC4:compile
+[INFO] |  |  |  |  \- org.springframework:spring-messaging:jar:6.0.0-RC4:compile
+[INFO] |  |  |  +- org.springframework:spring-tx:jar:6.0.0-RC4:compile
+[INFO] |  |  |  +- org.springframework:spring-beans:jar:6.0.0-RC4:compile
+[INFO] |  |  |  \- org.apache.geronimo.specs:geronimo-jms_2.0_spec:jar:1.0-alpha-2:compile
+[INFO] |  |  +- org.apache.qpid:qpid-jms-client:jar:1.7.0:compile
+[INFO] |  |  |  +- jakarta.jms:jakarta.jms-api:jar:3.1.0:compile
+[INFO] |  |  |  +- io.netty:netty-transport-native-epoll:jar:linux-x86_64:4.1.84.Final:compile
+[INFO] |  |  |  |  \- io.netty:netty-transport-classes-epoll:jar:4.1.84.Final:compile
+[INFO] |  |  |  \- io.netty:netty-transport-native-kqueue:jar:osx-x86_64:4.1.84.Final:compile
+[INFO] |  |  |     \- io.netty:netty-transport-classes-kqueue:jar:4.1.84.Final:compile
+[INFO] |  |  +- org.apache.qpid:proton-j:jar:0.34.0:compile
+[INFO] |  |  +- io.netty:netty-buffer:jar:4.1.84.Final:compile
+[INFO] |  |  +- io.netty:netty-common:jar:4.1.84.Final:compile
+[INFO] |  |  +- io.netty:netty-handler:jar:4.1.84.Final:compile
+[INFO] |  |  |  +- io.netty:netty-resolver:jar:4.1.84.Final:compile
+[INFO] |  |  |  +- io.netty:netty-transport-native-unix-common:jar:4.1.84.Final:compile
+[INFO] |  |  |  \- io.netty:netty-codec:jar:4.1.84.Final:compile
+[INFO] |  |  +- io.netty:netty-transport:jar:4.1.84.Final:compile
+[INFO] |  |  \- io.netty:netty-codec-http:jar:4.1.84.Final:compile
+[INFO] |  \- org.apache.camel.springboot:camel-core-starter:jar:3.19.0:compile
+[INFO] |     \- org.apache.camel.springboot:camel-spring-boot:jar:3.19.0:compile
+[INFO] |        +- org.apache.camel:camel-spring-main:jar:3.19.0:compile
+[INFO] |        |  \- org.apache.camel:camel-main:jar:3.19.0:compile
+[INFO] |        |     \- org.apache.camel:camel-core-languages:jar:3.19.0:compile
+[INFO] |        +- org.apache.camel:camel-util-json:jar:3.19.0:compile
+[INFO] |        +- org.apache.camel:camel-xml-jaxb-dsl:jar:3.19.0:compile
+[INFO] |        |  +- org.apache.camel:camel-xml-jaxb:jar:3.19.0:compile
+[INFO] |        |  |  +- com.sun.xml.bind:jaxb-core:jar:4.0.1:compile
+[INFO] |        |  |  |  \- org.eclipse.angus:angus-activation:jar:1.0.0:runtime
+[INFO] |        |  |  \- com.sun.xml.bind:jaxb-impl:jar:4.0.1:compile
+[INFO] |        |  \- org.apache.camel:camel-dsl-support:jar:3.19.0:compile
+[INFO] |        +- org.apache.camel:camel-spring-xml:jar:3.19.0:compile
+[INFO] |        |  +- org.apache.camel:camel-xml-jaxp:jar:3.19.0:compile
+[INFO] |        |  |  \- org.apache.camel:camel-xml-io-util:jar:3.19.0:compile
+[INFO] |        |  +- org.apache.camel:camel-core-xml:jar:3.19.0:compile
+[INFO] |        |  \- javax.annotation:javax.annotation-api:jar:1.3.2:compile
+[INFO] |        +- org.apache.camel:camel-cloud:jar:3.19.0:compile
+[INFO] |        +- org.apache.camel:camel-cluster:jar:3.19.0:compile
+[INFO] |        \- org.apache.camel:camel-health:jar:3.19.0:compile
+[INFO] +- org.apache.camel.springboot:camel-direct-starter:jar:3.19.0:compile
+[INFO] |  \- org.apache.camel:camel-direct:jar:3.19.0:compile
+[INFO] |     \- org.apache.camel:camel-support:jar:3.19.0:compile
+[INFO] +- org.apache.camel.springboot:camel-bean-starter:jar:3.19.0:compile
+[INFO] |  \- org.apache.camel:camel-bean:jar:3.19.0:compile
+[INFO] +- org.apache.camel:camel-jackson:jar:3.19.0:compile
+[INFO] |  +- org.apache.camel:camel-core-engine:jar:3.19.0:compile
+[INFO] |  |  +- org.apache.camel:camel-api:jar:3.19.0:compile
+[INFO] |  |  +- org.apache.camel:camel-base-engine:jar:3.19.0:compile
+[INFO] |  |  |  \- org.apache.camel:camel-base:jar:3.19.0:compile
+[INFO] |  |  +- org.apache.camel:camel-core-reifier:jar:3.19.0:compile
+[INFO] |  |  |  +- org.apache.camel:camel-core-model:jar:3.19.0:compile
+[INFO] |  |  |  \- org.apache.camel:camel-core-processor:jar:3.19.0:compile
+[INFO] |  |  +- org.apache.camel:camel-management-api:jar:3.19.0:compile
+[INFO] |  |  \- org.apache.camel:camel-util:jar:3.19.0:compile
+[INFO] |  \- com.fasterxml.jackson.core:jackson-databind:jar:2.14.0-rc3:compile
+[INFO] |     +- com.fasterxml.jackson.core:jackson-annotations:jar:2.14.0-rc3:compile
+[INFO] |     \- com.fasterxml.jackson.core:jackson-core:jar:2.14.0-rc3:compile
+[INFO] +- org.springframework.cloud:spring-cloud-contract-verifier:jar:4.0.0-SNAPSHOT:test
+[INFO] |  +- org.springframework.cloud:spring-cloud-contract-spec:jar:4.0.0-SNAPSHOT:test
+[INFO] |  |  +- org.springframework.cloud:spring-cloud-contract-spec-java:jar:4.0.0-SNAPSHOT:test
+[INFO] |  |  |  \- dk.brics:automaton:jar:1.12-4:test
+[INFO] |  |  \- org.springframework.cloud:spring-cloud-contract-spec-groovy:jar:4.0.0-SNAPSHOT:test
+[INFO] |  +- org.springframework.cloud:spring-cloud-contract-shade:jar:4.0.0-SNAPSHOT:test
+[INFO] |  +- org.springframework.boot:spring-boot-test-autoconfigure:jar:3.0.0-SNAPSHOT:test
+[INFO] |  +- org.apache.commons:commons-text:jar:1.10.0:test
+[INFO] |  |  \- org.apache.commons:commons-lang3:jar:3.12.0:test
+[INFO] |  +- javax.inject:javax.inject:jar:1:test
+[INFO] |  +- com.github.tomakehurst:wiremock-jre8-standalone:jar:2.35.0:test
+[INFO] |  +- com.toomuchcoding.jsonassert:jsonassert:jar:0.6.2:test
+[INFO] |  +- org.apache.maven.resolver:maven-resolver-api:jar:1.4.1:test
+[INFO] |  +- com.rackspace.eclipse.webtools.sourceediting:org.eclipse.wst.xml.xpath2.processor:jar:2.1.100:test
+[INFO] |  |  +- edu.princeton.cup:java-cup:jar:10k:test
+[INFO] |  |  \- com.ibm.icu:icu4j:jar:4.6:test
+[INFO] |  +- org.apache.groovy:groovy:jar:4.0.0:test
+[INFO] |  +- org.apache.groovy:groovy-nio:jar:4.0.0:test
+[INFO] |  +- org.apache.groovy:groovy-json:jar:4.0.0:test
+[INFO] |  +- org.apache.groovy:groovy-xml:jar:4.0.0:test
+[INFO] |  +- org.skyscreamer:jsonassert:jar:1.5.1:test
+[INFO] |  |  \- com.vaadin.external.google:android-json:jar:0.0.20131108.vaadin1:test
+[INFO] |  +- com.github.jknack:handlebars:jar:4.3.0:test
+[INFO] |  |  \- org.slf4j:slf4j-api:jar:2.0.3:provided (version selected from constraint [2.0.0,))
+[INFO] |  +- commons-beanutils:commons-beanutils:jar:1.9.4:test
+[INFO] |  |  +- commons-logging:commons-logging:jar:1.2:test
+[INFO] |  |  \- commons-collections:commons-collections:jar:3.2.2:test
+[INFO] |  +- org.yaml:snakeyaml:jar:1.33:compile
+[INFO] |  +- com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:jar:2.14.0-rc3:test
+[INFO] |  +- org.mockito:mockito-core:jar:2.23.0:test
+[INFO] |  |  +- net.bytebuddy:byte-buddy:jar:1.12.18:test
+[INFO] |  |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.18:test
+[INFO] |  |  \- org.objenesis:objenesis:jar:2.6:test
+[INFO] |  +- net.javacrumbs.json-unit:json-unit-assertj:jar:2.32.0:test
+[INFO] |  |  +- net.javacrumbs.json-unit:json-unit-core:jar:2.32.0:test
+[INFO] |  |  |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] |  |  \- net.javacrumbs.json-unit:json-unit-json-path:jar:2.32.0:test
+[INFO] |  \- org.junit.jupiter:junit-jupiter-api:jar:5.9.1:test
+[INFO] |     +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |     +- org.junit.platform:junit-platform-commons:jar:1.9.1:test
+[INFO] |     \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.spockframework:spock-spring:jar:2.3-groovy-4.0:test
+[INFO] |  \- org.spockframework:spock-core:jar:2.3-groovy-4.0:test
+[INFO] |     \- org.junit.platform:junit-platform-engine:jar:1.9.1:test
+[INFO] +- org.springframework.boot:spring-boot-starter-test:jar:3.0.0-SNAPSHOT:test
+[INFO] |  +- org.springframework.boot:spring-boot-test:jar:3.0.0-SNAPSHOT:test
+[INFO] |  +- com.jayway.jsonpath:json-path:jar:2.7.0:test
+[INFO] |  |  \- net.minidev:json-smart:jar:2.4.8:test
+[INFO] |  |     \- net.minidev:accessors-smart:jar:2.4.8:test
+[INFO] |  |        \- org.ow2.asm:asm:jar:9.1:test
+[INFO] |  +- jakarta.xml.bind:jakarta.xml.bind-api:jar:4.0.0:compile
+[INFO] |  |  \- jakarta.activation:jakarta.activation-api:jar:2.1.0:compile
+[INFO] |  +- org.assertj:assertj-core:jar:3.23.1:test
+[INFO] |  +- org.hamcrest:hamcrest:jar:2.2:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter:jar:5.9.1:test
+[INFO] |  |  +- org.junit.jupiter:junit-jupiter-params:jar:5.9.1:test
+[INFO] |  |  \- org.junit.jupiter:junit-jupiter-engine:jar:5.9.1:test
+[INFO] |  +- org.mockito:mockito-junit-jupiter:jar:4.8.1:test
+[INFO] |  +- org.springframework:spring-core:jar:6.0.0-RC4:compile
+[INFO] |  |  \- org.springframework:spring-jcl:jar:6.0.0-RC4:compile
+[INFO] |  +- org.springframework:spring-test:jar:6.0.0-RC4:test
+[INFO] |  \- org.xmlunit:xmlunit-core:jar:2.9.0:test
+[INFO] +- org.awaitility:awaitility:jar:4.2.0:test
+[INFO] +- org.testcontainers:rabbitmq:jar:1.17.5:test
+[INFO] |  \- org.testcontainers:testcontainers:jar:1.17.5:test
+[INFO] |     +- junit:junit:jar:4.12:test
+[INFO] |     +- org.apache.commons:commons-compress:jar:1.21:test
+[INFO] |     +- org.rnorth.duct-tape:duct-tape:jar:1.0.8:test
+[INFO] |     |  \- org.jetbrains:annotations:jar:17.0.0:test
+[INFO] |     +- com.github.docker-java:docker-java-api:jar:3.2.13:test
+[INFO] |     \- com.github.docker-java:docker-java-transport-zerodep:jar:3.2.13:test
+[INFO] |        +- com.github.docker-java:docker-java-transport:jar:3.2.13:test
+[INFO] |        \- net.java.dev.jna:jna:jar:5.8.0:test
+[INFO] \- org.testcontainers:junit-jupiter:jar:1.17.5:test
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  0.759 s
+[INFO] Finished at: 2022-11-14T15:58:28+01:00
+[INFO] ------------------------------------------------------------------------

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: net.javacrumbs.json-unit:json-unit-core:2.32.0">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/javacrumbs/json-unit/json-unit-core/2.32.0/json-unit-core-2.32.0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/net/javacrumbs/json-unit/json-unit-core/2.32.0/json-unit-core-2.32.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/javacrumbs/json-unit/json-unit-core/2.32.0/json-unit-core-2.32.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

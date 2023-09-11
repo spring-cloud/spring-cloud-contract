@@ -1,4 +1,0 @@
-logging:
-  level:
-    org.springframework.cloud.contract: debug
-    com.github.tomakehurst.wiremock: trace

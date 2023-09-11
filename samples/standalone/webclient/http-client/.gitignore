@@ -1,7 +1,0 @@
-
-target/
-
-.gradle
-build/
-
-/.apt_generated/

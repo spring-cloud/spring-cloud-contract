@@ -1,0 +1,477 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] Spring Cloud Contract RestDocs Http Server Sample                  [jar]
+[INFO] Spring Cloud Contract RestDocs Http WebClient Sample               [jar]
+[INFO] Spring Cloud Contract Standalone Restdocs Test Samples             [pom]
+[INFO] 
+[INFO] -----------------< com.example:http-server-webclient >------------------
+[INFO] Building Spring Cloud Contract RestDocs Http Server Sample 0.0.1   [1/3]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:3.3.1:clean (default-clean) @ http-server-webclient ---
+[INFO] Deleting /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-server/target
+[INFO] 
+[INFO] --- maven-resources-plugin:3.3.1:resources (default-resources) @ http-server-webclient ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:compile (default-compile) @ http-server-webclient ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 5 source files with javac [debug release 17] to target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:3.3.1:testResources (default-testResources) @ http-server-webclient ---
+[INFO] skip non existing resourceDirectory /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-server/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:testCompile (default-testCompile) @ http-server-webclient ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 1 source file with javac [debug release 17] to target/test-classes
+[INFO] /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-server/src/test/java/com/example/fraud/StubGeneratorTests.java: /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-server/src/test/java/com/example/fraud/StubGeneratorTests.java uses or overrides a deprecated API.
+[INFO] /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-server/src/test/java/com/example/fraud/StubGeneratorTests.java: Recompile with -Xlint:deprecation for details.
+[INFO] 
+[INFO] --- maven-surefire-plugin:3.1.2:test (default-test) @ http-server-webclient ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.example.fraud.StubGeneratorTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::       (v3.2.0-SNAPSHOT)
+
+2023-09-06T14:30:05.020+02:00  INFO 208298 --- [           main] com.example.fraud.StubGeneratorTests     : Starting StubGeneratorTests using Java 17.0.1 with PID 208298 (started by marcin in /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-server)
+2023-09-06T14:30:05.024+02:00  INFO 208298 --- [           main] com.example.fraud.StubGeneratorTests     : No active profile set, falling back to 1 default profile: "default"
+2023-09-06T14:30:05.979+02:00  INFO 208298 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint(s) beneath base path '/actuator'
+2023-09-06T14:30:06.317+02:00  INFO 208298 --- [           main] com.example.fraud.StubGeneratorTests     : Started StubGeneratorTests in 1.495 seconds (process running for 2.22)
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.718 s -- in com.example.fraud.StubGeneratorTests
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- maven-assembly-plugin:3.6.0:single (stub) @ http-server-webclient ---
+[INFO] Reading assembly descriptor: /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-server/src/assembly/stub.xml
+[INFO] Building jar: /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-server/target/http-server-webclient-0.0.1-stubs.jar
+[INFO] 
+[INFO] --- maven-jar-plugin:3.3.0:jar (default-jar) @ http-server-webclient ---
+[INFO] Building jar: /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-server/target/http-server-webclient-0.0.1.jar
+[INFO] 
+[INFO] --- spring-boot-maven-plugin:3.2.0-SNAPSHOT:repackage (repackage) @ http-server-webclient ---
+[INFO] Replacing main artifact /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-server/target/http-server-webclient-0.0.1.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-server/target/http-server-webclient-0.0.1.jar.original
+[INFO] 
+[INFO] --- maven-install-plugin:3.1.1:install (default-install) @ http-server-webclient ---
+[INFO] Installing /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-server/pom.xml to /home/marcin/.m2/repository/com/example/http-server-webclient/0.0.1/http-server-webclient-0.0.1.pom
+[INFO] Installing /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-server/target/http-server-webclient-0.0.1.jar to /home/marcin/.m2/repository/com/example/http-server-webclient/0.0.1/http-server-webclient-0.0.1.jar
+[INFO] Installing /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-server/target/http-server-webclient-0.0.1-stubs.jar to /home/marcin/.m2/repository/com/example/http-server-webclient/0.0.1/http-server-webclient-0.0.1-stubs.jar
+[INFO] 
+[INFO] -----------------< com.example:http-client-webclient >------------------
+[INFO] Building Spring Cloud Contract RestDocs Http WebClient Sample 0.0.1 [2/3]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] Downloading from local.central: file:///home/marcin/.m2/repository/org/springframework/boot/spring-boot-configuration-processor/3.2.0-SNAPSHOT/maven-metadata.xml
+[INFO] 
+[INFO] --- maven-clean-plugin:3.3.1:clean (default-clean) @ http-client-webclient ---
+[INFO] Deleting /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-client/target
+[INFO] 
+[INFO] --- maven-resources-plugin:3.3.1:resources (default-resources) @ http-client-webclient ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:compile (default-compile) @ http-client-webclient ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 9 source files with javac [debug release 17] to target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:3.3.1:testResources (default-testResources) @ http-client-webclient ---
+[INFO] Copying 1 resource from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:testCompile (default-testCompile) @ http-client-webclient ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 3 source files with javac [debug release 17] to target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:3.1.2:test (default-test) @ http-client-webclient ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.example.loan.LoanApplicationServiceusingStubRunnerTests
+14:30:08.651 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.example.loan.LoanApplicationServiceusingStubRunnerTests]: LoanApplicationServiceusingStubRunnerTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+14:30:08.719 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.example.loan.Application for test class com.example.loan.LoanApplicationServiceusingStubRunnerTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::       (v3.2.0-SNAPSHOT)
+
+2023-09-06T14:30:08.951+02:00  INFO 208420 --- [           main] anApplicationServiceusingStubRunnerTests : Starting LoanApplicationServiceusingStubRunnerTests using Java 17.0.1 with PID 208420 (started by marcin in /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-client)
+2023-09-06T14:30:08.952+02:00  INFO 208420 --- [           main] anApplicationServiceusingStubRunnerTests : No active profile set, falling back to 1 default profile: "default"
+2023-09-06T14:30:09.603+02:00  WARN 208420 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.contract.stubrunner.spring.StubRunnerConfiguration' of type [org.springframework.cloud.contract.stubrunner.spring.StubRunnerConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [batchStubRunnerBeanPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2023-09-06T14:30:09.616+02:00  WARN 208420 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'stubrunner-org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties' of type [org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [batchStubRunnerBeanPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2023-09-06T14:30:09.620+02:00  INFO 208420 --- [           main] o.s.c.c.s.ClasspathStubProvider          : Will download stubs from classpath
+2023-09-06T14:30:09.657+02:00  INFO 208420 --- [           main] .s.c.c.s.ResourceResolvingStubDownloader : Unpacked files for [com.example:http-server-webclient:+] to folder [/tmp/classpath-stubs-1694003409651-0]
+2023-09-06T14:30:10.235+02:00  INFO 208420 --- [tp1178861747-39] WireMock                                 : Admin request received:
+127.0.0.1 - POST /mappings
+
+Host: []
+Content-Length: [225]
+Content-Type: [text/plain; charset=UTF-8]
+Connection: [keep-alive]
+User-Agent: [Apache-HttpClient/5.1.3 (Java/17.0.1)]
+{
+  "id" : "580c4bd5-4ae9-4395-acdb-45689c43c5cc",
+  "request" : {
+    "url" : "/ping",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "OK"
+  },
+  "uuid" : "580c4bd5-4ae9-4395-acdb-45689c43c5cc"
+}
+
+2023-09-06T14:30:10.248+02:00  INFO 208420 --- [tp1178861747-32] WireMock                                 : Admin request received:
+127.0.0.1 - POST /mappings
+
+Host: []
+Content-Length: [227]
+Content-Type: [text/plain; charset=UTF-8]
+Connection: [keep-alive]
+User-Agent: [Apache-HttpClient/5.1.3 (Java/17.0.1)]
+{
+  "id" : "7f923a77-9c09-4507-b0af-2dfc09e68c60",
+  "request" : {
+    "url" : "/health",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "OK"
+  },
+  "uuid" : "7f923a77-9c09-4507-b0af-2dfc09e68c60"
+}
+
+2023-09-06T14:30:10.255+02:00  INFO 208420 --- [tp1178861747-38] WireMock                                 : Admin request received:
+127.0.0.1 - POST /mappings
+
+Host: []
+Content-Length: [622]
+Content-Type: [text/plain; charset=UTF-8]
+Connection: [keep-alive]
+User-Agent: [Apache-HttpClient/5.1.3 (Java/17.0.1)]
+{
+  "id" : "2dfb487b-c23b-447d-892c-e89e66f21547",
+  "request" : {
+    "urlPath" : "/fraudcheck",
+    "method" : "PUT",
+    "headers" : {
+      "Content-Type" : {
+        "matches" : "\\Qapplication/vnd.fraud.v1+json\\E.*"
+      }
+    },
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$.clientId"
+    }, {
+      "matchesJsonPath" : "$[?(@.loanAmount <= 1000)]"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"fraudCheckStatus\":\"OK\",\"rejectionReason\":null}",
+    "headers" : {
+      "Content-Type" : "application/vnd.fraud.v1+json"
+    }
+  },
+  "uuid" : "2dfb487b-c23b-447d-892c-e89e66f21547"
+}
+
+2023-09-06T14:30:10.260+02:00  INFO 208420 --- [tp1178861747-39] WireMock                                 : Admin request received:
+127.0.0.1 - POST /mappings
+
+Host: []
+Content-Length: [639]
+Content-Type: [text/plain; charset=UTF-8]
+Connection: [keep-alive]
+User-Agent: [Apache-HttpClient/5.1.3 (Java/17.0.1)]
+{
+  "id" : "9fa5dc20-a0d2-40fb-badb-4dc89ff73236",
+  "request" : {
+    "urlPath" : "/fraudcheck",
+    "method" : "PUT",
+    "headers" : {
+      "Content-Type" : {
+        "matches" : "\\Qapplication/vnd.fraud.v1+json\\E.*"
+      }
+    },
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$.clientId"
+    }, {
+      "matchesJsonPath" : "$[?(@.loanAmount > 1000)]"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"fraudCheckStatus\":\"FRAUD\",\"rejectionReason\":\"Amount too high\"}",
+    "headers" : {
+      "Content-Type" : "application/vnd.fraud.v1+json"
+    }
+  },
+  "uuid" : "9fa5dc20-a0d2-40fb-badb-4dc89ff73236"
+}
+
+2023-09-06T14:30:10.264+02:00  INFO 208420 --- [           main] o.s.c.contract.stubrunner.StubServer     : Started stub server for project [com.example:http-server-webclient:+:stubs] on port 13186 with [2] mappings
+2023-09-06T14:30:10.264+02:00  INFO 208420 --- [           main] o.s.c.c.stubrunner.StubRunnerExecutor    : All stubs are now running RunningStubs [namesAndPorts={com.example:http-server-webclient:+:stubs=13186}]
+2023-09-06T14:30:10.265+02:00  WARN 208420 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'batchStubRunner' of type [org.springframework.cloud.contract.stubrunner.BatchStubRunner] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [batchStubRunnerBeanPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2023-09-06T14:30:10.736+02:00  INFO 208420 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint(s) beneath base path '/actuator'
+2023-09-06T14:30:10.761+02:00  INFO 208420 --- [           main] o.s.c.c.v.m.i.ContractVerifierMessaging  : The message verifier sender implementation is of type [class org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages]
+2023-09-06T14:30:10.762+02:00  INFO 208420 --- [           main] o.s.c.c.v.m.i.ContractVerifierMessaging  : The message verifier receiver implementation is of type [class org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessages]
+2023-09-06T14:30:10.803+02:00  INFO 208420 --- [           main] anApplicationServiceusingStubRunnerTests : Started LoanApplicationServiceusingStubRunnerTests in 2.015 seconds (process running for 2.579)
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+2023-09-06T14:30:11.413+02:00 DEBUG 208420 --- [           main] o.s.web.client.RestTemplate              : HTTP PUT http://localhost:13186/fraudcheck
+2023-09-06T14:30:11.437+02:00 DEBUG 208420 --- [           main] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
+2023-09-06T14:30:11.444+02:00 DEBUG 208420 --- [           main] o.s.web.client.RestTemplate              : Writing [com.example.loan.model.FraudServiceRequest@18cb4ed1] as "application/vnd.fraud.v1+json"
+2023-09-06T14:30:11.472+02:00  INFO 208420 --- [tp1178861747-37] WireMock                                 : Request received:
+127.0.0.1 - PUT /fraudcheck
+
+Accept: [application/json, application/*+json]
+Content-Type: [application/vnd.fraud.v1+json]
+User-Agent: [Java/17.0.1]
+Host: [localhost:13186]
+Connection: [keep-alive]
+Transfer-Encoding: [chunked]
+{"clientId":"1234567890","loanAmount":123.123}
+
+
+Matched response definition:
+{
+  "status" : 200,
+  "body" : "{\"fraudCheckStatus\":\"OK\",\"rejectionReason\":null}",
+  "headers" : {
+    "Content-Type" : "application/vnd.fraud.v1+json"
+  }
+}
+
+Response:
+HTTP/1.1 200
+Content-Type: [application/vnd.fraud.v1+json]
+Matched-Stub-Id: [2dfb487b-c23b-447d-892c-e89e66f21547]
+
+2023-09-06T14:30:11.474+02:00 DEBUG 208420 --- [           main] o.s.web.client.RestTemplate              : Response 200 OK
+2023-09-06T14:30:11.475+02:00 DEBUG 208420 --- [           main] o.s.web.client.RestTemplate              : Reading to [com.example.loan.model.FraudServiceResponse]
+2023-09-06T14:30:11.516+02:00 DEBUG 208420 --- [           main] o.s.web.client.RestTemplate              : HTTP PUT http://localhost:13186/fraudcheck
+2023-09-06T14:30:11.517+02:00 DEBUG 208420 --- [           main] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
+2023-09-06T14:30:11.517+02:00 DEBUG 208420 --- [           main] o.s.web.client.RestTemplate              : Writing [com.example.loan.model.FraudServiceRequest@1f27f354] as "application/vnd.fraud.v1+json"
+2023-09-06T14:30:11.518+02:00  INFO 208420 --- [tp1178861747-38] WireMock                                 : Request received:
+127.0.0.1 - PUT /fraudcheck
+
+Accept: [application/json, application/*+json]
+Content-Type: [application/vnd.fraud.v1+json]
+User-Agent: [Java/17.0.1]
+Host: [localhost:13186]
+Connection: [keep-alive]
+Transfer-Encoding: [chunked]
+{"clientId":"1234567890","loanAmount":99999.0}
+
+
+Matched response definition:
+{
+  "status" : 200,
+  "body" : "{\"fraudCheckStatus\":\"FRAUD\",\"rejectionReason\":\"Amount too high\"}",
+  "headers" : {
+    "Content-Type" : "application/vnd.fraud.v1+json"
+  }
+}
+
+Response:
+HTTP/1.1 200
+Content-Type: [application/vnd.fraud.v1+json]
+Matched-Stub-Id: [9fa5dc20-a0d2-40fb-badb-4dc89ff73236]
+
+2023-09-06T14:30:11.519+02:00 DEBUG 208420 --- [           main] o.s.web.client.RestTemplate              : Response 200 OK
+2023-09-06T14:30:11.519+02:00 DEBUG 208420 --- [           main] o.s.web.client.RestTemplate              : Reading to [com.example.loan.model.FraudServiceResponse]
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.963 s -- in com.example.loan.LoanApplicationServiceusingStubRunnerTests
+[INFO] Running com.example.loan.LoanApplicationServiceTests
+2023-09-06T14:30:11.528+02:00  INFO 208420 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.example.loan.LoanApplicationServiceTests]: LoanApplicationServiceTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2023-09-06T14:30:11.529+02:00  INFO 208420 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.example.loan.Application for test class com.example.loan.LoanApplicationServiceTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::       (v3.2.0-SNAPSHOT)
+
+2023-09-06T14:30:11.548+02:00  INFO 208420 --- [           main] c.e.loan.LoanApplicationServiceTests     : Starting LoanApplicationServiceTests using Java 17.0.1 with PID 208420 (started by marcin in /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-client)
+2023-09-06T14:30:11.548+02:00  INFO 208420 --- [           main] c.e.loan.LoanApplicationServiceTests     : No active profile set, falling back to 1 default profile: "default"
+2023-09-06T14:30:11.885+02:00  INFO 208420 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint(s) beneath base path '/actuator'
+2023-09-06T14:30:11.911+02:00  INFO 208420 --- [           main] c.e.loan.LoanApplicationServiceTests     : Started LoanApplicationServiceTests in 0.38 seconds (process running for 3.688)
+2023-09-06T14:30:11.922+02:00 DEBUG 208420 --- [           main] o.s.web.client.RestTemplate              : HTTP PUT http://localhost:11915/fraudcheck
+2023-09-06T14:30:11.923+02:00 DEBUG 208420 --- [           main] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
+2023-09-06T14:30:11.924+02:00 DEBUG 208420 --- [           main] o.s.web.client.RestTemplate              : Writing [com.example.loan.model.FraudServiceRequest@823f978] as "application/vnd.fraud.v1+json"
+2023-09-06T14:30:11.929+02:00  INFO 208420 --- [tp1254252690-46] WireMock                                 : Request received:
+127.0.0.1 - PUT /fraudcheck
+
+Accept: [application/json, application/*+json]
+Content-Type: [application/vnd.fraud.v1+json]
+User-Agent: [Java/17.0.1]
+Host: [localhost:11915]
+Connection: [keep-alive]
+Transfer-Encoding: [chunked]
+{"clientId":"1234567890","loanAmount":123.123}
+
+
+Matched response definition:
+{
+  "status" : 200,
+  "body" : "{\"fraudCheckStatus\":\"OK\",\"rejectionReason\":null}",
+  "headers" : {
+    "Content-Type" : "application/vnd.fraud.v1+json"
+  }
+}
+
+Response:
+HTTP/1.1 200
+Content-Type: [application/vnd.fraud.v1+json]
+Matched-Stub-Id: [2dfb487b-c23b-447d-892c-e89e66f21547]
+
+2023-09-06T14:30:11.930+02:00 DEBUG 208420 --- [           main] o.s.web.client.RestTemplate              : Response 200 OK
+2023-09-06T14:30:11.930+02:00 DEBUG 208420 --- [           main] o.s.web.client.RestTemplate              : Reading to [com.example.loan.model.FraudServiceResponse]
+2023-09-06T14:30:11.938+02:00 DEBUG 208420 --- [           main] o.s.web.client.RestTemplate              : HTTP PUT http://localhost:11915/fraudcheck
+2023-09-06T14:30:11.938+02:00 DEBUG 208420 --- [           main] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
+2023-09-06T14:30:11.938+02:00 DEBUG 208420 --- [           main] o.s.web.client.RestTemplate              : Writing [com.example.loan.model.FraudServiceRequest@7894a250] as "application/vnd.fraud.v1+json"
+2023-09-06T14:30:11.940+02:00  INFO 208420 --- [tp1254252690-55] WireMock                                 : Request received:
+127.0.0.1 - PUT /fraudcheck
+
+Accept: [application/json, application/*+json]
+Content-Type: [application/vnd.fraud.v1+json]
+User-Agent: [Java/17.0.1]
+Host: [localhost:11915]
+Connection: [keep-alive]
+Transfer-Encoding: [chunked]
+{"clientId":"1234567890","loanAmount":99999.0}
+
+
+Matched response definition:
+{
+  "status" : 200,
+  "body" : "{\"fraudCheckStatus\":\"FRAUD\",\"rejectionReason\":\"Amount too high\"}",
+  "headers" : {
+    "Content-Type" : "application/vnd.fraud.v1+json"
+  }
+}
+
+Response:
+HTTP/1.1 200
+Content-Type: [application/vnd.fraud.v1+json]
+Matched-Stub-Id: [9fa5dc20-a0d2-40fb-badb-4dc89ff73236]
+
+2023-09-06T14:30:11.941+02:00 DEBUG 208420 --- [           main] o.s.web.client.RestTemplate              : Response 200 OK
+2023-09-06T14:30:11.941+02:00 DEBUG 208420 --- [           main] o.s.web.client.RestTemplate              : Reading to [com.example.loan.model.FraudServiceResponse]
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.428 s -- in com.example.loan.LoanApplicationServiceTests
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- exec-maven-plugin:1.6.0:exec (gradle) @ http-client-webclient ---
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :clean
+> Task :compileJava
+> Task :compileGroovy NO-SOURCE
+> Task :processResources
+> Task :classes
+> Task :resolveMainClassName
+> Task :bootJar
+> Task :jar
+> Task :assemble
+> Task :check
+> Task :build
+> Task :publishToMavenLocal UP-TO-DATE
+
+BUILD SUCCESSFUL in 6s
+6 actionable tasks: 6 executed
+[INFO] 
+[INFO] --- maven-jar-plugin:3.3.0:jar (default-jar) @ http-client-webclient ---
+[INFO] Building jar: /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-client/target/http-client-webclient-0.0.1.jar
+[INFO] 
+[INFO] --- spring-boot-maven-plugin:3.2.0-SNAPSHOT:repackage (repackage) @ http-client-webclient ---
+[INFO] Replacing main artifact /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-client/target/http-client-webclient-0.0.1.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-client/target/http-client-webclient-0.0.1.jar.original
+[INFO] 
+[INFO] --- maven-install-plugin:3.1.1:install (default-install) @ http-client-webclient ---
+[INFO] Installing /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-client/pom.xml to /home/marcin/.m2/repository/com/example/http-client-webclient/0.0.1/http-client-webclient-0.0.1.pom
+[INFO] Installing /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/http-client/target/http-client-webclient-0.0.1.jar to /home/marcin/.m2/repository/com/example/http-client-webclient/0.0.1/http-client-webclient-0.0.1.jar
+[INFO] 
+[INFO] --< org.springframework.cloud:spring-cloud-contract-samples-webclient >--
+[INFO] Building Spring Cloud Contract Standalone Restdocs Test Samples 4.1.0-SNAPSHOT [3/3]
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] Downloading from maven-default-http-blocker: http://0.0.0.0/org/slf4j/slf4j-api/maven-metadata.xml
+[WARNING] Could not transfer metadata org.slf4j:slf4j-api/maven-metadata.xml from/to maven-default-http-blocker (http://0.0.0.0/): transfer failed for http://0.0.0.0/org/slf4j/slf4j-api/maven-metadata.xml
+[INFO] 
+[INFO] --- maven-clean-plugin:3.1.0:clean (default-clean) @ spring-cloud-contract-samples-webclient ---
+[INFO] Deleting /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/target
+[INFO] 
+[INFO] --- spring-javaformat-maven-plugin:0.0.35:apply (default) @ spring-cloud-contract-samples-webclient ---
+[INFO] 
+[INFO] --- spring-javaformat-maven-plugin:0.0.35:validate (default) @ spring-cloud-contract-samples-webclient ---
+[INFO] 
+[INFO] --- maven-checkstyle-plugin:3.1.2:check (checkstyle-validation) @ spring-cloud-contract-samples-webclient ---
+[INFO] Starting audit...
+Audit done.
+[INFO] You have 0 Checkstyle violations.
+[INFO] 
+[INFO] --- maven-checkstyle-plugin:3.1.2:check (no-http-checkstyle-validation) @ spring-cloud-contract-samples-webclient ---
+[INFO] 
+[INFO] --- maven-javadoc-plugin:3.3.1:jar (javadoc) @ spring-cloud-contract-samples-webclient ---
+[INFO] Not executing Javadoc as the project is not a Java classpath-capable package
+[INFO] 
+[INFO] >>> maven-source-plugin:3.2.1:jar (attach-sources) > generate-sources @ spring-cloud-contract-samples-webclient >>>
+[INFO] 
+[INFO] --- spring-javaformat-maven-plugin:0.0.35:apply (default) @ spring-cloud-contract-samples-webclient ---
+[INFO] 
+[INFO] --- spring-javaformat-maven-plugin:0.0.35:validate (default) @ spring-cloud-contract-samples-webclient ---
+[INFO] 
+[INFO] --- maven-checkstyle-plugin:3.1.2:check (checkstyle-validation) @ spring-cloud-contract-samples-webclient ---
+[INFO] Starting audit...
+Audit done.
+[INFO] You have 0 Checkstyle violations.
+[INFO] 
+[INFO] --- maven-checkstyle-plugin:3.1.2:check (no-http-checkstyle-validation) @ spring-cloud-contract-samples-webclient ---
+[INFO] 
+[INFO] <<< maven-source-plugin:3.2.1:jar (attach-sources) < generate-sources @ spring-cloud-contract-samples-webclient <<<
+[INFO] 
+[INFO] 
+[INFO] --- maven-source-plugin:3.2.1:jar (attach-sources) @ spring-cloud-contract-samples-webclient ---
+[INFO] 
+[INFO] --- maven-invoker-plugin:3.2.1:run (integration) @ spring-cloud-contract-samples-webclient ---
+[INFO] No projects were selected for execution.
+[INFO] 
+[INFO] --- maven-install-plugin:2.4:install (default-install) @ spring-cloud-contract-samples-webclient ---
+[INFO] Installing /home/marcin/repo/spring-cloud-contract/samples/standalone/webclient/interpolated-pom.xml to /home/marcin/.m2/repository/org/springframework/cloud/spring-cloud-contract-samples-webclient/4.1.0-SNAPSHOT/spring-cloud-contract-samples-webclient-4.1.0-SNAPSHOT.pom
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] Spring Cloud Contract RestDocs Http Server Sample 0.0.1 SUCCESS [  4.793 s]
+[INFO] Spring Cloud Contract RestDocs Http WebClient Sample 0.0.1 SUCCESS [ 11.313 s]
+[INFO] Spring Cloud Contract Standalone Restdocs Test Samples 4.1.0-SNAPSHOT SUCCESS [  1.157 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  17.421 s
+[INFO] Finished at: 2023-09-06T14:30:20+02:00
+[INFO] ------------------------------------------------------------------------

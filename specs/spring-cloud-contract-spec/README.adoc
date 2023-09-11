@@ -1,3 +1,0 @@
-=== Spring Cloud Contract Specification
-
-This module contains both Groovy and Java specs.

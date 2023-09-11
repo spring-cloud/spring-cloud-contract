@@ -1,0 +1,169 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --< org.springframework.cloud:spring-cloud-contract-stub-runner-boot >--
+[INFO] Building Spring Cloud Contract Stub Runner Boot 4.0.0-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ spring-cloud-contract-stub-runner-boot ---
+[WARNING] The artifact xml-apis:xml-apis:jar:2.0.2 has been relocated to xml-apis:xml-apis:jar:1.0.b2
+[INFO] org.springframework.cloud:spring-cloud-contract-stub-runner-boot:jar:4.0.0-SNAPSHOT
+[INFO] +- org.springframework.cloud:spring-cloud-starter-contract-stub-runner:jar:4.0.0-SNAPSHOT:compile
+[INFO] |  +- org.springframework.cloud:spring-cloud-contract-stub-runner:jar:4.0.0-SNAPSHOT:compile
+[INFO] |  |  +- org.springframework.cloud:spring-cloud-contract-verifier:jar:4.0.0-SNAPSHOT:compile
+[INFO] |  |  |  +- javax.inject:javax.inject:jar:1:compile
+[INFO] |  |  |  +- com.toomuchcoding.jsonassert:jsonassert:jar:0.6.2:compile
+[INFO] |  |  |  +- com.rackspace.eclipse.webtools.sourceediting:org.eclipse.wst.xml.xpath2.processor:jar:2.1.100:compile
+[INFO] |  |  |  |  +- edu.princeton.cup:java-cup:jar:10k:compile
+[INFO] |  |  |  |  \- com.ibm.icu:icu4j:jar:4.6:compile
+[INFO] |  |  |  +- org.apache.groovy:groovy-nio:jar:4.0.0:compile
+[INFO] |  |  |  +- org.apache.groovy:groovy-json:jar:4.0.0:compile
+[INFO] |  |  |  +- org.apache.groovy:groovy-xml:jar:4.0.0:compile
+[INFO] |  |  |  +- com.github.jknack:handlebars:jar:4.3.0:compile
+[INFO] |  |  |  +- commons-beanutils:commons-beanutils:jar:1.9.4:compile
+[INFO] |  |  |  |  +- commons-logging:commons-logging:jar:1.2:compile
+[INFO] |  |  |  |  \- commons-collections:commons-collections:jar:3.2.2:compile
+[INFO] |  |  |  +- com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:jar:2.14.0-rc3:compile
+[INFO] |  |  |  +- net.javacrumbs.json-unit:json-unit-assertj:jar:2.32.0:compile
+[INFO] |  |  |  |  +- net.javacrumbs.json-unit:json-unit-core:jar:2.32.0:compile
+[INFO] |  |  |  |  |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] |  |  |  |  \- net.javacrumbs.json-unit:json-unit-json-path:jar:2.32.0:compile
+[INFO] |  |  |  \- org.junit.jupiter:junit-jupiter-api:jar:5.9.1:compile
+[INFO] |  |  |     +- org.opentest4j:opentest4j:jar:1.2.0:compile
+[INFO] |  |  |     +- org.junit.platform:junit-platform-commons:jar:1.9.1:compile
+[INFO] |  |  |     \- org.apiguardian:apiguardian-api:jar:1.1.2:compile
+[INFO] |  |  +- org.springframework.cloud:spring-cloud-contract-shade:jar:4.0.0-SNAPSHOT:compile
+[INFO] |  |  +- org.springframework.cloud:spring-cloud-contract-converters:jar:4.0.0-SNAPSHOT:compile
+[INFO] |  |  +- org.springframework.cloud:spring-cloud-contract-spec:jar:4.0.0-SNAPSHOT:compile
+[INFO] |  |  |  \- org.springframework.cloud:spring-cloud-contract-spec-groovy:jar:4.0.0-SNAPSHOT:compile
+[INFO] |  |  +- org.eclipse.jgit:org.eclipse.jgit:jar:6.1.0.202203080745-r:compile
+[INFO] |  |  |  \- com.googlecode.javaewah:JavaEWAH:jar:1.1.13:compile
+[INFO] |  |  +- org.eclipse.jgit:org.eclipse.jgit.ssh.jsch:jar:6.1.0.202203080745-r:compile
+[INFO] |  |  |  +- com.jcraft:jsch:jar:0.1.55:compile
+[INFO] |  |  |  \- com.jcraft:jzlib:jar:1.1.1:compile
+[INFO] |  |  +- com.jcraft:jsch.agentproxy.sshagent:jar:0.0.9:compile
+[INFO] |  |  |  \- com.jcraft:jsch.agentproxy.core:jar:0.0.9:compile
+[INFO] |  |  +- com.jcraft:jsch.agentproxy.jsch:jar:0.0.9:compile
+[INFO] |  |  \- com.jcraft:jsch.agentproxy.usocket-jna:jar:0.0.9:compile
+[INFO] |  |     \- net.java.dev.jna:jna-platform:jar:4.1.0:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter-test:jar:3.0.0-RC2:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-test:jar:3.0.0-RC2:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-test-autoconfigure:jar:3.0.0-RC2:compile
+[INFO] |  |  +- com.jayway.jsonpath:json-path:jar:2.7.0:compile
+[INFO] |  |  |  \- net.minidev:json-smart:jar:2.4.8:compile
+[INFO] |  |  |     \- net.minidev:accessors-smart:jar:2.4.8:compile
+[INFO] |  |  |        \- org.ow2.asm:asm:jar:9.1:compile
+[INFO] |  |  +- jakarta.xml.bind:jakarta.xml.bind-api:jar:4.0.0:compile
+[INFO] |  |  |  \- jakarta.activation:jakarta.activation-api:jar:2.1.0:compile
+[INFO] |  |  +- org.assertj:assertj-core:jar:3.23.1:compile
+[INFO] |  |  |  \- net.bytebuddy:byte-buddy:jar:1.12.18:compile
+[INFO] |  |  +- org.hamcrest:hamcrest:jar:2.2:compile
+[INFO] |  |  +- org.junit.jupiter:junit-jupiter:jar:5.9.1:compile
+[INFO] |  |  |  +- org.junit.jupiter:junit-jupiter-params:jar:5.9.1:compile
+[INFO] |  |  |  \- org.junit.jupiter:junit-jupiter-engine:jar:5.9.1:runtime
+[INFO] |  |  |     \- org.junit.platform:junit-platform-engine:jar:1.9.1:runtime
+[INFO] |  |  +- org.mockito:mockito-core:jar:2.23.0:test
+[INFO] |  |  |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.18:test
+[INFO] |  |  |  \- org.objenesis:objenesis:jar:2.6:test
+[INFO] |  |  +- org.mockito:mockito-junit-jupiter:jar:4.8.1:compile
+[INFO] |  |  +- org.skyscreamer:jsonassert:jar:1.5.1:compile
+[INFO] |  |  |  \- com.vaadin.external.google:android-json:jar:0.0.20131108.vaadin1:compile
+[INFO] |  |  +- org.springframework:spring-core:jar:6.0.0-RC4:compile
+[INFO] |  |  +- org.springframework:spring-test:jar:6.0.0-RC4:compile
+[INFO] |  |  \- org.xmlunit:xmlunit-core:jar:2.9.0:compile
+[INFO] |  +- org.springframework.cloud:spring-cloud-contract-wiremock:jar:4.0.0-SNAPSHOT:compile
+[INFO] |  |  +- jakarta.servlet:jakarta.servlet-api:jar:6.0.0:compile
+[INFO] |  |  +- com.github.tomakehurst:wiremock-jre8-standalone:jar:2.35.0:compile
+[INFO] |  |  +- org.apache.httpcomponents.client5:httpclient5:jar:5.1.3:compile
+[INFO] |  |  |  +- org.apache.httpcomponents.core5:httpcore5:jar:5.1.4:compile
+[INFO] |  |  |  +- org.apache.httpcomponents.core5:httpcore5-h2:jar:5.1.4:compile
+[INFO] |  |  |  \- commons-codec:commons-codec:jar:1.15:compile
+[INFO] |  |  \- org.springframework.cloud:spring-cloud-test-support:jar:4.0.0-SNAPSHOT:compile
+[INFO] |  |     +- org.apache.maven.resolver:maven-resolver-connector-basic:jar:1.4.1:compile
+[INFO] |  |     |  +- org.apache.maven.resolver:maven-resolver-spi:jar:1.4.1:compile
+[INFO] |  |     |  \- org.apache.maven.resolver:maven-resolver-util:jar:1.4.1:compile
+[INFO] |  |     +- org.apache.maven.resolver:maven-resolver-impl:jar:1.4.1:compile
+[INFO] |  |     +- org.apache.maven:maven-resolver-provider:jar:3.6.3:compile
+[INFO] |  |     |  +- org.apache.maven:maven-model:jar:3.6.3:compile
+[INFO] |  |     |  +- org.apache.maven:maven-model-builder:jar:3.6.3:compile
+[INFO] |  |     |  |  +- org.codehaus.plexus:plexus-interpolation:jar:1.25:compile
+[INFO] |  |     |  |  +- org.apache.maven:maven-artifact:jar:3.6.3:compile
+[INFO] |  |     |  |  \- org.apache.maven:maven-builder-support:jar:3.6.3:compile
+[INFO] |  |     |  \- org.apache.maven:maven-repository-metadata:jar:3.6.3:compile
+[INFO] |  |     \- org.apache.maven.resolver:maven-resolver-transport-http:jar:1.4.1:compile
+[INFO] |  |        +- org.apache.httpcomponents:httpclient:jar:4.5.13:compile
+[INFO] |  |        \- org.apache.httpcomponents:httpcore:jar:4.4.15:compile
+[INFO] |  +- org.apache.maven.resolver:maven-resolver-api:jar:1.4.1:compile
+[INFO] |  \- org.sonatype.sisu:sisu-inject-plexus:jar:2.6.0:compile
+[INFO] |     +- org.codehaus.plexus:plexus-component-annotations:jar:1.7.1:compile
+[INFO] |     +- org.codehaus.plexus:plexus-classworlds:jar:2.5.2:compile
+[INFO] |     +- org.codehaus.plexus:plexus-utils:jar:3.0.18:compile
+[INFO] |     +- org.sonatype.sisu:sisu-inject-bean:jar:2.6.0:compile
+[INFO] |     |  +- javax.enterprise:cdi-api:jar:1.0:compile
+[INFO] |     |  |  \- javax.annotation:jsr250-api:jar:1.0:compile
+[INFO] |     |  +- org.sonatype.sisu:sisu-guice:jar:no_aop:3.2.6:compile
+[INFO] |     |  |  \- com.google.guava:guava:jar:16.0.1:compile
+[INFO] |     |  \- org.eclipse.sisu:org.eclipse.sisu.inject:jar:0.3.3:compile
+[INFO] |     \- org.eclipse.sisu:org.eclipse.sisu.plexus:jar:0.3.3:compile
+[INFO] +- org.springframework.cloud:spring-cloud-contract-spec-kotlin:jar:4.0.0-SNAPSHOT:compile
+[INFO] |  +- org.springframework.cloud:spring-cloud-contract-spec-java:jar:4.0.0-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.groovy:groovy:jar:4.0.0:compile
+[INFO] |  |  +- dk.brics:automaton:jar:1.12-4:compile
+[INFO] |  |  +- org.apache.commons:commons-text:jar:1.10.0:compile
+[INFO] |  |  |  \- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] |  |  \- org.springframework:spring-jcl:jar:6.0.0-RC4:compile
+[INFO] |  +- org.jetbrains.kotlin:kotlin-stdlib-jdk8:jar:1.6.21:compile
+[INFO] |  |  +- org.jetbrains.kotlin:kotlin-stdlib:jar:1.6.21:compile
+[INFO] |  |  |  +- org.jetbrains.kotlin:kotlin-stdlib-common:jar:1.6.21:compile
+[INFO] |  |  |  \- org.jetbrains:annotations:jar:13.0:compile
+[INFO] |  |  \- org.jetbrains.kotlin:kotlin-stdlib-jdk7:jar:1.6.21:compile
+[INFO] |  +- org.jetbrains.kotlin:kotlin-compiler-embeddable:jar:1.6.21:compile
+[INFO] |  |  +- org.jetbrains.kotlin:kotlin-script-runtime:jar:1.6.21:compile
+[INFO] |  |  +- org.jetbrains.kotlin:kotlin-reflect:jar:1.6.21:runtime
+[INFO] |  |  +- org.jetbrains.kotlin:kotlin-daemon-embeddable:jar:1.6.21:runtime
+[INFO] |  |  +- org.jetbrains.intellij.deps:trove4j:jar:1.0.20200330:compile
+[INFO] |  |  \- net.java.dev.jna:jna:jar:5.6.0:compile
+[INFO] |  +- org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:jar:1.6.21:compile
+[INFO] |  |  \- org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable:jar:1.6.21:runtime
+[INFO] |  |     \- org.jetbrains.kotlin:kotlin-scripting-common:jar:1.6.21:compile
+[INFO] |  \- org.jetbrains.kotlin:kotlin-script-util:jar:1.6.21:compile
+[INFO] |     +- org.jetbrains.kotlin:kotlin-scripting-jvm:jar:1.6.21:compile
+[INFO] |     \- org.jetbrains.kotlin:kotlin-daemon-client:jar:1.6.21:compile
+[INFO] |        \- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:jar:1.6.4:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-web:jar:3.0.0-RC2:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter:jar:3.0.0-RC2:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot:jar:3.0.0-RC2:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-autoconfigure:jar:3.0.0-RC2:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:3.0.0-RC2:compile
+[INFO] |  |  |  +- ch.qos.logback:logback-classic:jar:1.4.4:compile
+[INFO] |  |  |  |  \- ch.qos.logback:logback-core:jar:1.4.4:compile
+[INFO] |  |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.19.0:compile
+[INFO] |  |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.19.0:compile
+[INFO] |  |  |  \- org.slf4j:jul-to-slf4j:jar:2.0.3:compile
+[INFO] |  |  +- jakarta.annotation:jakarta.annotation-api:jar:2.1.1:compile
+[INFO] |  |  \- org.yaml:snakeyaml:jar:1.33:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter-json:jar:3.0.0-RC2:compile
+[INFO] |  |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.14.0-rc3:compile
+[INFO] |  |  |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.14.0-rc3:compile
+[INFO] |  |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.14.0-rc3:compile
+[INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.14.0-rc3:compile
+[INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.14.0-rc3:compile
+[INFO] |  |  \- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.14.0-rc3:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter-tomcat:jar:3.0.0-RC2:compile
+[INFO] |  |  +- org.apache.tomcat.embed:tomcat-embed-core:jar:10.1.1:compile
+[INFO] |  |  +- org.apache.tomcat.embed:tomcat-embed-el:jar:10.1.1:compile
+[INFO] |  |  \- org.apache.tomcat.embed:tomcat-embed-websocket:jar:10.1.1:compile
+[INFO] |  +- org.springframework:spring-web:jar:6.0.0-RC4:compile
+[INFO] |  |  +- org.springframework:spring-beans:jar:6.0.0-RC4:compile
+[INFO] |  |  \- io.micrometer:micrometer-observation:jar:1.10.0:compile
+[INFO] |  |     \- io.micrometer:micrometer-commons:jar:1.10.0:compile
+[INFO] |  \- org.springframework:spring-webmvc:jar:6.0.0-RC4:compile
+[INFO] |     +- org.springframework:spring-aop:jar:6.0.0-RC4:compile
+[INFO] |     +- org.springframework:spring-context:jar:6.0.0-RC4:compile
+[INFO] |     \- org.springframework:spring-expression:jar:6.0.0-RC4:compile
+[INFO] \- org.slf4j:slf4j-api:jar:2.0.3:compile
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  0.752 s
+[INFO] Finished at: 2022-11-16T14:04:05+01:00
+[INFO] ------------------------------------------------------------------------

@@ -1,8 +1,0 @@
-[[how-to-reference-text-from-file]]
-= How Can I Reference Text from File?
-:page-section-summary-toc: 1
-
-In version 1.2.0, we added this ability. You can call a `file(...)` method in the
-DSL and provide a path relative to where the contract lies.
-If you use YAML, you can use the `bodyFromFile` property.
-

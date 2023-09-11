@@ -1,3 +1,0 @@
-=== Spring Cloud Contract Specification Java
-
-This module contains the Contract specification written in Java.

@@ -1,2 +1,0 @@
-stubrunner:
-  stubs.ids: 'com.example:http-server-restdocs-gradle'

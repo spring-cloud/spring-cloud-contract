@@ -1,5 +1,0 @@
-releaser.maven.buildCommand: ./scripts/noIntegration.sh {{systemProps}}
-releaser.maven.deployCommand: ./mvnw deploy -DskipTests -B -Pfast,deploy -Dgradle.publish-plugins.task=-Phello=world {{systemProps}}
-releaser.gradle.gradlePropsSubstitution:
-  verifierVersion: spring-cloud-contract
-  bootVersion: spring-boot

@@ -1,8 +1,0 @@
-label: some_label
-input:
-  triggeredBy: foo()
-outputMessage:
-  sentTo: jms:output
-  bodyFromFileAsBytes: response.pdf
-  headers:
-    contentType: application/octet-stream
