@@ -23,6 +23,7 @@
 		<maven-deploy-plugin-default.phase>none</maven-deploy-plugin-default.phase>
 		<!-- Aligned with Groovy in SC-Build -->
 		<groovy.version>4.0.6</groovy.version>
+		<generate-adoc-resource.phase>process-classes</generate-adoc-resource.phase>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -124,7 +125,7 @@
 						<executions>
 							<execution>
 								<id>generate-docker-env-vars</id>
-								<phase>generate-resources</phase>
+								<phase>${generate-cloud-resources.phase}</phase>
 								<goals>
 									<goal>exec</goal>
 								</goals>
@@ -138,7 +139,7 @@
 							</execution>
 							<execution>
 								<id>generate-adoc-resources</id>
-								<phase>process-classes</phase>
+								<phase>${generate-adoc-resource.phase}</phase>
 								<goals>
 									<goal>java</goal>
 								</goals>
@@ -168,6 +169,18 @@
 					</plugin>
 				</plugins>
 			</build>
+		</profile>
+		<profile>
+			<id>antora-process</id>
+			<activation>
+				<property>
+					<name>antora-maven-plugin.phase</name>
+					<value>none</value>
+				</property>
+			</activation>
+			<properties>
+				<generate-adoc-resource.phase>none</generate-adoc-resource.phase>
+			</properties>
 		</profile>
 	</profiles>
 </project>
