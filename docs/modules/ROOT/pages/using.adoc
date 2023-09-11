@@ -6,13 +6,13 @@ such as flows of how to work with {project-full-name}. We also
 cover some {project-full-name} best practices.
 
 If you are starting out with {project-full-name}, you should probably read the
-<<getting-started.adoc#getting-started, Getting Started>> guide before diving into this
+xref:getting-started.adoc[Getting Started] guide before diving into this
 section.
 
 [[flows-provider-nexus]]
 == Provider Contract Testing with Stubs in Nexus or Artifactory
 
-You can check the <<getting-started.adoc#getting-started-first-application, Developing Your First Spring Cloud Contract based application>> link to see the provider contract testing with stubs in the Nexus or Artifactory flow.
+You can check the xref:getting-started/first-application.adoc[Developing Your First Spring Cloud Contract based application] link to see the provider contract testing with stubs in the Nexus or Artifactory flow.
 
 [[flows-provider-git]]
 == Provider Contract Testing with Stubs in Git
@@ -52,11 +52,11 @@ Contract set up, together with a plugin. For an example of such a project, see
 === The Flow
 
 The flow looks exactly as the one presented in
-<<getting-started.adoc#getting-started-first-application, Developing Your First Spring Cloud Contract based application>>,
+xref:getting-started/first-application.adoc[Developing Your First Spring Cloud Contract based application],
 but the `Stub Storage` implementation is a git repository.
 
 You can read more about setting up a git repository and setting consumer and producer side
-in the <<howto.adoc#how-to-use-git-as-storage,How To page>> of the documentation.
+in the xref:howto/how-to-use-git-as-storage.adoc[How To page] of the documentation.
 
 [[flows-provider-git-consumer]]
 === Consumer setup
@@ -174,13 +174,13 @@ publish.dependsOn("publishStubsToScm")
 ====
 
 You can read more about setting up a git repository in the
-<<howto.adoc#how-to-use-git-as-storage,How To section>> of the documentation.
+xref:howto/how-to-use-git-as-storage.adoc[How To section] of the documentation.
 
 [[flows-cdc-contracts-producer]]
 == Consumer Driven Contracts with Contracts on the Producer Side
 
-See <<getting-started.adoc#getting-started-cdc, Step-by-step Guide to Consumer Driven
-Contracts (CDC) with Contracts on the Producer Side>> to see the Consumer Driven Contracts
+See xref:getting-started/cdc.adoc[Step-by-step Guide to Consumer Driven Contracts (CDC) with Contracts on the Producer Side]
+ to see the Consumer Driven Contracts
 with contracts on the producer side flow.
 
 [[flows-cdc-contracts-external]]
@@ -199,7 +199,7 @@ To use consumer-driven contracts with the contracts held in an external reposito
 * For each contract producer, contains a way (for example, `pom.xml`) to install stubs
 locally through the Spring Cloud Contract Plugin (SCC Plugin).
 
-For more information, see the <<howto.adoc#how-to-common-repo-with-contracts, How To section>>,
+For more information, see the xref:howto/how-to-common-repo-with-contracts.adoc[How To section],
 where we describe how to set up such a repository.
 For an example of such a project, see {samples_code}/beer_contracts[this sample].
 
@@ -454,13 +454,13 @@ The following UML diagram shows the producer process:
 [[flows-cdc-contracts-stubs-git]]
 == Consumer-driven Contracts with Contracts on the Producer Side, Pushed to Git
 
-You can read the <<getting-started.adoc#getting-started-cdc, Step-by-step Guide to Consumer Driven Contracts (CDC) with contracts laying on the producer side>> to see the consumer driven contracts with contracts on the producer side flow.
+You can read the xref:getting-started/cdc.adoc[Step-by-step Guide to Consumer Driven Contracts (CDC) with contracts laying on the producer side] to see the consumer driven contracts with contracts on the producer side flow.
 
 The stub storage implementation is a git repository. We describe its setup in the
-<<flows-provider-git>> section.
+xref:using.adoc#flows-provider-git[Provider Contract Testing with Stubs in Git] section.
 
 You can read more about setting up a git repository for the consumer and producer sides in
-the <<howto.adoc#how-to-use-git-as-storage,How To section>> of the documentation.
+the xref:howto/how-to-use-git-as-storage.adoc[How To section] of the documentation.
 
 [[flows-provider-non-spring]]
 == Provider Contract Testing with Stubs in Artifactory for a non-Spring Application
@@ -468,7 +468,7 @@ the <<howto.adoc#how-to-use-git-as-storage,How To section>> of the documentation
 [[flows-provider-non-spring-flow]]
 === The Flow
 
-You can read <<getting-started.adoc#getting-started-first-application, Developing Your First Spring Cloud Contract-based Application>> to see the flow for provider contract testing with stubs in Nexus or Artifactory.
+You can read xref:getting-started/first-application.adoc[Developing Your First Spring Cloud Contract-based Application] to see the flow for provider contract testing with stubs in Nexus or Artifactory.
 
 [[flows-provider-non-spring-consumer]]
 === Setting up the Consumer
@@ -858,7 +858,7 @@ The following UML diagram shows the producer flow:
 [[flows-provider-rest-docs-consumer]]
 === Consumer Flow
 
-Since the consumer flow is not affected by the tool used to generate the stubs, you can read <<getting-started.adoc#getting-started-first-application-consumer, Developing Your First Spring Cloud Contract-based Application>> to see the flow for consumer side of the provider contract testing with stubs in Nexus or Artifactory.
+Since the consumer flow is not affected by the tool used to generate the stubs, you can read xref:getting-started/first-application.adoc#getting-started-first-application-consumer[Developing Your First Spring Cloud Contract-based Application] to see the flow for consumer side of the provider contract testing with stubs in Nexus or Artifactory.
 
 [[using-whats-next]]
 == What to Read Next

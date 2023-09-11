@@ -20,7 +20,7 @@ IMPORTANT: Entries inside the `matchers` must reference existing elements of the
 == Dynamic Properties inside the Body
 
 IMPORTANT: This section is valid only for the Coded DSL (Groovy, Java, and so on). See the
-<<contract-dsl-matchers>> section for YAML examples of a similar feature.
+xref:_project-features-contract/dsl-dynamic-properties.adoc#contract-dsl-matchers[Dynamic Properties in the Matchers Sections] section for YAML examples of a similar feature.
 
 You can set the properties inside the body either with the `value` method or, if you use
 the Groovy map notation, with `$()`. The following example shows how to set dynamic
@@ -53,7 +53,7 @@ method. Subsequent sections take a closer look at what you can do with those val
 == Regular Expressions
 
 IMPORTANT: This section is valid only for the Groovy DSL. See the
-<<contract-dsl-matchers>> section for YAML examples of a similar feature.
+xref:_project-features-contract/dsl-dynamic-properties.adoc#contract-dsl-matchers[Dynamic Properties in the Matchers Sections] section for YAML examples of a similar feature.
 
 You can use regular expressions to write your requests in the contract DSL. Doing so is
 particularly useful when you want to indicate that a given response should be provided
@@ -63,7 +63,7 @@ need to use patterns and not exact values both for your tests and your server-si
 Make sure that regex matches a whole region of a sequence, as, internally,
 https://docs.oracle.com/javase/8/docs/api/java/util/regex/Matcher.html#matches[`Pattern.matches()`]
 is called. For instance, `abc` does not match `aabc`, but `.abc` does.
-There are several additional <<contract-dsl-regex-limitations,known limitations>> as well.
+There are several additional xref:_project-features-contract/dsl-dynamic-properties.adoc#contract-dsl-regex-limitations[known limitations] as well.
 
 The following example shows how to use regular expressions to write a request:
 
@@ -154,7 +154,7 @@ See https://github.com/spring-cloud/spring-cloud-contract/issues/900[Issue 900].
 == Passing Optional Parameters
 
 IMPORTANT: This section is valid only for Groovy DSL. See the
-<<contract-dsl-matchers>> section for YAML examples of a similar feature.
+xref:_project-features-contract/dsl-dynamic-properties.adoc#contract-dsl-matchers[Dynamic Properties in the Matchers Sections] section for YAML examples of a similar feature.
 
 You can provide optional parameters in your contract. However, you can provide
 optional parameters only for the following:
@@ -208,7 +208,7 @@ include:../:{plugins_path}/spring-cloud-contract-converters/src/test/groovy/org/
 == Calling Custom Methods on the Server Side
 
 IMPORTANT: This section is valid only for the Groovy DSL. See the
-<<contract-dsl-matchers>> section for YAML examples of a similar feature.
+xref:_project-features-contract/dsl-dynamic-properties.adoc#contract-dsl-matchers[Dynamic Properties in the Matchers Sections] section for YAML examples of a similar feature.
 
 You can define a method call that runs on the server side during the test. Such a
 method can be added to the class defined as `baseClassForTests` in the configuration. The

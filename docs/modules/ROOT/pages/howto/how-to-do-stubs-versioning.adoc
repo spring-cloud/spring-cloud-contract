@@ -3,9 +3,9 @@
 
 This section covers versioning of the stubs, which you can handle in a number of different ways:
 
-* <<how-to-api-versioning>>
-* <<how-to-jar-versioning>>
-* <<how-to-dev-or-prod-stubs>>
+* xref:howto/how-to-do-stubs-versioning.adoc#how-to-api-versioning[API Versioning]
+* xref:howto/how-to-do-stubs-versioning.adoc#how-to-jar-versioning[JAR versioning]
+* xref:howto/how-to-do-stubs-versioning.adoc#how-to-dev-or-prod-stubs[Development or Production Stubs]
 
 [[how-to-api-versioning]]
 == API Versioning

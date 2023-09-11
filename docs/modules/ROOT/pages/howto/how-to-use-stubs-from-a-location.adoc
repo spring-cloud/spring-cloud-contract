@@ -1,5 +1,5 @@
 [[how-to-use-stubs-from-a-location]]
 = How Can I Use Stubs from a Location
 
-If you want to fetch contracts or stubs from a given location without cloning a repository or fetching a JAR, use the `stubs://` protocol when providing the repository root argument for Stub Runner or the Spring Cloud Contract plugin. You can read more about this in <<project-features.adoc#features-stub-runner-stubs-protocol, this section>> of the documentation.
+If you want to fetch contracts or stubs from a given location without cloning a repository or fetching a JAR, use the `stubs://` protocol when providing the repository root argument for Stub Runner or the Spring Cloud Contract plugin. You can read more about this in xref:_project-features-stubrunner/stub-runner-stubs-protocol.adoc[this section] of the documentation.
 

@@ -99,7 +99,7 @@ How can you then provide a matcher for the consumer and a concrete value for the
 Spring Cloud Contract lets you provide a dynamic value. That means that it can differ for both
 sides of the communication.
 
-You can read more about this in the <<project-features.adoc#contract-dsl, Contract DSL>> section.
+You can read more about this in the xref:_project-features-contract.adoc[Contract DSL] section.
 
 IMPORTANT: Read the https://groovy-lang.org/json.html[Groovy docs related to JSON] to understand how to
 properly structure the request and response bodies.

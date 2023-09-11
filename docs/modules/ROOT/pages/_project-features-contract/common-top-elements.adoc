@@ -3,12 +3,12 @@
 
 The following sections describe the most common top-level elements:
 
-* <<contract-dsl-description>>
-* <<contract-dsl-name>>
-* <<contract-dsl-ignoring-contracts>>
-* <<contract-dsl-in-progress>>
-* <<contract-dsl-passing-values-from-files>>
-* <<contract-dsl-metadata>>
+* xref:_project-features-contract/common-top-elements.adoc#contract-dsl-description[Description]
+* xref:_project-features-contract/common-top-elements.adoc#contract-dsl-name[Name]
+* xref:_project-features-contract/common-top-elements.adoc#contract-dsl-ignoring-contracts[Ignoring Contracts]
+* xref:_project-features-contract/common-top-elements.adoc#contract-dsl-in-progress[Contracts in Progress]
+* xref:_project-features-contract/common-top-elements.adoc#contract-dsl-passing-values-from-files[Passing Values from Files]
+* xref:_project-features-contract/common-top-elements.adoc#contract-dsl-metadata[Metadata]
 
 [[contract-dsl-description]]
 == Description

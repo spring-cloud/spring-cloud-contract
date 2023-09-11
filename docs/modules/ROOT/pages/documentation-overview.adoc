@@ -25,7 +25,7 @@ copy contains this Copyright Notice, whether distributed in print or electronica
 == Getting Help
 If you have trouble with {project-full-name}, we would like to help.
 
-* Try the <<howto.adoc#howto, How-to documents>>. They provide solutions to the most
+* Try the xref:howto.adoc[How-to documents]. They provide solutions to the most
 common questions.
 * Learn the {project-full-name} basics. If you are
 starting out with {project-full-name}, try one of the https://spring.io/guides[guides].
@@ -42,37 +42,37 @@ involved].
 [[contract-documentation-first-steps]]
 == First Steps
 If you are getting started with {project-full-name} or 'Spring' in general, start with
-<<getting-started.adoc#getting-started, the following topics>>:
+xref:getting-started.adoc[the following topics]:
 
 * *From scratch:*
 <<getting-started.adoc#getting-started-introducing-{project-name}, Overview>> |
-<<getting-started.adoc#getting-started-three-second-tour, Three-second Tour>> |
-<<getting-started.adoc#getting-started-first-application, First application>>
+xref:getting-started/three-second-tour.adoc[Three-second Tour] |
+xref:getting-started/first-application.adoc[First application]
 * *Tutorial:*
-<<getting-started.adoc#getting-started-cdc, Introduction>> |
+xref:getting-started/cdc.adoc[Introduction] |
 <<getting-started.adoc#consumer-side-loan-issuance, Consumer, Part 1>> |
 <<getting-started.adoc#producer-side-fraud-detection-server, Producer>> |
-<<getting-started.adoc#consumer-side-loan-issuance-final-step, Consumer, Part 2>>
+xref:getting-started/cdc.adoc#getting-started-cdc-consumer-final[Consumer, Part 2]
 
 
 
 [[working-with-{project-full-name}]]
 == Working with {project-full-name}
-Ready to actually start using {project-full-name}? <<using.adoc#using, We have
-you covered>>:
+Ready to actually start using {project-full-name}? xref:using.adoc[We have you covered]
+:
 
 * *Provider contract testing:*
 
-** <<using.adoc#flows-provider-nexus,Provider contract testing with stubs in Nexus or Artifactory>>
-** <<using.adoc#flows-provider-git,Provider contract testing with stubs in Git>>
-** <<using.adoc#flows-provider-non-spring,Provider contract testing with stubs in Artifactory for a non-Spring application>>
-** <<using.adoc#flows-provider-non-jvm,Provider contract testing with stubs in Artifactory in non JVM world>>
-** <<using.adoc#flows-provider-rest-docs,Provider contract testing with REST Docs and stubs in Nexus / Artifactory>>
+** xref:using.adoc#flows-provider-nexus[Provider contract testing with stubs in Nexus or Artifactory]
+** xref:using.adoc#flows-provider-git[Provider contract testing with stubs in Git]
+** xref:using.adoc#flows-provider-non-spring[Provider contract testing with stubs in Artifactory for a non-Spring application]
+** xref:using.adoc#flows-provider-non-jvm[Provider contract testing with stubs in Artifactory in non JVM world]
+** xref:using.adoc#flows-provider-rest-docs[Provider contract testing with REST Docs and stubs in Nexus / Artifactory]
 
 * *Consumer-Driven contract testing:*
-** <<using.adoc#flows-cdc-contracts-producer,Consumer Driven Contracts with contracts on the producer side>>
-** <<using.adoc#flows-cdc-contracts-external,Consumer Driven Contracts with contracts in external repo>>
-** <<using.adoc#flows-cdc-contracts-stubs-git,Consumer Driven Contracts with contracts on the producer side, pushed to git>>
+** xref:using.adoc#flows-cdc-contracts-producer[Consumer Driven Contracts with contracts on the producer side]
+** xref:using.adoc#flows-cdc-contracts-external[Consumer Driven Contracts with contracts in external repo]
+** xref:using.adoc#flows-cdc-contracts-stubs-git[Consumer Driven Contracts with contracts on the producer side, pushed to git]
 
 TIP: We talk about *Provider Contracts* when it is the producer of the API that defines the contracts and
 publishes it for all its consumers to use. This approach is useful for producers that cannot
@@ -87,19 +87,19 @@ of consumers is not extremely large.
 [[learning-about-{project-full-name}-features]]
 == Learning about {project-full-name} Features
 Need more details about {project-full-name}'s core features?
-<<project-features.adoc#features, The following content is for you>>:
+xref:project-features.adoc[The following content is for you]:
 
 * *Core Features:*
-<<project-features.adoc#contract-dsl, Contract DSL>> |
-<<project-features.adoc#features-http, Contracts for HTTP>> |
-<<project-features.adoc#features-messaging, Contracts for Messaging>>
+xref:_project-features-contract.adoc[Contract DSL] |
+xref:_project-features-contract/common-top-elements.adoc#features-http[Contracts for HTTP] |
+xref:_project-features-messaging.adoc[Contracts for Messaging]
 * *Integrations:*
-<<project-features.adoc#features-jax-rs, JAX-RS>> |
-<<project-features.adoc#features-context-paths, Context Paths>> |
-<<project-features.adoc#features-rest-docs, RESTDocs>>
+xref:_project-features-flows/jax-rs.adoc[JAX-RS] |
+xref:_project-features-flows/context-paths.adoc[Context Paths] |
+xref:_project-features-flows/rest-docs.adoc[RESTDocs]
 * *Modules:*
-<<project-features.adoc#features-stub-runner, Stub Runner>> |
-<<project-features.adoc#features-wiremock, WireMock>>
+xref:_project-features-stubrunner.adoc[Stub Runner] |
+xref:_project-features-wiremock.adoc[WireMock]
 // TODO: links don't work in "build Tools" section
 * *Build Tools:*
 link:maven-project.html[Contract Verifier - Maven] |
@@ -118,8 +118,8 @@ Finally, we have a few topics for more advanced users:
 <<advanced.adoc#contract-dsl-plugin-dep, Plugin Dependency>> |
 <<advanced.adoc#contract-dsl-referencing, Referencing the DSL>>
 * *Customizing WireMock:*
-<<advanced.adoc#customization-wiremock-extension, Extensions>> |
-<<advanced.adoc#customization-wiremock-configuration, Configuration>>
+xref:advanced.adoc#customization-wiremock-extension[Extensions] |
+xref:advanced.adoc#customization-wiremock-configuration[Configuration]
 * *Customizing {project-full-name}:*
 <<advanced.adoc#contract-dsl-pluggable-architecture, Pluggable Architecture>> |
 <<advanced.adoc#contract-dsl-custom-contract-converter, Contract Converter>> |

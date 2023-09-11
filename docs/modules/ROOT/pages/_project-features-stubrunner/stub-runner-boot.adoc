@@ -28,7 +28,7 @@ compile "org.springframework.cloud:spring-cloud-starter-stub-runner"
 
 Then annotate a class with `@EnableStubRunnerServer`, build a fat jar, and it is ready to work.
 
-For the properties, see the <<features-stub-runner-rule-spring,Stub Runner Spring>> section.
+For the properties, see the xref:_project-features-stubrunner/stub-runner-junit.adoc#features-stub-runner-rule-spring[Stub Runner Spring] section.
 
 [[features-stub-runner-boot-how-fat-jar]]
 == Stub Runner Server Fat Jar
@@ -74,8 +74,8 @@ the Stub Runner server. It is available at port `8750`.
 
 Stub Runner Boot offers two endpoints:
 
-* <<features-stub-runner-boot-endpoints-http>>
-* <<features-stub-runner-boot-endpoints-messaging>>
+* xref:_project-features-stubrunner/stub-runner-boot.adoc#features-stub-runner-boot-endpoints-http[HTTP]
+* xref:_project-features-stubrunner/stub-runner-boot.adoc#features-stub-runner-boot-endpoints-messaging[Messaging]
 
 [[features-stub-runner-boot-endpoints-http]]
 === HTTP

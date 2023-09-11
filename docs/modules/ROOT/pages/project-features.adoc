@@ -3,8 +3,8 @@
 
 This section dives into the details of {project-full-name}. Here you can learn about the key
 features that you may want to use and customize. If you have not already done so, you
-might want to read the "<<getting-started.adoc#getting-started>>" and
-"<<using.adoc#using>>" sections, so that you have a good grounding in the
+might want to read the "xref:getting-started.adoc[Getting Started]" and
+"xref:using.adoc[Using Spring Cloud Contract]" sections, so that you have a good grounding in the
 basics.
 
 
@@ -27,7 +27,7 @@ as follows:
 
 If you want to learn more about any of the classes discussed in this section, you can browse the
 {github-code}[source code directly]. If you have specific questions, see the
-<<howto.adoc#howto, how-to>> section.
+xref:howto.adoc[how-to] section.
 
 If you are comfortable with {project-full-name}'s core features, you can continue on and read
 about

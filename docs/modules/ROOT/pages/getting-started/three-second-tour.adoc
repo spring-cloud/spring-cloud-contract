@@ -4,11 +4,11 @@
 This very brief tour walks through using Spring Cloud Contract. It consists of the
 following topics:
 
-* <<getting-started-three-second-tour-producer>>
-* <<getting-started-three-second-tour-consumer>>
+* xref:getting-started/three-second-tour.adoc#getting-started-three-second-tour-producer[On the Producer Side]
+* xref:getting-started/three-second-tour.adoc#getting-started-three-second-tour-consumer[On the Consumer Side]
 
 You can find a somewhat longer tour
-<<getting-started-first-application,here>>.
+xref:getting-started/first-application.adoc[here].
 
 The following UML diagram shows the relationship of the parts within Spring Cloud Contract:
 

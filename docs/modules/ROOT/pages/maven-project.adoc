@@ -4,18 +4,18 @@
 To learn how to set up the Maven project for Spring Cloud Contract Verifier, read the
 following sections:
 
-* <<maven-add-plugin>>
-* <<maven-rest-assured>>
-* <<maven-snapshot-versions>>
-* <<maven-add-stubs>>
-* <<maven-run-plugin>>
-* <<maven-configure-plugin>>
-* <<maven-configuration-options>>
-* <<maven-single-base>>
-* <<maven-different-base>>
-* <<maven-invoking-generated-tests>>
-* <<maven-pushing-stubs-to-scm>>
-* <<maven-sts>>
+* xref:maven-project.adoc#maven-add-plugin[Adding the Maven Plugin]
+* xref:maven-project.adoc#maven-rest-assured[Maven and Rest Assured 2.0]
+* xref:maven-project.adoc#maven-snapshot-versions[Using Snapshot and Milestone Versions for Maven]
+* xref:maven-project.adoc#maven-add-stubs[Adding stubs]
+* xref:maven-project.adoc#maven-run-plugin[Run Plugin]
+* xref:maven-project.adoc#maven-configure-plugin[Configure plugin]
+* xref:maven-project.adoc#maven-configuration-options[Configuration Options]
+* xref:maven-project.adoc#maven-single-base[Single Base Class for All Tests]
+* xref:maven-project.adoc#maven-different-base[Using Different Base Classes for Contracts]
+* xref:maven-project.adoc#maven-invoking-generated-tests[Invoking Generated Tests]
+* xref:maven-project.adoc#maven-pushing-stubs-to-scm[Pushing Stubs to SCM]
+* xref:maven-project.adoc#maven-sts[Maven Plugin and STS]
 
 You can also check the plugin's documentation link:../../spring-cloud-contract-maven-plugin/index.html[here].
 
@@ -520,7 +520,7 @@ goal. The following example shows how to do so:
 ----
 ====
 
-Under <<scm-stub-downloader>>, you can find all possible
+Under xref:advanced.adoc#scm-stub-downloader[Using the SCM Stub Downloader], you can find all possible
 configuration options that you can pass through
 the `<configuration><contractsProperties>` map, a system property,
 or an environment variable. For instance, you could specify a concrete branch to checkout, instead of the default one

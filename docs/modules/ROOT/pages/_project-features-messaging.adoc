@@ -12,9 +12,9 @@ but you can also create one of your own and use that.
 The DSL for messaging looks a little bit different than the one that focuses on HTTP. The
 following sections explain the differences:
 
-* <<contract-dsl-output-triggered-method>>
-* <<contract-dsl-consumer-producer>>
-* <<contract-dsl-messaging-common>>
+* xref:_project-features-messaging.adoc#contract-dsl-output-triggered-method[Output Triggered by a Method]
+* xref:_project-features-messaging.adoc#contract-dsl-consumer-producer[Consumer/Producer]
+* xref:_project-features-messaging.adoc#contract-dsl-messaging-common[Common]
 
 [[contract-dsl-output-triggered-method]]
 === Output Triggered by a Method
@@ -208,10 +208,10 @@ or the other in your tests.
 
 `StubTrigger` gives you the following options to trigger a message:
 
-* <<features-messaging-trigger-label>>
-* <<features-messaging-trigger-group-artifact-ids>>
-* <<features-messaging-trigger-artifact-ids>>
-* <<features-messaging-trigger-all-messages>>
+* xref:_project-features-messaging.adoc#features-messaging-trigger-label[Trigger by Label]
+* xref:_project-features-messaging.adoc#features-messaging-trigger-group-artifact-ids[Trigger by Group and Artifact IDs]
+* xref:_project-features-messaging.adoc#features-messaging-trigger-artifact-ids[Trigger by Artifact IDs]
+* xref:_project-features-messaging.adoc#features-messaging-trigger-all-messages[Trigger All Messages]
 
 [[features-messaging-trigger-label]]
 === Trigger by Label

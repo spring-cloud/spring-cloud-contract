@@ -3,11 +3,11 @@
 
 This brief tour walks through using Spring Cloud Contract. It consists of the following topics:
 
-* <<getting-started-first-application-producer>>
-* <<getting-started-first-application-consumer>>
+* xref:getting-started/first-application.adoc#getting-started-first-application-producer[On the Producer Side]
+* xref:getting-started/first-application.adoc#getting-started-first-application-consumer[On the Consumer Side]
 
 You can find an even more brief tour
-<<getting-started-three-second-tour,here>>.
+xref:getting-started/three-second-tour.adoc[here].
 
 For the sake of this example, the `Stub Storage` is Nexus/Artifactory.
 

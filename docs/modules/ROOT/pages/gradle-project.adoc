@@ -4,20 +4,20 @@
 To learn how to set up the Gradle project for Spring Cloud Contract Verifier, read the
 following sections:
 
-* <<gradle-prerequisites>>
-* <<gradle-add-gradle-plugin>>
-* <<gradle-and-rest-assured>>
-* <<gradle-snapshot-versions>>
-* <<gradle-add-stubs>>
-* <<gradle-default-setup>>
-* <<gradle-configure-plugin>>
-* <<gradle-configuration-options>>
-* <<gradle-single-base-class>>
-* <<gradle-different-base-classes>>
-* <<gradle-invoking-generated-tests>>
-* <<gradle-publishing-stubs-to-artifact-repo>>
-* <<gradle-pushing-stubs-to-scm>>
-* <<gradle-consumer>>
+* xref:gradle-project.adoc#gradle-prerequisites[Prerequisites]
+* xref:gradle-project.adoc#gradle-add-gradle-plugin[Add Gradle Plugin with Dependencies]
+* xref:gradle-project.adoc#gradle-and-rest-assured[Gradle and Rest Assured 2.0]
+* xref:gradle-project.adoc#gradle-snapshot-versions[Snapshot Versions for Gradle]
+* xref:gradle-project.adoc#gradle-add-stubs[Add stubs]
+* xref:gradle-project.adoc#gradle-default-setup[Default Setup]
+* xref:gradle-project.adoc#gradle-configure-plugin[Configuring the Plugin]
+* xref:gradle-project.adoc#gradle-configuration-options[Configuration Options]
+* xref:gradle-project.adoc#gradle-single-base-class[Single Base Class for All Tests]
+* xref:gradle-project.adoc#gradle-different-base-classes[Different Base Classes for Contracts]
+* xref:gradle-project.adoc#gradle-invoking-generated-tests[Invoking Generated Tests]
+* xref:gradle-project.adoc#gradle-publishing-stubs-to-artifact-repo[Publishing Stubs to Artifact Repository]
+* xref:gradle-project.adoc#gradle-pushing-stubs-to-scm[Pushing Stubs to SCM]
+* xref:gradle-project.adoc#gradle-consumer[Spring Cloud Contract Verifier on the Consumer Side]
 
 [[gradle-prerequisites]]
 == Prerequisites
@@ -505,7 +505,7 @@ $ ./gradlew pushStubsToScm
 ----
 ====
 
-Under <<scm-stub-downloader>>, you can find all possible
+Under xref:advanced.adoc#scm-stub-downloader[Using the SCM Stub Downloader], you can find all possible
 configuration options that you can pass either through
 the `contractsProperties` field (for example, `contracts { contractsProperties = [foo:"bar"] }`),
 through the `contractsProperties` method (for example, `contracts { contractsProperties([foo:"bar"]) }`),

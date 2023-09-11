@@ -18,7 +18,7 @@ You can pick from the following options of acquiring stubs:
 - Classpath-scanning solution that searches the classpath with a pattern to retrieve stubs
 - Writing your own implementation of the `org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder` for full customization
 
-The latter example is described in the <<advanced.html#customization-custom-stub-runner, Custom Stub Runner>> section.
+The latter example is described in the xref:advanced.adoc#customization-custom-stub-runner[Custom Stub Runner] section.
 
 [[features-stub-runner-downloading-stub]]
 === Downloading Stubs
@@ -203,9 +203,9 @@ Whenever an HTTPS port is found, it takes precedence over the HTTP port.
 
 This section describes how to run stubs. It contains the following topics:
 
-* <<features-stub-runner-http-stubs>>
-* <<features-stub-runner-viewing>>
-* <<features-stub-runner-messaging>>
+* xref:_project-features-stubrunner/stub-runner-core.adoc#features-stub-runner-http-stubs[HTTP Stubs]
+* xref:_project-features-stubrunner/stub-runner-core.adoc#features-stub-runner-viewing[Viewing Registered Mappings]
+* xref:_project-features-stubrunner/stub-runner-core.adoc#features-stub-runner-messaging[Messaging Stubs]
 
 [[features-stub-runner-http-stubs]]
 === HTTP Stubs

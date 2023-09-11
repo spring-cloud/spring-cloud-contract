@@ -9,9 +9,9 @@ The reference documentation consists of the following sections:
 [horizontal]
 <<legal.adoc#legal-information,Legal>> :: Legal information.
 <<documentation-overview.adoc#contract-documentation,Documentation Overview>> :: About the Documentation, Getting Help, First Steps, and more.
-<<getting-started.adoc#getting-started,Getting Started>> :: Introducing {project-full-name}, Developing Your First {project-full-name}-based Application
-<<using.adoc#using,Using {project-full-name}>> :: {project-full-name} usage examples and workflows.
-<<project-features.adoc#features,{project-full-name} Features>> :: Contract DSL, Messaging, Spring Cloud Contract Stub Runner, and Spring Cloud Contract WireMock.
-<<project-features.adoc#features-build-tools,Build Tools>> :: Maven Plugin, Gradle Plugin, and Docker.
-<<howto.adoc#howto,"`How-to`" Guides>> :: Stubs versioning, Debugging, and more.
+xref:getting-started.adoc[Getting Started] :: Introducing {project-full-name}, Developing Your First {project-full-name}-based Application
+xref:using.adoc[Using {project-full-name}] :: {project-full-name} usage examples and workflows.
+xref:project-features.adoc[{project-full-name} Features] :: Contract DSL, Messaging, Spring Cloud Contract Stub Runner, and Spring Cloud Contract WireMock.
+xref:project-features.adoc#features-build-tools[Build Tools] :: Maven Plugin, Gradle Plugin, and Docker.
+xref:howto.adoc["`How-to`" Guides] :: Stubs versioning, Debugging, and more.
 <<appendix.adoc#appendix,Appendices>> :: Properties, Metadata, Configuration, Dependencies, and more.

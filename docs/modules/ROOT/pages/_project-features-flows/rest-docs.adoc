@@ -177,7 +177,7 @@ methods to create request matchers, but you cannot use both approaches.
 
 On the consumer side, you can make the `resource.json` generated earlier in this section
 available on the classpath (by
-<<features-stub-runner-publishing-stubs-as-jars>>, for example). After that, you can create a stub that uses WireMock in a
+xref:_project-features-stubrunner/stub-runner-publishing-stubs-as-jars.adoc[Publishing Stubs as JARs], for example). After that, you can create a stub that uses WireMock in a
 number of different ways, including by using
 `@AutoConfigureWireMock(stubs="classpath:resource.json")`, as described earlier in this
 document.
@@ -254,7 +254,7 @@ contract. The location of this file would be `index/dsl-contract.adoc`.
 
 The method `SpringCloudContractRestDocs.dslContract()` takes an optional Map parameter that allows you to specify additional attributes in the template.
 
-One of these attributes is the <<contract-dsl-http-top-level-elements,priority>> field that you may specify as follows:
+One of these attributes is the xref:_project-features-contract/dsl-http-top-level-elements.adoc[priority] field that you may specify as follows:
 
 [source,java,indent=0]
 ----

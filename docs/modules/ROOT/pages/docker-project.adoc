@@ -398,7 +398,7 @@ Since the Spring Cloud Contract Stub Runner Docker Image uses the standalone ver
 [[docker-stubrunner-env-vars]]
 === Environment Variables
 
-You can run the docker image and pass any of the <<project-features.adoc#features-stub-runner-common-properties-junit-spring, common properties for JUnit and Spring>>
+You can run the docker image and pass any of the xref:_project-features-stubrunner/stub-runner-common.adoc#features-stub-runner-common-properties-junit-spring[common properties for JUnit and Spring]
 as environment variables. The convention is that all the
 letters should be upper case.
 The dot (`.`) should be replaced with underscore (`_`) characters. For example,

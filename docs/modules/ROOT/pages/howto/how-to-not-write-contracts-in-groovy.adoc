@@ -1,7 +1,7 @@
 [[how-to-not-write-contracts-in-groovy]]
 = How Can I Write Contracts in a Language Other than Groovy?
 
-You can write a contract in YAML. See <<project-features.adoc#contract-dsl, this section>> for more information.
+You can write a contract in YAML. See xref:_project-features-contract.adoc[this section] for more information.
 
 We are working on allowing more ways of describing the contracts. You can check the {github-issues}[github-issues] for more information.
 

@@ -3,8 +3,8 @@
 
 This section briefly describes common properties, including:
 
-* <<features-stub-runner-common-properties-junit-spring>>
-* <<features-stub-runner-stub-runner-stub-ids>>
+* xref:_project-features-stubrunner/stub-runner-common.adoc#features-stub-runner-common-properties-junit-spring[Common Properties for JUnit and Spring]
+* xref:_project-features-stubrunner/stub-runner-common.adoc#features-stub-runner-stub-runner-stub-ids[Stub Runner Stubs IDs]
 
 [[features-stub-runner-common-properties-junit-spring]]
 == Common Properties for JUnit and Spring

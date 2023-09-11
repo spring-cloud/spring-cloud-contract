@@ -61,7 +61,7 @@ public class WiremockImportApplicationTests {
 
 NOTE: Actually, WireMock always loads mappings from `src/test/resources/mappings` *as
 well as* the custom locations in the `stubs` attribute. To change this behavior, you can
-also specify a file root, as described in the <<features-wiremock-using-files,next section of this document>>.
+also specify a file root, as described in the xref:_project-features-wiremock.adoc#features-wiremock-using-files[next section of this document].
 
 NOTE: Also, the mappings in the `stubs` location are not considered part of Wiremock's "default mappings" and calls
 to `com.github.tomakehurst.wiremock.client.WireMock.resetToDefaultMappings` during a test do not result in the mappings
