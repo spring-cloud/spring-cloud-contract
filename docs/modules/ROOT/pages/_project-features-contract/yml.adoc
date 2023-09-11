@@ -1,0 +1,5 @@
+[[contract-yml]]
+= Contract DSL in YAML
+
+To see a schema of a YAML contract, visit the {docs-url}/reference/html/yml-schema.html[YML Schema] page.
+

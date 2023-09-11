@@ -1,0 +1,38 @@
+[[contract-stateful-contracts]]
+= Stateful Contracts
+
+Stateful contracts (also known as scenarios) are contract definitions that should be read
+in order. This might be useful in the following situations:
+
+* You want to invoke the contract in a precisely defined order, since you use Spring
+Cloud Contract to test your stateful application.
+
+TIP: We really discourage you from doing that, since contract tests should be stateless.
+
+* You want the same endpoint to return different results for the same request.
+
+To create stateful contracts (or scenarios), you need to
+use the proper naming convention while creating your contracts. The convention
+requires including an order number followed by an underscore. This works regardless
+of whether you work with YAML or Groovy. The following listing shows an example:
+
+====
+[source,indent=0]
+----
+my_contracts_dir\
+  scenario1\
+    1_login.groovy
+    2_showCart.groovy
+    3_logout.groovy
+----
+====
+
+Such a tree causes Spring Cloud Contract Verifier to generate WireMock's scenario with a
+name of `scenario1` and the three following steps:
+
+. `login`, marked as `Started` pointing to...
+. `showCart`, marked as `Step1` pointing to...
+. `logout`, marked as `Step2` (which closes the scenario).
+
+You can find more details about WireMock scenarios at
+https://wiremock.org/docs/stateful-behaviour/[https://wiremock.org/docs/stateful-behaviour/].

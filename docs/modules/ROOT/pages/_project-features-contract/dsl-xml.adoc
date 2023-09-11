@@ -1,0 +1,121 @@
+[[contract-dsl-xml]]
+= XML Support for HTTP
+
+For HTTP contracts, we also support using XML in the request and response body.
+The XML body has to be passed within the `body` element
+as a `String` or `GString`. Also, body matchers can be provided for
+both the request and the response. In place of the `jsonPath(...)` method, the `org.springframework.cloud.contract.spec.internal.BodyMatchers.xPath`
+method should be used, with the desired `xPath` provided as the first argument
+and the appropriate `MatchingType` as the second argument. All the body matchers apart from `byType()` are supported.
+
+The following example shows a Groovy DSL contract with XML in the response body:
+
+====
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Groovy
+----
+include:../:{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/XmlMethodBodyBuilderSpec.groovy[tags=xmlgroovy]
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+include:../:{verifier_core_path}/src/test/resources/yml/contract_rest_xml.yml[indent=0]
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
+----
+include:../:{verifier_core_path}/src/test/resources/contractsToCompile/contract_xml.java[tags=class,indent=0]
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+include:../:{verifier_core_path}/src/test/resources/kotlin/contract_xml.kts[tags=class,indent=0]
+----
+====
+
+The following example shows an automatically generated test for XML in the response body:
+
+====
+[source,java,indent=0]
+----
+@Test
+public void validate_xmlMatches() throws Exception {
+	// given:
+	MockMvcRequestSpecification request = given()
+				.header("Content-Type", "application/xml");
+
+	// when:
+	ResponseOptions response = given().spec(request).get("/get");
+
+	// then:
+	assertThat(response.statusCode()).isEqualTo(200);
+	// and:
+	DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance()
+					.newDocumentBuilder();
+	Document parsedXml = documentBuilder.parse(new InputSource(
+				new StringReader(response.getBody().asString())));
+	// and:
+	assertThat(valueFromXPath(parsedXml, "/test/list/elem/text()")).isEqualTo("abc");
+	assertThat(valueFromXPath(parsedXml,"/test/list/elem[2]/text()")).isEqualTo("def");
+	assertThat(valueFromXPath(parsedXml, "/test/duck/text()")).matches("[0-9]{3}");
+	assertThat(nodeFromXPath(parsedXml, "/test/duck/xxx")).isNull();
+	assertThat(valueFromXPath(parsedXml, "/test/alpha/text()")).matches("[\\p{L}]*");
+	assertThat(valueFromXPath(parsedXml, "/test/*/complex/text()")).isEqualTo("foo");
+	assertThat(valueFromXPath(parsedXml, "/test/duck/@type")).isEqualTo("xtype");
+	}
+----
+====
+
+[[xml-support-for-namespaces]]
+== XML Support for Namespaces
+Namespaced XML is supported. However, any XPath expresssions used to select namespaced content must be updated.
+
+Consider the following explicitly namespaced XML document:
+
+[source,xml,indent=0]
+----
+<ns1:customer xmlns:ns1="http://demo.com/customer">
+    <email>customer@test.com</email>
+</ns1:customer>
+----
+The XPath expression to select the email address is: `/ns1:customer/email/text()`.
+
+WARNING: Beware as the unqualified expression (`/customer/email/text()`) results in `""`.
+
+For content that uses an unqualified namespace, the expression is more verbose. Consider the following XML document that
+uses an unqualified namespace:
+
+[source,xml,indent=0]
+----
+<customer xmlns="http://demo.com/customer">
+    <email>customer@test.com</email>
+</customer>
+----
+The XPath expression to select the email address is
+```
+*/[local-name()='customer' and namespace-uri()='http://demo.com/customer']/*[local-name()='email']/text()
+```
+WARNING: Beware, as the unqualified expressions (`/customer/email/text()` or `*/[local-name()='customer' and namespace-uri()='http://demo.com/customer']/email/text()`)
+result in `""`. Even the child elements have to be referenced with the `local-name` syntax.
+
+[[general-namespaced-node-expression-syntax]]
+=== General Namespaced Node Expression Syntax
+- Node using qualified namespace:
+```
+/<node-name>
+```
+- Node using and defining an unqualified namespace:
+```
+/*[local-name=()='<node-name>' and namespace-uri=()='<namespace-uri>']
+```
+NOTE: In some cases, you can omit the `namespace_uri` portion, but doing so may lead to ambiguity.
+
+- Node using an unqualified namespace (one of its ancestor's defines the xmlns attribute):
+```
+/*[local-name=()='<node-name>']
+```
+
+

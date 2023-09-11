@@ -1,0 +1,307 @@
+[[features-rest-docs]]
+= Working with REST Docs
+
+You can use https://projects.spring.io/spring-restdocs[Spring REST Docs] to generate
+documentation (for example, in Asciidoc format) for an HTTP API with Spring MockMvc,
+WebTestClient, or RestAssured. At the same time that you generate documentation for your API, you can also
+generate WireMock stubs by using Spring Cloud Contract WireMock. To do so, write your
+normal REST Docs test cases and use `@AutoConfigureRestDocs` to have stubs be
+automatically generated in the REST Docs output directory. The following UML diagram shows
+the REST Docs flow:
+
+[plantuml, rest-docs, png]
+----
+"API Producer"->"API Producer": Add Spring Cloud Contract (SCC) \nStub Runner dependency
+"API Producer"->"API Producer": Set up stub jar assembly
+"API Producer"->"API Producer": Write and set up REST Docs tests
+"API Producer"->"Build": Run build
+"Build"->"REST Docs": Generate API \ndocumentation
+"REST Docs"->"SCC": Generate stubs from the \nREST Docs tests
+"REST Docs"->"SCC": Generate contracts from the \nREST Docs tests
+"Build"->"Build": Assemble stubs jar with \nstubs and contracts
+"Build"->"Nexus / Artifactory": Upload contracts \nand stubs and the project arifact
+"Build"->"API Producer": Build successful
+"API Consumer"->"API Consumer": Add SCC Stub Runner \ndependency
+"API Consumer"->"API Consumer": Write a SCC Stub Runner \nbased contract test
+"SCC Stub Runner"->"Nexus / Artifactory": Test asks for [API Producer] stubs
+"Nexus / Artifactory"->"SCC Stub Runner": Fetch the [API Producer] stubs
+"SCC Stub Runner"->"SCC Stub Runner": Run in memory\n HTTP server stubs
+"API Consumer"->"SCC Stub Runner": Send a request \nto the HTTP server stub
+"SCC Stub Runner"->"API Consumer": Communication is correct
+----
+
+The following example uses `MockMvc`:
+
+====
+[source,java,indent=0]
+----
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureRestDocs(outputDir = "target/snippets")
+@AutoConfigureMockMvc
+public class ApplicationTests {
+
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Test
+	public void contextLoads() throws Exception {
+		mockMvc.perform(get("/resource"))
+				.andExpect(content().string("Hello World"))
+				.andDo(document("resource"));
+	}
+}
+----
+====
+
+This test generates a WireMock stub at `target/snippets/stubs/resource.json`. It matches
+all `GET` requests to the `/resource` path. The same example with WebTestClient (used
+for testing Spring WebFlux applications) would be as follows:
+
+====
+[source,java,indent=0]
+----
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureRestDocs(outputDir = "target/snippets")
+@AutoConfigureWebTestClient
+public class ApplicationTests {
+
+	@Autowired
+	private WebTestClient client;
+
+	@Test
+	public void contextLoads() throws Exception {
+		client.get().uri("/resource").exchange()
+				.expectBody(String.class).isEqualTo("Hello World")
+ 				.consumeWith(document("resource"));
+	}
+}
+----
+====
+
+Without any additional configuration, these tests create a stub with a request matcher
+for the HTTP method and all headers except `host` and `content-length`. To match the
+request more precisely (for example, to match the body of a POST or PUT), we need to
+explicitly create a request matcher. Doing so has two effects:
+
+* Creating a stub that matches only in the way you specify.
+* Asserting that the request in the test case also matches the same conditions.
+
+The main entry point for this feature is `WireMockRestDocs.verify()`, which can be used
+as a substitute for the `document()` convenience method, as the following
+example shows:
+
+====
+[source,java,indent=0]
+----
+import static org.springframework.cloud.contract.wiremock.restdocs.WireMockRestDocs.verify;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureRestDocs(outputDir = "target/snippets")
+@AutoConfigureMockMvc
+public class ApplicationTests {
+
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Test
+	public void contextLoads() throws Exception {
+		mockMvc.perform(post("/resource")
+                .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
+				.andExpect(status().isOk())
+				.andDo(verify().jsonPath("$.id"))
+				.andDo(document("resource"));
+	}
+}
+----
+====
+
+The preceding contract specifies that any valid POST with an `id` field receives the response
+defined in this test. You can chain together calls to `.jsonPath()` to add additional
+matchers. If JSON Path is unfamiliar, the https://github.com/jayway/JsonPath[JayWay
+documentation] can help you get up to speed. The WebTestClient version of this test
+has a similar `verify()` static helper that you insert in the same place.
+
+Instead of the `jsonPath` and `contentType` convenience methods, you can also use the
+WireMock APIs to verify that the request matches the created stub, as the
+following example shows:
+
+====
+[source,java,indent=0]
+----
+	@Test
+	public void contextLoads() throws Exception {
+		mockMvc.perform(post("/resource")
+                .content("{\"id\":\"123456\",\"message\":\"Hello World\"}"))
+				.andExpect(status().isOk())
+				.andDo(verify()
+						.wiremock(WireMock.post(urlPathEquals("/resource"))
+						.withRequestBody(matchingJsonPath("$.id"))
+						.andDo(document("post-resource"))));
+	}
+----
+====
+
+The WireMock API is rich. You can match headers, query parameters, and the request body by
+regex as well as by JSON path. You can use these features to create stubs with a wider
+range of parameters. The preceding example generates a stub resembling the following example:
+
+====
+.post-resource.json
+[source,json]
+----
+{
+  "request" : {
+    "url" : "/resource",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$.id"
+    }]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "Hello World",
+    "headers" : {
+      "X-Application-Context" : "application:-1",
+      "Content-Type" : "text/plain"
+    }
+  }
+}
+----
+====
+
+NOTE: You can use either the `wiremock()` method or the `jsonPath()` and `contentType()`
+methods to create request matchers, but you cannot use both approaches.
+
+On the consumer side, you can make the `resource.json` generated earlier in this section
+available on the classpath (by
+<<features-stub-runner-publishing-stubs-as-jars>>, for example). After that, you can create a stub that uses WireMock in a
+number of different ways, including by using
+`@AutoConfigureWireMock(stubs="classpath:resource.json")`, as described earlier in this
+document.
+
+[[features-rest-docs-contracts]]
+== Generating Contracts with REST Docs
+
+You can also generate Spring Cloud Contract DSL files and documentation with Spring REST
+Docs. If you do so in combination with Spring Cloud WireMock, you get both the contracts
+and the stubs.
+
+Why would you want to use this feature? Some people in the community asked questions
+about a situation in which they would like to move to DSL-based contract definition,
+but they already have a lot of Spring MVC tests. Using this feature lets you generate
+the contract files that you can later modify and move to folders (defined in your
+configuration) so that the plugin finds them.
+
+NOTE: You might wonder why this functionality is in the WireMock module. The functionality
+is there because it makes sense to generate both the contracts and the stubs.
+
+Consider the following test:
+
+====
+[source,java]
+----
+include:../:{wiremock_tests}/src/test/java/org/springframework/cloud/contract/wiremock/restdocs/ContractDslSnippetTests.java[tags=contract_snippet]
+----
+====
+
+The preceding test creates the stub presented in the previous section, generating both
+the contract and a documentation file.
+
+The contract is called `index.groovy` and might resemble the following example:
+
+====
+[source,groovy]
+----
+import org.springframework.cloud.contract.spec.Contract
+
+Contract.make {
+    request {
+        method 'POST'
+        url '/foo'
+        body('''
+            {"foo": 23 }
+        ''')
+        headers {
+            header('''Accept''', '''application/json''')
+            header('''Content-Type''', '''application/json''')
+        }
+    }
+    response {
+        status OK()
+        body('''
+        bar
+        ''')
+        headers {
+            header('''Content-Type''', '''application/json;charset=UTF-8''')
+            header('''Content-Length''', '''3''')
+        }
+        bodyMatchers {
+            jsonPath('$[?(@.foo >= 20)]', byType())
+        }
+    }
+}
+----
+====
+
+The generated document (formatted in Asciidoc in this case) contains a formatted
+contract. The location of this file would be `index/dsl-contract.adoc`.
+
+[[features-restdocs-priority-attribute]]
+== Specifying the priority attribute
+
+The method `SpringCloudContractRestDocs.dslContract()` takes an optional Map parameter that allows you to specify additional attributes in the template.
+
+One of these attributes is the <<contract-dsl-http-top-level-elements,priority>> field that you may specify as follows:
+
+[source,java,indent=0]
+----
+SpringCloudContractRestDocs.dslContract(Map.of("priority", 1))
+----
+
+[[features-restdocs-override]]
+== Overriding the DSL contract template
+
+By default, the output of the contract is based on a file named `default-dsl-contract-only.snippet`.
+
+You may provide a custom template file instead by overriding the getTemplate() method as follows:
+
+[source,java,indent=0]
+----
+new ContractDslSnippet(){
+    @Override
+    protected String getTemplate() {
+        return "custom-dsl-contract";
+    }
+}));
+----
+
+so the example above showing this line
+[source,java,indent=0]
+----
+.andDo(document("index", SpringCloudContractRestDocs.dslContract()));
+----
+
+should be changed to:
+[source,java,indent=0]
+----
+.andDo(document("index", new ContractDslSnippet(){
+                            @Override
+                            protected String getTemplate() {
+                                return "custom-dsl-template";
+                            }
+                        }));
+----
+
+Templates are resolved by looking for resources on the classpath. The following locations are checked in order:
+
+* `org/springframework/restdocs/templates/${templateFormatId}/${name}.snippet`
+* `org/springframework/restdocs/templates/${name}.snippet`
+* `org/springframework/restdocs/templates/${templateFormatId}/default-${name}.snippet`
+
+Therefore in the example above you should place a file named custom-dsl-template.snippet in  `src/test/resources/org/springframework/restdocs/templates/custom-dsl-template.snippet`
+
+
+

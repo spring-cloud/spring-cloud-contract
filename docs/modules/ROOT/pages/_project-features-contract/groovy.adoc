@@ -1,0 +1,17 @@
+[[contract-groovy]]
+= Contract DSL in Groovy
+
+If you are not familiar with Groovy, do not worry. You can use Java syntax in the
+Groovy DSL files as well.
+
+If you decide to write the contract in Groovy, do not be alarmed if you have not used Groovy
+before. Knowledge of the language is not really needed, as the Contract DSL uses only a
+tiny subset of it (only literals, method calls, and closures). Also, the DSL is statically
+typed, to make it programmer-readable without any knowledge of the DSL itself.
+
+IMPORTANT: Remember that, inside the Groovy contract file, you have to provide the fully
+qualified name to the `Contract` class and `make` static imports, such as
+`org.springframework.cloud.spec.Contract.make { ... }`. You can also provide an import to
+the `Contract` class (`import org.springframework.cloud.spec.Contract`) and then call
+`Contract.make { ... }`.
+

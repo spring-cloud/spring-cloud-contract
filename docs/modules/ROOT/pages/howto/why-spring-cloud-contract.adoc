@@ -1,0 +1,16 @@
+[[why-spring-cloud-contract]]
+= Why use Spring Cloud Contract?
+
+Spring Cloud Contract works great in a polyglot environment. This project has a lot of
+really interesting features. Quite a few of these features definitely make
+Spring Cloud Contract Verifier stand out on the market of Consumer Driven Contract
+(CDC) tooling. The most interesting features include the following:
+
+- Ability to do CDC with messaging.
+- Clear and easy to use, statically typed DSL.
+- Ability to copy-paste your current JSON file to the contract and edit only its elements.
+- Automatic generation of tests from the defined contract.
+- Stub Runner functionality: The stubs are automatically downloaded at runtime from Nexus or Artifactory.
+- Spring Cloud integration: No discovery service is needed for integration tests.
+- Ability to add support for any language & framework through Docker.
+

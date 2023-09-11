@@ -1,0 +1,60 @@
+[[features-stub-runner-common]]
+= Common Properties
+
+This section briefly describes common properties, including:
+
+* <<features-stub-runner-common-properties-junit-spring>>
+* <<features-stub-runner-stub-runner-stub-ids>>
+
+[[features-stub-runner-common-properties-junit-spring]]
+== Common Properties for JUnit and Spring
+
+You can set repetitive properties by using system properties or Spring configuration
+properties. The following table shows their names with their default values:
+
+[frame="topbot",options="header"]
+|===============
+| Property name | Default value | Description
+|`stubrunner.minPort`|`10000`| Minimum value of a port for a started WireMock with stubs.
+|`stubrunner.maxPort`|`15000`| Maximum value of a port for a started WireMock with stubs.
+|`stubrunner.repositoryRoot`|| Maven repository URL. If blank, then call the local Maven repo.
+|`stubrunner.classifier`|`stubs`| Default classifier for the stub artifacts.
+|`stubrunner.stubsMode`|`CLASSPATH`| The way you want to fetch and register the stubs.
+|`stubrunner.ids`|| Array of Ivy notation stubs to download.
+|`stubrunner.username`|| Optional username to access the tool that stores the JARs with
+stubs.
+|`stubrunner.password`|| Optional password to access the tool that stores the JARs with
+stubs.
+|`stubrunner.stubsPerConsumer`|`false`| Set to `true` if you want to use different stubs for
+each consumer instead of registering all stubs for every consumer.
+|`stubrunner.consumerName`|| If you want to use a stub for each consumer and want to
+override the consumer name, change this value.
+|===============
+
+[[features-stub-runner-stub-runner-stub-ids]]
+== Stub Runner Stubs IDs
+
+You can set the stubs to download in the `stubrunner.ids` system property. They
+use the following pattern:
+
+====
+[source,java,indent=0]
+----
+groupId:artifactId:version:classifier:port
+----
+====
+
+Note that `version`, `classifier`, and `port` are optional.
+
+* If you do not provide the `port`, a random one is picked.
+* If you do not provide the `classifier`, the default is used. (Note that you can
+pass an empty classifier this way: `groupId:artifactId:version:`).
+* If you do not provide the `version`, then `+` is passed, and the latest one is
+downloaded.
+
+`port` means the port of the WireMock server.
+
+IMPORTANT: Starting with version 1.0.4, you can provide a range of versions that you
+would like the Stub Runner to take into consideration. You can read more about the
+Aether versioning ranges
+https://wiki.eclipse.org/Aether/New_and_Noteworthy#Version_Ranges[here].

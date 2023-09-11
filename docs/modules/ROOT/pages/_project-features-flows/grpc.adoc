@@ -1,0 +1,277 @@
+[[features-grpc]]
+= GRPC
+
+https://grpc.io/[GRPC] is an RPC framework built on top of HTTP/2 for which Spring Cloud Contract has basic support.
+
+IMPORTANT: Spring Cloud Contract has an experimental support for basic use cases of GRPC. Unfortunately, due to GRPC's tweaking of the HTTP/2 Header frames, it's impossible to assert the `grpc-status` header.
+
+Let's look at the following contract.
+
+====
+[source,groovy,indent=0,subs="verbatim,attributes"]
+.Groovy contract
+----
+package contracts.beer.rest
+
+
+import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.verifier.http.ContractVerifierHttpMetaData
+
+Contract.make {
+	description("""
+Represents a successful scenario of getting a beer
+
+```
+given:
+	client is old enough
+when:
+	he applies for a beer
+then:
+	we'll grant him the beer
+```
+
+""")
+	request {
+		method 'POST'
+		url '/beer.BeerService/check'
+		body(fileAsBytes("PersonToCheck_old_enough.bin"))
+		headers {
+			contentType("application/grpc")
+			header("te", "trailers")
+		}
+	}
+	response {
+		status 200
+		body(fileAsBytes("Response_old_enough.bin"))
+		headers {
+			contentType("application/grpc")
+			header("grpc-encoding", "identity")
+			header("grpc-accept-encoding", "gzip")
+		}
+	}
+	metadata([
+			"verifierHttp": [
+					"protocol": ContractVerifierHttpMetaData.Protocol.H2_PRIOR_KNOWLEDGE.toString()
+			]
+	])
+}
+----
+====
+
+[[features-grpc-producer]]
+== Producer Side Setup
+
+In order to leverage the HTTP/2 support you must set the `CUSTOM` test mode as follow.
+
+====
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+<plugin>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+    <version>${spring-cloud-contract.version}</version>
+    <extensions>true</extensions>
+    <configuration>
+        <testMode>CUSTOM</testMode>
+        <packageWithBaseClasses>com.example</packageWithBaseClasses>
+    </configuration>
+</plugin>
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
+----
+contracts {
+	packageWithBaseClasses = 'com.example'
+	testMode = "CUSTOM"
+}
+----
+====
+
+The base class would set up the application running on a random port. It will also set the `HttpVerifier` implementation to one that can use the HTTP/2 protocol. Spring Cloud Contract comes with the `OkHttpHttpVerifier` implementation.
+
+====
+[source,java,indent=0,subs="verbatim,attributes"]
+.Base Class
+----
+@SpringBootTest(classes = BeerRestBase.Config.class,
+		webEnvironment = SpringBootTest.WebEnvironment.NONE,
+		properties = {
+				"grpc.server.port=0"
+		})
+public abstract class BeerRestBase {
+
+	@Autowired
+	GrpcServerProperties properties;
+
+	@Configuration
+	@EnableAutoConfiguration
+	static class Config {
+
+		@Bean
+		ProducerController producerController(PersonCheckingService personCheckingService) {
+			return new ProducerController(personCheckingService);
+		}
+
+		@Bean
+		PersonCheckingService testPersonCheckingService() {
+			return argument -> argument.getAge() >= 20;
+		}
+
+		@Bean
+		HttpVerifier httpOkVerifier(GrpcServerProperties properties) {
+			return new OkHttpHttpVerifier("localhost:" + properties.getPort());
+		}
+
+	}
+}
+----
+====
+
+[[features-grpc-consumer]]
+== Consumer Side Setup
+
+Example of GRPC consumer side test. Due to the unusual behaviour of the GRPC server side, the stub is unable to return the `grpc-status` header in the proper moment. This is why we need to manually set the return status.
+
+====
+[source,java,indent=0,subs="verbatim,attributes"]
+.Consumer Side Test
+----
+@SpringBootTest(webEnvironment = WebEnvironment.NONE, classes = GrpcTests.TestConfiguration.class, properties = {
+		"grpc.client.beerService.address=static://localhost:5432", "grpc.client.beerService.negotiationType=TLS"
+})
+public class GrpcTests {
+
+	@GrpcClient(value = "beerService", interceptorNames = "fixedStatusSendingClientInterceptor")
+	BeerServiceGrpc.BeerServiceBlockingStub beerServiceBlockingStub;
+
+	int port;
+
+	@RegisterExtension
+	static StubRunnerExtension rule = new StubRunnerExtension()
+			.downloadStub("com.example", "beer-api-producer-grpc")
+			// With WireMock PlainText mode you can just set an HTTP port
+//			.withPort(5432)
+			.stubsMode(StubRunnerProperties.StubsMode.LOCAL)
+			.withHttpServerStubConfigurer(MyWireMockConfigurer.class);
+
+	@BeforeEach
+	public void setupPort() {
+		this.port = rule.findStubUrl("beer-api-producer-grpc").getPort();
+	}
+
+	@Test
+	public void should_give_me_a_beer_when_im_old_enough() throws Exception {
+		Response response = beerServiceBlockingStub.check(PersonToCheck.newBuilder().setAge(23).build());
+
+		BDDAssertions.then(response.getStatus()).isEqualTo(Response.BeerCheckStatus.OK);
+	}
+
+	@Test
+	public void should_reject_a_beer_when_im_too_young() throws Exception {
+		Response response = beerServiceBlockingStub.check(PersonToCheck.newBuilder().setAge(17).build());
+		response = response == null ? Response.newBuilder().build() : response;
+
+		BDDAssertions.then(response.getStatus()).isEqualTo(Response.BeerCheckStatus.NOT_OK);
+	}
+
+	// Not necessary with WireMock PlainText mode
+	static class MyWireMockConfigurer extends WireMockHttpServerStubConfigurer {
+		@Override
+		public WireMockConfiguration configure(WireMockConfiguration httpStubConfiguration, HttpServerStubConfiguration httpServerStubConfiguration) {
+			return httpStubConfiguration
+					.httpsPort(5432);
+		}
+	}
+
+	@Configuration
+	@ImportAutoConfiguration(GrpcClientAutoConfiguration.class)
+	static class TestConfiguration {
+
+		// Not necessary with WireMock PlainText mode
+		@Bean
+		public GrpcChannelConfigurer keepAliveClientConfigurer() {
+			return (channelBuilder, name) -> {
+				if (channelBuilder instanceof NettyChannelBuilder) {
+					try {
+						((NettyChannelBuilder) channelBuilder)
+								.sslContext(GrpcSslContexts.forClient()
+										.trustManager(InsecureTrustManagerFactory.INSTANCE)
+										.build());
+					}
+					catch (SSLException e) {
+						throw new IllegalStateException(e);
+					}
+				}
+			};
+		}
+
+		/**
+		 * GRPC client interceptor that sets the returned status always to OK.
+		 * You might want to change the return status depending on the received stub payload.
+		 *
+		 * Hopefully in the future this will be unnecessary and will be removed.
+		 */
+		@Bean
+		ClientInterceptor fixedStatusSendingClientInterceptor() {
+			return new ClientInterceptor() {
+				@Override
+				public <ReqT, RespT> ClientCall<ReqT, RespT> interceptCall(MethodDescriptor<ReqT, RespT> method, CallOptions callOptions, Channel next) {
+					ClientCall<ReqT, RespT> call = next.newCall(method, callOptions);
+					return new ClientCall<ReqT, RespT>() {
+						@Override
+						public void start(Listener<RespT> responseListener, Metadata headers) {
+							Listener<RespT> listener = new Listener<RespT>() {
+								@Override
+								public void onHeaders(Metadata headers) {
+									responseListener.onHeaders(headers);
+								}
+
+								@Override
+								public void onMessage(RespT message) {
+									responseListener.onMessage(message);
+								}
+
+								@Override
+								public void onClose(Status status, Metadata trailers) {
+									// TODO: This must be fixed somehow either in Jetty (WireMock) or somewhere else
+									responseListener.onClose(Status.OK, trailers);
+								}
+
+								@Override
+								public void onReady() {
+									responseListener.onReady();
+								}
+							};
+							call.start(listener, headers);
+						}
+
+						@Override
+						public void request(int numMessages) {
+							call.request(numMessages);
+						}
+
+						@Override
+						public void cancel(@Nullable String message, @Nullable Throwable cause) {
+							call.cancel(message, cause);
+						}
+
+						@Override
+						public void halfClose() {
+							call.halfClose();
+						}
+
+						@Override
+						public void sendMessage(ReqT message) {
+							call.sendMessage(message);
+						}
+					};
+				}
+			};
+		}
+	}
+}
+
+----
+====

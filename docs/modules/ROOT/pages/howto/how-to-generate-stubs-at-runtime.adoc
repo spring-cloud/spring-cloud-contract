@@ -1,0 +1,5 @@
+[[how-to-generate-stubs-at-runtime]]
+= How Can I Generate Stubs at Runtime
+
+If you want to generate stubs at runtime for contracts, switch the `generateStubs` property in the `@AutoConfigureStubRunner` annotation, or call the `withGenerateStubs(true)` method on the JUnit Rule or Extension. You can read more about this in <<project-features.adoc#features-stub-runner-generate-stubs-at-runtime, this section>> of the documentation.
+

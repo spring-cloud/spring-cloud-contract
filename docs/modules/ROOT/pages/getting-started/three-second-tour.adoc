@@ -1,0 +1,176 @@
+[[getting-started-three-second-tour]]
+= A Three-second Tour
+
+This very brief tour walks through using Spring Cloud Contract. It consists of the
+following topics:
+
+* <<getting-started-three-second-tour-producer>>
+* <<getting-started-three-second-tour-consumer>>
+
+You can find a somewhat longer tour
+<<getting-started-first-application,here>>.
+
+The following UML diagram shows the relationship of the parts within Spring Cloud Contract:
+
+[plantuml, getting-started-three-second, png]
+----
+"API Producer"->"API Producer": add Spring Cloud \nContract (SCC) plugin
+"API Producer"->"API Producer": add SCC Verifier dependency
+"API Producer"->"API Producer": define contracts
+"API Producer"->"Build": run build
+"Build"->"SCC Plugin": generate \ntests, stubs and stubs \nartifact (e.g. stubs-jar)
+"Build"->"Stub Storage": upload contracts \nand stubs and the project arifact
+"Build"->"API Producer": Build successful
+"API Consumer"->"API Consumer": add SCC Stub Runner \ndependency
+"API Consumer"->"API Consumer": write a SCC Stub Runner \nbased contract test
+"SCC Stub Runner"->"Stub Storage": test asks for [API Producer] stubs
+"Stub Storage"->"SCC Stub Runner": fetch the [API Producer] stubs
+"SCC Stub Runner"->"SCC Stub Runner": run in memory\n HTTP server stubs
+"API Consumer"->"SCC Stub Runner": send a request \nto the HTTP server stub
+"SCC Stub Runner"->"API Consumer": communication is correct
+----
+
+[[getting-started-three-second-tour-producer]]
+== On the Producer Side
+
+To start working with Spring Cloud Contract, you can add files with REST or messaging contracts
+expressed in either Groovy DSL or YAML to the contracts directory, which is set by the
+`contractsDslDir` property. By default, it is `$rootDir/src/test/resources/contracts`.
+
+Then you can add the Spring Cloud Contract Verifier dependency and plugin to your build file, as
+the following example shows:
+
+====
+[source,xml,indent=0]
+----
+include:../:{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
+----
+====
+
+The following listing shows how to add the plugin, which should go in the build/plugins
+portion of the file:
+
+====
+[source,xml,indent=0]
+----
+<plugin>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-contract-maven-plugin</artifactId>
+	<version>${spring-cloud-contract.version}</version>
+	<extensions>true</extensions>
+</plugin>
+----
+====
+
+Running `./mvnw clean install` automatically generates tests that verify the application
+compliance with the added contracts. By default, the tests get generated under
+`org.springframework.cloud.contract.verifier.tests.`.
+
+As the implementation of the functionalities described by the contracts is not yet
+present, the tests fail.
+
+To make them pass, you must add the correct implementation of either handling HTTP
+requests or messages. Also, you must add a base test class for auto-generated
+tests to the project. This class is extended by all the auto-generated tests, and it
+should contain all the setup information necessary to run them (for example `RestAssuredMockMvc`
+controller setup or messaging test setup).
+
+The following example, from `pom.xml`, shows how to specify the base test class:
+
+====
+[source,xml,indent=0]
+----
+<build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+                <version>2.1.2.RELEASE</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <baseClassForTests>com.example.contractTest.BaseTestClass</baseClassForTests> <1>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+----
+<1> The `baseClassForTests` element lets you specify your base test class. It must be a child
+of a `configuration` element within `spring-cloud-contract-maven-plugin`.
+====
+
+Once the implementation and the test base class are in place, the tests pass, and both the
+application and the stub artifacts are built and installed in the local Maven repository.
+You can now merge the changes, and you can publish both the application and the stub artifacts
+in an online repository.
+
+[[getting-started-three-second-tour-consumer]]
+== On the Consumer Side
+
+You can use `Spring Cloud Contract Stub Runner` in the integration tests to get a running
+WireMock instance or messaging route that simulates the actual service.
+
+To do so, add the dependency to `Spring Cloud Contract Stub Runner`, as the
+following example shows:
+
+====
+[source,xml,indent=0]
+----
+include:../:{introduction_url}/samples/standalone/dsl/http-client/pom.xml[tags=stub_runner,indent=0]
+----
+====
+
+You can get the Producer-side stubs installed in your Maven repository in either of two
+ways:
+
+* By checking out the Producer side repository and adding contracts and generating the stubs
+by running the following commands:
++
+====
+[source,bash,indent=0]
+----
+$ cd local-http-server-repo
+$ ./mvnw clean install -DskipTests
+----
+====
+
+TIP: The tests are being skipped because the producer-side contract implementation is not
+in place yet, so the automatically-generated contract tests fail.
+
+* By getting already-existing producer service stubs from a remote repository. To do so,
+pass the stub artifact IDs and artifact repository URL as `Spring Cloud Contract
+Stub Runner` properties, as the following example shows:
++
+====
+[source,yaml,indent=0]
+----
+include:../:{introduction_url}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
+----
+====
+
+Now you can annotate your test class with `@AutoConfigureStubRunner`. In the annotation,
+provide the `group-id` and `artifact-id` values for `Spring Cloud Contract Stub Runner` to
+run the collaborators' stubs for you, as the following example shows:
+
+====
+[source,java, indent=0]
+----
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment=WebEnvironment.NONE)
+@AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:6565"},
+		stubsMode = StubRunnerProperties.StubsMode.LOCAL)
+public class LoanApplicationServiceTests {
+	. . .
+}
+----
+====
+
+TIP: Use the `REMOTE` `stubsMode` when downloading stubs from an online repository and
+`LOCAL` for offline work.
+
+Now, in your integration test, you can receive stubbed versions of HTTP responses or
+messages that are expected to be emitted by the collaborator service.
+

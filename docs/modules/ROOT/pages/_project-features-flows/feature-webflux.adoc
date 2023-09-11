@@ -1,0 +1,53 @@
+[[feature-webflux]]
+= WebFlux with WebTestClient
+
+You can work with WebFlux by using WebTestClient. The following listing shows how to
+configure WebTestClient as the test mode:
+
+====
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+<plugin>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+    <version>${spring-cloud-contract.version}</version>
+    <extensions>true</extensions>
+    <configuration>
+        <testMode>WEBTESTCLIENT</testMode>
+    </configuration>
+</plugin>
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
+----
+contracts {
+		testMode = 'WEBTESTCLIENT'
+}
+----
+====
+
+The following example shows how to set up a WebTestClient base class and RestAssured
+for WebFlux:
+
+====
+[source,groovy,indent=0]
+----
+import io.restassured.module.webtestclient.RestAssuredWebTestClient;
+import org.junit.Before;
+
+public abstract class BeerRestBase {
+
+	@Before
+	public void setup() {
+		RestAssuredWebTestClient.standaloneSetup(
+		new ProducerController(personToCheck -> personToCheck.age >= 20));
+	}
+}
+}
+----
+====
+
+TIP: The `WebTestClient` mode is faster than the `EXPLICIT` mode.
+

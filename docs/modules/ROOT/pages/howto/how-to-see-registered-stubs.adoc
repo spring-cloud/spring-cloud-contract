@@ -1,0 +1,7 @@
+[[how-to-see-registered-stubs]]
+= How Can I See What Got Registered in the HTTP Server Stub?
+
+You can use the `mappingsOutputFolder` property on `@AutoConfigureStubRunner`, `StubRunnerRule`, or
+`StubRunnerExtension` to dump all mappings for each artifact ID. Also, the port at which the given stub server
+was started is attached.
+

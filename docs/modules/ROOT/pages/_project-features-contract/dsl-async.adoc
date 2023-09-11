@@ -1,0 +1,134 @@
+[[contract-dsl-async]]
+= Asynchronous Support
+
+If you use asynchronous communication on the server side (your controllers are
+returning `Callable`, `DeferredResult`, and so on), then, inside your contract, you must
+provide an `async()` method in the `response` section. The following code shows an example:
+
+====
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Groovy
+----
+org.springframework.cloud.contract.spec.Contract.make {
+    request {
+        method GET()
+        url '/get'
+    }
+    response {
+        status OK()
+        body 'Passed'
+        async()
+    }
+}
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+response:
+    async: true
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
+----
+class contract implements Supplier<Collection<Contract>> {
+
+	@Override
+	public Collection<Contract> get() {
+		return Collections.singletonList(Contract.make(c -> {
+			c.request(r -> {
+				// ...
+			});
+			c.response(r -> {
+				r.async();
+				// ...
+			});
+		}));
+	}
+
+}
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
+
+contract {
+    request {
+        // ...
+    }
+    response {
+        async = true
+        // ...
+    }
+}
+----
+====
+
+You can also use the `fixedDelayMilliseconds` method or property to add delay to your stubs.
+The following example shows how to do so:
+
+====
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Groovy
+----
+org.springframework.cloud.contract.spec.Contract.make {
+    request {
+        method GET()
+        url '/get'
+    }
+    response {
+        status 200
+        body 'Passed'
+        fixedDelayMilliseconds 1000
+    }
+}
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+response:
+    fixedDelayMilliseconds: 1000
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
+----
+class contract implements Supplier<Collection<Contract>> {
+
+	@Override
+	public Collection<Contract> get() {
+		return Collections.singletonList(Contract.make(c -> {
+			c.request(r -> {
+				// ...
+			});
+			c.response(r -> {
+				r.fixedDelayMilliseconds(1000);
+				// ...
+			});
+		}));
+	}
+
+}
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
+
+contract {
+    request {
+        // ...
+    }
+    response {
+        delay = fixedMilliseconds(1000)
+        // ...
+    }
+}
+----
+====
+

@@ -1,0 +1,41 @@
+[[contract-dsl-response]]
+= HTTP Response
+
+The response must contain an HTTP status code and may contain other information. The
+following code shows an example:
+
+====
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Groovy
+----
+include:../:{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=response,indent=0]
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+include:../:{verifier_core_path}/src/test/resources/yml/contract.yml[tags=response,indent=0]
+...
+include:../:{verifier_core_path}/src/test/resources/yml/contract.yml[tags=response_obligatory,indent=0]
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
+----
+include:../:{verifier_core_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=response,indent=0]
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+include:../:{verifier_core_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=response,indent=0]
+----
+====
+
+Besides status, the response may contain headers, cookies, and a body, which are
+specified the same way as in the request (see <<contract-dsl-request>>).
+
+TIP: In the Groovy DSL, you can reference the `org.springframework.cloud.contract.spec.internal.HttpStatus`
+methods to provide a meaningful status instead of a digit. For example, you can call
+`OK()` for a status `200` or `BAD_REQUEST()` for `400`.
+
