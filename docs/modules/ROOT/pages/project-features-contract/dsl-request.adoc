@@ -1,0 +1,273 @@
+[[contract-dsl-request]]
+= HTTP Request
+
+include::partial$_attributes.adoc[]
+
+The HTTP protocol requires only the method and the URL to be specified in a request. The
+same information is mandatory in request definition of the contract.
+
+The following example shows a contract for a request:
+
+====
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=request,indent=0]
+----
+
+[source,yaml,indent=0,role="secondary"]
+.YAML
+----
+include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=request_obligatory,indent=0]
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
+----
+include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=request,indent=0]
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=request,indent=0]
+----
+====
+
+You can specify an absolute rather than a relative `url`, but using `urlPath` is
+the recommended way, as doing so makes the tests be host-independent.
+
+The following example uses `url`:
+
+====
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=url,indent=0]
+----
+
+[source,yaml,indent=0,role="secondary"]
+.YAML
+----
+include::{verifier_root_path}/src/test/resources/yml/contract_rest_with_path.yml[tags=url_path,indent=0]
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
+----
+include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=url,indent=0]
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=url,indent=0]
+----
+====
+
+`request` may contain query parameters, as the following example (which uses `urlPath`) shows:
+
+====
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Groovy
+----
+include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=urlpath,indent=0]
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=request,indent=0]
+...
+include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=query_params,indent=0]
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
+----
+include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=urlpath,indent=0]
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=urlpath,indent=0]
+----
+====
+
+`request` can contain additional request headers, as the following example shows:
+
+====
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Groovy
+----
+include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=headers,indent=0]
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=request,indent=0]
+...
+include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=headers,indent=0]
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
+----
+include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=headers,indent=0]
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=headers,indent=0]
+----
+====
+
+`request` may contain additional request cookies, as the following example shows:
+
+====
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Groovy
+----
+include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=cookies,indent=0]
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=request,indent=0]
+...
+include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=cookies,indent=0]
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
+----
+include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=cookies,indent=0]
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=cookies,indent=0]
+----
+====
+
+`request` may contain a request body, as the following example shows:
+
+====
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Groovy
+----
+include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=body,indent=0]
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=request,indent=0]
+...
+include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=body,indent=0]
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
+----
+include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=body,indent=0]
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=body,indent=0]
+----
+====
+
+`request` can contain multipart elements. To include multipart elements, use the
+`multipart` method/section, as the following examples show:
+
+====
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/SpringTestMethodBodyBuildersSpec.groovy[tags=multipartdsl,indent=0]
+----
+
+[source,yaml,indent=0,role="secondary"]
+.YAML
+----
+include::{verifier_root_path}/src/test/resources/yml/contract_multipart.yml[indent=0]
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
+----
+include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_multipart.java[tags=class,indent=0]
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+include::{verifier_root_path}/src/test/resources/kotlin/multipart.kts[tags=class,indent=0]
+----
+====
+
+In the preceding example, we defined parameters in either of two ways:
+
+.Coded DSL
+* Directly, by using the map notation, where the value can be a dynamic property (such as
+`formParameter: $(consumer(...), producer(...))`).
+* By using the `named(...)` method that lets you set a named parameter. A named parameter
+can set a `name` and `content`. You can call it either by using a method with two arguments,
+such as `named("fileName", "fileContent")`, or by using a map notation, such as
+`named(name: "fileName", content: "fileContent")`.
+
+.YAML
+* The multipart parameters are set in the `multipart.params` section.
+* The named parameters (the `fileName` and `fileContent` for a given parameter name)
+can be set in the `multipart.named` section. That section contains
+the `paramName` (the name of the parameter), `fileName` (the name of the file),
+`fileContent` (the content of the file) fields.
+* The dynamic bits can be set in the `matchers.multipart` section.
+** For parameters, use the `params` section, which can accept
+`regex` or a `predefined` regular expression.
+** For named parameters, use the `named` section where you first
+define the parameter name with `paramName`. Then you can pass the
+parametrization of either `fileName` or `fileContent` in a
+`regex` or in a `predefined` regular expression.
+
+IMPORTANT: For the `named(...)` section you always have to add a pair of
+`value(producer(...), consumer(...))` calls. Just setting DSL properties such
+as just `value(producer(...))` or just `file(...)` will not work.
+Check this https://github.com/spring-cloud/spring-cloud-contract/issues/1886[issue] for more information.
+
+From the contract in the preceding example, the generated test and stub look as follows:
+
+====
+[source,java,indent=0,subs="verbatim,attributes",role="primary"]
+.Test
+----
+// given:
+  MockMvcRequestSpecification request = given()
+    .header("Content-Type", "multipart/form-data;boundary=AaB03x")
+    .param("formParameter", "\"formParameterValue\"")
+    .param("someBooleanParameter", "true")
+    .multiPart("file", "filename.csv", "file content".getBytes());
+
+ // when:
+  ResponseOptions response = given().spec(request)
+    .put("/multipart");
+
+ // then:
+  assertThat(response.statusCode()).isEqualTo(200);
+----
+
+[source,json,indent=0,subs="verbatim,attributes",role="secondary"]
+.Stub
+----
+include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/dsl/wiremock/WireMockGroovyDslSpec.groovy[tags=multipartwiremock,indent=0]
+----
+====
+

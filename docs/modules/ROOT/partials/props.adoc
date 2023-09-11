@@ -1,0 +1,30 @@
+.Docker environment variables
+|===
+|Name | Description | Default
+|ADDITIONAL_FLAGS|(Docker Image only) Additional flags to be passed to the Gradle build|
+|DEBUG|(Docker Image only) Applicable for Docker Image - turns on debug mode for the Gradle build|false
+|EXTERNAL_CONTRACTS_ARTIFACT_ID|Artifact ID of the project with contracts|
+|EXTERNAL_CONTRACTS_CLASSIFIER|Classifier of the project with contracts|
+|EXTERNAL_CONTRACTS_GROUP_ID|Group ID of the project with contracts|com.example
+|EXTERNAL_CONTRACTS_PATH|Path to contracts for the given project, inside the project with contracts. Defaults to slash-separated `EXTERNAL_CONTRACTS_GROUP_ID` concatenated with `/` and `EXTERNAL_CONTRACTS_ARTIFACT_ID. For example,
+for group id `cat-server-side.dog` and artifact ID `fish`, would result in `cat/dog/fish` for the contracts path.|
+|EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_PASSWORD|(optional) Password if the `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL` requires authentication. It defaults to `REPO_WITH_BINARIES_PASSWORD, If that is not set, it defaults to `password|
+|EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL|URL of your Artifact Manager. It defaults to the value of `REPO_WITH_BINARIES_URL` environment variable and if that is not set, it defaults to `http://localhost:8081/artifactory/libs-release-local`|
+|EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_USERNAME|(optional) Username if the `EXTERNAL_CONTRACTS_REPO_WITH_BINARIES_URL` requires authentication. It defaults to `REPO_WITH_BINARIES_USERNAME`. If that is not set, it defaults to `admin|
+|EXTERNAL_CONTRACTS_VERSION|Version of the project with contracts. Defautls to an equivalent of picking the latest|+
+|EXTERNAL_CONTRACTS_WORK_OFFLINE|If set to `true`, retrieves the artifact with contracts from the container's `.m2`. Mount your local `.m2` as a volume available at the container's `/root/.m2` path|false
+|FAIL_ON_NO_CONTRACTS|Should the build fail if there are no contracts present?|false
+|MESSAGING_TYPE|Type of messaging. Can be either [rabbit] or [kafka].|
+|PRODUCER_STUBS_CLASSIFIER|Archive classifier used for generated producer stubs|stubs
+|PROJECT_GROUP|Your project's group ID|com.example
+|PROJECT_NAME|Your project's artifact id|example
+|PROJECT_VERSION|Your project's version|0.0.1-SNAPSHOT
+|PUBLISH_ARTIFACTS|If set to `true`, publishes the artifact to binary storage|true
+|PUBLISH_ARTIFACTS_OFFLINE|If set to `true`, publishes the artifacts to local m2|false
+|PUBLISH_STUBS_TO_SCM|If set to `true` will run the task to publish stubs to scm|false
+|REPO_ALLOW_INSECURE_PROTOCOL|(optional) If <true> allows to publish artifacts to Artifact Manager over insecure HTTP|false
+|REPO_WITH_BINARIES_PASSWORD|(optional) Password when the Artifact Manager is secured|password
+|REPO_WITH_BINARIES_URL|URL of your Artifact Manager (defaults to the default URL of https://jfrog.com/artifactory/[Artifactory] when running locally)|http://localhost:8081/artifactory/libs-release-local
+|REPO_WITH_BINARIES_USERNAME|(optional) Username when the Artifact Manager is secured|admin
+|STANDALONE_PROTOCOL|For standalone version, which additional protocol should be added|
+|===

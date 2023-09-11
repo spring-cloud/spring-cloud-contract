@@ -1,23 +1,7 @@
 [[gradle-project]]
 = Gradle Project
 
-To learn how to set up the Gradle project for Spring Cloud Contract Verifier, read the
-following sections:
-
-* xref:gradle-project.adoc#gradle-prerequisites[Prerequisites]
-* xref:gradle-project.adoc#gradle-add-gradle-plugin[Add Gradle Plugin with Dependencies]
-* xref:gradle-project.adoc#gradle-and-rest-assured[Gradle and Rest Assured 2.0]
-* xref:gradle-project.adoc#gradle-snapshot-versions[Snapshot Versions for Gradle]
-* xref:gradle-project.adoc#gradle-add-stubs[Add stubs]
-* xref:gradle-project.adoc#gradle-default-setup[Default Setup]
-* xref:gradle-project.adoc#gradle-configure-plugin[Configuring the Plugin]
-* xref:gradle-project.adoc#gradle-configuration-options[Configuration Options]
-* xref:gradle-project.adoc#gradle-single-base-class[Single Base Class for All Tests]
-* xref:gradle-project.adoc#gradle-different-base-classes[Different Base Classes for Contracts]
-* xref:gradle-project.adoc#gradle-invoking-generated-tests[Invoking Generated Tests]
-* xref:gradle-project.adoc#gradle-publishing-stubs-to-artifact-repo[Publishing Stubs to Artifact Repository]
-* xref:gradle-project.adoc#gradle-pushing-stubs-to-scm[Pushing Stubs to SCM]
-* xref:gradle-project.adoc#gradle-consumer[Spring Cloud Contract Verifier on the Consumer Side]
+include::partial$_attributes.adoc[]
 
 [[gradle-prerequisites]]
 == Prerequisites
@@ -34,39 +18,42 @@ documentation] for more information.
 
 To add a Gradle plugin with dependencies, you can use code similar to the following:
 
-====
+[tabs]
+======
+Plugin DSL GA versions::
++
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.Plugin DSL GA versions
 ----
 // build.gradle
 plugins {
   id "groovy"
   // this will work only for GA versions of Spring Cloud Contract
-  id "org.springframework.cloud.contract" version "${GAVerifierVersion}"
+  id "org.springframework.cloud.contract" version "$\{GAVerifierVersion}"
 }
 
 dependencyManagement {
 	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${GAVerifierVersion}"
+		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:$\{GAVerifierVersion}"
 	}
 }
 
 dependencies {
-	testImplementation "org.apache.groovy:groovy-all:${groovyVersion}"
+	testImplementation "org.apache.groovy:groovy-all:$\{groovyVersion}"
 	// example with adding Spock core and Spock Spring
-	testImplementation "org.spockframework:spock-core:${spockVersion}"
-	testImplementation "org.spockframework:spock-spring:${spockVersion}"
+	testImplementation "org.spockframework:spock-core:$\{spockVersion}"
+	testImplementation "org.spockframework:spock-spring:$\{spockVersion}"
 	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
 }
 ----
 
+Plugin DSL non GA versions::
++
 [source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
-.Plugin DSL non GA versions
 ----
 // settings.gradle
 pluginManagement {
 	plugins {
-		id "org.springframework.cloud.contract" version "${verifierVersion}"
+		id "org.springframework.cloud.contract" version "$\{verifierVersion}"
 	}
     repositories {
         // to pick from local .m2
@@ -88,21 +75,22 @@ plugins {
 
 dependencyManagement {
 	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifierVersion}"
+		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:$\{verifierVersion}"
 	}
 }
 
 dependencies {
-	testImplementation "org.apache.groovy:groovy-all:${groovyVersion}"
+	testImplementation "org.apache.groovy:groovy-all:$\{groovyVersion}"
 	// example with adding Spock core and Spock Spring
-	testImplementation "org.spockframework:spock-core:${spockVersion}"
-	testImplementation "org.spockframework:spock-spring:${spockVersion}"
+	testImplementation "org.spockframework:spock-core:$\{spockVersion}"
+	testImplementation "org.spockframework:spock-spring:$\{spockVersion}"
 	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
 }
 ----
 
+Legacy Plugin Application::
++
 [source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
-.Legacy Plugin Application
 ----
 // build.gradle
 buildscript {
@@ -110,10 +98,10 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"
-		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:$\{springboot_version}"
+		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:$\{verifier_version}"
         // here you can also pass additional dependencies such as Kotlin spec e.g.:
-        // classpath "org.springframework.cloud:spring-cloud-contract-spec-kotlin:${verifier_version}"
+        // classpath "org.springframework.cloud:spring-cloud-contract-spec-kotlin:$\{verifier_version}"
 	}
 }
 
@@ -122,19 +110,19 @@ apply plugin: 'org.springframework.cloud.contract'
 
 dependencyManagement {
 	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${verifier_version}"
+		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:$\{verifier_version}"
 	}
 }
 
 dependencies {
-	testImplementation "org.apache.groovy:groovy-all:${groovyVersion}"
+	testImplementation "org.apache.groovy:groovy-all:$\{groovyVersion}"
 	// example with adding Spock core and Spock Spring
-	testImplementation "org.spockframework:spock-core:${spockVersion}"
-	testImplementation "org.spockframework:spock-spring:${spockVersion}"
+	testImplementation "org.spockframework:spock-core:$\{spockVersion}"
+	testImplementation "org.spockframework:spock-spring:$\{spockVersion}"
 	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
 }
 ----
-====
+======
 
 [[gradle-and-rest-assured]]
 == Gradle and Rest Assured 2.0
@@ -142,7 +130,6 @@ dependencies {
 By default, Rest Assured 3.x is added to the classpath. However, to use Rest Assured 2.x,
 you can add it instead, as the following listing shows:
 
-====
 [source,groovy,indent=0]
 ----
 buildscript {
@@ -150,8 +137,8 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springboot_version}"
-		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifier_version}"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:$\{springboot_version}"
+		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:$\{verifier_version}"
 	}
 }
 
@@ -162,7 +149,6 @@ dependencies {
     testCompile "com.jayway.restassured:spring-mock-mvc:2.5.0"
 }
 ----
-====
 
 That way, the plugin automatically sees that Rest Assured 2.x is present on the classpath
 and modifies the imports accordingly.
@@ -173,13 +159,11 @@ and modifies the imports accordingly.
 You can add the additional snapshot repository to your `settings.gradle` to use snapshot versions,
 which are automatically uploaded after every successful build, as the following listing shows:
 
-====
 [source,groovy,indent=0]
 ----
 include::{standalone_samples_path}/http-server/settings.gradle[tags=repos,indent=0]
 }
 ----
-====
 
 [[gradle-add-stubs]]
 == Add stubs
@@ -190,8 +174,8 @@ will also look for contracts in `src/test/resources/contracts`, however, this di
 is deprecated as of Spring Cloud Contract 3.0.0.
 
 It should also be noted, that with this new Gradle source set, you should also migrate
-any base classes used within your contract tests to `src/contractTest/{language}` where
-`{language}` should be replaced with Java or Groovy as needed for your purposes.
+any base classes used within your contract tests to `src/contractTest/\{language}` where
+`\{language}` should be replaced with Java or Groovy as needed for your purposes.
 
 The directory that contains stub definitions is treated as a class name, and each stub
 definition is treated as a single test. Spring Cloud Contract Verifier assumes that it
@@ -199,13 +183,11 @@ contains at least one level of directories that are to be used as the test class
 If more than one level of nested directories is present, all except the last one is used
 as the package name. Consider the following structure:
 
-====
 [source,groovy,indent=0]
 ----
 src/contractTest/resources/contracts/myservice/shouldCreateUser.groovy
 src/contractTest/resources/contracts/myservice/shouldReturnUser.groovy
 ----
-====
 
 Given the preceding structure, Spring Cloud Contract Verifier creates a test class named
 `defaultBasePackage.MyService` with two methods:
@@ -226,18 +208,17 @@ tests, invoke the `generateContractTests` task.
 The default Gradle Plugin setup creates the following Gradle part of the build (in
 pseudocode):
 
-====
 [source,groovy,indent=0]
 ----
 contracts {
     testFramework ='JUNIT'
     testMode = 'MockMvc'
-    generatedTestJavaSourcesDir = project.file("${project.buildDir}/generated-test-sources/contractTest/java")
-    generatedTestGroovySourcesDir = project.file("${project.buildDir}/generated-test-sources/contractTest/groovy")
-    generatedTestResourcesDir = project.file("${project.buildDir}/generated-test-resources/contracts")
-    contractsDslDir = project.file("${project.projectDir}/src/contractTest/resources/contracts")
+    generatedTestJavaSourcesDir = project.file("$\{project.buildDir}/generated-test-sources/contractTest/java")
+    generatedTestGroovySourcesDir = project.file("$\{project.buildDir}/generated-test-sources/contractTest/groovy")
+    generatedTestResourcesDir = project.file("$\{project.buildDir}/generated-test-resources/contracts")
+    contractsDslDir = project.file("$\{project.projectDir}/src/contractTest/resources/contracts")
     basePackageForTests = 'org.springframework.cloud.verifier.tests'
-    stubsOutputDir = project.file("${project.buildDir}/stubs")
+    stubsOutputDir = project.file("$\{project.buildDir}/stubs")
     sourceSet = null
 }
 
@@ -254,7 +235,6 @@ def copyContracts = tasks.register(type: Copy, name: 'copyContracts') {
 
 verifierStubsJar.dependsOn copyContracts
 ----
-====
 
 [[gradle-configure-plugin]]
 == Configuring the Plugin
@@ -262,7 +242,6 @@ verifierStubsJar.dependsOn copyContracts
 To change the default configuration, you can add a `contracts` snippet to your Gradle
 configuration, as the following listing shows:
 
-====
 [source,groovy,indent=0]
 ----
 contracts {
@@ -271,11 +250,9 @@ contracts {
 	generatedTestJavaSourcesDir = project.file('src/generatedContract')
 }
 ----
-====
 
 To download contracts from a remote source, you can use the following snippets as needed:
 
-====
 [source,groovy,indent=0]
 ----
 contracts {
@@ -300,22 +277,19 @@ contracts {
     contractsPath = ''
 }
 ----
-====
 
 Since we are using Gradle's Jar packaging task, there are several options and capabilities that you may wish to utilize to further extend what is created by the `verifierStubsJar`. In order to do this, you would use the native mechanisms provided directly by Gradle for customizing an existing task like so:
 
 NOTE: for the sake of the example, we desire to add a `git.properties` file to the `verifierStubsJar`.
 
-====
 [source,groovy,inden=0]
 ----
 verifierStubsJar {
-    from("${buildDir}/resources/main/") {
+    from("$\{buildDir}/resources/main/") {
         include("git.properties")
     }
 }
 ----
-====
 
 It should also be noted that as of 3.0.0, the default publication has been disabled. As a result this means, that you are able to create any named jar and publish it as you would normally have done via Gradle configuration options. This means that you can build a jar file customized just the way you would like and publish that for absolute full control over the jar's layout and contents.
 
@@ -399,12 +373,10 @@ When using Spring Cloud Contract Verifier in MockMvc (the default), you need to 
 specification for all generated acceptance tests. In this class, you need to point to an
 endpoint, which should be verified. The following example shows how to do so:
 
-====
 [source,groovy,indent=0]
 ----
 include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/org/springframework/cloud/contract/verifier/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
 ----
-====
 
 If you use `Explicit` mode, you can use a base class to initialize the whole tested application,
 as you might see in regular integration tests. If you use the `JAXRSCLIENT` mode, this
@@ -454,12 +426,10 @@ generated from `src/contractTest/resources/contract/com/` contracts extend the
 To ensure that the provider side is compliant with your defined contracts, you need to run
 the following command:
 
-====
 [source,bash,indent=0]
 ----
 ./gradlew contractTest
 ----
-====
 
 [[gradle-publishing-stubs-to-artifact-repo]]
 == Publishing Stubs to Artifact Repository
@@ -469,7 +439,6 @@ you will need to configure the publishing section for Gradle to
 include the `verifierStubsJar`. To do that, you can use the
 example configuration below:
 
-====
 [source,groovy,indent=0]
 ----
 apply plugin: 'maven-publish'
@@ -484,7 +453,6 @@ publishing {
     }
 }
 ----
-====
 
 Since 3.0.0, the internal stubs publication has been deprecated
 and disabled by default. It is recommended to include the
@@ -498,12 +466,10 @@ stubs, you might want to automate the step of pushing stubs to
 the repository. To do that, you can call the `pushStubsToScm`
 task by running the following command:
 
-====
 [source,bash,indent=0]
 ----
 $ ./gradlew pushStubsToScm
 ----
-====
 
 Under xref:advanced.adoc#scm-stub-downloader[Using the SCM Stub Downloader], you can find all possible
 configuration options that you can pass either through
@@ -519,19 +485,16 @@ in exactly the same way as in the case of a provider. If you do not want to use 
 you need to copy the contracts stored in `src/contractTest/resources/contracts` and generate
 WireMock JSON stubs by using the following command:
 
-====
 [source,bash,indent=0]
 ----
 ./gradlew generateClientStubs
 ----
-====
 
 NOTE: The `stubsOutputDir` option has to be set for stub generation to work.
 
 When present, you can use JSON stubs in automated tests to consume a service. The
 following example shows how to do so:
 
-====
 [source,groovy,indent=0]
 ----
 @ContextConfiguration(loader == SpringApplicationContextLoader, classes == Application)
@@ -556,7 +519,6 @@ class LoanApplicationServiceSpec extends Specification {
  }
 }
 ----
-====
 
 In the preceding example, `LoanApplication` makes a call to the `FraudDetection` service.
 This request is handled by a WireMock server configured with stubs that were generated by

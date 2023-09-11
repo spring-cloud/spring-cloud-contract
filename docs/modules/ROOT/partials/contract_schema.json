@@ -1,0 +1,442 @@
+{
+  "type" : "object",
+  "id" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract",
+  "properties" : {
+    "request" : {
+      "type" : "object",
+      "id" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:Request",
+      "properties" : {
+        "method" : {
+          "type" : "string"
+        },
+        "url" : {
+          "type" : "string"
+        },
+        "urlPath" : {
+          "type" : "string"
+        },
+        "queryParameters" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "object",
+            "id" : "urn:jsonschema:java:lang:Object"
+          }
+        },
+        "headers" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "object",
+            "$ref" : "urn:jsonschema:java:lang:Object"
+          }
+        },
+        "cookies" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "object",
+            "$ref" : "urn:jsonschema:java:lang:Object"
+          }
+        },
+        "body" : {
+          "type" : "object",
+          "$ref" : "urn:jsonschema:java:lang:Object"
+        },
+        "bodyFromFile" : {
+          "type" : "string"
+        },
+        "bodyFromFileAsBytes" : {
+          "type" : "string"
+        },
+        "matchers" : {
+          "type" : "object",
+          "id" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:StubMatchers",
+          "properties" : {
+            "url" : {
+              "type" : "object",
+              "id" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:KeyValueMatcher",
+              "properties" : {
+                "key" : {
+                  "type" : "string"
+                },
+                "regex" : {
+                  "type" : "string"
+                },
+                "predefined" : {
+                  "type" : "string",
+                  "enum" : [ "only_alpha_unicode", "number", "any_double", "any_boolean", "ip_address", "hostname", "email", "url", "uuid", "iso_date", "iso_date_time", "iso_time", "iso_8601_with_offset", "non_empty", "non_blank" ]
+                },
+                "command" : {
+                  "type" : "string"
+                },
+                "regexType" : {
+                  "type" : "string",
+                  "enum" : [ "as_integer", "as_double", "as_float", "as_long", "as_short", "as_boolean", "as_string" ]
+                }
+              }
+            },
+            "body" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "id" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:BodyStubMatcher",
+                "properties" : {
+                  "path" : {
+                    "type" : "string"
+                  },
+                  "type" : {
+                    "type" : "string",
+                    "enum" : [ "by_date", "by_time", "by_timestamp", "by_regex", "by_equality", "by_type", "by_null" ]
+                  },
+                  "value" : {
+                    "type" : "string"
+                  },
+                  "predefined" : {
+                    "type" : "string",
+                    "enum" : [ "only_alpha_unicode", "number", "any_double", "any_boolean", "ip_address", "hostname", "email", "url", "uuid", "iso_date", "iso_date_time", "iso_time", "iso_8601_with_offset", "non_empty", "non_blank" ]
+                  },
+                  "minOccurrence" : {
+                    "type" : "integer"
+                  },
+                  "maxOccurrence" : {
+                    "type" : "integer"
+                  },
+                  "regexType" : {
+                    "type" : "string",
+                    "enum" : [ "as_integer", "as_double", "as_float", "as_long", "as_short", "as_boolean", "as_string" ]
+                  }
+                }
+              }
+            },
+            "headers" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "$ref" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:KeyValueMatcher"
+              }
+            },
+            "queryParameters" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "id" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:QueryParameterMatcher",
+                "properties" : {
+                  "key" : {
+                    "type" : "string"
+                  },
+                  "type" : {
+                    "type" : "string",
+                    "enum" : [ "equal_to", "containing", "matching", "not_matching", "equal_to_json", "equal_to_xml", "absent", "binary_equal_to" ]
+                  },
+                  "value" : {
+                    "type" : "object",
+                    "$ref" : "urn:jsonschema:java:lang:Object"
+                  }
+                }
+              }
+            },
+            "cookies" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "$ref" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:KeyValueMatcher"
+              }
+            },
+            "multipart" : {
+              "type" : "object",
+              "id" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:MultipartStubMatcher",
+              "properties" : {
+                "params" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "$ref" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:KeyValueMatcher"
+                  }
+                },
+                "named" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "id" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:MultipartNamedStubMatcher",
+                    "properties" : {
+                      "paramName" : {
+                        "type" : "string"
+                      },
+                      "fileName" : {
+                        "type" : "object",
+                        "id" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:ValueMatcher",
+                        "properties" : {
+                          "regex" : {
+                            "type" : "string"
+                          },
+                          "predefined" : {
+                            "type" : "string",
+                            "enum" : [ "only_alpha_unicode", "number", "any_double", "any_boolean", "ip_address", "hostname", "email", "url", "uuid", "iso_date", "iso_date_time", "iso_time", "iso_8601_with_offset", "non_empty", "non_blank" ]
+                          }
+                        }
+                      },
+                      "fileContent" : {
+                        "type" : "object",
+                        "$ref" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:ValueMatcher"
+                      },
+                      "contentType" : {
+                        "type" : "object",
+                        "$ref" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:ValueMatcher"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "multipart" : {
+          "type" : "object",
+          "id" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:Multipart",
+          "properties" : {
+            "params" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "string"
+              }
+            },
+            "named" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "id" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:Named",
+                "properties" : {
+                  "paramName" : {
+                    "type" : "string"
+                  },
+                  "fileName" : {
+                    "type" : "string"
+                  },
+                  "fileContent" : {
+                    "type" : "string"
+                  },
+                  "fileContentAsBytes" : {
+                    "type" : "string"
+                  },
+                  "fileContentFromFileAsBytes" : {
+                    "type" : "string"
+                  },
+                  "contentType" : {
+                    "type" : "string"
+                  },
+                  "fileNameCommand" : {
+                    "type" : "string"
+                  },
+                  "fileContentCommand" : {
+                    "type" : "string"
+                  },
+                  "contentTypeCommand" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "response" : {
+      "type" : "object",
+      "id" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:Response",
+      "properties" : {
+        "status" : {
+          "type" : "integer"
+        },
+        "headers" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "object",
+            "$ref" : "urn:jsonschema:java:lang:Object"
+          }
+        },
+        "cookies" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "object",
+            "$ref" : "urn:jsonschema:java:lang:Object"
+          }
+        },
+        "body" : {
+          "type" : "object",
+          "$ref" : "urn:jsonschema:java:lang:Object"
+        },
+        "bodyFromFile" : {
+          "type" : "string"
+        },
+        "bodyFromFileAsBytes" : {
+          "type" : "string"
+        },
+        "matchers" : {
+          "type" : "object",
+          "id" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:TestMatchers",
+          "properties" : {
+            "body" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "id" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:BodyTestMatcher",
+                "properties" : {
+                  "path" : {
+                    "type" : "string"
+                  },
+                  "type" : {
+                    "type" : "string",
+                    "enum" : [ "by_date", "by_time", "by_timestamp", "by_regex", "by_equality", "by_type", "by_command", "by_null" ]
+                  },
+                  "value" : {
+                    "type" : "string"
+                  },
+                  "minOccurrence" : {
+                    "type" : "integer"
+                  },
+                  "maxOccurrence" : {
+                    "type" : "integer"
+                  },
+                  "predefined" : {
+                    "type" : "string",
+                    "enum" : [ "only_alpha_unicode", "number", "any_double", "any_boolean", "ip_address", "hostname", "email", "url", "uuid", "iso_date", "iso_date_time", "iso_time", "iso_8601_with_offset", "non_empty", "non_blank" ]
+                  },
+                  "regexType" : {
+                    "type" : "string",
+                    "enum" : [ "as_integer", "as_double", "as_float", "as_long", "as_short", "as_boolean", "as_string" ]
+                  }
+                }
+              }
+            },
+            "headers" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "id" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:TestHeaderMatcher",
+                "properties" : {
+                  "key" : {
+                    "type" : "string"
+                  },
+                  "regex" : {
+                    "type" : "string"
+                  },
+                  "command" : {
+                    "type" : "string"
+                  },
+                  "predefined" : {
+                    "type" : "string",
+                    "enum" : [ "only_alpha_unicode", "number", "any_double", "any_boolean", "ip_address", "hostname", "email", "url", "uuid", "iso_date", "iso_date_time", "iso_time", "iso_8601_with_offset", "non_empty", "non_blank" ]
+                  },
+                  "regexType" : {
+                    "type" : "string",
+                    "enum" : [ "as_integer", "as_double", "as_float", "as_long", "as_short", "as_boolean", "as_string" ]
+                  }
+                }
+              }
+            },
+            "cookies" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "id" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:TestCookieMatcher",
+                "properties" : {
+                  "key" : {
+                    "type" : "string"
+                  },
+                  "regex" : {
+                    "type" : "string"
+                  },
+                  "command" : {
+                    "type" : "string"
+                  },
+                  "predefined" : {
+                    "type" : "string",
+                    "enum" : [ "only_alpha_unicode", "number", "any_double", "any_boolean", "ip_address", "hostname", "email", "url", "uuid", "iso_date", "iso_date_time", "iso_time", "iso_8601_with_offset", "non_empty", "non_blank" ]
+                  },
+                  "regexType" : {
+                    "type" : "string",
+                    "enum" : [ "as_integer", "as_double", "as_float", "as_long", "as_short", "as_boolean", "as_string" ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "async" : {
+          "type" : "boolean"
+        },
+        "fixedDelayMilliseconds" : {
+          "type" : "integer"
+        }
+      }
+    },
+    "input" : {
+      "type" : "object",
+      "id" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:Input",
+      "properties" : {
+        "triggeredBy" : {
+          "type" : "string"
+        },
+        "assertThat" : {
+          "type" : "string"
+        }
+      }
+    },
+    "outputMessage" : {
+      "type" : "object",
+      "id" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:OutputMessage",
+      "properties" : {
+        "sentTo" : {
+          "type" : "string"
+        },
+        "headers" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "object",
+            "$ref" : "urn:jsonschema:java:lang:Object"
+          }
+        },
+        "body" : {
+          "type" : "object",
+          "$ref" : "urn:jsonschema:java:lang:Object"
+        },
+        "bodyFromFile" : {
+          "type" : "string"
+        },
+        "bodyFromFileAsBytes" : {
+          "type" : "string"
+        },
+        "assertThat" : {
+          "type" : "string"
+        },
+        "matchers" : {
+          "type" : "object",
+          "$ref" : "urn:jsonschema:org:springframework:cloud:contract:verifier:converter:YamlContract:TestMatchers"
+        }
+      }
+    },
+    "description" : {
+      "type" : "string"
+    },
+    "label" : {
+      "type" : "string"
+    },
+    "name" : {
+      "type" : "string"
+    },
+    "priority" : {
+      "type" : "integer"
+    },
+    "ignored" : {
+      "type" : "boolean"
+    },
+    "inProgress" : {
+      "type" : "boolean"
+    },
+    "metadata" : {
+      "type" : "object",
+      "additionalProperties" : {
+        "type" : "object",
+        "$ref" : "urn:jsonschema:java:lang:Object"
+      }
+    }
+  }
+}

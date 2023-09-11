@@ -1,0 +1,12 @@
+[[features-stub-runner-publishing-stubs-as-jars]]
+= Publishing Stubs as JARs
+
+include::partial$_attributes.adoc[]
+
+The easiest approach to publishing stubs as jars is to centralize the way stubs are kept.
+For example, you can keep them as jars in a Maven repository.
+
+TIP: For both Maven and Gradle, the setup comes ready to work. However, you can customize
+it if you want to.
+
+Check these URL for {samples_url}/producer_with_restdocs/pom.xml[Maven] and {samples_url}/producer_with_restdocs/pom.xml[Gradle] samples.

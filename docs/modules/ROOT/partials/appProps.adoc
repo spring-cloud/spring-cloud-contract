@@ -1,0 +1,13 @@
+.Docker environment variables - read at runtime
+|===
+|Name | Description | Default
+|APPLICATION_BASE_URL|URL at which the application is running.|
+|APPLICATION_PASSWORD|Optional password to access the application.|
+|APPLICATION_USERNAME|Optional username to access the application.|
+|MESSAGING_TRIGGER_CONNECT_TIMEOUT|Timeout to connect to the application to trigger a message.|5000
+|MESSAGING_TRIGGER_READ_TIMEOUT|Timeout to read the response from the application to trigger a message.|5000
+|MESSAGING_TYPE|Type of messaging. Can be either [rabbit] or [kafka].|
+|MESSAGING_TYPE|Defines the messaging type when dealing with message based contracts.|
+|SPRING_KAFKA_BOOTSTRAP_SERVERS|For Kafka - brokers addresses.|
+|SPRING_RABBITMQ_ADDRESSES|For RabbitMQ - brokers addresses.|
+|===

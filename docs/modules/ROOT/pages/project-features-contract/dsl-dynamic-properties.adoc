@@ -1,0 +1,799 @@
+[[contract-dsl-dynamic-properties]]
+= Dynamic properties
+
+include::partial$_attributes.adoc[]
+
+The contract can contain some dynamic properties: timestamps, IDs, and so on. You do not
+want to force the consumers to stub their clocks to always return the same value of time
+so that it gets matched by the stub.
+
+For the Groovy DSL, you can provide the dynamic parts in your contracts
+in two ways: pass them directly in the body or set them in a separate section called
+`bodyMatchers`.
+
+NOTE: Before 2.0.0, these were set by using `testMatchers` and `stubMatchers`.
+See the https://github.com/spring-cloud/spring-cloud-contract/wiki/Spring-Cloud-Contract-2.0-Migration-Guide[migration guide] for more information.
+
+For YAML, you can use only the `matchers` section.
+
+IMPORTANT: Entries inside the `matchers` must reference existing elements of the payload. For more information, see https://github.com/spring-cloud/spring-cloud-contract/issues/722[this issue].
+
+[[contract-dsl-dynamic-properties-in-body]]
+== Dynamic Properties inside the Body
+
+IMPORTANT: This section is valid only for the Coded DSL (Groovy, Java, and so on). See the
+xref:project-features-contract/dsl-dynamic-properties.adoc#contract-dsl-matchers[Dynamic Properties in the Matchers Sections] section for YAML examples of a similar feature.
+
+You can set the properties inside the body either with the `value` method or, if you use
+the Groovy map notation, with `$()`. The following example shows how to set dynamic
+properties with the value method:
+
+====
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.value
+----
+value(consumer(...), producer(...))
+value(c(...), p(...))
+value(stub(...), test(...))
+value(client(...), server(...))
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.$
+----
+$(consumer(...), producer(...))
+$(c(...), p(...))
+$(stub(...), test(...))
+$(client(...), server(...))
+----
+====
+
+Both approaches work equally well. The `stub` and `client` methods are aliases over the `consumer`
+method. Subsequent sections take a closer look at what you can do with those values.
+
+[[contract-dsl-regex]]
+== Regular Expressions
+
+IMPORTANT: This section is valid only for the Groovy DSL. See the
+xref:project-features-contract/dsl-dynamic-properties.adoc#contract-dsl-matchers[Dynamic Properties in the Matchers Sections] section for YAML examples of a similar feature.
+
+You can use regular expressions to write your requests in the contract DSL. Doing so is
+particularly useful when you want to indicate that a given response should be provided
+for requests that follow a given pattern. Also, you can use regular expressions when you
+need to use patterns and not exact values both for your tests and your server-side tests.
+
+Make sure that regex matches a whole region of a sequence, as, internally,
+https://docs.oracle.com/javase/8/docs/api/java/util/regex/Matcher.html#matches[`Pattern.matches()`]
+is called. For instance, `abc` does not match `aabc`, but `.abc` does.
+There are several additional xref:project-features-contract/dsl-dynamic-properties.adoc#contract-dsl-regex-limitations[known limitations] as well.
+
+The following example shows how to use regular expressions to write a request:
+
+====
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=regex,indent=0]
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
+----
+include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=regex,indent=0]
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=regex,indent=0]
+----
+====
+
+You can also provide only one side of the communication with a regular expression. If you
+do so, then the contract engine automatically provides the generated string that matches
+the provided regular expression. The following code shows an example for Groovy:
+
+[source,groovy,indent=0]
+----
+include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/SpringTestMethodBodyBuildersSpec.groovy[tags=dsl_one_side_data_generation_example,indent=0]
+----
+
+In the preceding example, the opposite side of the communication has the respective data
+generated for request and response.
+
+Spring Cloud Contract comes with a series of predefined regular expressions that you can
+use in your contracts, as the following example shows:
+
+[source,java,indent=0]
+----
+include::{contract_spec_path}/src/main/java/org/springframework/cloud/contract/spec/internal/RegexPatterns.java[tags=regexps,indent=0]
+----
+
+In your contract, you can use it as follows (example for the Groovy DSL):
+
+[source,groovy,indent=0]
+----
+include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/SpringTestMethodBodyBuildersSpec.groovy[tags=contract_with_regex,indent=0]
+----
+
+To make matters even simpler, you can use a set of predefined objects that automatically
+assume that you want a regular expression to be passed.
+All of those methods start with the `any` prefix, as follows:
+
+[source,java,indent=0]
+----
+include::{contract_spec_path}/src/main/java/org/springframework/cloud/contract/spec/internal/RegexCreatingProperty.java[tags=regex_creating_props,indent=0]
+----
+
+The following example shows how you can reference those methods:
+
+====
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=regex_creating_props,indent=0]
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=regex_creating_props,indent=0]
+----
+====
+
+[[contract-dsl-regex-limitations]]
+=== Limitations
+
+CAUTION: Due to certain limitations of the `Xeger` library that generates a string out of
+a regex, do not use the `$` and `^` signs in your regex if you rely on automatic
+generation. See https://github.com/spring-cloud/spring-cloud-contract/issues/899[Issue 899].
+
+CAUTION: Do not use a `LocalDate` instance as a value for `$` (for example, `$(consumer(LocalDate.now()))`).
+It causes a `java.lang.StackOverflowError`. Use `$(consumer(LocalDate.now().toString()))` instead.
+See https://github.com/spring-cloud/spring-cloud-contract/issues/900[Issue 900].
+
+[[contract-dsl-optional-params]]
+== Passing Optional Parameters
+
+IMPORTANT: This section is valid only for Groovy DSL. See the
+xref:project-features-contract/dsl-dynamic-properties.adoc#contract-dsl-matchers[Dynamic Properties in the Matchers Sections] section for YAML examples of a similar feature.
+
+You can provide optional parameters in your contract. However, you can provide
+optional parameters only for the following:
+
+* The STUB side of the Request
+* The TEST side of the Response
+
+The following example shows how to provide optional parameters:
+
+====
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=optionals,indent=0]
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
+----
+include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=optionals,indent=0]
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=optionals,indent=0]
+----
+====
+
+By wrapping a part of the body with the `optional()` method, you create a regular
+expression that must be present 0 or more times.
+
+If you use Spock, the following test would be generated from the previous example:
+
+====
+[source,groovy,indent=0]
+.Groovy
+----
+include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=optionals_test,indent=0]
+----
+====
+
+The following stub would also be generated:
+
+[source,groovy,indent=0]
+----
+include::{plugins_path}/spring-cloud-contract-converters/src/test/groovy/org/springframework/cloud/contract/verifier/wiremock/DslToWireMockClientConverterSpec.groovy[tags=wiremock,indent=0]
+----
+
+[[contract-dsl-custom-methods]]
+== Calling Custom Methods on the Server Side
+
+IMPORTANT: This section is valid only for the Groovy DSL. See the
+xref:project-features-contract/dsl-dynamic-properties.adoc#contract-dsl-matchers[Dynamic Properties in the Matchers Sections] section for YAML examples of a similar feature.
+
+You can define a method call that runs on the server side during the test. Such a
+method can be added to the class defined as `baseClassForTests` in the configuration. The
+following code shows an example of the contract portion of the test case:
+
+====
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=method,indent=0]
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
+----
+include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=method,indent=0]
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=method,indent=0]
+----
+====
+
+The following code shows the base class portion of the test case:
+
+[source,groovy,indent=0]
+----
+include::{plugins_path}/spring-cloud-contract-gradle-plugin/src/test/resources/functionalTest/bootSimple/src/test/groovy/org/springframework/cloud/contract/verifier/twitter/places/BaseMockMvcSpec.groovy[tags=base_class,indent=0]
+----
+
+IMPORTANT: You cannot use both a `String` and `execute` to perform concatenation. For
+example, calling `header('Authorization', 'Bearer ' + execute('authToken()'))` leads to
+improper results. Instead, call `header('Authorization', execute('authToken()'))` and
+ensure that the `authToken()` method returns everything you need.
+
+The type of the object read from the JSON can be one of the following, depending on the
+JSON path:
+
+* `String`: If you point to a `String` value in the JSON.
+* `JSONArray`: If you point to a `List` in the JSON.
+* `Map`: If you point to a `Map` in the JSON.
+* `Number`: If you point to `Integer`, `Double`, and other numeric type in the JSON.
+* `Boolean`: If you point to a `Boolean` in the JSON.
+
+In the request part of the contract, you can specify that the `body` should be taken from
+a method.
+
+IMPORTANT: You must provide both the consumer and the producer side. The `execute` part
+is applied for the whole body, not for parts of it.
+
+The following example shows how to read an object from JSON:
+
+[source,groovy,indent=0]
+----
+include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MethodBodyBuilderSpec.groovy[tags=body_execute,indent=0]
+----
+
+The preceding example results in calling the `hashCode()` method in the request body.
+It should resemble the following code:
+
+[source,java,indent=0]
+----
+ // given:
+  MockMvcRequestSpecification request = given()
+    .body(hashCode());
+
+ // when:
+  ResponseOptions response = given().spec(request)
+    .get("/something");
+
+ // then:
+  assertThat(response.statusCode()).isEqualTo(200);
+----
+
+[[contract-dsl-referencing-request-from-response]]
+== Referencing the Request from the Response
+
+The best situation is to provide fixed values, but sometimes you need to reference a
+request in your response.
+
+If you write contracts in the Groovy DSL, you can use the `fromRequest()` method, which lets
+you reference a bunch of elements from the HTTP request. You can use the following
+options:
+
+* `fromRequest().url()`: Returns the request URL and query parameters.
+* `fromRequest().query(String key)`: Returns the first query parameter with the given name.
+* `fromRequest().query(String key, int index)`: Returns the nth query parameter with the
+given name.
+* `fromRequest().path()`: Returns the full path.
+* `fromRequest().path(int index)`: Returns the nth path element.
+* `fromRequest().header(String key)`: Returns the first header with the given name.
+* `fromRequest().header(String key, int index)`: Returns the nth header with the given name.
+* `fromRequest().body()`: Returns the full request body.
+* `fromRequest().body(String jsonPath)`: Returns the element from the request that
+matches the JSON Path.
+
+If you use the YAML contract definition or the Java one, you have to use the
+https://handlebarsjs.com/[Handlebars] `{{{ }}}` notation with custom Spring Cloud Contract
+functions to achieve this. In that case, you can use the following options:
+
+* `{{{ request.url }}}`: Returns the request URL and query parameters.
+* `{{{ request.query.key.[index] }}}`: Returns the nth query parameter with the given name.
+For example, for a key of `thing`, the first entry is `{{{ request.query.thing.[0] }}}`
+* `{{{ request.path }}}`: Returns the full path.
+* `{{{ request.path.[index] }}}`: Returns the nth path element. For example,
+the first entry is ```{{{ request.path.[0] }}}
+* `{{{ request.headers.key }}}`: Returns the first header with the given name.
+* `{{{ request.headers.key.[index] }}}`: Returns the nth header with the given name.
+* `{{{ request.body }}}`: Returns the full request body.
+* `{{{ jsonpath this 'your.json.path' }}}`: Returns the element from the request that
+matches the JSON Path. For example, for a JSON path of `$.here`, use `{{{ jsonpath this '$.here' }}}`
+
+Consider the following contract:
+
+====
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/SpringTestMethodBodyBuildersSpec.groovy[tags=template_contract,indent=0]
+----
+
+[source,yaml,indent=0,role="secondary"]
+.YAML
+----
+include::{verifier_root_path}/src/test/resources/yml/contract_reference_request.yml[indent=0]
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
+----
+package contracts.beer.rest;
+
+import java.util.function.Supplier;
+
+import org.springframework.cloud.contract.spec.Contract;
+
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.map;
+
+class shouldReturnStatsForAUser implements Supplier<Contract> {
+
+	@Override
+	public Contract get() {
+		return Contract.make(c -> {
+			c.request(r -> {
+				r.method("POST");
+				r.url("/stats");
+				r.body(map().entry("name", r.anyAlphaUnicode()));
+				r.headers(h -> {
+					h.contentType(h.applicationJson());
+				});
+			});
+			c.response(r -> {
+				r.status(r.OK());
+				r.body(map()
+						.entry("text",
+								"Dear {{{jsonPath request.body '$.name'}}} thanks for your interested in drinking beer")
+						.entry("quantity", r.$(r.c(5), r.p(r.anyNumber()))));
+				r.headers(h -> {
+					h.contentType(h.applicationJson());
+				});
+			});
+		});
+	}
+
+}
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+package contracts.beer.rest
+
+import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
+
+contract {
+    request {
+        method = method("POST")
+        url = url("/stats")
+        body(mapOf(
+            "name" to anyAlphaUnicode
+        ))
+        headers {
+            contentType = APPLICATION_JSON
+        }
+    }
+    response {
+        status = OK
+        body(mapOf(
+            "text" to "Don't worry $\{fromRequest().body("$.name")} thanks for your interested in drinking beer",
+            "quantity" to v(c(5), p(anyNumber))
+        ))
+        headers {
+            contentType = fromRequest().header(CONTENT_TYPE)
+        }
+    }
+}
+----
+====
+
+Running a JUnit test generation leads to a test that resembles the following example:
+
+====
+[source,java,indent=0]
+----
+ // given:
+  MockMvcRequestSpecification request = given()
+    .header("Authorization", "secret")
+    .header("Authorization", "secret2")
+    .body("{\"foo\":\"bar\",\"baz\":5}");
+
+ // when:
+  ResponseOptions response = given().spec(request)
+    .queryParam("foo","bar")
+    .queryParam("foo","bar2")
+    .get("/api/v1/xxxx");
+
+ // then:
+  assertThat(response.statusCode()).isEqualTo(200);
+  assertThat(response.header("Authorization")).isEqualTo("foo secret bar");
+ // and:
+  DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+  assertThatJson(parsedJson).field("['fullBody']").isEqualTo("{\"foo\":\"bar\",\"baz\":5}");
+  assertThatJson(parsedJson).field("['authorization']").isEqualTo("secret");
+  assertThatJson(parsedJson).field("['authorization2']").isEqualTo("secret2");
+  assertThatJson(parsedJson).field("['path']").isEqualTo("/api/v1/xxxx");
+  assertThatJson(parsedJson).field("['param']").isEqualTo("bar");
+  assertThatJson(parsedJson).field("['paramIndex']").isEqualTo("bar2");
+  assertThatJson(parsedJson).field("['pathIndex']").isEqualTo("v1");
+  assertThatJson(parsedJson).field("['responseBaz']").isEqualTo(5);
+  assertThatJson(parsedJson).field("['responseFoo']").isEqualTo("bar");
+  assertThatJson(parsedJson).field("['url']").isEqualTo("/api/v1/xxxx?foo=bar&foo=bar2");
+  assertThatJson(parsedJson).field("['responseBaz2']").isEqualTo("Bla bla bar bla bla");
+----
+====
+
+As you can see, elements from the request have been properly referenced in the response.
+
+The generated WireMock stub should resemble the following example:
+
+====
+[source,json,indent=0]
+----
+{
+  "request" : {
+    "urlPath" : "/api/v1/xxxx",
+    "method" : "POST",
+    "headers" : {
+      "Authorization" : {
+        "equalTo" : "secret2"
+      }
+    },
+    "queryParameters" : {
+      "foo" : {
+        "equalTo" : "bar2"
+      }
+    },
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : "$[?(@.['baz'] == 5)]"
+    }, {
+      "matchesJsonPath" : "$[?(@.['foo'] == 'bar')]"
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"authorization\":\"{{{request.headers.Authorization.[0]}}}\",\"path\":\"{{{request.path}}}\",\"responseBaz\":{{{jsonpath this '$.baz'}}} ,\"param\":\"{{{request.query.foo.[0]}}}\",\"pathIndex\":\"{{{request.path.[1]}}}\",\"responseBaz2\":\"Bla bla {{{jsonpath this '$.foo'}}} bla bla\",\"responseFoo\":\"{{{jsonpath this '$.foo'}}}\",\"authorization2\":\"{{{request.headers.Authorization.[1]}}}\",\"fullBody\":\"{{{escapejsonbody}}}\",\"url\":\"{{{request.url}}}\",\"paramIndex\":\"{{{request.query.foo.[1]}}}\"}",
+    "headers" : {
+      "Authorization" : "{{{request.headers.Authorization.[0]}}};foo"
+    },
+    "transformers" : [ "response-template" ]
+  }
+}
+----
+====
+
+Sending a request such as the one presented in the `request` part of the contract results
+in sending the following response body:
+
+====
+[source,json,indent=0]
+----
+{
+  "url" : "/api/v1/xxxx?foo=bar&foo=bar2",
+  "path" : "/api/v1/xxxx",
+  "pathIndex" : "v1",
+  "param" : "bar",
+  "paramIndex" : "bar2",
+  "authorization" : "secret",
+  "authorization2" : "secret2",
+  "fullBody" : "{\"foo\":\"bar\",\"baz\":5}",
+  "responseFoo" : "bar",
+  "responseBaz" : 5,
+  "responseBaz2" : "Bla bla bar bla bla"
+}
+----
+====
+
+IMPORTANT: This feature works only with WireMock versions greater than or equal
+to 2.5.1. The Spring Cloud Contract Verifier uses WireMock's
+`response-template` response transformer. It uses Handlebars to convert the Mustache `{{{ }}}` templates into
+proper values. Additionally, it registers two helper functions:
+
+* `escapejsonbody`: Escapes the request body in a format that can be embedded in JSON.
+* `jsonpath`: For a given parameter, finds an object in the request body.
+
+[[contract-dsl-matchers]]
+== Dynamic Properties in the Matchers Sections
+
+If you work with https://docs.pact.io/[Pact], the following discussion may seem familiar.
+Quite a few users are used to having a separation between the body and setting the
+dynamic parts of a contract.
+
+You can use the `bodyMatchers` section for two reasons:
+
+* Define the dynamic values that should end up in a stub.
+You can set it in the `request` part of your contract.
+* Verify the result of your test.
+This section is present in the `response` or `outputMessage` side of the
+contract.
+
+Currently, Spring Cloud Contract Verifier supports only JSON path-based matchers with the
+following matching possibilities:
+
+[[coded-dsl]]
+=== Coded DSL
+
+For the stubs (in tests on the consumer's side):
+
+* `byEquality()`: The value taken from the consumer's request in the provided JSON path must be
+equal to the value provided in the contract.
+* `byRegex(...)`: The value taken from the consumer's request in the provided JSON path must
+match the regex. You can also pass the type of the expected matched value (for example, `asString()`, `asLong()`, and so on).
+* `byDate()`: The value taken from the consumer's request in the provided JSON path must
+match the regex for an ISO Date value.
+* `byTimestamp()`: The value taken from the consumer's request in the provided JSON path must
+match the regex for an ISO DateTime value.
+* `byTime()`: The value taken from the consumer's request in the provided JSON path must
+match the regex for an ISO Time value.
+
+For the verification (in generated tests on the Producer's side):
+
+* `byEquality()`: The value taken from the producer's response in the provided JSON path must be
+equal to the provided value in the contract.
+* `byRegex(...)`: The value taken from the producer's response in the provided JSON path must
+match the regex.
+* `byDate()`: The value taken from the producer's response in the provided JSON path must match
+the regex for an ISO Date value.
+* `byTimestamp()`: The value taken from the producer's response in the provided JSON path must
+match the regex for an ISO DateTime value.
+* `byTime()`: The value taken from the producer's response in the provided JSON path must match
+the regex for an ISO Time value.
+* `byType()`: The value taken from the producer's response in the provided JSON path needs to be
+of the same type as the type defined in the body of the response in the contract.
+`byType` can take a closure, in which you can set `minOccurrence` and `maxOccurrence`. For the
+request side, you should use the closure to assert size of the collection.
+That way, you can assert the size of the flattened collection. To check the size of an
+unflattened collection, use a custom method with the `byCommand(...)` `testMatcher`.
+* `byCommand(...)`: The value taken from the producer's response in the provided JSON path is
+passed as an input to the custom method that you provide. For example,
+`byCommand('thing($it)')` results in calling a `thing` method to which the value matching the
+JSON Path gets passed. The type of the object read from the JSON can be one of the
+following, depending on the JSON path:
+** `String`: If you point to a `String` value.
+** `JSONArray`: If you point to a `List`.
+** `Map`: If you point to a `Map`.
+** `Number`: If you point to `Integer`, `Double`, or another kind of number.
+** `Boolean`: If you point to a `Boolean`.
+* `byNull()`: The value taken from the response in the provided JSON path must be null.
+
+[[yaml]]
+=== YAML
+
+NOTE: See the Groovy section for a detailed explanation of
+what the types mean.
+
+For YAML, the structure of a matcher resembles the following example:
+
+[source,yml,indent=0]
+----
+- path: $.thing1
+  type: by_regex
+  value: thing2
+  regexType: as_string
+----
+
+Alternatively, if you want to use one of the predefined regular expressions
+`[only_alpha_unicode, number, any_boolean, ip_address, hostname,
+email, url, uuid, iso_date, iso_date_time, iso_time, iso_8601_with_offset, non_empty,
+non_blank]`, you can use something similar to the following example:
+
+[source,yml,indent=0]
+----
+- path: $.thing1
+  type: by_regex
+  predefined: only_alpha_unicode
+----
+
+The following list shows the allowed list of `type` values:
+
+* For `stubMatchers`:
+** `by_equality`
+** `by_regex`
+** `by_date`
+** `by_timestamp`
+** `by_time`
+** `by_type`
+*** Two additional fields (`minOccurrence` and `maxOccurrence`) are accepted.
+* For `testMatchers`:
+** `by_equality`
+** `by_regex`
+** `by_date`
+** `by_timestamp`
+** `by_time`
+** `by_type`
+*** Two additional fields (`minOccurrence` and `maxOccurrence`) are accepted.
+** `by_command`
+** `by_null`
+
+You can also define which type the regular expression corresponds to in the `regexType`
+field. The following list shows the allowed regular expression types:
+
+* `as_integer`
+* `as_double`
+* `as_float`
+* `as_long`
+* `as_short`
+* `as_boolean`
+* `as_string`
+
+Consider the following example:
+
+====
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MockMvcMethodBodyBuilderWithMatchersSpec.groovy[tags=matchers,indent=0]
+----
+
+[source,yaml,indent=0,role="secondary"]
+.YAML
+----
+include::{verifier_root_path}/src/test/resources/yml/contract_matchers.yml[indent=0]
+----
+====
+
+In the preceding example, you can see the dynamic portions of the contract in the
+`matchers` sections. For the request part, you can see that, for all fields but
+`valueWithoutAMatcher`, the values of the regular expressions that the stub should
+contain are explicitly set. For `valueWithoutAMatcher`, the verification takes place
+in the same way as without the use of matchers. In that case, the test performs an
+equality check.
+
+For the response side in the `bodyMatchers` section, we define the dynamic parts in a
+similar manner. The only difference is that the `byType` matchers are also present. The
+verifier engine checks four fields to verify whether the response from the test
+has a value for which the JSON path matches the given field, is of the same type as the one
+defined in the response body, and passes the following check (based on the method being called):
+
+* For `$.valueWithTypeMatch`, the engine checks whether the type is the same.
+* For `$.valueWithMin`, the engine checks the type and asserts whether the size is greater
+than or equal to the minimum occurrence.
+* For `$.valueWithMax`, the engine checks the type and asserts whether the size is
+smaller than or equal to the maximum occurrence.
+* For `$.valueWithMinMax`, the engine checks the type and asserts whether the size is
+between the minimum and maximum occurrence.
+
+The resulting test resembles the following example (note that an `and` section
+separates the autogenerated assertions and the assertion from matchers):
+
+[source,java,indent=0]
+----
+ // given:
+  MockMvcRequestSpecification request = given()
+    .header("Content-Type", "application/json")
+    .body("{\"duck\":123,\"alpha\":\"abc\",\"number\":123,\"aBoolean\":true,\"date\":\"2017-01-01\",\"dateTime\":\"2017-01-01T01:23:45\",\"time\":\"01:02:34\",\"valueWithoutAMatcher\":\"foo\",\"valueWithTypeMatch\":\"string\",\"key\":{\"complex.key\":\"foo\"}}");
+
+ // when:
+  ResponseOptions response = given().spec(request)
+    .get("/get");
+
+ // then:
+  assertThat(response.statusCode()).isEqualTo(200);
+  assertThat(response.header("Content-Type")).matches("application/json.*");
+ // and:
+  DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+  assertThatJson(parsedJson).field("['valueWithoutAMatcher']").isEqualTo("foo");
+ // and:
+  assertThat(parsedJson.read("$.duck", String.class)).matches("[0-9]{3}");
+  assertThat(parsedJson.read("$.duck", Integer.class)).isEqualTo(123);
+  assertThat(parsedJson.read("$.alpha", String.class)).matches("[\\p{L}]*");
+  assertThat(parsedJson.read("$.alpha", String.class)).isEqualTo("abc");
+  assertThat(parsedJson.read("$.number", String.class)).matches("-?(\\d*\\.\\d+|\\d+)");
+  assertThat(parsedJson.read("$.aBoolean", String.class)).matches("(true|false)");
+  assertThat(parsedJson.read("$.date", String.class)).matches("(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])");
+  assertThat(parsedJson.read("$.dateTime", String.class)).matches("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
+  assertThat(parsedJson.read("$.time", String.class)).matches("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
+  assertThat((Object) parsedJson.read("$.valueWithTypeMatch")).isInstanceOf(java.lang.String.class);
+  assertThat((Object) parsedJson.read("$.valueWithMin")).isInstanceOf(java.util.List.class);
+  assertThat((java.lang.Iterable) parsedJson.read("$.valueWithMin", java.util.Collection.class)).as("$.valueWithMin").hasSizeGreaterThanOrEqualTo(1);
+  assertThat((Object) parsedJson.read("$.valueWithMax")).isInstanceOf(java.util.List.class);
+  assertThat((java.lang.Iterable) parsedJson.read("$.valueWithMax", java.util.Collection.class)).as("$.valueWithMax").hasSizeLessThanOrEqualTo(3);
+  assertThat((Object) parsedJson.read("$.valueWithMinMax")).isInstanceOf(java.util.List.class);
+  assertThat((java.lang.Iterable) parsedJson.read("$.valueWithMinMax", java.util.Collection.class)).as("$.valueWithMinMax").hasSizeBetween(1, 3);
+  assertThat((Object) parsedJson.read("$.valueWithMinEmpty")).isInstanceOf(java.util.List.class);
+  assertThat((java.lang.Iterable) parsedJson.read("$.valueWithMinEmpty", java.util.Collection.class)).as("$.valueWithMinEmpty").hasSizeGreaterThanOrEqualTo(0);
+  assertThat((Object) parsedJson.read("$.valueWithMaxEmpty")).isInstanceOf(java.util.List.class);
+  assertThat((java.lang.Iterable) parsedJson.read("$.valueWithMaxEmpty", java.util.Collection.class)).as("$.valueWithMaxEmpty").hasSizeLessThanOrEqualTo(0);
+  assertThatValueIsANumber(parsedJson.read("$.duck"));
+  assertThat(parsedJson.read("$.['key'].['complex.key']", String.class)).isEqualTo("foo");
+----
+
+IMPORTANT: Notice that, for the `byCommand` method, the example calls the
+`assertThatValueIsANumber`. This method must be defined in the test base class or be
+statically imported to your tests. Notice that the `byCommand` call was converted to
+`assertThatValueIsANumber(parsedJson.read("$.duck"));`. That means that the engine took
+the method name and passed the proper JSON path as a parameter to it.
+
+The resulting WireMock stub is in the following example:
+
+[source,json,indent=0]
+----
+include::{plugins_path}/spring-cloud-contract-converters/src/test/groovy/org/springframework/cloud/contract/verifier/wiremock/DslToWireMockClientConverterSpec.groovy[tags=matchers,indent=0]
+----
+
+IMPORTANT: If you use a `matcher`, the part of the request and response that the
+`matcher` addresses with the JSON Path gets removed from the assertion. In the case of
+verifying a collection, you must create matchers for *all* the elements of the
+collection.
+
+Consider the following example:
+
+====
+[source,groovy,indent=0]
+----
+Contract.make {
+    request {
+        method 'GET'
+        url("/foo")
+    }
+    response {
+        status OK()
+        body(events: [[
+                                 operation          : 'EXPORT',
+                                 eventId            : '16f1ed75-0bcc-4f0d-a04d-3121798faf99',
+                                 status             : 'OK'
+                         ], [
+                                 operation          : 'INPUT_PROCESSING',
+                                 eventId            : '3bb4ac82-6652-462f-b6d1-75e424a0024a',
+                                 status             : 'OK'
+                         ]
+                ]
+        )
+        bodyMatchers {
+            jsonPath('$.events[0].operation', byRegex('.+'))
+            jsonPath('$.events[0].eventId', byRegex('^([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})$'))
+            jsonPath('$.events[0].status', byRegex('.+'))
+        }
+    }
+}
+----
+====
+
+The preceding code leads to creating the following test (the code block shows only the assertion section):
+
+====
+[source,java,indent=0]
+----
+		and:
+			DocumentContext parsedJson = JsonPath.parse(response.body.asString())
+			assertThatJson(parsedJson).array("['events']").contains("['eventId']").isEqualTo("16f1ed75-0bcc-4f0d-a04d-3121798faf99")
+			assertThatJson(parsedJson).array("['events']").contains("['operation']").isEqualTo("EXPORT")
+			assertThatJson(parsedJson).array("['events']").contains("['operation']").isEqualTo("INPUT_PROCESSING")
+			assertThatJson(parsedJson).array("['events']").contains("['eventId']").isEqualTo("3bb4ac82-6652-462f-b6d1-75e424a0024a")
+			assertThatJson(parsedJson).array("['events']").contains("['status']").isEqualTo("OK")
+		and:
+			assertThat(parsedJson.read("\$.events[0].operation", String.class)).matches(".+")
+			assertThat(parsedJson.read("\$.events[0].eventId", String.class)).matches("^([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})\$")
+			assertThat(parsedJson.read("\$.events[0].status", String.class)).matches(".+")
+----
+====
+
+Note that the assertion is malformed. Only the first element of the array got
+asserted. To fix this, apply the assertion to the whole `$.events`
+collection and assert it with the `byCommand(...)` method.
+

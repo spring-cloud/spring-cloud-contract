@@ -1,6 +1,6 @@
-name: PROJECT_WITHOUT_SPRING
+name: cloud-contract
 version: true
-title: PROJECT_NAME
+title: spring-cloud-contract
 nav:
   - modules/ROOT/nav.adoc
 ext:

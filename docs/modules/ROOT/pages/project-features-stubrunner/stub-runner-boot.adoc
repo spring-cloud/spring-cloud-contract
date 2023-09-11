@@ -1,0 +1,133 @@
+[[features-stub-runner-boot]]
+= Using the Stub Runner Boot Application
+
+include::partial$_attributes.adoc[]
+
+Spring Cloud Contract Stub Runner Boot is a Spring Boot application that exposes REST endpoints to
+trigger the messaging labels and to access WireMock servers.
+
+[[features-stub-runner-boot-security]]
+== Stub Runner Boot Security
+
+The Stub Runner Boot application is not secured by design - securing it would require to add security to all
+stubs even if they don't actually require it. Since this is a testing utility - the server is **not intended**
+to be used in production environments.
+
+IMPORTANT: It is expected that **only a trusted client** has access to the Stub Runner Boot server. You should not
+run this application as a Fat Jar or a xref:../docker-project.adoc[Docker Image] in untrusted locations.
+
+[[features-stub-runner-boot-server]]
+== Stub Runner Server
+
+To use the Stub Runner Server, add the following dependency:
+
+====
+[source,groovy,indent=0]
+----
+compile "org.springframework.cloud:spring-cloud-starter-stub-runner"
+----
+====
+
+Then annotate a class with `@EnableStubRunnerServer`, build a fat jar, and it is ready to work.
+
+For the properties, see the xref:../project-features-stubrunner/stub-runner-junit.adoc#features-stub-runner-rule-spring[Stub Runner Spring] section.
+
+[[features-stub-runner-boot-how-fat-jar]]
+== Stub Runner Server Fat Jar
+
+You can download a standalone JAR from Maven (for example, for version 2.0.1.RELEASE)
+by running the following commands:
+
+====
+[source,bash,indent=0]
+----
+$ wget -O stub-runner.jar 'https://search.maven.org/remotecontent?filepath=org/springframework/cloud/spring-cloud-contract-stub-runner-boot/2.0.1.RELEASE/spring-cloud-contract-stub-runner-boot-2.0.1.RELEASE.jar'
+$ java -jar stub-runner.jar --stubrunner.ids=... --stubrunner.repositoryRoot=...
+----
+====
+
+[[features-stub-runner-boot-how-cli]]
+== Spring Cloud CLI
+
+Starting from the `1.4.0.RELEASE` version of the https://cloud.spring.io/spring-cloud-cli[Spring Cloud CLI]
+project, you can start Stub Runner Boot by running `spring cloud stubrunner`.
+
+To pass the configuration, you can create a `stubrunner.yml` file in the current working directory,
+in a subdirectory called `config`, or in `~/.spring-cloud`. The file could resemble the following
+example for running stubs installed locally:
+
+
+.stubrunner.yml
+====
+[source,yml,indent=0]
+----
+stubrunner:
+  stubsMode: LOCAL
+  ids:
+    - com.example:beer-api-producer:+:9876
+----
+====
+
+Then you can call `spring cloud stubrunner` from your terminal window to start
+the Stub Runner server. It is available at port `8750`.
+
+[[features-stub-runner-boot-endpoints]]
+== Endpoints
+
+Stub Runner Boot offers two endpoints:
+
+* xref:../project-features-stubrunner/stub-runner-boot.adoc#features-stub-runner-boot-endpoints-http[HTTP]
+* xref:../project-features-stubrunner/stub-runner-boot.adoc#features-stub-runner-boot-endpoints-messaging[Messaging]
+
+[[features-stub-runner-boot-endpoints-http]]
+=== HTTP
+
+For HTTP, Stub Runner Boot makes the following endpoints available:
+
+- GET `/stubs`: Returns a list of all running stubs in `ivy:integer` notation
+- GET `/stubs/\{ivy}`: Returns a port for the given `ivy` notation (when calling the endpoint `ivy` can also be `artifactId` only)
+
+[[features-stub-runner-boot-endpoints-messaging]]
+=== Messaging
+
+For Messaging, Stub Runner Boot makes the following endpoints available:
+
+- GET `/triggers`: Returns a list of all running labels in `ivy : [ label1, label2 ...]` notation
+- POST `/triggers/\{label}`: Runs a trigger with `label`
+- POST `/triggers/\{ivy}/\{label}`: Runs a trigger with a `label` for the given `ivy` notation
+(when calling the endpoint, `ivy` can also be `artifactId` only)
+
+[[features-stub-runner-boot-endpoints-example]]
+== Example
+
+The following example shows typical usage of Stub Runner Boot:
+
+[source,groovy,indent=0]
+----
+include::{stubrunner_core_path}/src/test/groovy/org/springframework/cloud/contract/stubrunner/server/StubRunnerBootSpec.groovy[tags=boot_usage]
+----
+
+[[features-stub-runner-boot-service-discovery]]
+== Stub Runner Boot with Service Discovery
+
+One way to use Stub Runner Boot is to use it as a feed of stubs for "`smoke tests`". What does that mean?
+Assume that you do not want to deploy 50 microservices to a test environment in order
+to see whether your application works. You have already run a suite of tests during the build process,
+but you would also like to ensure that the packaging of your application works. You can
+deploy your application to an environment, start it, and run a couple of tests on it to see whether
+it works. We can call those tests "`smoke tests`", because their purpose is to check only a handful
+of testing scenarios.
+
+The problem with this approach is that, if you use microservices, you most likely also
+use a service discovery tool. Stub Runner Boot lets you solve this issue by starting the
+required stubs and registering them in a service discovery tool.
+
+Now assume that we want to start this application so that the stubs get automatically registered.
+We can do so by running the application with `java -jar $\{SYSTEM_PROPS} stub-runner-boot-eureka-example.jar`, where
+`$\{SYSTEM_PROPS}`.
+
+That way, your deployed application can send requests to started WireMock servers through service
+discovery. Most likely, points 1 through 3 could be set by default in `application.yml`, because they are not
+likely to change. That way, you can provide only the list of stubs to download whenever you start
+the Stub Runner Boot.
+

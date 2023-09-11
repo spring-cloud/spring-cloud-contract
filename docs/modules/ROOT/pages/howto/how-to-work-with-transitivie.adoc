@@ -1,12 +1,13 @@
 [[how-to-work-with-transitivie]]
 = How Can I Work with Transitive Dependencies?
 
+include::partial$_attributes.adoc[]
+
 The Spring Cloud Contract plugins add the tasks that create the stubs jar for you. One
 problem that arises is that, when reusing the stubs, you can mistakenly import all of
 that stub's dependencies. When building a Maven artifact, even though you have a couple
 of different jars, all of them share one `pom.xml` file, as the following listing shows:
 
-====
 [source,bash,indent=0]
 ----
 ├── producer-0.0.1.BUILD-20160903.075506-1-stubs.jar
@@ -19,7 +20,6 @@ of different jars, all of them share one `pom.xml` file, as the following listin
 ├── ...
 └── ...
 ----
-====
 
 There are three possibilities of working with those dependencies so as not to have any
 issues with transitive dependencies:

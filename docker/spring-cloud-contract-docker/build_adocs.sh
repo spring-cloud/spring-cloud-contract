@@ -3,7 +3,7 @@
 set -e
 
 CURRENT_DIR="$( pwd )"
-ADOC_OUTPUT_DIR="${CURRENT_DIR}/target/adoc/"
+ADOC_OUTPUT_DIR="${1:-${CURRENT_DIR}/target/adoc/}"
 pushd project
   mkdir -p "${ADOC_OUTPUT_DIR}"
   ./gradlew dumpAllProps

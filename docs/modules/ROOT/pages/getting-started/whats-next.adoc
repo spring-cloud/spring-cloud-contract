@@ -1,6 +1,8 @@
 [[getting-started-whats-next]]
 = Next Steps
 
+include::partial$_attributes.adoc[]
+
 Hopefully, this section provided some of the {project-full-name} basics and got you on your way
 to writing your own applications. If you are a task-oriented type of developer, you might
 want to jump over to https://spring.io and check out some

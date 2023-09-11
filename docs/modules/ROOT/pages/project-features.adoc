@@ -1,6 +1,8 @@
 [[features]]
 = Spring Cloud Contract Features
 
+include::partial$_attributes.adoc[]
+
 This section dives into the details of {project-full-name}. Here you can learn about the key
 features that you may want to use and customize. If you have not already done so, you
 might want to read the "xref:getting-started.adoc[Getting Started]" and

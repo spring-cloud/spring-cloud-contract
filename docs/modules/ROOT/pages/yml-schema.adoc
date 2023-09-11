@@ -2,13 +2,9 @@
 = YML Schema
 :page-section-summary-toc: 1
 
-
 Below you can find a JSON schema definition of a YAML contract.
 
-====
 [source,json,indent=0]
 ----
-// TODO: reenable
-//include::{project-root}/docs/target/contract_schema.json[indent=0]
+include::partial$contract_schema.json[indent=0]
 ----
-====

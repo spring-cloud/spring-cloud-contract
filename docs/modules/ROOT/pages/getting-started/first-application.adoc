@@ -1,6 +1,8 @@
 [[getting-started-first-application]]
 = Developing Your First Spring Cloud Contract-based Application
 
+include::partial$_attributes.adoc[]
+
 This brief tour walks through using Spring Cloud Contract. It consists of the following topics:
 
 * xref:getting-started/first-application.adoc#getting-started-first-application-producer[On the Producer Side]
@@ -13,7 +15,23 @@ For the sake of this example, the `Stub Storage` is Nexus/Artifactory.
 
 The following UML diagram shows the relationship of the parts of Spring Cloud Contract:
 
-image::getting-started-three-second.png[Getting started first application]
+[plantuml, getting-started-three-second, png]
+----
+"API Producer"->"API Producer": add Spring Cloud \nContract (SCC) plugin
+"API Producer"->"API Producer": add SCC Verifier dependency
+"API Producer"->"API Producer": define contracts
+"API Producer"->"Build": run build
+"Build"->"SCC Plugin": generate \ntests, stubs and stubs \nartifact (e.g. stubs-jar)
+"Build"->"Stub Storage": upload contracts \nand stubs and the project arifact
+"Build"->"API Producer": Build successful
+"API Consumer"->"API Consumer": add SCC Stub Runner \ndependency
+"API Consumer"->"API Consumer": write a SCC Stub Runner \nbased contract test
+"SCC Stub Runner"->"Stub Storage": test asks for [API Producer] stubs
+"Stub Storage"->"SCC Stub Runner": fetch the [API Producer] stubs
+"SCC Stub Runner"->"SCC Stub Runner": run in memory\n HTTP server stubs
+"API Consumer"->"SCC Stub Runner": send a request \nto the HTTP server stub
+"SCC Stub Runner"->"API Consumer": communication is correct
+----
 
 [[getting-started-first-application-producer]]
 == On the Producer Side
@@ -21,17 +39,14 @@ image::getting-started-three-second.png[Getting started first application]
 To start working with `Spring Cloud Contract`, you can add the Spring Cloud Contract Verifier
 dependency and plugin to your build file, as the following example shows:
 
-====
 [source,xml,indent=0]
 ----
-include:../:{introduction_url}/samples/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
+include::{samples_path}/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
 ----
-====
 
 The following listing shows how to add the plugin, which should go in the build/plugins
 portion of the file:
 
-====
 [source,xml,indent=0]
 ----
 <plugin>
@@ -41,7 +56,6 @@ portion of the file:
 	<extensions>true</extensions>
 </plugin>
 ----
-====
 
 [TIP]
 ====
@@ -64,9 +78,11 @@ For the HTTP stubs, a contract defines what kind of response should be returned 
 given request (taking into account the HTTP methods, URLs, headers, status codes, and so
 on). The following example shows an HTTP stub contract in both Groovy and YAML:
 
-====
+[tabs]
+======
+groovy::
++
 [source,groovy,indent=0,role="primary"]
-.groovy
 ----
 package contracts
 
@@ -95,8 +111,9 @@ org.springframework.cloud.contract.spec.Contract.make {
 }
 ----
 
+yaml::
++
 [source,yaml,indent=0,role="secondary"]
-.yaml
 ----
 request:
   method: PUT
@@ -119,7 +136,7 @@ response:
   headers:
     Content-Type: application/json;charset=UTF-8
 ----
-====
+======
 
 If you need to use messaging, you can define:
 
@@ -130,19 +147,22 @@ was sent, the message body, and the header).
 
 The following example shows a Camel messaging contract:
 
-====
+[tabs]
+======
+groovy::
++
 [source,groovy,indent=0,role="primary"]
-.groovy
 ----
-include:../:{verifier_core_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_method_dsl]
+include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_method_dsl]
 ----
 
+yaml::
++
 [source,yaml,indent=0,role="secondary"]
-.yaml
 ----
-include:../:{verifier_core_path}/src/test/resources/yml/contract_message_scenario1.yml[indent=0]
+include::{verifier_root_path}/src/test/resources/yml/contract_message_scenario1.yml[indent=0]
 ----
-====
+======
 
 Running `./mvnw clean install` automatically generates tests that verify the application
 compliance with the added contracts. By default, the generated tests are under
@@ -163,9 +183,11 @@ of the other frameworks, add its library to your classpath.
 
 The following listing shows samples for all frameworks:
 
-====
+[tabs]
+======
+mockmvc::
++
 [source,java,indent=0,role="primary"]
-.mockmvc
 ----
 @Test
 public void validate_shouldMarkClientAsFraud() throws Exception {
@@ -188,8 +210,9 @@ public void validate_shouldMarkClientAsFraud() throws Exception {
 }
 ----
 
+jaxrs::
++
 [source,java,indent=0,role="secondary"]
-.jaxrs
 ----
 @SuppressWarnings("rawtypes")
 public class FooTest {
@@ -225,8 +248,9 @@ public class FooTest {
 }
 ----
 
+webtestclient::
++
 [source,java,indent=0,role="secondary"]
-.webtestclient
 ----
 @Test
 	public void validate_shouldRejectABeerIfTooYoung() throws Exception {
@@ -247,7 +271,7 @@ public class FooTest {
 			assertThatJson(parsedJson).field("['status']").isEqualTo("NOT_OK");
 	}
 ----
-====
+======
 
 As the implementation of the functionalities described by the contracts is not yet
 present, the tests fail.
@@ -260,7 +284,6 @@ contain all the setup necessary information needed to run them (for example,
 
 The following example, from `pom.xml`, shows how to specify the base test class:
 
-====
 [source,xml,indent=0]
 ----
 <build>
@@ -283,11 +306,9 @@ The following example, from `pom.xml`, shows how to specify the base test class:
 ----
 <1> The `baseClassForTests` element lets you specify your base test class. It must be a child
 of a `configuration` element within `spring-cloud-contract-maven-plugin`.
-====
 
 The following example shows a minimal (but functional) base test class:
 
-====
 [source,java, indent=0]
 ----
 package com.example.contractTest;
@@ -304,7 +325,6 @@ public class BaseTestClass {
 	}
 }
 ----
-====
 
 This minimal class really is all you need to get your tests to work. It serves as a
 starting place to which the automatically generated tests attach.
@@ -312,7 +332,6 @@ starting place to which the automatically generated tests attach.
 Now we can move on to the implementation. For that, we first need a data class, which we
 then use in our controller. The following listing shows the data class:
 
-====
 [source,java, indent=0]
 ----
 package com.example.Test;
@@ -343,7 +362,6 @@ public class LoanRequest {
 	}
 }
 ----
-====
 
 The preceding class provides an object in which we can store the parameters. Because the
 client ID in the contract is called `client.id`, we need to use the
@@ -351,7 +369,6 @@ client ID in the contract is called `client.id`, we need to use the
 
 Now we can move along to the controller, which the following listing shows:
 
-====
 [source,java, indent=0]
 ----
 package com.example.docTest;
@@ -379,7 +396,6 @@ public class FraudController {
 <3> If it is too much, we return the JSON (created with a simple string here) that the
 test expects.
 <4> If we had a test to catch when the amount is allowable, we could match it to this output.
-====
 
 The `FraudController` is about as simple as things get. You can do much more, including
 logging, validating the client ID, and so on.
@@ -389,7 +405,6 @@ application and the stub artifacts are built and installed in the local Maven re
 Information about installing the stubs jar to the local repository appears in the logs, as
 the following example shows:
 
-====
 [source,bash,indent=0]
 ----
  [INFO] --- spring-cloud-contract-maven-plugin:1.0.0.BUILD-SNAPSHOT:generateStubs (default-generateStubs) @ http-server ---
@@ -405,7 +420,6 @@ the following example shows:
  [INFO] Installing /some/path/http-server/pom.xml to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT.pom
  [INFO] Installing /some/path/http-server/target/http-server-0.0.1-SNAPSHOT-stubs.jar to /path/to/your/.m2/repository/com/example/http-server/0.0.1-SNAPSHOT/http-server-0.0.1-SNAPSHOT-stubs.jar
 ----
-====
 
 You can now merge the changes and publish both the application and the stub artifacts
 in an online repository.
@@ -418,12 +432,10 @@ WireMock instance or messaging route that simulates the actual service.
 
 To get started, add the dependency to `Spring Cloud Contract Stub Runner`, as follows:
 
-====
 [source,xml,indent=0]
 ----
-include:../:{introduction_url}/samples/standalone/dsl/http-client/pom.xml[tags=stub_runner,indent=0]
+include::{samples_path}/standalone/dsl/http-client/pom.xml[tags=stub_runner,indent=0]
 ----
-====
 
 You can get the Producer-side stubs installed in your Maven repository in either of two
 ways:
@@ -431,13 +443,11 @@ ways:
 * By checking out the Producer side repository and adding contracts and generating the
 stubs by running the following commands:
 +
-====
 [source,bash,indent=0]
 ----
 $ cd local-http-server-repo
 $ ./mvnw clean install -DskipTests
 ----
-====
 NOTE: The tests are skipped because the Producer-side contract implementation is not yet
 in place, so the automatically-generated contract tests fail.
 
@@ -445,18 +455,15 @@ in place, so the automatically-generated contract tests fail.
 pass the stub artifact IDs and artifact repository URL as `Spring Cloud Contract Stub
 Runner` properties, as the following example shows:
 +
-====
 [source,yaml,indent=0]
 ----
-include:../:{introduction_url}/samples/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
+include::{samples_path}/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
 ----
-====
 
 Now you can annotate your test class with `@AutoConfigureStubRunner`. In the annotation,
 provide the `group-id` and `artifact-id` for `Spring Cloud Contract Stub Runner` to run
 the collaborators' stubs for you, as the following example shows:
 
-====
 [source,java, indent=0]
 ----
 @RunWith(SpringRunner.class)
@@ -467,7 +474,6 @@ public class LoanApplicationServiceTests {
 	. . .
 }
 ----
-====
 
 TIP: Use the `REMOTE` `stubsMode` when downloading stubs from an online repository and
 `LOCAL` for offline work.
@@ -476,7 +482,6 @@ In your integration test, you can receive stubbed versions of HTTP responses or 
 that are expected to be emitted by the collaborator service. You can see entries similar
 to the following in the build logs:
 
-====
 [source,bash,indent=0]
 ----
 2016-07-19 14:22:25.403  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Desired version is + - will try to resolve the latest version
@@ -487,5 +492,4 @@ to the following in the build logs:
 2016-07-19 14:22:25.475  INFO 41050 --- [           main] o.s.c.c.stubrunner.AetherStubDownloader  : Unpacked file to [/var/folders/0p/xwq47sq106x1_g3dtv6qfm940000gq/T/contracts100276532569594265]
 2016-07-19 14:22:27.737  INFO 41050 --- [           main] o.s.c.c.stubrunner.StubRunnerExecutor    : All stubs are now running RunningStubs [namesAndPorts={com.example:http-server:0.0.1-SNAPSHOT:stubs=8080}]
 ----
-====
 

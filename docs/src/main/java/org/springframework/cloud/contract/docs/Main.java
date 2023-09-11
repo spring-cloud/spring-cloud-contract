@@ -66,7 +66,7 @@ public class Main {
 	void produceJsonSchemaOfAYamlModel() throws IOException {
 		log.info("Generating schema...");
 		String schemaString = generateJsonSchemaForClass(YamlContract.class);
-		File schemaFile = new File(this.rootPath, "target/contract_schema.json");
+		File schemaFile = new File(this.rootPath, "modules/ROOT/partials/contract_schema.json");
 		Files.write(schemaFile.toPath(), schemaString.getBytes());
 		log.info("Generated schema!");
 	}

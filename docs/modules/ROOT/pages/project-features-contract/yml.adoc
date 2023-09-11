@@ -1,0 +1,6 @@
+[[contract-yml]]
+= Contract DSL in YAML
+:page-section-summary-toc: 1
+
+To see a schema of a YAML contract, visit the xref:../yml-schema.adoc[YML Schema] page.
+

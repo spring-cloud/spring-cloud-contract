@@ -2,6 +2,8 @@
 = How Can I Debug the Mapping, Request, or Response Being Sent by WireMock?
 :page-section-summary-toc: 1
 
+include::partial$_attributes.adoc[]
+
 Starting from version `1.2.0`, we set WireMock logging to
 `info` and set the WireMock notifier to being verbose. Now you can
 exactly know what request was received by the WireMock server and which
@@ -9,10 +11,8 @@ matching response definition was picked.
 
 To turn off this feature, set WireMock logging to `ERROR`, as follows:
 
-====
 [source,properties,indent=0]
 ----
 logging.level.com.github.tomakehurst.wiremock=ERROR
 ----
-====
 

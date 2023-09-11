@@ -1,40 +1,48 @@
 [[contract-dsl-rest-docs]]
 = How Can I Generate Spring REST Docs Snippets from the Contracts?
 
+include::partial$_attributes.adoc[]
+
 When you want to include the requests and responses of your API by using Spring REST Docs,
 you only need to make some minor changes to your setup if you are using MockMvc and RestAssuredMockMvc.
 To do so, include the following dependencies (if you have not already done so):
 
-====
+[tabs]
+======
+maven::
++
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
-.maven
 ----
-include:../:{standalone_restdocs_path}/http-server/pom.xml[tags=dependencies,indent=0]
+include::{standalone_restdocs_path}/http-server/pom.xml[tags=dependencies,indent=0]
 ----
 
+gradle::
++
 [source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
-.gradle
 ----
-include:../:{standalone_restdocs_path}/http-server/build.gradle[tags=dependencies,indent=0]
+include::{standalone_restdocs_path}/http-server/build.gradle[tags=dependencies,indent=0]
 ----
-====
+======
 
 Next, you need to make some changes to your base class. The following examples use
 `WebAppContext` and the standalone option with RestAssured:
 
-====
+[tabs]
+======
+WebAppContext::
++
 [source,java,indent=0,subs="verbatim,attributes",role="primary"]
-.WebAppContext
 ----
-include:../:{standalone_restdocs_path}/http-server/src/test/java/com/example/fraud/FraudBaseWithWebAppSetup.java[tags=base_class,indent=0]
+include::{standalone_restdocs_path}/http-server/src/test/java/com/example/fraud/FraudBaseWithWebAppSetup.java[tags=base_class,indent=0]
 ----
 
+Standalone::
++
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.Standalone
 ----
-include:../:{standalone_restdocs_path}/http-server/src/test/java/com/example/fraud/FraudBaseWithStandaloneSetup.java[tags=base_class,indent=0]
+include::{standalone_restdocs_path}/http-server/src/test/java/com/example/fraud/FraudBaseWithStandaloneSetup.java[tags=base_class,indent=0]
 ----
-====
+======
 
 TIP: You need not specify the output directory for the generated snippets (since version 1.2.0.RELEASE of Spring REST Docs).
 

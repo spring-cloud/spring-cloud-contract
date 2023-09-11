@@ -1,0 +1,34 @@
+[[feature-webflux-explicit]]
+= WebFlux with Explicit Mode
+
+include::partial$_attributes.adoc[]
+
+You can also use WebFlux with the explicit mode in your generated tests
+to work with WebFlux. The following example shows how to configure using explicit mode:
+
+====
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+<plugin>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+    <version>${spring-cloud-contract.version}</version>
+    <extensions>true</extensions>
+    <configuration>
+        <testMode>EXPLICIT</testMode>
+    </configuration>
+</plugin>
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
+----
+contracts {
+		testMode = 'EXPLICIT'
+}
+----
+====
+
+The following {samples_url}/producer_webflux/[example] shows how to set up a base class and RestAssured for Web Flux.
+

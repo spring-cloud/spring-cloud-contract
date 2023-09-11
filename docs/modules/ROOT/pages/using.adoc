@@ -1,6 +1,8 @@
 [[using]]
 = Using Spring Cloud Contract
 
+include::partial$_attributes.adoc[]
+
 This section goes into more detail about how you should use {project-full-name}. It covers topics
 such as flows of how to work with {project-full-name}. We also
 cover some {project-full-name} best practices.
@@ -19,7 +21,7 @@ You can check the xref:getting-started/first-application.adoc[Developing Your Fi
 
 In this flow, we perform the provider contract testing (the producer has no knowledge of how consumers use their API). The stubs are uploaded to a separate repository (they are not uploaded to Artifactory or Nexus).
 
-[[prerequisites]]
+[[using-prerequisites]]
 === Prerequisites
 
 Before testing provider contracts with stubs in git, you must provide a git repository
@@ -27,7 +29,6 @@ that contains all the stubs for each producer. For an example of such a project,
 {samples_code}/contract_git[this samples ] or {samples_code}/contract_git[this sample].
 As a result of pushing stubs there, the repository has the following structure:
 
-====
 [source,bash,indent=0]
 ----
 $ tree .
@@ -40,7 +41,6 @@ $ tree .
                └── contractC.groovy
 
 ----
-====
 
 You must also provide consumer code that has Spring Cloud Contract Stub Runner set up. For
 an example of such a project, see {samples_code}/consumer[this sample] and search for a
@@ -65,9 +65,11 @@ In order to fetch the stubs from a git repository instead of Nexus or Artifactor
 need to use the `git` protocol in the URL of the `repositoryRoot` property in Stub Runner.
 The following example shows how to set it up:
 
-====
+[tabs]
+======
+Annotation::
++
 [source,java,indent=0,subs="verbatim,attributes",role="primary"]
-.Annotation
 ----
 @AutoConfigureStubRunner(
 stubsMode = StubRunnerProperties.StubsMode.REMOTE,
@@ -75,8 +77,9 @@ stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 		ids = "com.example:artifact-id:0.0.1")
 ----
 
+JUnit 4 Rule::
++
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.JUnit 4 Rule
 ----
 @Rule
 	public StubRunnerRule rule = new StubRunnerRule()
@@ -85,8 +88,9 @@ stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 			.stubsMode(StubRunnerProperties.StubsMode.REMOTE);
 ----
 
+JUnit 5 Extension::
++
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.JUnit 5 Extension
 ----
 @RegisterExtension
 	public StubRunnerExtension stubRunnerExtension = new StubRunnerExtension()
@@ -94,7 +98,7 @@ stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 			.repoRoot("git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git")
 			.stubsMode(StubRunnerProperties.StubsMode.REMOTE);
 ----
-====
+======
 
 [[flows-provider-git-producer]]
 === Setting up the Producer
@@ -104,9 +108,11 @@ to use the `git` protocol in the URL of the plugin setup. Also you need to expli
 the plugin to push the stubs at the end of the build process. The following examples show
 how to do so in both Maven and Gradle:
 
-====
+[tabs]
+======
+Maven::
++
 [source,xml,indent=0,role="primary"]
-.Maven
 ----
 <plugin>
     <groupId>org.springframework.cloud</groupId>
@@ -144,8 +150,9 @@ how to do so in both Maven and Gradle:
 </plugin>
 ----
 
+Gradle::
++
 [source,groovy,indent=0,role="secondary"]
-.Gradle
 ----
 contracts {
 	// We want to pick contracts from a Git repository
@@ -171,7 +178,7 @@ the `publish` task is run
 */
 publish.dependsOn("publishStubsToScm")
 ----
-====
+======
 
 You can read more about setting up a git repository in the
 xref:howto/how-to-use-git-as-storage.adoc[How To section] of the documentation.
@@ -239,13 +246,11 @@ The test fails due to no server being present.
 For example, for a producer named `producer` and a consumer named `consumer`, the contracts would be stored under `src/main/resources/contracts/producer/consumer/`)
 . Once the contracts are defined, installs the producer stubs to local storage, as the following example shows:
 +
-====
 [source,bash,indent=0]
 ----
 $ cd src/main/resource/contracts/producer
 $ ./mvnw clean install
 ----
-====
 . Sets up Spring Cloud Contract (SCC) Stub Runner in the consumer tests, to:
 * Fetch the producer stubs from local storage.
 * Work in the stubs-per-consumer mode (this enables consumer driven contracts mode).
@@ -285,27 +290,25 @@ The producer:
 . Takes over the pull request to the repository with contract definitions. You can do it
 from the command line, as follows
 +
-====
 [source,bash,indent=0]
 ----
 $ git checkout -b the_branch_with_pull_request master
 git pull https://github.com/user_id/project_name.git the_branch_with_pull_request
 ----
-====
 . Installs the contract definitions, as follows
 +
-====
 [source,bash,indent=0]
 ----
 $ ./mvnw clean install
 ----
-====
 . Sets up the plugin to fetch the contract definitions from a JAR instead of from
 `src/test/resources/contracts`, as follows:
 +
-====
+[tabs]
+======
+Maven::
++
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
-.Maven
 ----
 <plugin>
 	<groupId>org.springframework.cloud</groupId>
@@ -325,8 +328,9 @@ $ ./mvnw clean install
 </plugin>
 ----
 
+Gradle::
++
 [source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
-.Gradle
 ----
 contracts {
 	// We want to use the JAR with contracts with the following coordinates
@@ -339,26 +343,28 @@ contracts {
 	// Additional configuration
 }
 ----
-====
+======
 . Runs the build to generate tests and stubs, as follows:
 +
-====
+[tabs]
+======
+Maven::
++
 [source,bash,indent=0,subs="verbatim,attributes",role="primary"]
-.Maven
 ----
 ./mvnw clean install
 ----
 
+Gradle::
++
 [source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
-.Gradle
 ----
 ./gradlew clean build
 ----
-====
+======
 . Writes the missing implementation, to make the tests pass.
 . Merges the pull request to the repository with contract definitions, as follows:
 +
-====
 [source,bash,indent=0]
 ----
 $ git commit -am "Finished the implementation to make the contract tests pass"
@@ -366,7 +372,6 @@ $ git checkout master
 $ git merge --no-ff the_branch_with_pull_request
 $ git push origin master
 ----
-====
 +
 The CI system builds the project with the contract definitions and uploads the JAR with
 the contract definitions to Nexus or Artifactory.
@@ -374,9 +379,11 @@ the contract definitions to Nexus or Artifactory.
 . Sets up the plugin so that the contract definitions are no longer taken from the local
 storage but from a remote location, as follows:
 +
-====
+[tabs]
+======
+Maven::
++
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
-.Maven
 ----
 <plugin>
 	<groupId>org.springframework.cloud</groupId>
@@ -396,8 +403,9 @@ storage but from a remote location, as follows:
 </plugin>
 ----
 
+Gradle::
++
 [source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
-.Gradle
 ----
 contracts {
 	// We want to use the JAR with contracts with the following coordinates
@@ -410,7 +418,7 @@ contracts {
 	// Additional configuration
 }
 ----
-====
+======
 . Merges the producer code with the new implementation.
 . The CI system:
 ** Builds the project.
@@ -475,9 +483,11 @@ You can read xref:getting-started/first-application.adoc[Developing Your First S
 
 For the consumer side, you can use a JUnit rule. That way, you need not start a Spring context. The following listing shows such a rule (in JUnit4 and JUnit 5);
 
-====
+[tabs]
+======
+JUnit 4 Rule::
++
 [source,java,indent=0,subs="verbatim,attributes",role="primary"]
-.JUnit 4 Rule
 ----
 @Rule
 	public StubRunnerRule rule = new StubRunnerRule()
@@ -486,8 +496,9 @@ For the consumer side, you can use a JUnit rule. That way, you need not start a 
 			.stubsMode(StubRunnerProperties.StubsMode.REMOTE);
 ----
 
+JUnit 5 Extension::
++
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.JUnit 5 Extension
 ----
 @RegisterExtension
 	public StubRunnerExtension stubRunnerExtension = new StubRunnerExtension()
@@ -495,7 +506,7 @@ For the consumer side, you can use a JUnit rule. That way, you need not start a 
 			.repoRoot("git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git")
 			.stubsMode(StubRunnerProperties.StubsMode.REMOTE);
 ----
-====
+======
 
 [[flows-provider-non-spring-producer]]
 === Setting up the Producer
@@ -509,7 +520,6 @@ non-Spring HTTP server.
 
 Assume that we have the following application:
 
-====
 [source,java,indent=0]
 ----
 package com.example.demo;
@@ -536,14 +546,15 @@ public class DemoApplication {
 
 }
 ----
-====
 
 Given that application, we can set up the plugin to use the `EXPLICIT` mode (that is, to
 send out requests to a real port), as follows:
 
-====
+[tabs]
+======
+Maven::
++
 [source,xml,indent=0,role="primary"]
-.Maven
 ----
 <plugin>
 	<groupId>org.springframework.cloud</groupId>
@@ -558,8 +569,9 @@ send out requests to a real port), as follows:
 </plugin>
 ----
 
+Gradle::
++
 [source,groovy,indent=0,role="secondary"]
-.Gradle
 ----
 contracts {
 	// This will setup the EXPLICIT mode for the tests
@@ -567,11 +579,10 @@ contracts {
 	baseClassForTests = "com.example.demo.BaseClass"
 }
 ----
-====
+======
 
 The base class might resemble the following:
 
-====
 [source,java,indent=0]
 ----
 import io.javalin.Javalin;
@@ -606,7 +617,6 @@ public class BaseClass {
 	}
 }
 ----
-====
 
 With such a setup:
 
@@ -647,8 +657,8 @@ At a high level, the producer:
 .. Start the application with mocked services on a given port.
 +
 If mocking is not possible, you can set up the infrastructure and define tests in a stateful way.
-.. Run the Spring Cloud Contract Docker image and pass the port of a running application as an environment variable.
 
+.. Run the Spring Cloud Contract Docker image and pass the port of a running application as an environment variable.
 The SCC Docker image:
 * Generates the tests from the attached volume.
 * Runs the tests against the running application.
@@ -725,9 +735,11 @@ As a producer, we:
 . Write RESTDocs tests of our API.
 . Add Spring Cloud Contract Stub Runner starter to our build (`spring-cloud-starter-contract-stub-runner`), as follows:
 +
-====
+[tabs]
+======
+Maven::
++
 [source,xml,indent=0,role="primary"]
-.Maven
 ----
 <dependencies>
 	<dependency>
@@ -750,8 +762,9 @@ As a producer, we:
 </dependencyManagement>
 ----
 
+Gradle::
++
 [source,groovy,indent=0,role="secondary"]
-.Gradle
 ----
 dependencies {
 	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
@@ -763,12 +776,14 @@ dependencyManagement {
 	}
 }
 ----
-====
+======
 . We set up the build tool to package our stubs, as follows:
 +
-====
+[tabs]
+======
+Maven::
++
 [source,xml,indent=0,role="primary"]
-.Maven
 ----
 <!-- pom.xml -->
 <plugins>
@@ -816,8 +831,9 @@ dependencyManagement {
 </assembly>
 ----
 
+Gradle::
++
 [source,groovy,indent=0,role="secondary"]
-.Gradle
 ----
 task stubsJar(type: Jar) {
 	classifier = "stubs"
@@ -830,7 +846,7 @@ task stubsJar(type: Jar) {
 stubsJar.dependsOn(test)
 bootJar.dependsOn(stubsJar)
 ----
-====
+======
 
 Now, when we run the tests, stubs are automatically published and packaged.
 

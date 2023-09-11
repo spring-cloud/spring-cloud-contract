@@ -2,6 +2,8 @@
 = How Can I See What Got Registered in the HTTP Server Stub?
 :page-section-summary-toc: 1
 
+include::partial$_attributes.adoc[]
+
 You can use the `mappingsOutputFolder` property on `@AutoConfigureStubRunner`, `StubRunnerRule`, or
 `StubRunnerExtension` to dump all mappings for each artifact ID. Also, the port at which the given stub server
 was started is attached.

@@ -1,6 +1,8 @@
 [[how-to-do-stubs-versioning]]
 = How to Do Stubs versioning?
 
+include::partial$_attributes.adoc[]
+
 This section covers versioning of the stubs, which you can handle in a number of different ways:
 
 * xref:howto/how-to-do-stubs-versioning.adoc#how-to-api-versioning[API Versioning]
@@ -31,42 +33,34 @@ Assume that you do continuous delivery and deployment, which means that you gene
 the jar each time you go through the pipeline and that the jar can go to production at any time. For example, your jar version
 looks like the following (because it got built on the 20.10.2016 at 20:15:21) :
 
-====
 [source,groovy,indent=0]
 ----
 1.0.0.20161020-201521-RELEASE
 ----
-====
 
 In that case, your generated stub jar should look like the following:
 
-====
 [source,groovy,indent=0]
 ----
 1.0.0.20161020-201521-RELEASE-stubs.jar
 ----
-====
 
 In this case, you should, inside your `application.yml` or `@AutoConfigureStubRunner` when
 referencing stubs, provide the latest version of the stubs. You can do that by passing the
 `+` sign. the following example shows how to do so:
 
-====
 [source,java,indent=0]
 ----
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:8080"})
 ----
-====
 
 If the versioning, however, is fixed (for example, `1.0.4.RELEASE` or `2.1.1`), you have to set the concrete value of the jar
 version. The following example shows how to do so for version 2.1.1:
 
-====
 [source,java,indent=0]
 ----
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:2.1.1:stubs:8080"})
 ----
-====
 
 [[how-to-dev-or-prod-stubs]]
 == Development or Production Stubs
@@ -78,21 +72,17 @@ deployment, you can run tests in one case with development stubs and in another 
 
 The following example works for tests that use the development version of the stubs:
 
-====
 [source,java,indent=0]
 ----
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:stubs:8080"})
 ----
-====
 
 The following example works for tests that use the production version of stubs:
 
-====
 [source,java,indent=0]
 ----
 @AutoConfigureStubRunner(ids = {"com.example:http-server-dsl:+:prod-stubs:8080"})
 ----
-====
 
 You can also pass those values also in properties from your deployment pipeline.
 

@@ -1,0 +1,106 @@
+[[features-custom-mode]]
+= Custom Mode
+
+include::partial$_attributes.adoc[]
+
+IMPORTANT: This mode is experimental and can change in the future.
+
+The Spring Cloud Contract lets you provide your own, custom, implementation of the
+`org.springframework.cloud.contract.verifier.http.HttpVerifier`. That way, you can use any client you want to send and receive a request. The default implementation in Spring Cloud Contract is `OkHttpHttpVerifier` and it uses OkHttp3 http client.
+
+To get started, set `testMode` to `CUSTOM`:
+
+====
+[source,groovy,indent=0]
+----
+testMode = 'CUSTOM'
+----
+====
+
+The following example shows a generated test:
+
+====
+[source,java,indent=0]
+----
+package com.example.beer;
+
+import com.example.BeerRestBase;
+import javax.inject.Inject;
+import org.springframework.cloud.contract.verifier.http.HttpVerifier;
+import org.springframework.cloud.contract.verifier.http.Request;
+import org.springframework.cloud.contract.verifier.http.Response;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat;
+import static org.springframework.cloud.contract.verifier.util.ContractVerifierUtil.*;
+import static org.springframework.cloud.contract.verifier.http.Request.given;
+
+@SuppressWarnings("rawtypes")
+public class RestTest extends BeerRestBase {
+	@Inject HttpVerifier httpVerifier;
+
+	@Test
+	public void validate_shouldGrantABeerIfOldEnough() throws Exception {
+		// given:
+			Request request = given()
+					.post("/beer.BeerService/check")
+					.scheme("HTTP")
+					.protocol("h2_prior_knowledge")
+					.header("Content-Type", "application/grpc")
+					.header("te", "trailers")
+					.body(fileToBytes(this, "shouldGrantABeerIfOldEnough_request_PersonToCheck_old_enough.bin"))
+					.build();
+
+
+		// when:
+			Response response = httpVerifier.exchange(request);
+
+
+		// then:
+			assertThat(response.statusCode()).isEqualTo(200);
+			assertThat(response.header("Content-Type")).matches("application/grpc.*");
+			assertThat(response.header("grpc-encoding")).isEqualTo("identity");
+			assertThat(response.header("grpc-accept-encoding")).isEqualTo("gzip");
+
+		// and:
+			assertThat(response.getBody().asByteArray()).isEqualTo(fileToBytes(this, "shouldGrantABeerIfOldEnough_response_Response_old_enough.bin"));
+	}
+
+}
+----
+====
+
+The following example shows a corresponding base class:
+
+====
+[source,java,indent=0]
+----
+@SpringBootTest(classes = BeerRestBase.Config.class,
+		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public abstract class BeerRestBase {
+
+	@Configuration
+	@EnableAutoConfiguration
+	static class Config {
+
+		@Bean
+		ProducerController producerController(PersonCheckingService personCheckingService) {
+			return new ProducerController(personCheckingService);
+		}
+
+		@Bean
+		PersonCheckingService testPersonCheckingService() {
+			return argument -> argument.getAge() >= 20;
+		}
+
+		@Bean
+		HttpVerifier httpOkVerifier(@LocalServerPort int port) {
+			return new OkHttpHttpVerifier("localhost:" + port);
+		}
+
+	}
+}
+----
+====
+

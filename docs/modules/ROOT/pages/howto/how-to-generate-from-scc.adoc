@@ -1,0 +1,17 @@
+[[how-to-generate-from-scc]]
+= How Can I Generate YAML, or X files from Spring Cloud Contract Contracts?
+
+include::partial$_attributes.adoc[]
+
+Spring Cloud Contract comes with a `ToFileContractsTransformer` class that lets you dump
+contracts as files for the given `ContractConverter`. It contains a `static void main`
+method that lets you run the transformer as an executable. It takes the following
+arguments:
+
+- argument 1 : `FQN`: Fully qualified name of the `ContractConverter` (for example, `PactContractConverter`). *REQUIRED*.
+- argument 2 : `path`: Path where the dumped files should be stored. *OPTIONAL* -- defaults to `target/converted-contracts`.
+- argument 3 : `path`: Path were the contracts should be searched for. *OPTIONAL* -- defaults to `src/test/resources/contracts`.
+
+After calling the transformer, the Spring Cloud Contract files are processed and,
+depending on the provided FQN of the `ContractTransformer`, the contracts are transformed
+to the required format and dumped to the provided folder.

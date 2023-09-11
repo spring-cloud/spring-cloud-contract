@@ -1,0 +1,28 @@
+[[features-jax-rs]]
+= JAX-RS
+
+include::partial$_attributes.adoc[]
+
+The Spring Cloud Contract supports the JAX-RS 2 Client API. The base class needs
+to define `protected WebTarget webTarget` and server initialization. The only option for
+testing JAX-RS API is to start a web server. Also, a request with a body needs to have a
+content type be set. Otherwise, the default of `application/octet-stream` gets used.
+
+To use JAX-RS mode, use the following setting:
+
+====
+[source,groovy,indent=0]
+----
+testMode = 'JAXRSCLIENT'
+----
+====
+
+The following example shows a generated test API:
+
+====
+[source,groovy,indent=0]
+----
+include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/JaxRsClientMethodBuilderSpec.groovy[tags=jaxrs,indent=0]
+----
+====
+

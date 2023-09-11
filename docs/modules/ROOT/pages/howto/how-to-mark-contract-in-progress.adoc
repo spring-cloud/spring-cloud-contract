@@ -2,6 +2,8 @@
 = How Can I Mark that a Contract Is in Progress
 :page-section-summary-toc: 1
 
-If a contract is in progress, it means that the, on the producer side, tests are not generated, but the stub is generated. You can read more about this in xref:_project-features-contract/common-top-elements.adoc#contract-dsl-in-progress[this section] of the documentation.
+include::partial$_attributes.adoc[]
+
+If a contract is in progress, it means that the, on the producer side, tests are not generated, but the stub is generated. You can read more about this in xref:project-features-contract/common-top-elements.adoc#contract-dsl-in-progress[this section] of the documentation.
 
 In a CI build, before going to production, you would like to ensure that no in-progress contracts are on the classpath, because they may lead to false positives. For this reason, by default, in the Spring Cloud Contract plugin, we set the value of `failOnInProgress` to `true`. If you want to allow such contracts when tests are to be generated, set the flag to `false`.

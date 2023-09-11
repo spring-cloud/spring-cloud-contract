@@ -1,0 +1,23 @@
+[[features-stub-runner-snapshot-versions]]
+= Snapshot Versions
+:page-section-summary-toc: 1
+
+include::partial$_attributes.adoc[]
+
+You can add the additional snapshot repository to your build file to use snapshot
+versions, which are automatically uploaded after every successful build, as follows:
+
+====
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+include::{standalone_samples_path}/http-server/pom.xml[tags=repos,indent=0]
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle (`settings.xml`)
+----
+include::{standalone_samples_path}/http-server/settings.gradle[tags=repos,indent=0]
+----
+====
+

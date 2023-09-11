@@ -1,6 +1,8 @@
 [[docker]]
 = Docker Project
 
+include::partial$_attributes.adoc[]
+
 In this section, we publish a `springcloud/spring-cloud-contract` Docker image
 that contains a project that generates tests and runs them in `EXPLICIT` mode
 against a running application.
@@ -75,24 +77,20 @@ The Docker image requires some environment variables to point to
 your running application, to the Artifact manager instance, and so on.
 The following list describes the environment variables:
 
-// TODO: reenable
-//include::{project-root}/docker/spring-cloud-contract-docker/target/adoc/props.adoc[indent=0]
+include::partial$props.adoc[indent=0]
 
 The following environment variables are used when tests are run:
 
-// TODO: reenable
-//include::{project-root}/docker/spring-cloud-contract-docker/target/adoc/appProps.adoc[indent=0]
+include::partial$appProps.adoc[indent=0]
 
 ### Customizing the gradle build
 
 You can provide a customized `gradle.build` to be run in the container by mounting your customized build file as a volume when running the container:
 
-====
 [source,bash]
 ----
 $ docker run -v <absolute-path-of-your-custom-file>:/spring-cloud-contract/build.gradle springcloud/spring-cloud-contract:<version>
 ----
-====
 
 [[docker-example-of-usage]]
 === Example of Usage via HTTP
@@ -100,28 +98,23 @@ $ docker run -v <absolute-path-of-your-custom-file>:/spring-cloud-contract/build
 In this section, we explore a simple MVC application. To get started, clone the following
 git repository and cd to the resulting directory, by running the following commands:
 
-====
 [source,bash]
 ----
 $ git clone https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs
 $ cd bookstore
 ----
-====
 
 The contracts are available in the `/contracts` folder.
 
 Since we want to run tests, we can run the following command:
 
-====
 [source,bash]
 ----
 $ npm test
 ----
-====
 
 However, for learning purposes, we split it into pieces, as follows:
 
-====
 [source,bash]
 ----
 # Stop docker infra (nodejs, artifactory)
@@ -150,7 +143,6 @@ $ docker run  --rm -e "APPLICATION_BASE_URL=${APPLICATION_BASE_URL}" -e "PUBLISH
 # Kill app
 $ pkill -f "node app"
 ----
-====
 
 Through bash scripts, the following happens:
 
@@ -188,9 +180,11 @@ in case of polyglot applications) then you'll have to have the following prerequ
 
 The contract needs to call a `triggerMessage(...)` method. That method is already provided in the base class for all tests in the docker image and will send out a request to the HTTP endpoint on the producer side. Below you can find examples of such contracts.
 
-====
+[tabs]
+======
+Groovy::
++
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
-.Groovy
 ----
 import org.springframework.cloud.contract.spec.Contract
 
@@ -224,8 +218,9 @@ Contract.make {
 }
 ----
 
+YAML::
++
 [source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
-.YAML
 ----
 description: 'Send a pong message in response to a ping message'
 label: 'ping_pong'
@@ -245,7 +240,7 @@ metadata:
             messageProperties:
                 receivedRoutingKey: '#'
 ----
-====
+======
 
 [[docker-example-of-usage-messaging-endpoint]]
 ==== HTTP Endpoint to Trigger a Message
@@ -256,7 +251,7 @@ code that sends a message to a broker. If such code is not generated then we nee
 
 The endpoint must have the following configuration:
 
-- URL: `/springcloudcontract/{label}` where `label` can be any text
+- URL: `/springcloudcontract/\{label}` where `label` can be any text
 - Method: `POST`
 - Basing on the `label` will generate a message that will be sent to a given destination according to the contract definition
 
@@ -264,7 +259,6 @@ Below you have an example of such an endpoint. If you're interested in
 providing an example in your language don't hesitate to file an issue in
 the https://github.com/spring-cloud/spring-cloud-contract/issues/new?assignees=&labels=&template=feature_request.md&title=New+Polyglot+Sample+of+a+HTTP+controller[Spring Cloud Contract repository at Github].
 
-====
 [source,python,indent=0,subs="verbatim,attributes"]
 .Python
 ----
@@ -300,7 +294,6 @@ if 'CONTRACT_TEST' in os.environ:
         else:
             raise ValueError('No such label expected.')
 ----
-====
 
 [[docker-example-of-usage-messaging-producer]]
 ==== Running Message Tests on the Producer Side
@@ -311,7 +304,6 @@ with attached contracts, however we will also add variables for the messaging
 code to work. In this case let's assume that the contracts are being stored in
 a Git repository.
 
-====
 [source,bash]
 ----
 #!/bin/bash
@@ -369,7 +361,6 @@ kill $APP_PID
 
 yes | docker-compose kill
 ----
-====
 
 What will happen is:
 
@@ -398,7 +389,7 @@ Since the Spring Cloud Contract Stub Runner Docker Image uses the standalone ver
 [[docker-stubrunner-env-vars]]
 === Environment Variables
 
-You can run the docker image and pass any of the xref:_project-features-stubrunner/stub-runner-common.adoc#features-stub-runner-common-properties-junit-spring[common properties for JUnit and Spring]
+You can run the docker image and pass any of the xref:project-features-stubrunner/stub-runner-common.adoc[common properties for JUnit and Spring]
 as environment variables. The convention is that all the
 letters should be upper case.
 The dot (`.`) should be replaced with underscore (`_`) characters. For example,
@@ -417,18 +408,15 @@ We want to use the stubs created in this <<docker-server-side>> step.
 Assume that we want to run the stubs on port `9876`. You can see the NodeJS code
 by cloning the repository and changing to the directory indicated in the following commands:
 
-====
 [source,bash]
 ----
 $ git clone https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs
 $ cd bookstore
 ----
-====
 
 Now we can run the Stub Runner Boot application with the stubs, by running the following
 commands:
 
-====
 [source,bash]
 ----
 # Provide the Spring Cloud Contract Docker version
@@ -449,7 +437,6 @@ $ docker run  --rm \
     -p "9876:9876" \
     springcloud/spring-cloud-contract-stub-runner:"${SC_CONTRACT_DOCKER_VERSION}"
 ----
-====
 
 When the preceding commands run,
 
@@ -462,7 +449,6 @@ When the preceding commands run,
 On the server side, we built a stateful stub. We can use curl to assert
 that the stubs are setup properly. To do so, run the following commands:
 
-====
 [source,bash]
 ----
 # let's run the first request (no response is returned)
@@ -471,11 +457,10 @@ $ curl -H "Content-Type:application/json" -X POST --data '{ "title" : "Title", "
 $ curl -X GET http://localhost:9876/api/books
 # You will receive contents of the JSON
 ----
-====
 
 IMPORTANT: If you want use the stubs that you have built locally, on your host,
 you should set the `-e STUBRUNNER_STUBS_MODE=LOCAL` environment variable and mount
-the volume of your local m2 (`-v "${HOME}/.m2/:/home/scc/.m2:ro"`).
+the volume of your local m2 (`-v "$\{HOME}/.m2/:/home/scc/.m2:ro"`).
 
 [[docker-stubrunner-example-messaging]]
 === Example of Usage with Messaging
@@ -576,7 +561,7 @@ yes | docker-compose kill
 ----
 <1> We need to have the middleware running first
 <2> The application needs to be up and running
-<3> Via the `STANDALONE_PROTOCOL` environment variable we will fetch a https://camel.apache.org/components/latest/index.html[Apache Camel Component]. The artifact that we will fetch is `org.apache.camel.springboot:camel-${STANDALONE_PROTOCOL}-starter`. In other words `STANDALONE_PROTOCOL` is matching Camel's component.
+<3> Via the `STANDALONE_PROTOCOL` environment variable we will fetch a https://camel.apache.org/components/latest/index.html[Apache Camel Component]. The artifact that we will fetch is `org.apache.camel.springboot:camel-$\{STANDALONE_PROTOCOL}-starter`. In other words `STANDALONE_PROTOCOL` is matching Camel's component.
 <4> We're setting addresses (we could be setting credentials) via Camel's Spring Boot Starter mechanisms. Example for https://camel.apache.org/components/latest/rabbitmq-component.html#_spring_boot_auto_configuration[Apache Camel's RabbitMQ Spring Boot Auto-Configuration]
 
 [[docker-stubrunner-running-middlware]]

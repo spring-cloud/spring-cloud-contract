@@ -1,6 +1,8 @@
 [[getting-started-introducing-spring-cloud-contract]]
 = Introducing Spring Cloud Contract
 
+include::partial$_attributes.adoc[]
+
 Spring Cloud Contract moves TDD to the level of software architecture.
 It lets you perform consumer-driven and producer-driven contract testing.
 
@@ -106,21 +108,23 @@ amount it wants to borrow from us. You also want to send it to the `/fraudcheck`
 the `PUT` method. The following listing shows a contract to check whether a client should
 be marked as a fraud in both Groovy and YAML:
 
-====
+[tabs]
+======
+groovy::
++
 [source,groovy,indent=0,role="primary"]
-.groovy
 ----
-include:../:{introduction_url}/samples/standalone/dsl/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.groovy[]
+include::{samples_path}/standalone/dsl/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.groovy[]
 ----
+======
 ////
 
 ////
 [source,yaml,indent=0,role="secondary"]
 .yaml
 ----
-include:../:{introduction_url}/samples/standalone/dsl/http-server/src/test/resources/contracts/yml/fraud/shouldMarkClientAsFraud.yml[]
+include::{samples_path}/standalone/dsl/http-server/src/test/resources/contracts/yml/fraud/shouldMarkClientAsFraud.yml[]
 ----
-====
 
 IMPORTANT: It is expected that contracts are coming from a **trusted source**. You should never download nor interact with contracts coming from untrusted locations.
 

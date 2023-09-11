@@ -1,0 +1,23 @@
+:sc-ext: java
+:project-full-name: Spring Cloud Contract
+
+// project-specific attributes
+:converters_path: example$tools-src/spring-cloud-contract-converters
+:verifier_root_path: example$verifier-src
+:contract_spec_path: example$specs-src/spring-cloud-contract-spec-java
+:contract_spec_tests_path: example$specs-src/spring-cloud-contract-spec
+:contract_kotlin_spec_path: example$specs-src/spring-cloud-contract-spec-kotlin
+:samples_path: example$samples-src
+:stubrunner_core_path: example$stubrunner-src
+:standalone_samples_path: example$samples-src/standalone/dsl
+:standalone_messaging_samples_path: example$samples-src/standalone/dsl
+:standalone_restdocs_path: example$samples-src/standalone/restdocs
+:tests_path: example$tests-src
+:tools_path: example$tools-src
+:plugins_path: {tools_path}
+:samples_branch: main
+:samples_url: https://raw.githubusercontent.com/spring-cloud-samples/spring-cloud-contract-samples/{samples_branch}
+:samples_code: https://github.com/spring-cloud-samples/spring-cloud-contract-samples/tree/{samples_branch}
+:doc_samples: {samples_code}/wiremock-for-contract-docs
+:doc_samples_url: {samples_url}/wiremock-for-contract-docs
+:wiremock_tests: example$wiremock-src
