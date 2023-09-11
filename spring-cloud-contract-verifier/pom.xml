@@ -254,18 +254,18 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<artifactId>jetty-server</artifactId>
-			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-ee10-servlet</artifactId>
+			<groupId>org.eclipse.jetty.ee10</groupId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<artifactId>jetty-servlet</artifactId>
-			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-ee10-servlet</artifactId>
+			<groupId>org.eclipse.jetty.ee10</groupId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<artifactId>jetty-servlets</artifactId>
-			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-ee10-servlets</artifactId>
+			<groupId>org.eclipse.jetty.ee10</groupId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
