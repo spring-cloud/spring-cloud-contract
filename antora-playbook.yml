@@ -40,5 +40,5 @@ ui:
     snapshot: true
 runtime:
   log:
-    failure_level: warn
+    failure_level: error
     format: pretty
