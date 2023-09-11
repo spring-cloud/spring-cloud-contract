@@ -1,4 +1,5 @@
 [[feature-integrations]]
 = Integrations
+:page-section-summary-toc: 1
 
 

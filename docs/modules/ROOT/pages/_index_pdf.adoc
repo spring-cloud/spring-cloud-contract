@@ -1,5 +1,6 @@
 [[spring-cloud-contract-reference-documentation]]
 = Spring Cloud Contract Reference Documentation
+:page-section-summary-toc: 1
 Adam Dudczak, Mathias Düsterhöft, Marcin Grzejszczak, Dennis Kieselhorst, Jakub Kubryński, Karol Lassak, Olga Maciaszek-Sharma, Mariusz Smykuła, Dave Syer, Jay Bryant
 
 

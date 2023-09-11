@@ -1,5 +1,6 @@
 [[how-to-use-the-failonnostubs-feature]]
 = How Can I Make The Build Pass if There Are No Contracts or Stubs
+:page-section-summary-toc: 1
 
 If you want Stub Runner not to fail if no stubs were found, switch the `generateStubs` property in the `@AutoConfigureStubRunner` annotation or call the `withFailOnNoStubs(false)` method on the JUnit Rule or Extension. You can read more about this in xref:_project-features-stubrunner/stub-runner-fail-on-no-stubs.adoc[this section] of the documentation.
 

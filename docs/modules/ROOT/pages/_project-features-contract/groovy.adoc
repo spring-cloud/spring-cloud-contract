@@ -1,5 +1,6 @@
 [[contract-groovy]]
 = Contract DSL in Groovy
+:page-section-summary-toc: 1
 
 If you are not familiar with Groovy, do not worry. You can use Java syntax in the
 Groovy DSL files as well.

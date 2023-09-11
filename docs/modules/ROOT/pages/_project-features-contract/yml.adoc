@@ -1,5 +1,6 @@
 [[contract-yml]]
 = Contract DSL in YAML
+:page-section-summary-toc: 1
 
 To see a schema of a YAML contract, visit the {docs-url}/reference/html/yml-schema.html[YML Schema] page.
 

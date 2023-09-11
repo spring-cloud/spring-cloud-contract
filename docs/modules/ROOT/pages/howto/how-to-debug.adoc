@@ -1,5 +1,6 @@
 [[how-to-debug]]
 = How Can I Debug the Request/Response Being Sent by the Generated Tests Client?
+:page-section-summary-toc: 1
 
 The generated tests all boil down to RestAssured in some form or fashion. RestAssured
 relies on the https://hc.apache.org/httpcomponents-client-ga/[Apache HttpClient].

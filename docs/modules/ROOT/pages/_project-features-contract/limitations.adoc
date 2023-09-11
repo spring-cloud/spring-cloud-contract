@@ -1,5 +1,6 @@
 [[contract-limitations]]
 = Limitations
+:page-section-summary-toc: 1
 
 WARNING: The support for verifying the size of JSON arrays is experimental. If you want
 to turn it on, set the value of the following system property to `true`:

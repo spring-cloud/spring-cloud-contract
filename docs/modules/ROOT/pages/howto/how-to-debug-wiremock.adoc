@@ -1,5 +1,6 @@
 [[how-to-debug-wiremock]]
 = How Can I Debug the Mapping, Request, or Response Being Sent by WireMock?
+:page-section-summary-toc: 1
 
 Starting from version `1.2.0`, we set WireMock logging to
 `info` and set the WireMock notifier to being verbose. Now you can

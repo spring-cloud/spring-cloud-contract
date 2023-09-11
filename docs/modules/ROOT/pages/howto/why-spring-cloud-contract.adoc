@@ -1,5 +1,6 @@
 [[why-spring-cloud-contract]]
 = Why use Spring Cloud Contract?
+:page-section-summary-toc: 1
 
 Spring Cloud Contract works great in a polyglot environment. This project has a lot of
 really interesting features. Quite a few of these features definitely make

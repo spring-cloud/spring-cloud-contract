@@ -1,5 +1,6 @@
 [[how-to-mark-contract-in-progress]]
 = How Can I Mark that a Contract Is in Progress
+:page-section-summary-toc: 1
 
 If a contract is in progress, it means that the, on the producer side, tests are not generated, but the stub is generated. You can read more about this in xref:_project-features-contract/common-top-elements.adoc#contract-dsl-in-progress[this section] of the documentation.
 

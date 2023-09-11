@@ -1,5 +1,6 @@
 [[features-stub-runner-snapshot-versions]]
 = Snapshot Versions
+:page-section-summary-toc: 1
 
 You can add the additional snapshot repository to your build file to use snapshot
 versions, which are automatically uploaded after every successful build, as follows:

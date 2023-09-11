@@ -1,5 +1,6 @@
 [[yml-schema]]
 = YML Schema
+:page-section-summary-toc: 1
 
 
 Below you can find a JSON schema definition of a YAML contract.
