@@ -1,4 +1,5 @@
 [legal]
+[[legal]]
 = Legal
 
 {project-version}

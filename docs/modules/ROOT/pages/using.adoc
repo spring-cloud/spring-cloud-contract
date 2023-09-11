@@ -20,6 +20,7 @@ You can check the <<getting-started.adoc#getting-started-first-application, Deve
 
 In this flow, we perform the provider contract testing (the producer has no knowledge of how consumers use their API). The stubs are uploaded to a separate repository (they are not uploaded to Artifactory or Nexus).
 
+[[prerequisites]]
 === Prerequisites
 
 Before testing provider contracts with stubs in git, you must provide a git repository
@@ -189,6 +190,7 @@ with contracts on the producer side flow.
 In this flow, we perform Consumer Driven Contract testing. The contract definitions are
 stored in a separate repository.
 
+[[prerequisites]]
 === Prerequisites
 
 To use consumer-driven contracts with the contracts held in an external repository, you need to set up a git repository that:

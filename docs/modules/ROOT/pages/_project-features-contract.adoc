@@ -1385,6 +1385,7 @@ contract.
 Currently, Spring Cloud Contract Verifier supports only JSON path-based matchers with the
 following matching possibilities:
 
+[[coded-dsl]]
 ===== Coded DSL
 
 For the stubs (in tests on the consumer's side):
@@ -1430,6 +1431,7 @@ following, depending on the JSON path:
 ** `Boolean`: If you point to a `Boolean`.
 * `byNull()`: The value taken from the response in the provided JSON path must be null.
 
+[[yaml]]
 ===== YAML
 
 NOTE: See the Groovy section for a detailed explanation of
@@ -1850,6 +1852,7 @@ public void validate_xmlMatches() throws Exception {
 ----
 ====
 
+[[xml-support-for-namespaces]]
 ==== XML Support for Namespaces
 Namespaced XML is supported. However, any XPath expresssions used to select namespaced content must be updated.
 
@@ -1881,6 +1884,7 @@ The XPath expression to select the email address is
 WARNING: Beware, as the unqualified expressions (`/customer/email/text()` or `*/[local-name()='customer' and namespace-uri()='http://demo.com/customer']/email/text()`)
 result in `""`. Even the child elements have to be referenced with the `local-name` syntax.
 
+[[general-namespaced-node-expression-syntax]]
 ===== General Namespaced Node Expression Syntax
 - Node using qualified namespace:
 ```
