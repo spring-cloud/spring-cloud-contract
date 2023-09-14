@@ -1,0 +1,15 @@
+= HTTP Contracts
+
+include::partial$_attributes.adoc[]
+
+This page describes most important HTTP related parts of the contract.
+
+include::_dsl-http-top-level-elements.adoc[]
+
+include::_dsl-request.adoc[]
+
+include::_dsl-response.adoc[]
+
+include::_dsl-xml.adoc[]
+
+include::_dsl-async.adoc[]

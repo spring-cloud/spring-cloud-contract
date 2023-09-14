@@ -1,6 +1,6 @@
 [[how-to-generate-stubs-at-runtime]]
 = How Can I Generate Stubs at Runtime
-:page-section-summary-toc: 1
+
 
 include::partial$_attributes.adoc[]
 

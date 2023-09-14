@@ -1,6 +1,6 @@
 [[how-to-reference-text-from-file]]
 = How Can I Reference Text from File?
-:page-section-summary-toc: 1
+
 
 include::partial$_attributes.adoc[]
 

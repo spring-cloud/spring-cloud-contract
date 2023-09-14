@@ -1,5 +1,5 @@
 [[contract-kotlin]]
-= Contract DSL in Kotlin
+== Contract DSL in Kotlin
 
 include::partial$_attributes.adoc[]
 
@@ -16,7 +16,7 @@ You need to explicitly pass the `spring-cloud-contract-spec-kotlin` dependency t
 The following example (in both Maven and Gradle) shows how to do so:
 
 ====
-[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+[source,xml,indent=0,subs="verbatim",role="primary"]
 .Maven
 ----
 <plugin>
@@ -46,7 +46,7 @@ The following example (in both Maven and Gradle) shows how to do so:
 </dependencies>
 ----
 
-[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,groovy,indent=0,subs="verbatim",role="secondary"]
 .Gradle
 ----
 buildscript {

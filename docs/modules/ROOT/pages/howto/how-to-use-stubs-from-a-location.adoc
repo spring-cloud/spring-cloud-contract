@@ -1,6 +1,6 @@
 [[how-to-use-stubs-from-a-location]]
 = How Can I Use Stubs from a Location
-:page-section-summary-toc: 1
+
 
 include::partial$_attributes.adoc[]
 

@@ -1,5 +1,5 @@
 [[contract-dsl-multiple]]
-= Multiple Contracts in One File
+== Multiple Contracts in One File
 
 include::partial$_attributes.adoc[]
 
@@ -19,7 +19,7 @@ include::{plugins_path}/spring-cloud-contract-maven-plugin/src/test/projects/mul
 include::{verifier_root_path}/src/test/resources/yml/multiple_contracts.yml[indent=0]
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .Java
 ----
 class contract implements Supplier<Collection<Contract>> {
@@ -41,7 +41,7 @@ class contract implements Supplier<Collection<Contract>> {
 }
 ----
 
-[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,kotlin,indent=0,subs="verbatim",role="secondary"]
 .Kotlin
 ----
 import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract

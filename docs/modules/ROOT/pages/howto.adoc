@@ -1,6 +1,6 @@
 [[howto]]
 = "`How-to`" Guides
-:page-section-summary-toc: 1
+
 
 include::partial$_attributes.adoc[]
 

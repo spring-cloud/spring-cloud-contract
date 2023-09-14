@@ -1,0 +1,160 @@
+[[flows-provider-non-spring]]
+= Provider Contract Testing with Stubs in Artifactory for a non-Spring Application
+
+include::partial$_attributes.adoc[]
+
+In this page you will learn how to do provider contract testing with a non-Spring application and stubs uploaded to Artifactory.
+
+[[flows-provider-non-spring-flow]]
+== The Flow
+
+You can read xref:getting-started/first-application.adoc[Developing Your First Spring Cloud Contract-based Application] to see the flow for provider contract testing with stubs in Nexus or Artifactory.
+
+[[flows-provider-non-spring-consumer]]
+== Setting up the Consumer
+
+For the consumer side, you can use a JUnit rule. That way, you need not start a Spring context. The following listing shows such a rule (in JUnit4 and JUnit 5);
+
+[tabs]
+===
+JUnit 4 Rule::
++
+[source,java,indent=0,subs="verbatim",role="primary"]
+----
+@Rule
+	public StubRunnerRule rule = new StubRunnerRule()
+			.downloadStub("com.example","artifact-id", "0.0.1")
+			.repoRoot("git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git")
+			.stubsMode(StubRunnerProperties.StubsMode.REMOTE);
+----
+
+JUnit 5 Extension::
++
+[source,java,indent=0,subs="verbatim",role="secondary"]
+----
+@RegisterExtension
+	public StubRunnerExtension stubRunnerExtension = new StubRunnerExtension()
+			.downloadStub("com.example","artifact-id", "0.0.1")
+			.repoRoot("git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git")
+			.stubsMode(StubRunnerProperties.StubsMode.REMOTE);
+----
+===
+
+[[flows-provider-non-spring-producer]]
+== Setting up the Producer
+
+By default, the Spring Cloud Contract Plugin uses Rest Assured's `MockMvc` setup for the
+generated tests. Since non-Spring applications do not use `MockMvc`, you can change the
+`testMode` to `EXPLICIT` to send a real request to an application bound at a specific port.
+
+In this example, we use a framework called https://javalin.io[Javalin] to start a
+non-Spring HTTP server.
+
+Assume that we have the following application:
+
+[source,java,indent=0]
+----
+package com.example.demo;
+
+import io.javalin.Javalin;
+
+public class DemoApplication {
+
+	public static void main(String[] args) {
+		new DemoApplication().run(7000);
+	}
+
+	public Javalin start(int port) {
+		return Javalin.create().start(port);
+	}
+
+	public Javalin registerGet(Javalin app) {
+		return app.get("/", ctx -> ctx.result("Hello World"));
+	}
+
+	public Javalin run(int port) {
+		return registerGet(start(port));
+	}
+
+}
+----
+
+Given that application, we can set up the plugin to use the `EXPLICIT` mode (that is, to
+send out requests to a real port), as follows:
+
+[tabs]
+===
+Maven::
++
+[source,xml,indent=0,role="primary"]
+----
+<plugin>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-contract-maven-plugin</artifactId>
+	<version>${spring-cloud-contract.version}</version>
+	<extensions>true</extensions>
+	<configuration>
+		<baseClassForTests>com.example.demo.BaseClass</baseClassForTests>
+		<!-- This will setup the EXPLICIT mode for the tests -->
+		<testMode>EXPLICIT</testMode>
+	</configuration>
+</plugin>
+----
+
+Gradle::
++
+[source,groovy,indent=0,role="secondary"]
+----
+contracts {
+	// This will setup the EXPLICIT mode for the tests
+	testMode = "EXPLICIT"
+	baseClassForTests = "com.example.demo.BaseClass"
+}
+----
+===
+
+The base class might resemble the following:
+
+[source,java,indent=0]
+----
+import io.javalin.Javalin;
+import io.restassured.RestAssured;
+import org.junit.After;
+import org.junit.Before;
+import org.springframework.cloud.test.TestSocketUtils;
+
+public class BaseClass {
+
+	Javalin app;
+
+	@Before
+	public void setup() {
+		// pick a random port
+		int port = TestSocketUtils.findAvailableTcpPort();
+		// start the application at a random port
+		this.app = start(port);
+		// tell Rest Assured where the started application is
+		RestAssured.baseURI = "http://localhost:" + port;
+	}
+
+	@After
+	public void close() {
+		// stop the server after each test
+		this.app.stop();
+	}
+
+	private Javalin start(int port) {
+		// reuse the production logic to start a server
+		return new DemoApplication().run(port);
+	}
+}
+----
+
+With such a setup:
+
+* We have set up the Spring Cloud Contract plugin to use the `EXPLICIT` mode to send real
+requests instead of mocked ones.
+* We have defined a base class that:
+** Starts the HTTP server on a random port for each test.
+** Sets Rest Assured to send requests to that port.
+** Closes the HTTP server after each test.

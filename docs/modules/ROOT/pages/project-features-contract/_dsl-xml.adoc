@@ -1,5 +1,5 @@
 [[contract-dsl-xml]]
-= XML Support for HTTP
+== XML Support for HTTP
 
 include::partial$_attributes.adoc[]
 
@@ -13,25 +13,25 @@ and the appropriate `MatchingType` as the second argument. All the body matchers
 The following example shows a Groovy DSL contract with XML in the response body:
 
 ====
-[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+[source,groovy,indent=0,subs="verbatim",role="primary"]
 .Groovy
 ----
 include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/XmlMethodBodyBuilderSpec.groovy[tags=xmlgroovy]
 ----
 
-[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,yml,indent=0,subs="verbatim",role="secondary"]
 .YAML
 ----
 include::{verifier_root_path}/src/test/resources/yml/contract_rest_xml.yml[indent=0]
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .Java
 ----
 include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_xml.java[tags=class,indent=0]
 ----
 
-[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,kotlin,indent=0,subs="verbatim",role="secondary"]
 .Kotlin
 ----
 include::{verifier_root_path}/src/test/resources/kotlin/contract_xml.kts[tags=class,indent=0]
@@ -72,7 +72,7 @@ public void validate_xmlMatches() throws Exception {
 ====
 
 [[xml-support-for-namespaces]]
-== XML Support for Namespaces
+=== XML Support for Namespaces
 Namespaced XML is supported. However, any XPath expresssions used to select namespaced content must be updated.
 
 Consider the following explicitly namespaced XML document:
@@ -104,7 +104,7 @@ WARNING: Beware, as the unqualified expressions (`/customer/email/text()` or `*/
 result in `""`. Even the child elements have to be referenced with the `local-name` syntax.
 
 [[general-namespaced-node-expression-syntax]]
-=== General Namespaced Node Expression Syntax
+==== General Namespaced Node Expression Syntax
 - Node using qualified namespace:
 ```
 /<node-name>

@@ -1,0 +1,54 @@
+[[customization-customization]]
+= DSL Customization
+
+include::partial$_attributes.adoc[]
+
+IMPORTANT: This section is valid only for the Groovy DSL
+
+You can customize the Spring Cloud Contract Verifier by extending the DSL, as shown in
+the remainder of this section.
+
+[[customization-extending]]
+== Extending the DSL
+
+You can provide your own functions to the DSL. The key requirement for this feature is to
+maintain the static compatibility. Later in this chapter, you can see examples of:
+
+* Creating a JAR with reusable classes.
+* Referencing of these classes in the DSLs.
+
+You can find the full example
+https://github.com/spring-cloud-samples/spring-cloud-contract-samples[here].
+
+[[customization-extending-common-jar]]
+== Common JAR
+
+The following examples show three classes that can be reused in the DSLs.
+
+{samples_url}/common/src/main/java/com/example/PatternUtils.java[PatternUtils] contains functions used by both the consumer and the producer.
+
+{samples_url}/common/src/main/java/com/example/ConsumerUtils.java[ConsumerUtils] contains functions used by the consumer.
+
+{samples_url}/common/src/main/java/com/example/ProducerUtils.java[ProducerUtils] contains functions used by the producer.
+
+[[customization-test-dep]]
+== Adding a Test Dependency in the Project's Dependencies
+
+To add a test dependency in the project's dependencies, you must first add the common jar
+dependency as a test dependency. Because your contracts files
+are available on the test resources path, the common jar classes automatically become
+visible in your Groovy files. The following {samples_url}/producer/[example] show how to test the dependency.
+
+[[customization-plugin-dep]]
+== Adding a Test Dependency in the Plugin's Dependencies
+
+Now, you must add the dependency for the plugin to reuse at runtime.
+
+[[customization-referencing]]
+== Referencing Classes in DSLs
+
+You can now reference your classes in your DSL, as the {samples_url}/producer/src/test/resources/contracts/beer/rest/shouldGrantABeerIfOldEnough.groovy[following example shows].
+
+IMPORTANT: You can set the Spring Cloud Contract plugin up by setting `convertToYaml` to
+`true`. That way, you do NOT have to add the dependency with the extended functionality
+to the consumer side, since the consumer side uses YAML contracts instead of Groovy contracts.

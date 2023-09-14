@@ -1,5 +1,5 @@
 [[contract-stateful-contracts]]
-= Stateful Contracts
+== Stateful Contracts
 
 include::partial$_attributes.adoc[]
 

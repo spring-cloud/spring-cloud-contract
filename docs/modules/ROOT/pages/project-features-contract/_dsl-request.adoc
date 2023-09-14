@@ -1,5 +1,5 @@
 [[contract-dsl-request]]
-= HTTP Request
+== HTTP Request
 
 include::partial$_attributes.adoc[]
 
@@ -21,13 +21,13 @@ include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract
 include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=request_obligatory,indent=0]
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .Java
 ----
 include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=request,indent=0]
 ----
 
-[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,kotlin,indent=0,subs="verbatim",role="secondary"]
 .Kotlin
 ----
 include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=request,indent=0]
@@ -52,13 +52,13 @@ include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract
 include::{verifier_root_path}/src/test/resources/yml/contract_rest_with_path.yml[tags=url_path,indent=0]
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .Java
 ----
 include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=url,indent=0]
 ----
 
-[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,kotlin,indent=0,subs="verbatim",role="secondary"]
 .Kotlin
 ----
 include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=url,indent=0]
@@ -68,13 +68,13 @@ include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.k
 `request` may contain query parameters, as the following example (which uses `urlPath`) shows:
 
 ====
-[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+[source,groovy,indent=0,subs="verbatim",role="primary"]
 .Groovy
 ----
 include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=urlpath,indent=0]
 ----
 
-[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,yml,indent=0,subs="verbatim",role="secondary"]
 .YAML
 ----
 include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=request,indent=0]
@@ -82,13 +82,13 @@ include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=request,i
 include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=query_params,indent=0]
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .Java
 ----
 include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=urlpath,indent=0]
 ----
 
-[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,kotlin,indent=0,subs="verbatim",role="secondary"]
 .Kotlin
 ----
 include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=urlpath,indent=0]
@@ -98,13 +98,13 @@ include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.k
 `request` can contain additional request headers, as the following example shows:
 
 ====
-[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+[source,groovy,indent=0,subs="verbatim",role="primary"]
 .Groovy
 ----
 include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=headers,indent=0]
 ----
 
-[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,yml,indent=0,subs="verbatim",role="secondary"]
 .YAML
 ----
 include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=request,indent=0]
@@ -112,13 +112,13 @@ include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=request,i
 include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=headers,indent=0]
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .Java
 ----
 include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=headers,indent=0]
 ----
 
-[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,kotlin,indent=0,subs="verbatim",role="secondary"]
 .Kotlin
 ----
 include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=headers,indent=0]
@@ -128,13 +128,13 @@ include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.k
 `request` may contain additional request cookies, as the following example shows:
 
 ====
-[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+[source,groovy,indent=0,subs="verbatim",role="primary"]
 .Groovy
 ----
 include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=cookies,indent=0]
 ----
 
-[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,yml,indent=0,subs="verbatim",role="secondary"]
 .YAML
 ----
 include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=request,indent=0]
@@ -142,13 +142,13 @@ include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=request,i
 include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=cookies,indent=0]
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .Java
 ----
 include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=cookies,indent=0]
 ----
 
-[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,kotlin,indent=0,subs="verbatim",role="secondary"]
 .Kotlin
 ----
 include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=cookies,indent=0]
@@ -158,13 +158,13 @@ include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.k
 `request` may contain a request body, as the following example shows:
 
 ====
-[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+[source,groovy,indent=0,subs="verbatim",role="primary"]
 .Groovy
 ----
 include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=body,indent=0]
 ----
 
-[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,yml,indent=0,subs="verbatim",role="secondary"]
 .YAML
 ----
 include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=request,indent=0]
@@ -172,13 +172,13 @@ include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=request,i
 include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=body,indent=0]
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .Java
 ----
 include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=body,indent=0]
 ----
 
-[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,kotlin,indent=0,subs="verbatim",role="secondary"]
 .Kotlin
 ----
 include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=body,indent=0]
@@ -201,13 +201,13 @@ include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract
 include::{verifier_root_path}/src/test/resources/yml/contract_multipart.yml[indent=0]
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .Java
 ----
 include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_multipart.java[tags=class,indent=0]
 ----
 
-[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,kotlin,indent=0,subs="verbatim",role="secondary"]
 .Kotlin
 ----
 include::{verifier_root_path}/src/test/resources/kotlin/multipart.kts[tags=class,indent=0]
@@ -246,7 +246,7 @@ Check this https://github.com/spring-cloud/spring-cloud-contract/issues/1886[iss
 From the contract in the preceding example, the generated test and stub look as follows:
 
 ====
-[source,java,indent=0,subs="verbatim,attributes",role="primary"]
+[source,java,indent=0,subs="verbatim",role="primary"]
 .Test
 ----
 // given:
@@ -264,7 +264,7 @@ From the contract in the preceding example, the generated test and stub look as 
   assertThat(response.statusCode()).isEqualTo(200);
 ----
 
-[source,json,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,json,indent=0,subs="verbatim",role="secondary"]
 .Stub
 ----
 include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/dsl/wiremock/WireMockGroovyDslSpec.groovy[tags=multipartwiremock,indent=0]

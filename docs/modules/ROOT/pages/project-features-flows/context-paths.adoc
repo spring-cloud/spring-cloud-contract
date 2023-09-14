@@ -13,7 +13,7 @@ side remains untouched. In order for the generated test to pass, you must use ex
 mode. The following example shows how to set the test mode to `EXPLICIT`:
 
 ====
-[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+[source,xml,indent=0,subs="verbatim",role="primary"]
 .Maven
 ----
 <plugin>
@@ -27,7 +27,7 @@ mode. The following example shows how to set the test mode to `EXPLICIT`:
 </plugin>
 ----
 
-[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,groovy,indent=0,subs="verbatim",role="secondary"]
 .Gradle
 ----
 contracts {

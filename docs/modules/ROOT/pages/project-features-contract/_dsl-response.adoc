@@ -1,5 +1,5 @@
 [[contract-dsl-response]]
-= HTTP Response
+== HTTP Response
 
 include::partial$_attributes.adoc[]
 
@@ -7,13 +7,13 @@ The response must contain an HTTP status code and may contain other information.
 following code shows an example:
 
 ====
-[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+[source,groovy,indent=0,subs="verbatim",role="primary"]
 .Groovy
 ----
 include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=response,indent=0]
 ----
 
-[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,yml,indent=0,subs="verbatim",role="secondary"]
 .YAML
 ----
 include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=response,indent=0]
@@ -21,13 +21,13 @@ include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=response,
 include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=response_obligatory,indent=0]
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .Java
 ----
 include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=response,indent=0]
 ----
 
-[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,kotlin,indent=0,subs="verbatim",role="secondary"]
 .Kotlin
 ----
 include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=response,indent=0]
@@ -35,7 +35,7 @@ include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.k
 ====
 
 Besides status, the response may contain headers, cookies, and a body, which are
-specified the same way as in the request (see xref:project-features-contract/dsl-request.adoc[HTTP Request]).
+specified the same way as in the request (see xref:project-features-contract/http.adoc#contract-dsl-request[HTTP Request]).
 
 TIP: In the Groovy DSL, you can reference the `org.springframework.cloud.contract.spec.internal.HttpStatus`
 methods to provide a meaningful status instead of a digit. For example, you can call

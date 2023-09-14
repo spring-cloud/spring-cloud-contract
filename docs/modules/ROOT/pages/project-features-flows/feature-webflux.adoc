@@ -7,7 +7,7 @@ You can work with WebFlux by using WebTestClient. The following listing shows ho
 configure WebTestClient as the test mode:
 
 ====
-[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+[source,xml,indent=0,subs="verbatim",role="primary"]
 .Maven
 ----
 <plugin>
@@ -21,7 +21,7 @@ configure WebTestClient as the test mode:
 </plugin>
 ----
 
-[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,groovy,indent=0,subs="verbatim",role="secondary"]
 .Gradle
 ----
 contracts {

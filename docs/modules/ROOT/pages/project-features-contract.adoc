@@ -15,25 +15,25 @@ TIP: Spring Cloud Contract supports defining multiple contracts in a single file
 The following example shows a contract definition:
 
 ====
-[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+[source,groovy,indent=0,subs="verbatim",role="primary"]
 .Groovy
 ----
 include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/SpringTestMethodBodyBuildersSpec.groovy[tags=dsl_example,indent=0]
 ----
 
-[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,yml,indent=0,subs="verbatim",role="secondary"]
 .YAML
 ----
 include::{verifier_root_path}/src/test/resources/yml/contract_rest.yml[indent=0]
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .Java
 ----
 include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_rest.java[tags=class,indent=0]
 ----
 
-[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,kotlin,indent=0,subs="verbatim",role="secondary"]
 .Kotlin
 ----
 include::{verifier_root_path}/src/test/resources/kotlin/contract_rest.kts[tags=class,indent=0]
@@ -49,3 +49,16 @@ mvn org.springframework.cloud:spring-cloud-contract-maven-plugin:convert
 ----
 ====
 
+include::project-features-contract/_groovy.adoc[]
+
+include::project-features-contract/_java.adoc[]
+
+include::project-features-contract/_kotlin.adoc[]
+
+include::project-features-contract/_yml.adoc[]
+
+include::project-features-contract/_limitations.adoc[]
+
+include::project-features-contract/_dsl-multiple.adoc[]
+
+include::project-features-contract/_stateful-contracts.adoc[]

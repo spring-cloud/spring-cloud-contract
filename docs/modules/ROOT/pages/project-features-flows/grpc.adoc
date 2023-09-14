@@ -10,7 +10,7 @@ IMPORTANT: Spring Cloud Contract has an experimental support for basic use cases
 Let's look at the following contract.
 
 ====
-[source,groovy,indent=0,subs="verbatim,attributes"]
+[source,groovy,indent=0,subs="verbatim"]
 .Groovy contract
 ----
 package contracts.beer.rest
@@ -66,7 +66,7 @@ then:
 In order to leverage the HTTP/2 support you must set the `CUSTOM` test mode as follow.
 
 ====
-[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+[source,xml,indent=0,subs="verbatim",role="primary"]
 .Maven
 ----
 <plugin>
@@ -81,7 +81,7 @@ In order to leverage the HTTP/2 support you must set the `CUSTOM` test mode as f
 </plugin>
 ----
 
-[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,groovy,indent=0,subs="verbatim",role="secondary"]
 .Gradle
 ----
 contracts {
@@ -94,7 +94,7 @@ contracts {
 The base class would set up the application running on a random port. It will also set the `HttpVerifier` implementation to one that can use the HTTP/2 protocol. Spring Cloud Contract comes with the `OkHttpHttpVerifier` implementation.
 
 ====
-[source,java,indent=0,subs="verbatim,attributes"]
+[source,java,indent=0,subs="verbatim"]
 .Base Class
 ----
 @SpringBootTest(classes = BeerRestBase.Config.class,
@@ -137,7 +137,7 @@ public abstract class BeerRestBase {
 Example of GRPC consumer side test. Due to the unusual behaviour of the GRPC server side, the stub is unable to return the `grpc-status` header in the proper moment. This is why we need to manually set the return status.
 
 ====
-[source,java,indent=0,subs="verbatim,attributes"]
+[source,java,indent=0,subs="verbatim"]
 .Consumer Side Test
 ----
 @SpringBootTest(webEnvironment = WebEnvironment.NONE, classes = GrpcTests.TestConfiguration.class, properties = {

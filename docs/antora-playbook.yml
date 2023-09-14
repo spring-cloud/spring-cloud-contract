@@ -23,16 +23,17 @@ asciidoc:
     hide-uri-scheme: '@'
     tabs-sync-option: '@'
     chomp: 'all'
-    plantuml-server-url: http://www.plantuml.com/plantuml
+    kroki-fetch-diagram: true
   extensions:
     - '@asciidoctor/tabs'
     - '@springio/asciidoctor-extensions' #TODO: Add plantuml rendering
+    - 'asciidoctor-kroki'
   sourcemap: true
 urls:
   latest_version_segment: ''
 runtime:
   log:
-    failure_level: error # at least until we figure out what's wrong in contract files
+    failure_level: warn
     format: pretty
 ui:
   bundle:

@@ -1,0 +1,8 @@
+[[flows-cdc-contracts-producer]]
+= Consumer Driven Contracts with Contracts on the Producer Side
+
+include::partial$_attributes.adoc[]
+
+See xref:../getting-started/cdc.adoc[Step-by-step Guide to Consumer Driven Contracts (CDC) with Contracts on the Producer Side]
+ to see the Consumer Driven Contracts
+with contracts on the producer side flow.

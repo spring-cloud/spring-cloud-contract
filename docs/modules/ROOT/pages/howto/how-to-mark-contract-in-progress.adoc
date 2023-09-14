@@ -1,6 +1,6 @@
 [[how-to-mark-contract-in-progress]]
 = How Can I Mark that a Contract Is in Progress
-:page-section-summary-toc: 1
+
 
 include::partial$_attributes.adoc[]
 

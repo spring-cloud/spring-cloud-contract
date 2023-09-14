@@ -1,0 +1,12 @@
+[[flows-cdc-contracts-stubs-git]]
+= Consumer-driven Contracts with Contracts on the Producer Side, Pushed to Git
+
+include::partial$_attributes.adoc[]
+
+You can read the xref:../getting-started/cdc.adoc[Step-by-step Guide to Consumer Driven Contracts (CDC) with contracts laying on the producer side] to see the consumer driven contracts with contracts on the producer side flow.
+
+The stub storage implementation is a git repository. We describe its setup in the
+xref:using/provider-contract-testing-with-stubs-in-git.adoc[Provider Contract Testing with Stubs in Git] section.
+
+You can read more about setting up a git repository for the consumer and producer sides in
+the xref:../howto/how-to-use-git-as-storage.adoc[How To section] of the documentation.

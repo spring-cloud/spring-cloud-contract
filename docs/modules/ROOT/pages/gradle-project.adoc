@@ -22,7 +22,7 @@ To add a Gradle plugin with dependencies, you can use code similar to the follow
 ======
 Plugin DSL GA versions::
 +
-[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+[source,groovy,indent=0,subs="verbatim",role="primary"]
 ----
 // build.gradle
 plugins {
@@ -48,7 +48,7 @@ dependencies {
 
 Plugin DSL non GA versions::
 +
-[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,groovy,indent=0,subs="verbatim",role="secondary"]
 ----
 // settings.gradle
 pluginManagement {
@@ -90,7 +90,7 @@ dependencies {
 
 Legacy Plugin Application::
 +
-[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,groovy,indent=0,subs="verbatim",role="secondary"]
 ----
 // build.gradle
 buildscript {

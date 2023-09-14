@@ -18,7 +18,7 @@ In this example, the `producer` project has been successfully
 built and stubs were generated under the `target/stubs` folder. As a consumer, one can set up the Stub Runner to pick the stubs from that location by using the `stubs://` protocol.
 
 ====
-[source,java,indent=0,subs="verbatim,attributes",role="primary"]
+[source,java,indent=0,subs="verbatim",role="primary"]
 .Annotation
 ----
 @AutoConfigureStubRunner(
@@ -27,7 +27,7 @@ stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 		ids = "com.example:some-producer")
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .JUnit 4 Rule
 ----
 @Rule
@@ -37,7 +37,7 @@ stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 			.stubsMode(StubRunnerProperties.StubsMode.REMOTE);
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .JUnit 5 Extension
 ----
 @RegisterExtension
@@ -76,7 +76,7 @@ The following listing shows an arrangement of contracts and stubs:
 ====
 
 ====
-[source,java,indent=0,subs="verbatim,attributes",role="primary"]
+[source,java,indent=0,subs="verbatim",role="primary"]
 .Annotation
 ----
 @AutoConfigureStubRunner(
@@ -86,7 +86,7 @@ stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 		properties="stubs.find-producer=true")
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .JUnit 4 Rule
 ----
 	static Map<String, String> contractProperties() {
@@ -103,7 +103,7 @@ stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 			.properties(contractProperties());
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .JUnit 5 Extension
 ----
 	static Map<String, String> contractProperties() {

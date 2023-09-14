@@ -10,7 +10,7 @@ As a producer, when a contract is defined, you are required to make the generate
 As a consumer, you can toggle a switch to generate stubs at runtime. Stub Runner ignores all the existing stub mappings and generates new ones for all the contract definitions. Another option is to pass the `stubrunner.generate-stubs` system property. The following example shows such a setup:
 
 ====
-[source,java,indent=0,subs="verbatim,attributes",role="primary"]
+[source,java,indent=0,subs="verbatim",role="primary"]
 .Annotation
 ----
 @AutoConfigureStubRunner(
@@ -20,7 +20,7 @@ stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 		generateStubs = true)
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .JUnit 4 Rule
 ----
 @Rule
@@ -31,7 +31,7 @@ stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 			.withGenerateStubs(true);
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .JUnit 5 Extension
 ----
 @RegisterExtension

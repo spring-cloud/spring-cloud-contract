@@ -24,13 +24,13 @@ The output message can be triggered by calling a method (such as a `Scheduler` w
 started and when a message was sent), as shown in the following example:
 
 ====
-[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+[source,groovy,indent=0,subs="verbatim",role="primary"]
 .Groovy
 ----
 include::{tests_path}/samples-messaging-integration/src/test/groovy/com/example/IntegrationMessagingApplicationSpec.groovy[tags=method_trigger,indent=0]
 ----
 
-[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,groovy,indent=0,subs="verbatim",role="secondary"]
 .YAML
 ----
 include::{verifier_root_path}/src/test/resources/yml/contract_message_method.yml[indent=0]
@@ -85,7 +85,7 @@ If you want to use Spring Cloud Stream, remember to add a test dependency on
 `org.springframework.cloud:spring-cloud-stream`, as  follows:
 
 ====
-[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+[source,xml,indent=0,subs="verbatim",role="primary"]
 .Maven
 ----
 <dependency>
@@ -97,7 +97,7 @@ If you want to use Spring Cloud Stream, remember to add a test dependency on
 </dependency>
 ----
 
-[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,groovy,indent=0,subs="verbatim",role="secondary"]
 .Gradle
 ----
 testImplementation(group: 'org.springframework.cloud', name: 'spring-cloud-stream', classifier: 'test-binder')
@@ -150,13 +150,13 @@ it is resolved as a channel name. For Camel, that's a certain component (for exa
 Consider the following contract:
 
 =====
-[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+[source,groovy,indent=0,subs="verbatim",role="primary"]
 .Groovy
 ----
 include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_method_dsl]
 ----
 
-[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,yml,indent=0,subs="verbatim",role="secondary"]
 .YAML
 [source,yml,indent=0]
 ----
@@ -167,13 +167,13 @@ include::{verifier_root_path}/src/test/resources/yml/contract_message_scenario1.
 For the preceding example, the following test would be created:
 
 ====
-[source,java,indent=0,subs="verbatim,attributes",role="primary"]
+[source,java,indent=0,subs="verbatim",role="primary"]
 .JUnit
 ----
 include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_method_junit_test]
 ----
 
-[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,groovy,indent=0,subs="verbatim",role="secondary"]
 .Spock
 ----
 include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/MessagingMethodBodyBuilderSpec.groovy[tags=trigger_method_test]
@@ -444,7 +444,7 @@ If you want to use Spring Cloud Stream, remember to add a dependency on
 `org.springframework.cloud:spring-cloud-stream` test support, as follows:
 
 ====
-[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+[source,xml,indent=0,subs="verbatim",role="primary"]
 .Maven
 ----
     <dependency>
@@ -454,7 +454,7 @@ If you want to use Spring Cloud Stream, remember to add a dependency on
     </dependency>
 ----
 
-[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,groovy,indent=0,subs="verbatim",role="secondary"]
 .Gradle
 ----
 testImplementation('org.springframework.cloud:spring-cloud-stream-test-binder')

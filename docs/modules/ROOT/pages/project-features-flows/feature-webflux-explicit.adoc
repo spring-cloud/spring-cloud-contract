@@ -7,7 +7,7 @@ You can also use WebFlux with the explicit mode in your generated tests
 to work with WebFlux. The following example shows how to configure using explicit mode:
 
 ====
-[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+[source,xml,indent=0,subs="verbatim",role="primary"]
 .Maven
 ----
 <plugin>
@@ -21,7 +21,7 @@ to work with WebFlux. The following example shows how to configure using explici
 </plugin>
 ----
 
-[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,groovy,indent=0,subs="verbatim",role="secondary"]
 .Gradle
 ----
 contracts {

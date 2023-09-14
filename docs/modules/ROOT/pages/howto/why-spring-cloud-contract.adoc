@@ -1,6 +1,6 @@
 [[why-spring-cloud-contract]]
 = Why use Spring Cloud Contract?
-:page-section-summary-toc: 1
+
 
 include::partial$_attributes.adoc[]
 

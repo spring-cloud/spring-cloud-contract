@@ -1,6 +1,6 @@
 [[contract-limitations]]
-= Limitations
-:page-section-summary-toc: 1
+== Limitations
+
 
 include::partial$_attributes.adoc[]
 

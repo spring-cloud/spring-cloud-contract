@@ -11,14 +11,14 @@ To do so, include the following dependencies (if you have not already done so):
 ======
 maven::
 +
-[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+[source,xml,indent=0,subs="verbatim",role="primary"]
 ----
 include::{standalone_restdocs_path}/http-server/pom.xml[tags=dependencies,indent=0]
 ----
 
 gradle::
 +
-[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,groovy,indent=0,subs="verbatim",role="secondary"]
 ----
 include::{standalone_restdocs_path}/http-server/build.gradle[tags=dependencies,indent=0]
 ----
@@ -31,14 +31,14 @@ Next, you need to make some changes to your base class. The following examples u
 ======
 WebAppContext::
 +
-[source,java,indent=0,subs="verbatim,attributes",role="primary"]
+[source,java,indent=0,subs="verbatim",role="primary"]
 ----
 include::{standalone_restdocs_path}/http-server/src/test/java/com/example/fraud/FraudBaseWithWebAppSetup.java[tags=base_class,indent=0]
 ----
 
 Standalone::
 +
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 ----
 include::{standalone_restdocs_path}/http-server/src/test/java/com/example/fraud/FraudBaseWithStandaloneSetup.java[tags=base_class,indent=0]
 ----

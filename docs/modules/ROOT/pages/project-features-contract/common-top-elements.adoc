@@ -31,13 +31,13 @@ include::{contract_spec_tests_path}/src/test/groovy/org/springframework/cloud/co
 include::{verifier_root_path}/src/test/resources/yml/contract_rest.yml[indent=0]
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .Java
 ----
 include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_rest_with_tags.java[tags=description,indent=0]
 ----
 
-[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,kotlin,indent=0,subs="verbatim",role="secondary"]
 .Kotlin
 ----
 include::{contract_kotlin_spec_path}/src/test/kotlin/org/springframework/cloud/contract/spec/ContractTests.kt[tags=description,indent=0]
@@ -72,13 +72,13 @@ include::{contract_spec_tests_path}/src/test/groovy/org/springframework/cloud/co
 include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=name,indent=0]
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .Java
 ----
 include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_rest_with_tags.java[tags=name,indent=0]
 ----
 
-[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,kotlin,indent=0,subs="verbatim",role="secondary"]
 .Kotlin
 ----
 include::{contract_kotlin_spec_path}/src/test/kotlin/org/springframework/cloud/contract/spec/ContractTests.kt[tags=name,indent=0]
@@ -105,13 +105,13 @@ include::{contract_spec_tests_path}/src/test/groovy/org/springframework/cloud/co
 include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=ignored,indent=0]
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .Java
 ----
 include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_rest_with_tags.java[tags=ignored,indent=0]
 ----
 
-[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,kotlin,indent=0,subs="verbatim",role="secondary"]
 .Kotlin
 ----
 include::{contract_kotlin_spec_path}/src/test/kotlin/org/springframework/cloud/contract/spec/ContractTests.kt[tags=ignored,indent=0]
@@ -141,13 +141,13 @@ include::{contract_spec_tests_path}/src/test/groovy/org/springframework/cloud/co
 include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=in_progress,indent=0]
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .Java
 ----
 include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_rest_with_tags.java[tags=in_progress,indent=0]
 ----
 
-[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,kotlin,indent=0,subs="verbatim",role="secondary"]
 .Kotlin
 ----
 include::{contract_kotlin_spec_path}/src/test/kotlin/org/springframework/cloud/contract/spec/ContractTests.kt[tags=in_progress,indent=0]
@@ -188,13 +188,13 @@ include::{verifier_root_path}/src/test/resources/classpath/readFromFile.groovy[i
 include::{verifier_root_path}/src/test/resources/yml/contract_from_file.yml[indent=0]
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .Java
 ----
 include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_rest_from_file.java[tags=class,indent=0]
 ----
 
-[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,kotlin,indent=0,subs="verbatim",role="secondary"]
 .Kotlin
 ----
 include::{verifier_root_path}/src/test/resources/kotlin/readFromFile.kts[tags=class,indent=0]
@@ -204,13 +204,13 @@ include::{verifier_root_path}/src/test/resources/kotlin/readFromFile.kts[tags=cl
 Further assume that the JSON files are as follows:
 
 ====
-[source,json,indent=0,subs="verbatim,attributes",role="primary"]
+[source,json,indent=0,subs="verbatim",role="primary"]
 .request.json
 ----
 include::{verifier_root_path}/src/test/resources/classpath/request.json[indent=0]
 ----
 
-[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,groovy,indent=0,subs="verbatim",role="secondary"]
 .response.json
 ----
 include::{verifier_root_path}/src/test/resources/classpath/response.json[indent=0]
@@ -239,13 +239,13 @@ include::{verifier_root_path}/src/test/resources/body_builder/worksWithPdf.groov
 include::{verifier_root_path}/src/test/resources/yml/contract_pdf.yml[indent=0]
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .Java
 ----
 include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_rest_from_pdf.java[tags=class,indent=0]
 ----
 
-[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,kotlin,indent=0,subs="verbatim",role="secondary"]
 .Kotlin
 ----
 include::{contract_kotlin_spec_path}/src/test/resources/contracts/shouldWorkWithBinaryPayload.kts[tags=class,indent=0]
@@ -276,13 +276,13 @@ include::{standalone_samples_path}/http-server/src/test/resources/contracts/frau
 include::{standalone_samples_path}/http-server/src/test/resources/contracts/yml/fraud/shouldReturnFraudStats.yml[tags=metadata,indent=0]
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .java
 ----
 include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_rest_with_tags.java[tags=metadata,indent=0]
 ----
 
-[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,kotlin,indent=0,subs="verbatim",role="secondary"]
 .kotlin
 ----
 include::{contract_kotlin_spec_path}/src/test/kotlin/org/springframework/cloud/contract/spec/ContractTests.kt[tags=metadata,indent=0]

@@ -1,6 +1,6 @@
 [[features-stub-runner]]
 = Spring Cloud Contract Stub Runner
-:page-section-summary-toc: 1
+
 
 One of the issues that you might encounter while using Spring Cloud Contract Verifier is
 passing the generated WireMock JSON stubs from the server side to the client side (or to

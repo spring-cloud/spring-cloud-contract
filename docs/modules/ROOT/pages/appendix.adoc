@@ -2,7 +2,7 @@
 [appendix]
 [[common-application-properties]]
 = Common application properties
-:page-section-summary-toc: 1
+
 
 include::partial$_attributes.adoc[]
 

@@ -1,5 +1,5 @@
 [[contract-dsl-http-top-level-elements]]
-= HTTP Top-Level Elements
+== HTTP Top-Level Elements
 
 include::partial$_attributes.adoc[]
 
@@ -12,13 +12,13 @@ You can call the following methods in the top-level closure of a contract defini
 The following example shows how to define an HTTP request contract:
 
 ====
-[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+[source,groovy,indent=0,subs="verbatim",role="primary"]
 .Groovy
 ----
 include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract/verifier/builder/ContractHttpDocsSpec.groovy[tags=http_dsl,indent=0]
 ----
 
-[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,yml,indent=0,subs="verbatim",role="secondary"]
 .YAML
 ----
 include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=priority,indent=0]
@@ -28,13 +28,13 @@ include::{verifier_root_path}/src/test/resources/yml/contract.yml[tags=response,
 ...
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .Java
 ----
 include::{verifier_root_path}/src/test/resources/contractsToCompile/contract_docs_examples.java[tags=http_dsl,indent=0]
 ----
 
-[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,kotlin,indent=0,subs="verbatim",role="secondary"]
 .Kotlin
 ----
 include::{verifier_root_path}/src/test/resources/kotlin/contract_docs_examples.kts[tags=http_dsl,indent=0]

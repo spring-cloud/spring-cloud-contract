@@ -1,0 +1,96 @@
+[[flows-provider-non-jvm]]
+= Provider Contract Testing with Stubs in Artifactory in a Non-JVM World
+
+In this flow, we assume that:
+
+* The API Producer and API Consumer are non-JVM applications.
+* The contract definitions are written in YAML.
+* The Stub Storage is Artifactory or Nexus.
+* Spring Cloud Contract Docker (SCC Docker) and Spring Cloud Contract Stub Runner Docker
+(SCC Stub Runner Docker) images are used.
+
+You can read more about how to use Spring Cloud Contract with Docker link:docker-project.html[here].
+
+https://spring.io/blog/2018/02/13/spring-cloud-contract-in-a-polyglot-world[Here], you can
+read a blog post about how to use Spring Cloud Contract in a polyglot world.
+
+https://github.com/spring-cloud-samples/spring-cloud-contract-nodejs/[Here], you can find
+a sample of a NodeJS application that uses Spring Cloud Contract both as a producer and a
+consumer.
+
+[[flows-provider-non-jvm-producer]]
+== Producer Flow
+
+At a high level, the producer:
+
+. Writes contract definitions (for example, in YAML).
+. Sets up the build tool to:
+.. Start the application with mocked services on a given port.
++
+If mocking is not possible, you can set up the infrastructure and define tests in a stateful way.
+
+.. Run the Spring Cloud Contract Docker image and pass the port of a running application as an environment variable.
+The SCC Docker image:
+* Generates the tests from the attached volume.
+* Runs the tests against the running application.
+
+Upon test completion, stubs get uploaded to a stub storage site (such as Artifactory or Git).
+
+The following UML diagram shows the producer flow:
+
+[plantuml, flows-provider-non-jvm-producer, png]
+----
+"API Producer"->"API Producer": write contract definitions
+"API Producer"->"API Producer": (preferable) prepare a way\nto run the app\nwith mocked services
+"API Producer"->"API Producer\nbuild": run the build
+"API Producer\nbuild"->"API Producer\nrunning app": run the app\non port X\nwith mocked services
+"API Producer\nbuild"->"SCC Docker": attach contract definitions\nas a volume
+"API Producer\nbuild"->"SCC Docker": set environment variables\ne.g. app running on port X
+"API Producer\nbuild"->"SCC Docker": run the contract tests
+"SCC Docker"->"SCC Docker\nimage": run the contract tests
+"SCC Docker\nimage"->"SCC Docker\nimage": pick the contract definitions\nfrom volume
+"SCC Docker\nimage"->"SCC Docker\nimage": generate contract tests
+"SCC Docker\nimage"->"SCC Docker\nimage": run the tests\nagainst app running\non port X
+"SCC Docker\nimage"->"SCC Docker\nimage": the tests are passing!
+"SCC Docker\nimage"->"Stub Storage": upload the stubs
+"SCC Docker\nimage"->"SCC Docker": build successful
+"SCC Docker"->"API Producer\nbuild": build successful
+"API Producer\nbuild"->"API Producer": build successful
+----
+
+[[flows-provider-non-jvm-consumer]]
+== Consumer Flow
+
+include::partial$_attributes.adoc[]
+
+At a high level, the consumer:
+
+. Sets up the build tool to:
+* Start the Spring Cloud Contract Stub Runner Docker image and start the stubs.
++
+The environment variables configure:
+* The stubs to fetch.
+* The location of the repositories.
++
+Note that:
+* To use the local storage, you can also attach it as a volume.
+* The ports at which the stubs are running need to be exposed.
+. Run the application tests against the running stubs.
+
+The following UML diagram shows the consumer flow:
+
+[plantuml, flows-provider-non-jvm-consumer, png]
+----
+"API Consumer"->"API Consumer\nbuild": run the build
+"API Consumer\nbuild"->"SCC\nStub Runner\nDocker": set environment variables\ne.g. stub X running on port Y
+"SCC\nStub Runner\nDocker"->"SCC\nStub Runner\nDocker\nimage": fetch and run\nthe stubs
+"SCC\nStub Runner\nDocker\nimage"->"Stub Storage": fetch the stubs of X
+"Stub Storage"->"SCC\nStub Runner\nDocker\nimage": stubs found
+"SCC\nStub Runner\nDocker\nimage"->"X Stub": run the stub of X
+"X Stub"->"SCC\nStub Runner\nDocker\nimage": stub is running\non port Y
+"SCC\nStub Runner\nDocker\nimage"->"SCC\nStub Runner\nDocker": stubs running and\nready for tests
+"API Consumer\nbuild"->"API Consumer\nbuild": run tests against X stub
+"API Consumer\nbuild"->"X Stub": send a request
+"X Stub"->"API Consumer\nbuild": response received
+"API Consumer\nbuild"->"API Consumer": build successful
+----

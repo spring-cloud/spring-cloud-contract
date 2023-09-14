@@ -8,29 +8,3 @@ features that you may want to use and customize. If you have not already done so
 might want to read the "xref:getting-started.adoc[Getting Started]" and
 "xref:using.adoc[Using Spring Cloud Contract]" sections, so that you have a good grounding in the
 basics.
-
-
-
-
-
-
-[[features-build-tools]]
-== Build Tools Integration
-
-You can run test generation and stub invokation in various ways. The most common ones are
-as follows:
-
-* link:maven-project.html[Maven]
-* link:gradle-project.html[Gradle]
-* link:docker-project.html[Docker]
-
-[[features-whats-next]]
-== What to Read Next
-
-If you want to learn more about any of the classes discussed in this section, you can browse the
-{github-code}[source code directly]. If you have specific questions, see the
-xref:howto.adoc[how-to] section.
-
-If you are comfortable with {project-full-name}'s core features, you can continue on and read
-about
-<<advanced.adoc#advanced.html, {project-full-name}'s advanced features>>.

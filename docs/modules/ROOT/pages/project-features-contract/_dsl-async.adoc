@@ -1,5 +1,5 @@
 [[contract-dsl-async]]
-= Asynchronous Support
+== Asynchronous Support
 
 include::partial$_attributes.adoc[]
 
@@ -8,7 +8,7 @@ returning `Callable`, `DeferredResult`, and so on), then, inside your contract, 
 provide an `async()` method in the `response` section. The following code shows an example:
 
 ====
-[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+[source,groovy,indent=0,subs="verbatim",role="primary"]
 .Groovy
 ----
 org.springframework.cloud.contract.spec.Contract.make {
@@ -24,14 +24,14 @@ org.springframework.cloud.contract.spec.Contract.make {
 }
 ----
 
-[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,yml,indent=0,subs="verbatim",role="secondary"]
 .YAML
 ----
 response:
     async: true
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .Java
 ----
 class contract implements Supplier<Collection<Contract>> {
@@ -52,7 +52,7 @@ class contract implements Supplier<Collection<Contract>> {
 }
 ----
 
-[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,kotlin,indent=0,subs="verbatim",role="secondary"]
 .Kotlin
 ----
 import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
@@ -73,7 +73,7 @@ You can also use the `fixedDelayMilliseconds` method or property to add delay to
 The following example shows how to do so:
 
 ====
-[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+[source,groovy,indent=0,subs="verbatim",role="primary"]
 .Groovy
 ----
 org.springframework.cloud.contract.spec.Contract.make {
@@ -89,14 +89,14 @@ org.springframework.cloud.contract.spec.Contract.make {
 }
 ----
 
-[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,yml,indent=0,subs="verbatim",role="secondary"]
 .YAML
 ----
 response:
     fixedDelayMilliseconds: 1000
 ----
 
-[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,java,indent=0,subs="verbatim",role="secondary"]
 .Java
 ----
 class contract implements Supplier<Collection<Contract>> {
@@ -117,7 +117,7 @@ class contract implements Supplier<Collection<Contract>> {
 }
 ----
 
-[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,kotlin,indent=0,subs="verbatim",role="secondary"]
 .Kotlin
 ----
 import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract

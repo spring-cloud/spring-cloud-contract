@@ -6,7 +6,7 @@ include::partial$_attributes.adoc[]
 Since https://graphql.org/[GraphQL] is essentially HTTP you can write a contract for it by creating a standard HTTP contract with an additional `metadata` entry with key `verifier` and a mapping `tool=graphql`.
 
 ====
-[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+[source,groovy,indent=0,subs="verbatim",role="primary"]
 .Groovy
 ----
 import org.springframework.cloud.contract.spec.Contract
@@ -50,7 +50,7 @@ Contract.make {
 }
 ----
 
-[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,yml,indent=0,subs="verbatim",role="secondary"]
 .YAML
 ----
 ---
@@ -99,7 +99,7 @@ Adding the metadata section will change the way the default, WireMock stub is bu
 On the producer side your configuration can look as follows.
 
 ====
-[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+[source,xml,indent=0,subs="verbatim",role="primary"]
 .Maven
 ----
 <plugin>
@@ -114,7 +114,7 @@ On the producer side your configuration can look as follows.
 </plugin>
 ----
 
-[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,groovy,indent=0,subs="verbatim",role="secondary"]
 .Gradle
 ----
 contracts {
@@ -127,7 +127,7 @@ contracts {
 The base class would set up the application running on a random port.
 
 ====
-[source,java,indent=0,subs="verbatim,attributes"]
+[source,java,indent=0,subs="verbatim"]
 .Base Class
 ----
 @SpringBootTest(classes = ProducerApplication.class,
@@ -152,7 +152,7 @@ public abstract class BaseClass {
 Example of a consumer side test of the GraphQL API.
 
 ====
-[source,java,indent=0,subs="verbatim,attributes"]
+[source,java,indent=0,subs="verbatim"]
 .Consumer Side Test
 ----
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)

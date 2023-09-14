@@ -1,0 +1,6 @@
+[[flows-provider-nexus]]
+= Provider Contract Testing with Stubs in Nexus or Artifactory
+
+include::partial$_attributes.adoc[]
+
+You can check the xref:../getting-started/first-application.adoc[Developing Your First Spring Cloud Contract based application] link to see the provider contract testing with stubs in the Nexus or Artifactory flow.

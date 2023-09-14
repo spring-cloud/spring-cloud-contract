@@ -1,0 +1,270 @@
+[[flows-cdc-contracts-external]]
+= Consumer Driven Contracts with Contracts in an External Repository
+
+include::partial$_attributes.adoc[]
+
+In this flow, we perform Consumer Driven Contract testing. The contract definitions are
+stored in a separate repository.
+
+[[prerequisites]]
+== Prerequisites
+
+To use consumer-driven contracts with the contracts held in an external repository, you need to set up a git repository that:
+
+* Contains all the contract definitions for each producer.
+* Can package the contract definitions in a JAR.
+* For each contract producer, contains a way (for example, `pom.xml`) to install stubs
+locally through the Spring Cloud Contract Plugin (SCC Plugin).
+
+For more information, see the xref:../howto/how-to-common-repo-with-contracts.adoc[How To section],
+where we describe how to set up such a repository.
+For an example of such a project, see {samples_code}/beer_contracts[this sample].
+
+You also need consumer code that has Spring Cloud Contract Stub Runner set up.
+For an example of such a project, see {samples_code}/consumer[this sample].
+You also need producer code that has Spring Cloud Contract set up, together with a plugin.
+For an example of such a project, see {samples_code}/producer_with_external_contracts[this sample].
+The stub storage is Nexus or Artifactory.
+
+At a high level, the flow is as follows:
+
+. The consumer works with the contract definitions from the separate repository.
+. Once the consumer's work is done, a branch with working code is created on the consumer
+side, and a pull request is made to the separate repository that holds the contract definitions.
+. The producer takes over the pull request to the separate repository with contract
+definitions and installs the JAR with all contracts locally.
+. The producer generates tests from the locally stored JAR and writes the missing
+implementation to make the tests pass.
+. Once the producer's work is done, the pull request to the repository that holds the
+contract definitions is merged.
+. After the CI tool builds the repository with the contract definitions and the JAR with
+contract definitions gets uploaded to Nexus or Artifactory, the producer can merge its branch.
+. Finally, the consumer can switch to working online to fetch stubs of the producer from a
+remote location, and the branch can be merged to master.
+
+[[flows-cdc-contracts-external-consumer]]
+== Consumer Flow
+
+The consumer:
+
+. Writes a test that would send a request to the producer.
++
+The test fails due to no server being present.
+. Clones the repository that holds the contract definitions.
+. Sets up the requirements as contracts under the folder, with the consumer name as a subfolder of the producer.
++
+For example, for a producer named `producer` and a consumer named `consumer`, the contracts would be stored under `src/main/resources/contracts/producer/consumer/`)
+. Once the contracts are defined, installs the producer stubs to local storage, as the following example shows:
++
+[source,bash,indent=0]
+----
+$ cd src/main/resource/contracts/producer
+$ ./mvnw clean install
+----
+. Sets up Spring Cloud Contract (SCC) Stub Runner in the consumer tests, to:
+* Fetch the producer stubs from local storage.
+* Work in the stubs-per-consumer mode (this enables consumer driven contracts mode).
++
+The SCC Stub Runner:
+* Fetches the producer stubs.
+* Runs an in-memory HTTP server stub with the producer stubs.
+Now your test communicates with the HTTP server stub, and your tests pass.
+* Creates a pull request to the repository with contract definitions, with the new contracts for the producer.
+* Branches your consumer code, until the producer team has merged their code.
+
+The following UML diagram shows the consumer flow:
+
+[plantuml, flow-overview-consumer-cdc-external-consumer, png]
+----
+"Consumer"->"Repo\nwith\ncontracts": clone
+"Repo\nwith\ncontracts"->"Repo\nwith\ncontracts\nclone": cloned
+"Consumer"->"Repo\nwith\ncontracts\nclone": create contract\ndefinitions of\nthe [Producer]
+"Repo\nwith\ncontracts\nclone"->"Local storage": install [Producer]\nstubs locally
+"Consumer"->"Consumer\nBuild": run tests
+"Consumer\nBuild"->"SCC\nStub Runner": Run [Producer] stubs
+"SCC\nStub Runner"->"Local storage": fetch [Producer] stubs
+"SCC\nStub Runner"->"Producer stub": stub is running
+"Consumer\nBuild"->"Producer stub": send a request\nin the tests
+"Producer stub"->"Consumer\nBuild": send a response
+"Consumer\nBuild"->"Consumer": the tests are passing
+"Consumer"->"Repo\nwith\ncontracts\nclone": send a pull request
+"Repo\nwith\ncontracts\nclone"->"Repo\nwith\ncontracts": pull request sent
+"Consumer"->"Consumer": branch the code
+----
+
+[[flows-cdc-contracts-external-producer]]
+== Producer Flow
+
+The producer:
+
+. Takes over the pull request to the repository with contract definitions. You can do it
+from the command line, as follows
++
+[source,bash,indent=0]
+----
+$ git checkout -b the_branch_with_pull_request master
+git pull https://github.com/user_id/project_name.git the_branch_with_pull_request
+----
+. Installs the contract definitions, as follows
++
+[source,bash,indent=0]
+----
+$ ./mvnw clean install
+----
+. Sets up the plugin to fetch the contract definitions from a JAR instead of from
+`src/test/resources/contracts`, as follows:
++
+[tabs]
+===
+Maven::
++
+[source,xml,indent=0,subs="verbatim",role="primary"]
+----
+<plugin>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-contract-maven-plugin</artifactId>
+	<version>${spring-cloud-contract.version}</version>
+	<extensions>true</extensions>
+	<configuration>
+		<!-- We want to use the JAR with contracts with the following coordinates -->
+		<contractDependency>
+			<groupId>com.example</groupId>
+			<artifactId>beer-contracts</artifactId>
+		</contractDependency>
+		<!-- The JAR with contracts should be taken from Maven local -->
+		<contractsMode>LOCAL</contractsMode>
+		<!-- ... additional configuration -->
+	</configuration>
+</plugin>
+----
+
+Gradle::
++
+[source,groovy,indent=0,subs="verbatim",role="secondary"]
+----
+contracts {
+	// We want to use the JAR with contracts with the following coordinates
+	// group id `com.example`, artifact id `beer-contracts`, LATEST version and NO classifier
+	contractDependency {
+		stringNotation = 'com.example:beer-contracts:+:'
+	}
+	// The JAR with contracts should be taken from Maven local
+	contractsMode = "LOCAL"
+	// Additional configuration
+}
+----
+===
+. Runs the build to generate tests and stubs, as follows:
++
+[tabs]
+===
+Maven::
++
+[source,bash,indent=0,subs="verbatim",role="primary"]
+----
+./mvnw clean install
+----
+
+Gradle::
++
+[source,groovy,indent=0,subs="verbatim",role="secondary"]
+----
+./gradlew clean build
+----
+===
+. Writes the missing implementation, to make the tests pass.
+. Merges the pull request to the repository with contract definitions, as follows:
++
+[source,bash,indent=0]
+----
+$ git commit -am "Finished the implementation to make the contract tests pass"
+$ git checkout master
+$ git merge --no-ff the_branch_with_pull_request
+$ git push origin master
+----
++
+The CI system builds the project with the contract definitions and uploads the JAR with
+the contract definitions to Nexus or Artifactory.
+. Switches to working remotely.
+. Sets up the plugin so that the contract definitions are no longer taken from the local
+storage but from a remote location, as follows:
++
+[tabs]
+===
+Maven::
++
+[source,xml,indent=0,subs="verbatim",role="primary"]
+----
+<plugin>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-contract-maven-plugin</artifactId>
+	<version>${spring-cloud-contract.version}</version>
+	<extensions>true</extensions>
+	<configuration>
+		<!-- We want to use the JAR with contracts with the following coordinates -->
+		<contractDependency>
+			<groupId>com.example</groupId>
+			<artifactId>beer-contracts</artifactId>
+		</contractDependency>
+		<!-- The JAR with contracts should be taken from a remote location -->
+		<contractsMode>REMOTE</contractsMode>
+		<!-- ... additional configuration -->
+	</configuration>
+</plugin>
+----
+
+Gradle::
++
+[source,groovy,indent=0,subs="verbatim",role="secondary"]
+----
+contracts {
+	// We want to use the JAR with contracts with the following coordinates
+	// group id `com.example`, artifact id `beer-contracts`, LATEST version and NO classifier
+	contractDependency {
+		stringNotation = 'com.example:beer-contracts:+:'
+	}
+	// The JAR with contracts should be taken from a remote location
+	contractsMode = "REMOTE"
+	// Additional configuration
+}
+----
+===
+. Merges the producer code with the new implementation.
+. The CI system:
+** Builds the project.
+** Generates tests, stubs, and the stub JAR.
+** Uploads the artifact with the application and the stubs to Nexus or Artifactory.
+
+The following UML diagram shows the producer process:
+
+[plantuml, flow-overview-consumer-cdc-external-producer, png]
+----
+"Producer"->"Repo\nwith\ncontracts": take over the pull request
+"Producer"->"Repo\nwith\ncontracts": install the contract\ndefinitions JAR
+"Repo\nwith\ncontracts"->"Local storage": install the\ncontract definitions\nJAR locally
+"Local storage"->"Repo\nwith\ncontracts": contract definitions\nJAR installed
+"Producer"->"Producer\nBuild": run build
+"Producer\nBuild"->"SCC\nPlugin": generate tests,\nstubs\nand stub jar
+"SCC\nPlugin"->"Local storage": fetch the contract definitions
+"Local storage"->"SCC\nPlugin": contract definitions found
+"SCC\nPlugin"->"SCC\nPlugin": generate tests
+"Producer\nBuild"->"Producer\nBuild": run the\ngenerated tests
+"Producer\nBuild"->"Producer": the tests failed to pass
+"Producer"->"Producer": write the missing implementation
+"Producer"->"Producer\nBuild": run the build again
+"Producer\nBuild"->"Producer\nBuild": fetch the contract definitions\nrun the generated tests
+"Producer\nBuild"->"Producer": the tests passed
+"Producer"->"Repo\nwith\ncontracts": merge the pull request
+"Repo\nwith\ncontracts"->"CI": build and upload the\ncontract definitions artifact
+"CI"->"Stub Storage": upload the\ncontract definitions
+"Producer"->"Producer": setup the SCC Plugin\nto work remotely
+"Producer"->"Producer": merge the code\nwith the implementation
+"Producer"->"CI": build and upload\nthe artifacts
+"CI"->"Producer\nBuild\non CI": generate tests,\nstubs\nand stub jar
+"Producer\nBuild\non CI"->"SCC\nPlugin": generate tests,\nstubs\nand stub jar
+"SCC\nPlugin"->"Stub Storage": fetch the contract definitions
+"Stub Storage"->"SCC\nPlugin": contract definitions found
+"SCC\nPlugin"->"SCC\nPlugin": generate tests
+"Producer\nBuild\non CI"->"CI": the build passed
+"Producer\nBuild\non CI"->"Stub Storage": upload the application JAR\nand the stubs jar
+----

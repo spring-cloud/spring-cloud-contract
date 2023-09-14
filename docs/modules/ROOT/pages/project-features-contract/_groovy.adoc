@@ -1,6 +1,6 @@
 [[contract-groovy]]
-= Contract DSL in Groovy
-:page-section-summary-toc: 1
+== Contract DSL in Groovy
+
 
 include::partial$_attributes.adoc[]
 

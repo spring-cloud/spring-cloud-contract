@@ -39,7 +39,7 @@ following section to your build:
 ======
 Maven::
 +
-[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+[source,xml,indent=0,subs="verbatim",role="primary"]
 ----
 include::{samples_path}/standalone/dsl/http-server/pom.xml[tags=repos,indent=0]
 ----
@@ -47,7 +47,7 @@ include::{samples_path}/standalone/dsl/http-server/pom.xml[tags=repos,indent=0]
 ////
 
 ////
-[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,groovy,indent=0,subs="verbatim",role="secondary"]
 .Gradle
 ----
 include::{samples_path}/standalone/dsl/http-server/build.gradle[tags=deps_repos,indent=0]

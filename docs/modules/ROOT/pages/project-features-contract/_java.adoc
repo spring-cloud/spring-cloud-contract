@@ -1,5 +1,5 @@
 [[contract-java]]
-= Contract DSL in Java
+== Contract DSL in Java
 
 include::partial$_attributes.adoc[]
 
@@ -10,7 +10,7 @@ You can also write the contract definitions under `src/test/java` (for example, 
 The following example (in both Maven and Gradle) has the contract definitions under `src/test/java`:
 
 ====
-[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+[source,xml,indent=0,subs="verbatim",role="primary"]
 .Maven
 ----
 <plugin>
@@ -24,7 +24,7 @@ The following example (in both Maven and Gradle) has the contract definitions un
 </plugin>
 ----
 
-[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,groovy,indent=0,subs="verbatim",role="secondary"]
 .Gradle
 ----
 contracts {

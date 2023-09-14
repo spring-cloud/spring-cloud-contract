@@ -1,6 +1,6 @@
 [[how-to-use-the-failonnostubs-feature]]
 = How Can I Make The Build Pass if There Are No Contracts or Stubs
-:page-section-summary-toc: 1
+
 
 include::partial$_attributes.adoc[]
 

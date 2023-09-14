@@ -184,7 +184,7 @@ The contract needs to call a `triggerMessage(...)` method. That method is alread
 ======
 Groovy::
 +
-[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+[source,groovy,indent=0,subs="verbatim",role="primary"]
 ----
 import org.springframework.cloud.contract.spec.Contract
 
@@ -220,7 +220,7 @@ Contract.make {
 
 YAML::
 +
-[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+[source,yml,indent=0,subs="verbatim",role="secondary"]
 ----
 description: 'Send a pong message in response to a ping message'
 label: 'ping_pong'
@@ -259,7 +259,7 @@ Below you have an example of such an endpoint. If you're interested in
 providing an example in your language don't hesitate to file an issue in
 the https://github.com/spring-cloud/spring-cloud-contract/issues/new?assignees=&labels=&template=feature_request.md&title=New+Polyglot+Sample+of+a+HTTP+controller[Spring Cloud Contract repository at Github].
 
-[source,python,indent=0,subs="verbatim,attributes"]
+[source,python,indent=0,subs="verbatim"]
 .Python
 ----
 #!/usr/bin/env python

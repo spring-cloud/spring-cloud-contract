@@ -1,6 +1,6 @@
 [[how-to-debug-wiremock]]
 = How Can I Debug the Mapping, Request, or Response Being Sent by WireMock?
-:page-section-summary-toc: 1
+
 
 include::partial$_attributes.adoc[]
 

@@ -1,7 +1,7 @@
 [legal]
 [[legal]]
 = Legal
-:page-section-summary-toc: 1
+
 
 {project-version}
 

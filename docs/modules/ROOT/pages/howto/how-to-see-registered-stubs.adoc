@@ -1,6 +1,6 @@
 [[how-to-see-registered-stubs]]
 = How Can I See What Got Registered in the HTTP Server Stub?
-:page-section-summary-toc: 1
+
 
 include::partial$_attributes.adoc[]
 
