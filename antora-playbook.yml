@@ -31,6 +31,7 @@ asciidoc:
   extensions:
     - '@asciidoctor/tabs'
     - '@springio/asciidoctor-extensions'
+    - 'asciidoctor-kroki'
 urls:
   latest_version_segment_strategy: redirect:to
   latest_version_segment: ''
