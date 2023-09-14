@@ -27,6 +27,7 @@ asciidoc:
     page-pagination: ''
     hide-uri-scheme: '@'
     tabs-sync-option: '@'
+    kroki-fetch-diagram: true
   extensions:
     - '@asciidoctor/tabs'
     - '@springio/asciidoctor-extensions'
