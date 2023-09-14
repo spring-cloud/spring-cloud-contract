@@ -251,7 +251,7 @@ class StubRunnerExecutor implements StubFinder {
 		setMessageType(contract, ContractVerifierMessageMetadata.MessageType.OUTPUT);
 
 		Object payload = null;
-		if (body.getClientValue() instanceof FromFileProperty) {
+		if (body != null && body.getClientValue() instanceof FromFileProperty) {
 			FromFileProperty fromFile = (FromFileProperty) body.getClientValue();
 			if (fromFile.isByte()) {
 				payload = fromFile.asBytes();
