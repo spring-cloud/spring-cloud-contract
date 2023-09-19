@@ -46,4 +46,4 @@ updates:
       # only upgrade by minor or patch
       - dependency-name: "*"
         update-types:
-          - version-update:semver-minor
+          - version-update:semver-major
