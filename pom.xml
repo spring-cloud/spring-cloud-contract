@@ -40,7 +40,7 @@
 		<handlebars.version>4.3.1</handlebars.version>
 		<jgit.version>6.6.1.202309021850-r</jgit.version>
 		<javax-inject.version>1</javax-inject.version>
-		<json-unit-assertj.version>2.32.0</json-unit-assertj.version>
+		<json-unit-assertj.version>3.2.2</json-unit-assertj.version>
 		<rest-assured.version>5.2.1</rest-assured.version>
 		<slf4j.version>[2.0.0,)</slf4j.version>
 		<thin-jar.version>1.0.30.RELEASE</thin-jar.version>
