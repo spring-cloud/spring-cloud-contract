@@ -49,7 +49,7 @@
 		<gmavenplus-plugin.version>1.12.1</gmavenplus-plugin.version>
 
 		<!-- We need to have compatibility with Gradle -->
-		<groovy.version>3.0.9</groovy.version>
+		<groovy.version>3.0.19</groovy.version>
 		<!-- We need to have compatibility with Boot -->
 		<maven.version>3.6.3</maven.version>
 		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
