@@ -45,7 +45,7 @@
 		<json-unit-assertj.version>2.27.0</json-unit-assertj.version>
 
 		<junit-vintage.version>5.9.1</junit-vintage.version>
-		<junit-jupiter.version>5.9.1</junit-jupiter.version>
+		<junit-jupiter.version>5.9.3</junit-jupiter.version>
 		<gmavenplus-plugin.version>1.12.1</gmavenplus-plugin.version>
 
 		<!-- We need to have compatibility with Gradle -->
