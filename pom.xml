@@ -52,6 +52,7 @@
 		<awaitility.version>4.2.0</awaitility.version>
 		<artemis.version>2.26.0</artemis.version>
 		<testcontainers.version>1.17.5</testcontainers.version>
+		<hamcrest.version>2.2</hamcrest.version>
 
 		<!-- We need to have compatibility with Gradle -->
 		<groovy.version>4.0.0</groovy.version>
@@ -490,6 +491,11 @@
 				<groupId>org.testcontainers</groupId>
 				<artifactId>junit-jupiter</artifactId>
 				<version>${testcontainers.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hamcrest</groupId>
+				<artifactId>hamcrest</artifactId>
+				<version>${hamcrest.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
