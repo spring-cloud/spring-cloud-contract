@@ -1,4 +1,4 @@
-:branch: main
+:branch: 4.0.x
 
 == Java Project with JUnit Tests
 
