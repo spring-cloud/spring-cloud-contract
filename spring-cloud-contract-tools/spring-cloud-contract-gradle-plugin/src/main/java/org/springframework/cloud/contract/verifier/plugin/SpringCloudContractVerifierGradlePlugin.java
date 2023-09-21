@@ -33,20 +33,19 @@ import org.gradle.api.attributes.Usage;
 import org.gradle.api.file.Directory;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.ProjectLayout;
-import org.gradle.api.internal.HasConvention;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.plugins.GroovyPlugin;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.JvmTestSuitePlugin;
 import org.gradle.api.plugins.jvm.JvmTestSuite;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
-import org.gradle.api.tasks.GroovySourceSet;
+import org.gradle.api.tasks.GroovySourceDirectorySet;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.SourceSetOutput;
@@ -131,7 +130,7 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 		registerPublishStubsToScmTask(extension, generateClientStubs);
 
 
-		JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
+		JavaPluginExtension javaExtension = project.getExtensions().getByType(JavaPluginExtension.class);
 		TestingExtension testing = project.getExtensions().getByType(TestingExtension.class);
 		testing.getSuites().register("contractTest", JvmTestSuite.class, contractTestSuite -> {
 			contractTestSuite.useJUnitJupiter();
@@ -150,7 +149,7 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 			});
 
 			contractTestSuite.sources(sourceSet -> {
-				configureSourceSets(extension, javaConvention, sourceSet);
+				configureSourceSets(extension, javaExtension, sourceSet);
 
 				project.getTasks().named(sourceSet.getProcessResourcesTaskName(), processContractTestResourcesTask -> {
 					processContractTestResourcesTask.dependsOn(generateServerTestsTaskProvider);
@@ -181,12 +180,12 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 		project.getDependencies().add(CONTRACT_TEST_GENERATOR_RUNTIME_CLASSPATH_CONFIGURATION_NAME, "org.springframework.cloud:spring-cloud-contract-converters:" + SPRING_CLOUD_VERSION);
 	}
 
-	private SourceSet configureSourceSets(ContractVerifierExtension extension, JavaPluginConvention javaConvention, SourceSet contractTest) {
-		SourceSetContainer sourceSets = javaConvention.getSourceSets();
+	private SourceSet configureSourceSets(ContractVerifierExtension extension, JavaPluginExtension javaExtension, SourceSet contractTest) {
+		SourceSetContainer sourceSets = javaExtension.getSourceSets();
 		contractTest.getJava().srcDirs(extension.getGeneratedTestJavaSourcesDir());
 		project.getPlugins().withType(GroovyPlugin.class, groovyPlugin -> {
-			GroovySourceSet groovy = ((HasConvention) contractTest).getConvention().getPlugin(GroovySourceSet.class);
-			groovy.getGroovy().srcDirs(extension.getGeneratedTestGroovySourcesDir());
+			GroovySourceDirectorySet groovy = contractTest.getExtensions().getByType(GroovySourceDirectorySet.class);
+			groovy.srcDirs(extension.getGeneratedTestGroovySourcesDir());
 		});
 		contractTest.getResources().srcDirs(extension.getGeneratedTestResourcesDir());
 
