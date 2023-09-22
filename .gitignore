@@ -20,3 +20,5 @@ node_modules
 build
 package.json
 package-lock.json
+.gradle
+dependency-reduced-pom.xml
