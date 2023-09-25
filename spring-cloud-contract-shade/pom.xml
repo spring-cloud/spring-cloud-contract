@@ -14,7 +14,7 @@
 		<maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
 		<build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
 		<!-- We need to set this cause resolvers are taking in an older version -->
-		<plexus-utils.version>3.3.0</plexus-utils.version>
+		<plexus-utils.version>3.3.1</plexus-utils.version>
 	</properties>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
