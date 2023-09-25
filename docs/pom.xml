@@ -160,16 +160,6 @@
 					<plugin>
 						<groupId>io.spring.maven.antora</groupId>
 						<artifactId>antora-maven-plugin</artifactId>
-						<configuration>
-							<packages>
-								<package>@antora/atlas-extension@1.0.0-alpha.1</package>
-								<package>@antora/collector-extension@1.0.0-alpha.3</package>
-								<package>@asciidoctor/tabs@1.0.0-beta.3</package>
-								<package>@springio/antora-extensions@1.5.0</package>
-								<package>@springio/asciidoctor-extensions@1.0.0-alpha.9</package>
-								<package>asciidoctor-kroki@0.17.0</package>
-							</packages>
-						</configuration>
 					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
