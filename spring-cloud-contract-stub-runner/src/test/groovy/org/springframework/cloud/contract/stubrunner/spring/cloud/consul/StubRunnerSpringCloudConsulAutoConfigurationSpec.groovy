@@ -34,8 +34,8 @@ import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
+import static org.mockito.ArgumentMatchers.argThat
 import static org.mockito.BDDMockito.then
-import static org.mockito.Matchers.argThat
 import static org.mockito.Mockito.mock
 /**
  * @author Marcin Grzejszczak
