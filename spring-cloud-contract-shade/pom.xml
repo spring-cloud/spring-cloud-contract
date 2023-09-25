@@ -13,7 +13,7 @@
 		<checker.version>3.25.0</checker.version>
 		<maven-dependency-plugin.version>3.6.0</maven-dependency-plugin.version>
 		<build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
-		<plexus-utils.version>3.5.0</plexus-utils.version>
+		<plexus-utils.version>3.5.1</plexus-utils.version>
 		<apache-client.version>4.5.13</apache-client.version>
 	</properties>
 	<parent>
