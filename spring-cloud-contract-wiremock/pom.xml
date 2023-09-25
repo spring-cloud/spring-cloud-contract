@@ -126,7 +126,7 @@
 			<groupId>com.example.github</groupId>
 			<artifactId>github-analytics</artifactId>
 			<classifier>stubs</classifier>
-			<version>1.0.0.M1-190120_105104-VERSION</version><!-- @releaser:version-check-off -->
+			<version>1.0.0.M1-20180613_114136-VERSION</version><!-- @releaser:version-check-off -->
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
