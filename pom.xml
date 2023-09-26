@@ -35,7 +35,7 @@
 		<spring-cloud-commons.version>3.1.8-SNAPSHOT</spring-cloud-commons.version>
 		<spring-cloud-functiondonotreplace.version>3.0.6.RELEASE</spring-cloud-functiondonotreplace.version>
 		<jopt-simple.version>5.0.4</jopt-simple.version>
-		<cglib.version>3.2.11</cglib.version>
+		<cglib.version>3.2.12</cglib.version>
 		<spock-spring.version>2.0-groovy-3.0</spock-spring.version> <!-- @releaser:version-check-off -->
 		<hoverfly-junit.version>0.2.2</hoverfly-junit.version>
 		<commons-text.version>1.10.0</commons-text.version>
