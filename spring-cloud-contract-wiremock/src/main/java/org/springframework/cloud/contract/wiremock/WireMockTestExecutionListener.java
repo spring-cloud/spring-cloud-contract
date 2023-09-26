@@ -39,7 +39,7 @@ public final class WireMockTestExecutionListener extends AbstractTestExecutionLi
 	private static final Log log = LogFactory.getLog(WireMockTestExecutionListener.class);
 
 	@Override
-	public void beforeTestClass(TestContext testContext) throws Exception {
+	public void prepareTestInstance(TestContext testContext) throws Exception {
 		if (applicationContextBroken(testContext) || wireMockConfigurationMissing(testContext)
 				|| annotationMissing(testContext)) {
 			return;
