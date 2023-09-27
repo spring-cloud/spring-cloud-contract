@@ -7,13 +7,13 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-parent</artifactId>
-		<version>4.1.0-M2</version>
+		<version>4.1.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
 	<artifactId>spring-cloud-contract-docker-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>4.1.0-M2</version>
+	<version>4.1.0-SNAPSHOT</version>
 	<name>Spring Cloud Contract Docker Parent</name>
 	<description>Spring Cloud Contract Docker Parent</description>
 
