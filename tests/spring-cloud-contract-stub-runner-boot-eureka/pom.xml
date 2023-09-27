@@ -14,7 +14,7 @@
 	<name>Spring Cloud Contract Stub Runner Boot Eureka</name>
 	<description>Spring Cloud Contract Stub Runner Boot Eureka</description>
 	<properties>
-		<jersey-apache-client4.version>1.19.1</jersey-apache-client4.version>
+		<jersey-apache-client4.version>1.19.4</jersey-apache-client4.version>
 	</properties>
 	<dependencies>
 		<dependency>
