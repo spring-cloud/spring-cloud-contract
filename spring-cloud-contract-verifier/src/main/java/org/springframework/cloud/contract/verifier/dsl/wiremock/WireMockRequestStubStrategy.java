@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -35,6 +36,9 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.extension.Parameters;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.matching.ContentPattern;
+import com.github.tomakehurst.wiremock.matching.EqualToPattern;
+import com.github.tomakehurst.wiremock.matching.MultipartValuePatternBuilder;
+import com.github.tomakehurst.wiremock.matching.RegexPattern;
 import com.github.tomakehurst.wiremock.matching.RequestPattern;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
@@ -46,16 +50,15 @@ import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.Body;
 import org.springframework.cloud.contract.spec.internal.BodyMatcher;
 import org.springframework.cloud.contract.spec.internal.BodyMatchers;
-import org.springframework.cloud.contract.spec.internal.ClientDslProperty;
 import org.springframework.cloud.contract.spec.internal.DslProperty;
 import org.springframework.cloud.contract.spec.internal.FromFileProperty;
+import org.springframework.cloud.contract.spec.internal.HttpHeaders;
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy;
 import org.springframework.cloud.contract.spec.internal.MatchingType;
-import org.springframework.cloud.contract.spec.internal.NamedProperty;
 import org.springframework.cloud.contract.spec.internal.OptionalProperty;
+import org.springframework.cloud.contract.spec.internal.Part;
 import org.springframework.cloud.contract.spec.internal.PathBodyMatcher;
 import org.springframework.cloud.contract.spec.internal.QueryParameters;
-import org.springframework.cloud.contract.spec.internal.RegexPatterns;
 import org.springframework.cloud.contract.spec.internal.RegexProperty;
 import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.spec.internal.Url;
@@ -275,21 +278,43 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 			return;
 		}
 		if (request.getMultipart().getClientValue() instanceof Map) {
-			List<StringValuePattern> multipartPattern = ((Map<?, ?>) request.getMultipart()
-					.getClientValue())
-							.entrySet().stream().map(
-									it -> it.getValue() instanceof NamedProperty
-											? WireMock.matching(RegexPatterns.multipartFile(it.getKey(),
-													((NamedProperty) it.getValue()).getName().getClientValue(),
-													((NamedProperty) it.getValue()).getValue().getClientValue(),
-													Optional.ofNullable(
-															((NamedProperty) it.getValue()).getContentType())
-															.map(DslProperty::getClientValue).orElse(null)))
-											: WireMock.matching(RegexPatterns.multipartParam(it.getKey(),
-													MapConverter.getStubSideValuesForNonBody(it.getValue()))))
-							.collect(Collectors.toList());
-			multipartPattern.forEach(requestPattern::withRequestBody);
+			((Map<?, ?>) request.getMultipart().getClientValue()).entrySet().stream().map(it -> {
+				String name = (String) it.getKey();
+				MultipartValuePatternBuilder builder = new MultipartValuePatternBuilder().withName(name);
+				if (it.getValue() instanceof Part) {
+					Part part = (Part) it.getValue();
 
+					Object filename = part.getFilename().getClientValue();
+					if (!Objects.isNull(filename)) {
+						String contentDispositionHeader = String.format("form-data; name=\"%s\"; filename=\"%s\"",
+								it.getKey(), filename);
+						builder.withHeader(HttpHeaders.CONTENT_DISPOSITION,
+								containsPattern(filename) ? new RegexPattern(contentDispositionHeader)
+										: new EqualToPattern(contentDispositionHeader));
+					}
+
+					Object contentType = part.getContentType().getClientValue();
+					if (!Objects.isNull(contentType)) {
+						builder.withHeader(HttpHeaders.CONTENT_TYPE,
+								containsPattern(contentType) ? new RegexPattern(contentType.toString())
+										: new EqualToPattern(contentType.toString()));
+					}
+
+					Object contentTransferEncoding = part.getContentTransferEncoding().getClientValue();
+					if (!Objects.isNull(contentTransferEncoding)) {
+						builder.withHeader(HttpHeaders.CONTENT_TYPE,
+								containsPattern(contentTransferEncoding)
+										? new RegexPattern(contentTransferEncoding.toString())
+										: new EqualToPattern(contentTransferEncoding.toString()));
+					}
+
+					builder.withBody(convertToValuePattern(part.getBody()));
+				}
+				else {
+					builder.withBody(convertToValuePattern(it.getValue()));
+				}
+				return builder;
+			}).forEach(requestPattern::withAnyRequestBodyPart);
 		}
 
 	}
@@ -370,8 +395,8 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 	}
 
 	protected ContentPattern<?> convertToValuePattern(Object object) {
-		if (object instanceof ClientDslProperty) {
-			object = ((ClientDslProperty) object).getClientValue();
+		if (object instanceof DslProperty<?>) {
+			object = ((DslProperty<?>) object).getClientValue();
 		}
 
 		if (object instanceof Pattern || object instanceof RegexProperty) {

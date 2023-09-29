@@ -72,6 +72,26 @@ public class Common {
 		return property;
 	}
 
+	public Part part(Object value) {
+		return part(null, value, null, null);
+	}
+
+	public Part part(Object value, Object contentType) {
+		return part(null, value, contentType, null);
+	}
+
+	public Part part(Object filename, Object value, Object contentType) {
+		return part(filename, value, contentType, null);
+	}
+
+	public Part part(Object filename, Object value, Object contentType, Object contentTransferEncoding) {
+		return new Part(filename, value, contentType, contentTransferEncoding);
+	}
+
+	public Part part(Map<String, Object> properties) {
+		return new Part(properties);
+	}
+
 	public NamedProperty named(DslProperty name, DslProperty value) {
 		return new NamedProperty(name, value);
 	}
