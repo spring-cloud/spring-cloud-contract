@@ -32,7 +32,7 @@
 		<asciidoctor-maven-plugin.version>1.6.0</asciidoctor-maven-plugin.version>
 		<maven-filtering.version>3.1.1</maven-filtering.version>
 		<maven-scm-publish-plugin.version>3.0.0</maven-scm-publish-plugin.version>
-		<maven-project-info-reports-plugin.version>3.1.1</maven-project-info-reports-plugin.version>
+		<maven-project-info-reports-plugin.version>3.4.5</maven-project-info-reports-plugin.version>
 		<maven-plugin-annotations.version>3.9.0</maven-plugin-annotations.version>
 		<maven-archiver.version>3.5.1</maven-archiver.version>
 		<plexus-archiver.version>4.8.0</plexus-archiver.version>
