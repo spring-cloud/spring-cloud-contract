@@ -9,7 +9,7 @@
 		<sisu-guice.version>4.2.0</sisu-guice.version>
 		<guice.version>5.0.1</guice.version>
 		<guava.version>30.0-jre</guava.version>
-		<asm.version>9.5</asm.version>
+		<asm.version>9.6</asm.version>
 		<checker.version>3.25.0</checker.version>
 		<maven-dependency-plugin.version>3.6.0</maven-dependency-plugin.version>
 		<build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
