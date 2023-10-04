@@ -51,7 +51,7 @@
 		<maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>  <!-- @releaser:version-check-off -->
 		<awaitility.version>4.2.0</awaitility.version>
 		<artemis.version>2.31.0</artemis.version>
-		<testcontainers.version>1.19.0</testcontainers.version>
+		<testcontainers.version>1.19.1</testcontainers.version>
 		<hamcrest.version>2.2</hamcrest.version>
 
 		<!-- We need to have compatibility with Gradle -->
