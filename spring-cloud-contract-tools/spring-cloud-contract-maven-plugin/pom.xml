@@ -34,7 +34,7 @@
 		<maven-scm-publish-plugin.version>3.0.0</maven-scm-publish-plugin.version>
 		<maven-project-info-reports-plugin.version>3.4.5</maven-project-info-reports-plugin.version>
 		<maven-plugin-annotations.version>3.9.0</maven-plugin-annotations.version>
-		<maven-archiver.version>3.5.1</maven-archiver.version>
+		<maven-archiver.version>3.6.1</maven-archiver.version>
 		<plexus-archiver.version>4.8.0</plexus-archiver.version>
 		<coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
 		<maven-site-plugin.version>3.12.1</maven-site-plugin.version>
