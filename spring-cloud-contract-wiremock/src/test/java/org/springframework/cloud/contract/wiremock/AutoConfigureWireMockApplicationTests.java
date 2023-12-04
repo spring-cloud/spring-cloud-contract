@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.wiremock;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.system.OutputCaptureRule;
+import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -47,6 +49,12 @@ public class AutoConfigureWireMockApplicationTests {
 	@Autowired
 	private WireMockProperties wireMockProperties;
 
+	@Autowired
+	private WireMockServer wireMockServer;
+
+	@Autowired
+	private Environment env;
+
 	@Test
 	public void contextLoads() throws Exception {
 		stubFor(get(urlEqualTo("/test"))
@@ -61,6 +69,14 @@ public class AutoConfigureWireMockApplicationTests {
 		boolean httpPortDynamic = this.wireMockProperties.getServer().isPortDynamic();
 		boolean httpsPortDynamic = this.wireMockProperties.getServer().isHttpsPortDynamic();
 		assertThat(!httpPortDynamic || !httpsPortDynamic).isTrue();
+	}
+
+	@Test
+	public void portIsAssigned() {
+		Integer expectedPort = 26384;
+		assertThat(this.wireMockServer.port()).isEqualTo(expectedPort);
+		assertThat(this.wireMockProperties.getServer().getPort()).isEqualTo(expectedPort);
+		assertThat(this.env.getProperty("wiremock.server.port", Integer.class)).isEqualTo(expectedPort);
 	}
 
 }
