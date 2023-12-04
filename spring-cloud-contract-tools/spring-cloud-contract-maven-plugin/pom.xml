@@ -26,7 +26,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<dependency.locations.enabled>false</dependency.locations.enabled>
-		<maven.plugin.plugin.version>3.9.0</maven.plugin.plugin.version>
+		<maven.plugin.plugin.version>3.10.2</maven.plugin.plugin.version>
 
 		<maven-failsafe-plugin.version>3.0.0-M3</maven-failsafe-plugin.version><!-- @releaser:version-check-off -->
 		<asciidoctor-maven-plugin.version>1.6.0</asciidoctor-maven-plugin.version>
