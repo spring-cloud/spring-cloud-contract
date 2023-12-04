@@ -4,8 +4,8 @@
 include::partial$_attributes.adoc[]
 
 The Spring Cloud Contract WireMock modules let you use https://github.com/tomakehurst/wiremock[WireMock] in a
-Spring Boot application. For more detail, check out the
-https://github.com/spring-cloud/spring-cloud-contract/tree/{github-tag}/samples[samples].
+Spring Boot application. For more detail, check out the Spring Cloud Contract's repository
+https://github.com/spring-cloud/spring-cloud-contract/[samples subfolder].
 
 If you have a Spring Boot application that uses Tomcat as an embedded server (which is
 the default with `spring-boot-starter-web`), you can add
