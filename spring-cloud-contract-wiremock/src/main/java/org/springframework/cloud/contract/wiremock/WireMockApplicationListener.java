@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import java.util.Optional;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -39,7 +40,6 @@ import org.springframework.core.env.PropertySource;
  *
  * @author Dave Syer
  * @author Matt Garner
- *
  */
 @Order(Ordered.LOWEST_PRECEDENCE)
 public class WireMockApplicationListener implements ApplicationListener<ApplicationPreparedEvent> {
