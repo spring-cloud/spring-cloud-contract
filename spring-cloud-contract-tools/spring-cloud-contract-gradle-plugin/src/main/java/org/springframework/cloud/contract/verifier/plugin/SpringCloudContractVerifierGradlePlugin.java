@@ -182,6 +182,8 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 
 	private SourceSet configureSourceSets(ContractVerifierExtension extension, JavaPluginExtension javaExtension, SourceSet contractTest) {
 		SourceSetContainer sourceSets = javaExtension.getSourceSets();
+		ConfigurationContainer configurations = project.getConfigurations();
+		ObjectFactory objects = project.getObjects();
 		contractTest.getJava().srcDirs(extension.getGeneratedTestJavaSourcesDir());
 		project.getPlugins().withType(GroovyPlugin.class, groovyPlugin -> {
 			GroovySourceDirectorySet groovy = contractTest.getExtensions().getByType(GroovySourceDirectorySet.class);
@@ -192,11 +194,11 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 		SourceSetOutput mainOutput = sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).getOutput();
 		SourceSetOutput testOutput = sourceSets.getByName(SourceSet.TEST_SOURCE_SET_NAME).getOutput();
 
-		FileCollection compileClasspath = contractTest.getCompileClasspath();
-		contractTest.setCompileClasspath(compileClasspath.plus(mainOutput).plus(testOutput));
+		Configuration contractTestCompileClasspathConfiguration = configurations.getByName(contractTest.getCompileClasspathConfigurationName());
+		Configuration contractTestRuntimeClasspathConfiguration = configurations.getByName(contractTest.getRuntimeClasspathConfigurationName());
 
-		FileCollection runtimeClasspath = contractTest.getRuntimeClasspath();
-		contractTest.setRuntimeClasspath(runtimeClasspath.plus(mainOutput).plus(testOutput));
+		contractTest.setCompileClasspath(objects.fileCollection().from(testOutput, mainOutput, contractTestCompileClasspathConfiguration));
+		contractTest.setRuntimeClasspath(objects.fileCollection().from(contractTest.getOutput(), testOutput, mainOutput, contractTestRuntimeClasspathConfiguration));
 		return contractTest;
 	}
 
