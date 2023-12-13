@@ -633,6 +633,8 @@ include::{verifier_core_path}/src/test/resources/kotlin/contract_docs_examples.k
 ----
 ====
 
+IMPORTANT: If a query parameter is missing in the contract it doesn't mean that we expect a request to be matched if the query parameter is missing. Quite the contrary, that means that the query parameter is not necessary to be there for the request to be matched.
+
 `request` can contain additional request headers, as the following example shows:
 
 ====
