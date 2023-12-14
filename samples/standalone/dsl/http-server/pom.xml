@@ -49,13 +49,11 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-stream-rabbit</artifactId>
-			<version>${spring-cloud-stream.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-test-binder</artifactId>
-			<version>${spring-cloud-stream.version}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -77,13 +75,12 @@
 				<version>${spring-cloud-contract.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
-			</dependency>
 			<!-- end::contract_bom[] -->
-			<!-- Until updated in Spring Boot -->
+			</dependency>
 			<dependency>
-				<groupId>io.rest-assured</groupId>
-				<artifactId>rest-assured-bom</artifactId>
-				<version>5.2.1</version>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-stream-dependencies</artifactId>
+				<version>${spring-cloud-stream.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

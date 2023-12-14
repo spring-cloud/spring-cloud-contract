@@ -19,7 +19,6 @@ repositories {
 	mavenLocal()
 	maven { url "https://repo.spring.io/snapshot" }
 	maven { url "https://repo.spring.io/milestone" }
-	maven { url "https://repo.spring.io/release" }
 }
 
 apply plugin: 'groovy'
@@ -29,8 +28,8 @@ apply plugin: 'maven-publish'
 
 dependencyManagement {
 	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:$BOM_VERSION"
-		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:${project.findProperty('verifierVersion') ?: verifierVersion}"
+		mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:$verifierVersion"
+		mavenBom "org.springframework.cloud:spring-cloud-stream-dependencies:$springCloudStreamVersion"
 	}
 }
 
