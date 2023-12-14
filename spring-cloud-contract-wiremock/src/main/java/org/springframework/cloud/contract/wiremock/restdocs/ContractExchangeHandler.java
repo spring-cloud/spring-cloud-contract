@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -48,6 +49,7 @@ import org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
@@ -110,6 +112,8 @@ public class ContractExchangeHandler extends WireMockVerifyHelper<EntityExchange
 }
 
 class WireMockHttpRequestAdapter implements Request {
+
+	private static final boolean SERVLET_API_PRESENT = ClassUtils.isPresent("jakarta.servlet.http.Part", null);
 
 	private EntityExchangeResult<?> result;
 
@@ -246,6 +250,9 @@ class WireMockHttpRequestAdapter implements Request {
 	@Override
 	public Collection<Part> getParts() {
 		try {
+			if (!SERVLET_API_PRESENT) {
+				return Collections.emptyList();
+			}
 			return getWireMockParts();
 		}
 		catch (Exception e) {
