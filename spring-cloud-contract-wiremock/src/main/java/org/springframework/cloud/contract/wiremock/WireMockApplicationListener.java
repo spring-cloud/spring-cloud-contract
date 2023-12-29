@@ -18,7 +18,6 @@ package org.springframework.cloud.contract.wiremock;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,10 +62,10 @@ public class WireMockApplicationListener implements ApplicationListener<Applicat
 		}
 		else {
 			Map<String, Object> source = getWireMockSource(environment);
-			Integer port = Optional.ofNullable(httpPortProperty).orElse(8080);
+			int port = httpPortProperty != null ? httpPortProperty : 8080;
 			source.put("wiremock.server.port", port);
 			if (log.isDebugEnabled()) {
-				log.debug("Registered WireMock server port property to the <" + port + "> value");
+				log.debug("Registered WireMock server port property to <" + port + "> value");
 			}
 		}
 		int httpsPortProperty = environment.getProperty("wiremock.server.https-port", Integer.class, 0);
