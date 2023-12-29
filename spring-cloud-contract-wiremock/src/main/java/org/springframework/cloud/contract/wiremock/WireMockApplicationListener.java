@@ -63,9 +63,10 @@ public class WireMockApplicationListener implements ApplicationListener<Applicat
 		}
 		else {
 			Map<String, Object> source = getWireMockSource(environment);
-			source.put("wiremock.server.port", 8080);
+			int port = httpPortProperty != null ? httpPortProperty : 8080;
+			source.put("wiremock.server.port", port);
 			if (log.isDebugEnabled()) {
-				log.debug("Registered WireMock server port property to the default <8080> value");
+				log.debug("Registered WireMock server port property to <" + port + "> value");
 			}
 		}
 		int httpsPortProperty = environment.getProperty("wiremock.server.https-port", Integer.class, 0);
