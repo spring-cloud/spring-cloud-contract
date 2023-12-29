@@ -8,7 +8,7 @@
 		<org.eclipse.sisu.plexus.version>0.3.5</org.eclipse.sisu.plexus.version>
 		<sisu-guice.version>4.2.0</sisu-guice.version>
 		<guice.version>5.0.1</guice.version>
-		<guava.version>33.0.0-jre</guava.version>
+		<guava.version>30.0-jre</guava.version>
 		<asm.version>9.6</asm.version>
 		<checker.version>3.25.0</checker.version>
 		<maven-dependency-plugin.version>3.6.1</maven-dependency-plugin.version>
