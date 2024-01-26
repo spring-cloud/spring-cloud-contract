@@ -25,7 +25,6 @@ class TestWireMockExtensions implements WireMockExtensions {
 	@Override
 	List<Extension> extensions() {
 		return [
-				new DefaultResponseTransformer(),
 				new CustomExtension()
 		]
 	}

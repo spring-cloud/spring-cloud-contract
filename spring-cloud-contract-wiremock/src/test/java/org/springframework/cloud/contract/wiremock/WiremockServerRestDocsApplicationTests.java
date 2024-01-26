@@ -20,7 +20,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.Map;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.matching.MultiValuePattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import jakarta.servlet.http.HttpServletRequest;
@@ -85,10 +84,9 @@ public class WiremockServerRestDocsApplicationTests {
 		BDDAssertions.then(file).exists();
 		StubMapping stubMapping = StubMapping.buildFrom(new String(Files.readAllBytes(file.toPath())));
 		Map<String, MultiValuePattern> queryParameters = stubMapping.getRequest().getQueryParameters();
-		BDDAssertions.then(queryParameters.get("callback").getValuePattern())
-				.isEqualTo(WireMock.equalTo("a_function_name"));
-		BDDAssertions.then(queryParameters.get("foo").getValuePattern()).isEqualTo(WireMock.equalTo("foo"));
-		BDDAssertions.then(queryParameters.get("bar").getValuePattern()).isEqualTo(WireMock.equalTo("bar"));
+		BDDAssertions.then(queryParameters.get("callback").getExpected()).isEqualTo("a_function_name");
+		BDDAssertions.then(queryParameters.get("foo").getExpected()).isEqualTo("foo");
+		BDDAssertions.then(queryParameters.get("bar").getExpected()).isEqualTo("bar");
 	}
 
 	@Test

@@ -18,7 +18,7 @@ package org.springframework.cloud.contract.verifier.messaging;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
 

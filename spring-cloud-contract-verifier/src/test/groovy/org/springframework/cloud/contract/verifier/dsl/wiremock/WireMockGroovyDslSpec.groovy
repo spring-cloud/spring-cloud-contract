@@ -34,9 +34,9 @@ import org.springframework.cloud.contract.verifier.converter.YamlContractConvert
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.AssertionUtil
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
+import org.springframework.cloud.test.TestSocketUtils
 import org.springframework.http.RequestEntity
 import org.springframework.http.ResponseEntity
-import org.springframework.cloud.test.TestSocketUtils
 
 class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifier {
 
@@ -2250,7 +2250,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				   "paramIndex":"bar2",
 				   "authorization":"secret",
 				   "path":"/api/v1/xxxx",
-				   "rawUrl":"/api/v1/xxxx?foo&#x3D;bar&amp;foo&#x3D;bar2",
+				   "rawUrl":"/api/v1/xxxx?foo=bar&foo=bar2",
 				   "rawPath":"/api/v1/xxxx",
 				   "rawResponseBaz2":"Bla bla bar bla bla",
 				   "param":"bar",
@@ -3199,14 +3199,10 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	}
 
 	WireMockConfiguration config() {
-		return new WireMockConfiguration().extensions(responseTemplateTransformer())
+		return new WireMockConfiguration().extensions(new HandlebarsJsonHelperExtension(), new HandlebarsEscapeHelperExtension()).globalTemplating(false).templatingEnabled(true)
 	}
 
-	private ResponseTemplateTransformer responseTemplateTransformer() {
-		return new ResponseTemplateTransformer(false,
-				[(HandlebarsJsonPathHelper.NAME): new HandlebarsJsonPathHelper(),
-				 (HandlebarsEscapeHelper.NAME)  : new HandlebarsEscapeHelper()])
-	}
+
 
 	ResponseEntity<String> call(int port) {
 		return new TestRestTemplate().exchange(

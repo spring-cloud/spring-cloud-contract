@@ -20,9 +20,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.extension.Extension;
+import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
@@ -83,10 +85,12 @@ class WireMockResponseStubStrategy extends BaseWireMockStubStrategy {
 		List<WireMockExtensions> wireMockExtensions = SpringFactoriesLoader.loadFactories(WireMockExtensions.class,
 				null);
 		if (!wireMockExtensions.isEmpty()) {
-			return wireMockExtensions.stream().map(WireMockExtensions::extensions).flatMap(Collection::stream)
-					.map(Extension::getName).toArray(String[]::new);
+			return Stream
+					.concat(Stream.of(ResponseTemplateTransformer.NAME), wireMockExtensions.stream()
+							.map(WireMockExtensions::extensions).flatMap(Collection::stream).map(Extension::getName))
+					.toArray(String[]::new);
 		}
-		return new String[] { new DefaultResponseTransformer().getName(), SpringCloudContractRequestMatcher.NAME };
+		return new String[] { ResponseTemplateTransformer.NAME, SpringCloudContractRequestMatcher.NAME };
 	}
 
 	private void appendHeaders(ResponseDefinitionBuilder builder) {
