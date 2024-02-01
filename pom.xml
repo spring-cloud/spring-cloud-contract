@@ -31,7 +31,7 @@
 		<spring-cloud-stream.version>4.1.1-SNAPSHOT</spring-cloud-stream.version>
 		<spring-cloud-netflix.version>4.1.1-SNAPSHOT</spring-cloud-netflix.version>
 		<spring-cloud-consul.version>4.1.1-SNAPSHOT</spring-cloud-consul.version>
-		<spring-cloud-commons.version>4.1.1-SNAPSHOT</spring-cloud-commons.version>
+		<spring-cloud-commons.version>4.1.2-SNAPSHOT</spring-cloud-commons.version>
 		<jopt-simple.version>5.0.4</jopt-simple.version>
 		<cglib.version>3.3.0</cglib.version>
 		<spock-spring.version>2.3-groovy-4.0</spock-spring.version> <!-- @releaser:version-check-off -->
@@ -52,7 +52,7 @@
 		<maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>  <!-- @releaser:version-check-off -->
 		<awaitility.version>4.2.0</awaitility.version>
 		<artemis.version>2.31.2</artemis.version>
-		<testcontainers.version>1.19.3</testcontainers.version>
+		<testcontainers.version>1.19.4</testcontainers.version>
 		<hamcrest.version>2.2</hamcrest.version>
 
 		<!-- We need to have compatibility with Gradle -->
