@@ -1,0 +1,20 @@
+= Http Server
+
+Run
+
+[source=groovy]
+--------
+./gradlew clean build publishToMavenLocal
+--------
+
+or
+
+--------
+./mvnw clean install
+--------
+
+To
+
+- build the app
+- generate and run Spring Cloud Contract Verifier tests
+- publish the fatJar and the stubs to Maven Local

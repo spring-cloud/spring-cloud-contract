@@ -1,0 +1,10 @@
+label: some_label
+input:
+  triggeredBy: bookReturnedTriggered
+outputMessage:
+  sentTo: activemq:output
+  body:
+    bookName: foo
+  headers:
+    BOOK-NAME: foo
+    contentType: application/json

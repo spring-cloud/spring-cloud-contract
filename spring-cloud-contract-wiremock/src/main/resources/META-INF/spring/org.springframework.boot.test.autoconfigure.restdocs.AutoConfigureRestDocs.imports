@@ -1,0 +1,3 @@
+org.springframework.cloud.contract.wiremock.restdocs.WireMockRestDocsConfiguration
+org.springframework.cloud.contract.wiremock.restdocs.WireMockWebTestClientConfiguration
+org.springframework.cloud.contract.wiremock.restdocs.WireMockRestAssuredConfiguration

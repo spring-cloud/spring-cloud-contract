@@ -1,0 +1,70 @@
+= Common contracts repo
+
+This repo contains all contracts for apps in the system.
+
+== As a consumer
+
+You are working offline in order to play around with the API of the producer.
+What you need to do is to have the producer's stubs installed locally. To do that
+you have to (from the root of the repo)
+
+[source,bash]
+----
+cd src/main/resources/contracts/com/example/beer-api-producer-external/1.0.0
+mvn clean install -DskipTests
+----
+
+Then if you do `ls ./target` you'll see `beer-api-producer-external-0.0.1-SNAPSHOT-stubs.jar`. This jar will
+ contain the stubs generated from your contracts. That way you
+can reference the `com.example:server:+:stubs` dependency in your consumer tests.
+
+TIP: Don't mind that there's a version mismatch in the stubs and the folder structure.
+The version number is there in the folder name for tests related to dealing with
+non-Java friendly naming of packages.
+
+== As a producer
+
+Assuming that the consumers have filed a PR with the proposed contract the producers
+can work offline to generate tests and stubs. To work offline, as a producer you just have
+to go to the root folder of the contracts and:
+
+[source,bash]
+----
+./mvnw clean install -DskipTests
+----
+
+Then if you do `ls ./target` you'll see `contracts-0.0.1-SNAPSHOT.jar`. This file contains
+all DSL contracts, for all applications.
+
+Now the producer can include the `contracts-0.0.1-SNAPSHOT.jar` from your local maven repository.
+You can achieve that by setting the proper flag in plugin properties.
+
+Example for Maven
+
+[source,xml]
+----
+<plugin>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+    <configuration>
+        <!-- url not required for working locally -->
+        <contractsWorkOffline>true<contractsWorkOffline>
+        <contractDependency>
+            <groupId>com.example</groupId>
+            <artifactId>beer-contracts</artifactId>
+        </contractDependency>
+    </configuration>
+</plugin>
+----
+
+and for Gradle:
+
+[source,groovy]
+----
+contracts {
+    contractsWorkOffline = true
+    contractDependency {
+        stringNotation = "com.example:beer-contracts"
+    }
+}
+----

@@ -1,0 +1,55 @@
+---
+request:
+  method: "GET"
+  url: null
+  urlPath: "/my-first-route"
+  queryParameters: {}
+  headers:
+    Content-Type: "application/json"
+  cookies: null
+  body: null
+  bodyFromFile: null
+  bodyFromFileAsBytes: null
+  matchers:
+    url: null
+    body: []
+    headers:
+    - key: "Content-Type"
+      regex: "application/json.*"
+      predefined: null
+      command: null
+      regexType: "as_string"
+    queryParameters: []
+    cookies: []
+    multipart: null
+  multipart: null
+response:
+  status: 200
+  headers: null
+  cookies: null
+  body:
+    test: "MVZWIKTLUUXDCDGKXMDC"
+  bodyFromFile: null
+  bodyFromFileAsBytes: null
+  matchers:
+    body:
+    - path: "$.['test']"
+      type: "by_regex"
+      value: "^\\s*\\S[\\S\\s]*"
+      minOccurrence: null
+      maxOccurrence: null
+      predefined: null
+      regexType: "as_string"
+    headers: []
+    cookies: []
+  async: false
+  fixedDelayMilliseconds: null
+input: null
+outputMessage: null
+description: null
+label: null
+name: "Test route"
+priority: 1
+ignored: false
+inProgress: false
+metadata: {}

@@ -1,0 +1,11 @@
+{
+  "priority": 1,
+  "request": {
+    "urlPath": "/resource",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "body": "Hello World"
+  }
+}

@@ -1,0 +1,22 @@
+request:
+  url: /numbers
+  queryParameters:
+    page: 0
+    size: 2
+  method: GET
+  headers:
+    Content-Type: application/json
+
+response:
+  status: 200
+  headers:
+    Content-Type: application/json;charset=UTF-8
+  body:
+    - number: 1541609556000
+    - number: 1541609316000
+  matchers:
+    body:
+      - path: $.[0].number
+        type: by_equality
+      - path: $.[1].number
+        type: by_equality

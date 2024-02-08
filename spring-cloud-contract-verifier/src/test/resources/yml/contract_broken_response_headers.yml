@@ -1,0 +1,12 @@
+request:
+  url: /foo
+  method: PUT
+response:
+  status: 200
+  headers:
+    foo2: bar
+    fooRes: baz
+  matchers:
+    headers:
+      - key: foo2
+        regex: barrrr

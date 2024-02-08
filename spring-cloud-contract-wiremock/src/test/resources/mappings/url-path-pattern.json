@@ -1,0 +1,10 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/([0-9]+)/url-path-pattern/"
+  },
+  "response": {
+    "status": 200,
+    "body": "Hello Url Path Matcher"
+  }
+}

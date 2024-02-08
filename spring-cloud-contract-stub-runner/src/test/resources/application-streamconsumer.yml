@@ -1,0 +1,5 @@
+spring.cloud.function.definition: output
+spring.cloud.stream.bindings.output-in-0.destination: output
+spring.cloud.stream.bindings.output-in-0.contentType: application/json
+spring.cloud.stream.bindings.output-out-0.destination: output
+spring.cloud.stream.bindings.output-out-0.contentType: application/json
