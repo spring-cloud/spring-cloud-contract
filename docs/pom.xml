@@ -160,9 +160,10 @@
 			</build>
 			<repositories>
 				<repository>
-					<id>spring-snapshots</id>
-					<name>Spring Snapshots</name>
-					<url>https://repo.spring.io/snapshot</url>
+					<id>spring-commercial-snapshot</id>
+					<name>Spring Commercial Snapshot Repository</name>
+					<url>https://repo.spring.vmware.com/artifactory/test-snapshot-local</url>
+					<!--<url>https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local</url>-->
 					<snapshots>
 						<enabled>true</enabled>
 					</snapshots>
@@ -171,17 +172,10 @@
 					</releases>
 				</repository>
 				<repository>
-					<id>spring-milestones</id>
-					<name>Spring Milestones</name>
-					<url>https://repo.spring.io/milestone</url>
-					<snapshots>
-						<enabled>false</enabled>
-					</snapshots>
-				</repository>
-				<repository>
-					<id>spring-releases</id>
-					<name>Spring Releases</name>
-					<url>https://repo.spring.io/release</url>
+					<id>spring-commercial-release</id>
+					<name>Spring Commercial Release Repository</name>
+					<url>https://repo.spring.vmware.com/artifactory/test-release-local</url>
+					<!--<url>https://repo.spring.vmware.com/artifactory/spring-commercial</url>-->
 					<snapshots>
 						<enabled>false</enabled>
 					</snapshots>
@@ -189,9 +183,10 @@
 			</repositories>
 			<pluginRepositories>
 				<pluginRepository>
-					<id>spring-snapshots</id>
-					<name>Spring Snapshots</name>
-					<url>https://repo.spring.io/snapshot</url>
+					<id>spring-commercial-snapshot</id>
+					<name>Spring Commercial Snapshot Repository</name>
+					<url>https://repo.spring.vmware.com/artifactory/test-snapshot-local</url>
+					<!--<url>https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local</url>-->
 					<snapshots>
 						<enabled>true</enabled>
 					</snapshots>
@@ -200,17 +195,10 @@
 					</releases>
 				</pluginRepository>
 				<pluginRepository>
-					<id>spring-milestones</id>
-					<name>Spring Milestones</name>
-					<url>https://repo.spring.io/milestone</url>
-					<snapshots>
-						<enabled>false</enabled>
-					</snapshots>
-				</pluginRepository>
-				<pluginRepository>
-					<id>spring-releases</id>
-					<name>Spring Releases</name>
-					<url>https://repo.spring.io/release</url>
+					<id>spring-commercial-release</id>
+					<name>Spring Commercial Release Repository</name>
+					<url>https://repo.spring.vmware.com/artifactory/test-release-local</url>
+					<!--<url>https://repo.spring.vmware.com/artifactory/spring-commercial</url>-->
 					<snapshots>
 						<enabled>false</enabled>
 					</snapshots>

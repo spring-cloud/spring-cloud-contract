@@ -522,23 +522,23 @@
 	</developers>
 
 	<scm>
-		<connection>scm:git:https://github.com/spring-cloud/spring-cloud-contract.git
+		<connection>scm:git:https://github.com/spring-cloud/spring-cloud-contract-commercial.git
 		</connection>
 		<developerConnection>
-			scm:git:git@github.com:spring-cloud/spring-cloud-contract.git
+			scm:git:git@github.com:spring-cloud/spring-cloud-contract-commercial.git
 		</developerConnection>
-		<url>https://github.com/spring-cloud/spring-cloud-contract</url>
+		<url>https://github.com/spring-cloud/spring-cloud-contract-commercial</url>
 		<tag>HEAD</tag>
 	</scm>
 
 	<issueManagement>
 		<system>GitHub</system>
-		<url>https://github.com/spring-cloud/spring-cloud-contract/issues</url>
+		<url>https://github.com/spring-cloud/spring-cloud-contract-commercial/issues</url>
 	</issueManagement>
 
 	<ciManagement>
 		<system>Github Actions</system>
-		<url>https://github.com/spring-cloud/spring-cloud-contract/actions</url>
+		<url>https://github.com/spring-cloud/spring-cloud-contract-commercial/actions</url>
 	</ciManagement>
 
 	<build>
@@ -638,9 +638,10 @@
 			<id>spring</id>
 			<repositories>
 				<repository>
-					<id>spring-snapshots</id>
-					<name>Spring Snapshots</name>
-					<url>https://repo.spring.io/snapshot</url>
+					<id>spring-commercial-snapshot</id>
+					<name>Spring Commercial Snapshot Repository</name>
+					<url>https://repo.spring.vmware.com/artifactory/test-snapshot-local</url>
+					<!--<url>https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local</url>-->
 					<snapshots>
 						<enabled>true</enabled>
 					</snapshots>
@@ -649,9 +650,10 @@
 					</releases>
 				</repository>
 				<repository>
-					<id>spring-milestones</id>
-					<name>Spring Milestones</name>
-					<url>https://repo.spring.io/milestone</url>
+					<id>spring-commercial-release</id>
+					<name>Spring Commercial Release Repository</name>
+					<url>https://repo.spring.vmware.com/artifactory/test-release-local</url>
+					<!--<url>https://repo.spring.vmware.com/artifactory/spring-commercial</url>-->
 					<snapshots>
 						<enabled>false</enabled>
 					</snapshots>
@@ -659,9 +661,10 @@
 			</repositories>
 			<pluginRepositories>
 				<pluginRepository>
-					<id>spring-snapshots</id>
-					<name>Spring Snapshots</name>
-					<url>https://repo.spring.io/snapshot</url>
+					<id>spring-commercial-snapshot</id>
+					<name>Spring Commercial Snapshot Repository</name>
+					<url>https://repo.spring.vmware.com/artifactory/test-snapshot-local</url>
+					<!--<url>https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local</url>-->
 					<snapshots>
 						<enabled>true</enabled>
 					</snapshots>
@@ -670,17 +673,10 @@
 					</releases>
 				</pluginRepository>
 				<pluginRepository>
-					<id>spring-milestones</id>
-					<name>Spring Milestones</name>
-					<url>https://repo.spring.io/milestone</url>
-					<snapshots>
-						<enabled>false</enabled>
-					</snapshots>
-				</pluginRepository>
-				<pluginRepository>
-					<id>spring-releases</id>
-					<name>Spring Releases</name>
-					<url>https://repo.spring.io/release</url>
+					<id>spring-commercial-release</id>
+					<name>Spring Commercial Release Repository</name>
+					<url>https://repo.spring.vmware.com/artifactory/test-release-local</url>
+					<!--<url>https://repo.spring.vmware.com/artifactory/spring-commercial</url>-->
 					<snapshots>
 						<enabled>false</enabled>
 					</snapshots>
