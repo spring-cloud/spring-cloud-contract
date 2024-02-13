@@ -155,7 +155,6 @@
 	</build>
 
 	<repositories>
-	<repositories>
 		<repository>
 			<id>spring-commercial-snapshot</id>
 			<name>Spring Commercial Snapshot Repository</name>
