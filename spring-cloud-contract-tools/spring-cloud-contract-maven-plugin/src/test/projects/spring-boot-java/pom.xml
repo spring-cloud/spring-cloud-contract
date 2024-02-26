@@ -89,8 +89,7 @@
 		<repository>
 			<id>spring-commercial-snapshot</id>
 			<name>Spring Commercial Snapshot Repository</name>
-			<url>https://repo.spring.vmware.com/artifactory/test-snapshot-local</url>
-			<!--<url>https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local</url>-->
+			<url>https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
@@ -101,8 +100,7 @@
 		<repository>
 			<id>spring-commercial-release</id>
 			<name>Spring Commercial Release Repository</name>
-			<url>https://repo.spring.vmware.com/artifactory/test-release-local</url>
-			<!--<url>https://repo.spring.vmware.com/artifactory/spring-commercial</url>-->
+			<url>https://repo.spring.vmware.com/artifactory/spring-commercial</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -112,8 +110,7 @@
 		<pluginRepository>
 			<id>spring-commercial-snapshot</id>
 			<name>Spring Commercial Snapshot Repository</name>
-			<url>https://repo.spring.vmware.com/artifactory/test-snapshot-local</url>
-			<!--<url>https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local</url>-->
+			<url>https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
@@ -124,8 +121,7 @@
 		<pluginRepository>
 			<id>spring-commercial-release</id>
 			<name>Spring Commercial Release Repository</name>
-			<url>https://repo.spring.vmware.com/artifactory/test-release-local</url>
-			<!--<url>https://repo.spring.vmware.com/artifactory/spring-commercial</url>-->
+			<url>https://repo.spring.vmware.com/artifactory/spring-commercial</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
