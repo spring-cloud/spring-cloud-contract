@@ -18,7 +18,7 @@
 	<description>Spring Cloud Contract Stub Runner Docker</description>
 
 	<properties>
-		<thin.repo>https://repo.spring.io/snapshot</thin.repo>
+		<thin.repo>https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local</thin.repo>
 	</properties>
 
 	<dependencies>
@@ -284,12 +284,6 @@
 		</plugins>
 	</build>
 	<profiles>
-		<profile>
-			<id>milestone</id>
-			<properties>
-				<thin.repo>https://repo.spring.io/milestone</thin.repo>
-			</properties>
-		</profile>
 		<profile>
 			<id>central</id>
 			<properties>

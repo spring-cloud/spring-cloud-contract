@@ -13,8 +13,7 @@ version = '0.0.1'
 repositories {
 	mavenCentral()
 	mavenLocal()
-	maven { url "https://repo.spring.io/snapshot" }
-	maven { url "https://repo.spring.io/milestone" }
+	maven { url "https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local" }
 }
 // end::deps_repos[]
 

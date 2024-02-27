@@ -36,9 +36,8 @@ targetCompatibility = 17
 repositories {
 	mavenLocal()
 	mavenCentral()
-	maven { url "https://repo.spring.io/snapshot" }
-	maven { url "https://repo.spring.io/milestone" }
-	maven { url "https://repo.spring.io/release" }
+	maven { url "https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local" }
+	maven { url "https://repo.spring.vmware.com/artifactory/spring-commercial" }
 }
 
 //Dependencies in all subprojects - https://solidsoft.wordpress.com/2014/11/13/gradle-tricks-display-dependencies-for-all-subprojects-in-multi-project-build/

@@ -47,9 +47,8 @@ subprojects {
 	repositories {
 		mavenCentral()
 		mavenLocal()
-		maven(url = "https://repo.spring.io/snapshot")
-		maven(url = "https://repo.spring.io/milestone")
-		maven(url = "https://repo.spring.io/release")
+		maven(url = "https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local")
+		maven(url = "https://repo.spring.vmware.com/artifactory/spring-commercial")
 	}
 
 	dependencies {

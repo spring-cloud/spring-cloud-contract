@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 
 ARG SDKMAN_JAVA_INSTALLATION=17.0.1-tem
-ARG THIN_REPO=https://repo.spring.io/snapshot
+ARG THIN_REPO=https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local
 
 LABEL Author="Marcin Grzejszczak <mgrzejszczak@pivotal.io>"
 LABEL Author="Bastian Doetsch <bdoetsch@vmware.com>"

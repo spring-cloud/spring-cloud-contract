@@ -13,16 +13,6 @@
 	<packaging>jar</packaging>
 	<name>spring-cloud-contract-wiremock</name>
 	<description>Spring Cloud Contract Wiremock</description>
-	<repositories>
-		<repository>
-			<id>spring-milestones</id>
-			<name>Spring Milestones</name>
-			<url>https://repo.spring.io/milestone</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

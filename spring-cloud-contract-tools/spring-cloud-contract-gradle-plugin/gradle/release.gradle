@@ -26,7 +26,14 @@ artifacts {
 
 ext {
 	resolveRepoName = { Project project ->
-		resolvedRepoName = "libs-${resolveVersion(project.version)}-local"
+		String resolvedRepoName;
+		if('release'.equals( resolveVersion(project.version))){
+			resolvedRepoName = 'spring-commercial'
+		}
+//		Milestones not handled for commercial repos
+		else {
+			resolvedRepoName = 'spring-commercial-snapshot-local'
+		}
 		logger.lifecycle("For project [$project.name] with " +
 				"version [$project.version] the resolved Artifactory repo is [$resolvedRepoName]")
 		return resolvedRepoName
@@ -48,35 +55,8 @@ ext {
 	}
 
 	repoUrl = isReleaseToCentral ?
-			"https://oss.sonatype.org/service/local/staging/deploy/maven2/" :
-			"https://repo.spring.io/${resolveRepoName(project)}"
-}
-
-if (isReleaseToCentral) {
-	/*signing {
-		sign configurations.archives
-	}*/
-
-	apply plugin: 'com.gradle.plugin-publish'
-
-	pluginBundle {
-		website = 'https://github.com/spring-cloud/spring-cloud-contract'
-		vcsUrl = 'https://github.com/spring-cloud/spring-cloud-contract'
-
-		plugins {
-			plugin {
-				id = 'org.springframework.cloud.contract'
-				displayName = 'spring-cloud-contract'
-				description = 'Spring Cloud Contract Gradle Plugin'
-				tags = ['spring', 'spring-framework', 'spring-cloud', 'spring-cloud-contract']
-			}
-		}
-
-		mavenCoordinates {
-			groupId = project.group
-			artifactId = project.name
-		}
-	}
+			"https://repo.spring.vmware.com/artifactory/spring-commercial/" :
+			"https://repo.spring.vmware.com/artifactory/${resolveRepoName(project)}"
 }
 
 String getProp(String propName) {

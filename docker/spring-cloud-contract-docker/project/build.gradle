@@ -5,9 +5,7 @@ buildscript {
 		mavenLocal()
 		mavenCentral()
 		if ("${verifierVersion}".contains("SNAPSHOT")) {
-			maven { url "https://repo.spring.io/snapshot" }
-		} else if ("${verifierVersion}".contains("M") || "${verifierVersion}".contains("RC")) {
-			maven { url "https://repo.spring.io/milestone" }
+			maven { url "https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local" }
 		}
 	}
 
@@ -53,9 +51,7 @@ repositories {
 	mavenLocal()
 	mavenCentral()
 	if ("${verifierVersion}".contains("SNAPSHOT")) {
-		maven { url "https://repo.spring.io/snapshot" }
-	} else if ("${verifierVersion}".contains("M") || "${verifierVersion}".contains("RC")) {
-		maven { url "https://repo.spring.io/milestone" }
+		maven { url "https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local" }
 	}
 }
 
