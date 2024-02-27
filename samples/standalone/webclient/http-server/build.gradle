@@ -18,7 +18,19 @@ version = '0.0.1'
 repositories {
 	mavenCentral()
 	mavenLocal()
-	maven { url "https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local" }
+	maven {
+		name "spring-commercial-release"
+		url "https://repo.spring.vmware.com/artifactory/spring-commercial-release-local/"
+		credentials {
+			username System.env.ARTIFACTORY_USERNAME
+			password System.env.ARTIFACTORY_PASSWORD
+		}
+	}
+	maven { url "https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local"
+		credentials {
+			username System.env.ARTIFACTORY_USERNAME
+			password System.env.ARTIFACTORY_PASSWORD
+		}}
 }
 
 dependencyManagement {

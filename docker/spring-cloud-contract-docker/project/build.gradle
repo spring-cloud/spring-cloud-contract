@@ -4,8 +4,20 @@ buildscript {
 	repositories {
 		mavenLocal()
 		mavenCentral()
+		maven {
+			name "spring-commercial-release"
+			url "https://repo.spring.vmware.com/artifactory/spring-commercial-release-local/"
+			credentials {
+				username System.env.ARTIFACTORY_USERNAME
+				password System.env.ARTIFACTORY_PASSWORD
+			}
+		}
 		if ("${verifierVersion}".contains("SNAPSHOT")) {
-			maven { url "https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local" }
+			maven { url "https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local"
+				credentials {
+					username System.env.ARTIFACTORY_USERNAME
+					password System.env.ARTIFACTORY_PASSWORD
+				}}
 		}
 	}
 
@@ -50,8 +62,20 @@ version = getProp(envVars, "PROJECT_VERSION") ?: '0.0.1-SNAPSHOT'
 repositories {
 	mavenLocal()
 	mavenCentral()
+	maven {
+		name "spring-commercial-release"
+		url "https://repo.spring.vmware.com/artifactory/spring-commercial-release-local/"
+		credentials {
+			username System.env.ARTIFACTORY_USERNAME
+			password System.env.ARTIFACTORY_PASSWORD
+		}
+	}
 	if ("${verifierVersion}".contains("SNAPSHOT")) {
-		maven { url "https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local" }
+		maven { url "https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local"
+			credentials {
+				username System.env.ARTIFACTORY_USERNAME
+				password System.env.ARTIFACTORY_PASSWORD
+			}}
 	}
 }
 

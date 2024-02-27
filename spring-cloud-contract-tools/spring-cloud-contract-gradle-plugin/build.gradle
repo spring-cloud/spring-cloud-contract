@@ -4,6 +4,14 @@ buildscript {
 		mavenLocal()
 		//For plugin-publish-plugin. Could be limited only to that dependency with Gradle 5.1+ - https://docs.gradle.org/5.1.1/release-notes.html#repository-to-dependency-matching
 		gradlePluginPortal()
+		maven {
+			name "spring-commercial-release"
+			url "https://repo.spring.vmware.com/artifactory/spring-commercial-release-local/"
+			credentials {
+				username System.env.ARTIFACTORY_USERNAME
+				password System.env.ARTIFACTORY_PASSWORD
+			}
+		}
 	}
 	dependencies {
 		classpath 'com.gradle.publish:plugin-publish-plugin:0.14.0'
@@ -36,8 +44,19 @@ targetCompatibility = 17
 repositories {
 	mavenLocal()
 	mavenCentral()
-	maven { url "https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local" }
-	maven { url "https://repo.spring.vmware.com/artifactory/spring-commercial" }
+	maven {
+		name "spring-commercial-release"
+		url "https://repo.spring.vmware.com/artifactory/spring-commercial-release-local/"
+		credentials {
+			username System.env.ARTIFACTORY_USERNAME
+			password System.env.ARTIFACTORY_PASSWORD
+		}
+	}
+	maven { url "https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local"
+		credentials {
+			username System.env.ARTIFACTORY_USERNAME
+			password System.env.ARTIFACTORY_PASSWORD
+		}}
 }
 
 //Dependencies in all subprojects - https://solidsoft.wordpress.com/2014/11/13/gradle-tricks-display-dependencies-for-all-subprojects-in-multi-project-build/
