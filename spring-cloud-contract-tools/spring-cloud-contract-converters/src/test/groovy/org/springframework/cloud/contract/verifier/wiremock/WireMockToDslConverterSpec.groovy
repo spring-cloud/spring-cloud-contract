@@ -73,12 +73,12 @@ class WireMockToDslConverterSpec extends Specification {
 				response {
 					status OK()
 					body("""{
-    "id": {
-        "value": "132"
+    "id" : {
+        "value" : "132"
     },
-    "surname": "Kowalsky",
-    "name": "Jan",
-    "created": "2014-02-02 12:23:43"
+    "surname" : "Kowalsky",
+    "name" : "Jan",
+    "created" : "2014-02-02 12:23:43"
 }""")
 					headers {
 						header 'Content-Type': 'text/plain'
@@ -246,8 +246,8 @@ class WireMockToDslConverterSpec extends Specification {
 					status OK()
 					body("""[
     {
-        "a": 1,
-        "c": "3"
+        "a" : 1,
+        "c" : "3"
     },
     "b",
     "a"
@@ -300,24 +300,24 @@ class WireMockToDslConverterSpec extends Specification {
 					status OK()
 					body("""[
     {
-        "amount": 1.01,
-        "name": "Name",
-        "info": {
-            "title": "title1",
-            "payload": null
+        "amount" : 1.01,
+        "name" : "Name",
+        "info" : {
+            "title" : "title1",
+            "payload" : null
         },
-        "booleanvalue": true,
-        "user": null
+        "booleanvalue" : true,
+        "user" : null
     },
     {
-        "amount": 2.01,
-        "name": "Name2",
-        "info": {
-            "title": "title2",
-            "payload": null
+        "amount" : 2.01,
+        "name" : "Name2",
+        "info" : {
+            "title" : "title2",
+            "payload" : null
         },
-        "booleanvalue": true,
-        "user": null
+        "booleanvalue" : true,
+        "user" : null
     }
 ]""")
 				}
