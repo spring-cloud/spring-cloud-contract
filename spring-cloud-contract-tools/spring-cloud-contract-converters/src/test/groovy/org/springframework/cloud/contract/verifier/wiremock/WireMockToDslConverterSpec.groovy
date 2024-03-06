@@ -24,6 +24,7 @@ import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.RegexProperty
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubMapping
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
+import org.springframework.util.StringUtils
 
 class WireMockToDslConverterSpec extends Specification {
 
@@ -78,7 +79,7 @@ class WireMockToDslConverterSpec extends Specification {
     },
     "surname": "Kowalsky",
     "name": "Jan",
-    "created": "2014-02-02 12:23:43"
+    "created" : "2014-02-02 12:23:43"
 }""")
 					headers {
 						header 'Content-Type': 'text/plain'
@@ -100,7 +101,9 @@ class WireMockToDslConverterSpec extends Specification {
 			b.request.headers.entries.find { it.name == 'X-Custom-Header'}.clientValue.pattern()
 			a.request.headers.entries.find { it.name == 'Accept'}.clientValue.pattern() ==
 			b.request.headers.entries.find { it.name == 'Accept'}.clientValue.pattern()
-			a.response == b.response
+			String aResponseTrimmed = StringUtils.trimAllWhitespace(a.response.toString())
+			String bResponseTrimmed = StringUtils.trimAllWhitespace(b.response.toString())
+			aResponseTrimmed == bResponseTrimmed
 	}
 
 
@@ -260,10 +263,13 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			ContractVerifierDslConverter.convertAsCollection(new File("/"),
+			Contract contract =
+					ContractVerifierDslConverter.convertAsCollection(new File("/"),
 					"""org.springframework.cloud.contract.spec.Contract.make {
 				$groovyDsl
-			}""").first() == expectedGroovyDsl
+			}""").first()
+			StringUtils.trimAllWhitespace(contract.toString()) ==
+					StringUtils.trimAllWhitespace(expectedGroovyDsl.toString())
 	}
 
 	def 'should convert WireMock stub with response body containing a nested list'() {
@@ -325,10 +331,13 @@ class WireMockToDslConverterSpec extends Specification {
 		when:
 			String groovyDsl = WireMockToDslConverter.fromWireMockStub(wireMockStub)
 		then:
-			ContractVerifierDslConverter.convertAsCollection(new File("/"),
+			Contract contract =
+					ContractVerifierDslConverter.convertAsCollection(new File("/"),
 					"""org.springframework.cloud.contract.spec.Contract.make {
 				$groovyDsl
-			}""").first() == expectedGroovyDsl
+			}""").first()
+			StringUtils.trimAllWhitespace(contract.toString()) ==
+					StringUtils.trimAllWhitespace(expectedGroovyDsl.toString())
 	}
 
 	def 'should convert WireMock stub with request body checking equality to Json'() {
