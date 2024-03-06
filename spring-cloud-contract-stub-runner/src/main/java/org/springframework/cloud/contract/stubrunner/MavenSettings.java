@@ -17,9 +17,10 @@
 package org.springframework.cloud.contract.stubrunner;
 
 import java.io.File;
+import java.util.HashMap;
 
 import org.sonatype.plexus.components.cipher.DefaultPlexusCipher;
-import org.sonatype.plexus.components.cipher.PlexusCipherException;
+import org.sonatype.plexus.components.cipher.PlexusCipher;
 import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
 import shaded.org.apache.maven.settings.crypto.DefaultSettingsDecrypter;
 import shaded.org.apache.maven.settings.crypto.SettingsDecrypter;
@@ -29,6 +30,8 @@ import org.springframework.util.StringUtils;
 public class MavenSettings {
 
 	private static final String MAVEN_USER_CONFIG_DIRECTORY = "maven.user.config.dir";
+
+	private static final String SECURITY_XML = "settings-security.xml";
 
 	private final String homeDir;
 
@@ -57,22 +60,16 @@ public class MavenSettings {
 	}
 
 	public SettingsDecrypter createSettingsDecrypter() {
-		return new DefaultSettingsDecrypter(new SpringCloudContractSecDispatcher());
+		File file = new File(MavenSettings.this.homeDir, SECURITY_XML);
+		String configurationFilePath = file.getAbsolutePath();
+		return new DefaultSettingsDecrypter(
+				new SpringCloudContractSecDispatcher(new DefaultPlexusCipher(), configurationFilePath));
 	}
 
-	private class SpringCloudContractSecDispatcher extends DefaultSecDispatcher {
+	private static class SpringCloudContractSecDispatcher extends DefaultSecDispatcher {
 
-		private static final String SECURITY_XML = "settings-security.xml";
-
-		SpringCloudContractSecDispatcher() {
-			File file = new File(MavenSettings.this.homeDir, SECURITY_XML);
-			this._configurationFile = file.getAbsolutePath();
-			try {
-				this._cipher = new DefaultPlexusCipher();
-			}
-			catch (PlexusCipherException e) {
-				throw new IllegalStateException(e);
-			}
+		SpringCloudContractSecDispatcher(PlexusCipher cipher, String configurationFile) {
+			super(cipher, new HashMap<>(), configurationFile);
 		}
 
 	}

@@ -41,7 +41,8 @@ import org.springframework.test.context.ActiveProfiles
  * @author Marcin Grzejszczak
  */
 // tag::test[]
-@SpringBootTest(classes = Config, properties = ["spring.application.name=bar-consumer"])
+@SpringBootTest(classes = Config, properties = ["spring.application.name=bar-consumer",
+		"stubrunner.jms.enabled=false"])
 @AutoConfigureStubRunner(ids = "org.springframework.cloud.contract.verifier.stubs:producerWithMultipleConsumers",
 		repositoryRoot = "classpath:m2repo/repository/",
 		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
