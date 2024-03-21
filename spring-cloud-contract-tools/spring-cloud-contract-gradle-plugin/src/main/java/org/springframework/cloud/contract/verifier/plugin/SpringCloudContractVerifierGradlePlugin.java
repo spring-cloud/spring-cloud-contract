@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2020 the original author or authors.
+ * Copyright 2013-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,12 +26,12 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
+import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.attributes.Bundling;
 import org.gradle.api.attributes.Category;
 import org.gradle.api.attributes.LibraryElements;
 import org.gradle.api.attributes.Usage;
 import org.gradle.api.file.Directory;
-import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
@@ -140,6 +140,16 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 					try {
 						Method implementation = dependencies.getClass().getMethod("implementation", Object.class);
 						implementation.invoke(dependencies, project);
+					} catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+						throw new RuntimeException("Unable to add project dependencies", e);
+					}
+				} else if (GradleVersion.current().compareTo(GradleVersion.version("8.6")) < 0) {
+					try {
+						Method projectMethod = dependencies.getClass().getMethod("project");
+						Method getImplementationMethod = dependencies.getClass().getMethod("getImplementation");
+						Object dependencyAdder = getImplementationMethod.invoke(dependencies);
+						Method addMethod = dependencyAdder.getClass().getMethod("add", Dependency.class);
+						addMethod.invoke(dependencyAdder, projectMethod.invoke(dependencies));
 					} catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
 						throw new RuntimeException("Unable to add project dependencies", e);
 					}
