@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.util
 
+import org.springframework.cloud.contract.spec.internal.Part
 
 import java.util.function.Function
 import java.util.regex.Matcher
@@ -37,7 +38,6 @@ import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import org.springframework.cloud.contract.spec.internal.Header
 import org.springframework.cloud.contract.spec.internal.Headers
 import org.springframework.cloud.contract.spec.internal.MatchingStrategy
-import org.springframework.cloud.contract.spec.internal.NamedProperty
 import org.springframework.cloud.contract.spec.internal.OptionalProperty
 import org.springframework.cloud.contract.verifier.template.HandlebarsTemplateProcessor
 import org.springframework.util.StringUtils
@@ -575,45 +575,49 @@ class ContentUtils {
 		return UNKNOWN
 	}
 
-	static String getGroovyMultipartFileParameterContent(String propertyName, NamedProperty propertyValue,
+	static String getGroovyMultipartFileParameterContent(String propertyName, Part propertyValue,
 			Closure<String> bytesFromFile) {
-		return "'$propertyName', ${namedPropertyName(propertyValue, "'")}, " +
-				"${groovyNamedPropertyValue(propertyValue, "'", bytesFromFile)}" +
-				namedContentTypeNameIfPresent(propertyValue, "'")
+		return "'$propertyName', ${partName(propertyValue, "'")}, " +
+				"${groovyPartPropertyValue(propertyValue, "'", bytesFromFile)}" +
+				partContentTypeNameIfPresent(propertyValue, "'")
 	}
 
-	static String getGroovyMultipartFileParameterContent(String propertyName, NamedProperty propertyValue,
+	static String getGroovyMultipartFileParameterContent(String propertyName, Part propertyValue,
 			Function<FromFileProperty, String> bytesFromFile) {
-		return "'$propertyName', ${namedPropertyName(propertyValue, "'")}, " +
-				"${groovyNamedPropertyValue(propertyValue, "'", { FromFileProperty property -> bytesFromFile.apply(property) })}" +
-				namedContentTypeNameIfPresent(propertyValue, "'")
+		return "'$propertyName', ${partName(propertyValue, "'")}, " +
+				"${groovyPartPropertyValue(propertyValue, "'", { FromFileProperty property -> bytesFromFile.apply(property) })}" +
+				partContentTypeNameIfPresent(propertyValue, "'")
 	}
 
-	static String getJavaMultipartFileParameterContent(String propertyName, NamedProperty propertyValue,
+	static String getJavaMultipartFileParameterContent(String propertyName, Part propertyValue,
 			Function<FromFileProperty, String> bytesFromFile) {
 		return getJavaMultipartFileParameterContent(propertyName, propertyValue, { FromFileProperty property -> bytesFromFile.apply(property) })
 	}
 
-	static String getJavaMultipartFileParameterContent(String propertyName, NamedProperty propertyValue,
+	static String getJavaMultipartFileParameterContent(String propertyName, Part propertyValue,
 			Closure<String> bytesFromFile) {
 		return """"${escapeJava(propertyName)}", ${
-			namedPropertyName(propertyValue, '"')
+			partName(propertyValue, '"')
 		}, """ +
 				"""${
-					javaNamedPropertyValue(propertyValue, '"', bytesFromFile)
+					javaPartPropertyValue(propertyValue, '"', bytesFromFile)
 				}${
-					namedContentTypeNameIfPresent(propertyValue, '"')
+					partContentTypeNameIfPresent(propertyValue, '"')
 				}"""
 	}
 
-	static String namedPropertyName(NamedProperty property, String quote) {
-		return property.name.serverValue instanceof ExecutionProperty ?
-				property.name.serverValue.toString() : quote +
-				escapeJava(property.name.serverValue.toString()) + quote
+	static String partName(Part property, String quote) {
+		if (Objects.isNull(property.filename.serverValue)) {
+			return null;
+		} else if (property.filename.serverValue instanceof ExecutionProperty) {
+			return property.filename.serverValue.toString();
+		} else {
+			return quote + escapeJava(property.filename.serverValue.toString()) + quote;
+		}
 	}
 
-	static String namedContentTypeNameIfPresent(NamedProperty property, String quote) {
-		if (!property.contentType) {
+	static String partContentTypeNameIfPresent(Part property, String quote) {
+		if (Objects.isNull(property.contentType.serverValue)) {
 			return ""
 		}
 		String contentType = property.contentType.serverValue instanceof ExecutionProperty ?
@@ -622,16 +626,16 @@ class ContentUtils {
 		return ", " + contentType
 	}
 
-	static String groovyNamedPropertyValue(NamedProperty property, String quote, Closure<String> bytesFromFile) {
-		if (property.value.serverValue instanceof ExecutionProperty) {
-			return property.value.serverValue.toString()
+	static String groovyPartPropertyValue(Part property, String quote, Closure<String> bytesFromFile) {
+		if (property.body.serverValue instanceof ExecutionProperty) {
+			return property.body.serverValue.toString()
 		}
-		else if (property.value.serverValue instanceof byte[]) {
-			byte[] bytes = (byte[]) property.value.serverValue
+		else if (property.body.serverValue instanceof byte[]) {
+			byte[] bytes = (byte[]) property.body.serverValue
 			return "[" + bytes.collect { it }.join(", ") + "] as byte[]"
 		}
-		else if (property.value.serverValue instanceof FromFileProperty) {
-			FromFileProperty fromFileProperty = (FromFileProperty) property.value.serverValue
+		else if (property.body.serverValue instanceof FromFileProperty) {
+			FromFileProperty fromFileProperty = (FromFileProperty) property.body.serverValue
 			if (fromFileProperty.isByte()) {
 				return bytesFromFile(fromFileProperty)
 			}
@@ -639,19 +643,19 @@ class ContentUtils {
 					join(", ") + "] as byte[]"
 		}
 		return quote +
-				escapeJava(property.value.serverValue.toString()) + quote + ".bytes"
+				escapeJava(property.body.serverValue.toString()) + quote + ".bytes"
 	}
 
-	static String javaNamedPropertyValue(NamedProperty property, String quote, Closure<String> bytesFromFile) {
-		if (property.value.serverValue instanceof ExecutionProperty) {
-			return property.value.serverValue.toString()
+	static String javaPartPropertyValue(Part property, String quote, Closure<String> bytesFromFile) {
+		if (property.body.serverValue instanceof ExecutionProperty) {
+			return property.body.serverValue.toString()
 		}
-		else if (property.value.serverValue instanceof byte[]) {
-			byte[] bytes = (byte[]) property.value.serverValue
+		else if (property.body.serverValue instanceof byte[]) {
+			byte[] bytes = (byte[]) property.body.serverValue
 			return "new byte[] {" + bytes.collect { it }.join(", ") + "}"
 		}
-		else if (property.value.serverValue instanceof FromFileProperty) {
-			FromFileProperty fromFileProperty = (FromFileProperty) property.value.serverValue
+		else if (property.body.serverValue instanceof FromFileProperty) {
+			FromFileProperty fromFileProperty = (FromFileProperty) property.body.serverValue
 			if (fromFileProperty.isByte()) {
 				return bytesFromFile(fromFileProperty)
 			}
@@ -659,7 +663,7 @@ class ContentUtils {
 					join(", ") + "}"
 		}
 		return quote +
-				escapeJava(property.value.serverValue.toString()) + quote + ".getBytes()"
+				escapeJava(property.body.serverValue.toString()) + quote + ".getBytes()"
 	}
 
 	static ContentType evaluateClientSideContentType(Headers contractHeaders, Object body) {

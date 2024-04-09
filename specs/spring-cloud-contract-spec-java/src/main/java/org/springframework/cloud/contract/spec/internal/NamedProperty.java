@@ -17,14 +17,13 @@
 package org.springframework.cloud.contract.spec.internal;
 
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Represents a property that has name and content. Used together with multipart requests.
  *
  * @since 1.0.0
  */
-public class NamedProperty {
+public class NamedProperty extends Part {
 
 	private static final String NAME = "name";
 
@@ -32,22 +31,12 @@ public class NamedProperty {
 
 	private static final String CONTENT_TYPE = "contentType";
 
-	private DslProperty name;
-
-	private DslProperty value;
-
-	private DslProperty contentType;
-
 	public NamedProperty(DslProperty name, DslProperty value) {
-		this.name = name;
-		this.value = value;
-		this.contentType = null;
+		this(name, value, null);
 	}
 
 	public NamedProperty(DslProperty name, DslProperty value, DslProperty contentType) {
-		this.name = name;
-		this.value = value;
-		this.contentType = contentType;
+		super(name, value, contentType, null);
 	}
 
 	public NamedProperty(Map<String, DslProperty> namedMap) {
@@ -75,51 +64,10 @@ public class NamedProperty {
 		return new DslProperty(o);
 	}
 
-	public DslProperty getName() {
-		return name;
-	}
-
-	public void setName(DslProperty name) {
-		this.name = name;
-	}
-
-	public DslProperty getValue() {
-		return value;
-	}
-
-	public void setValue(DslProperty value) {
-		this.value = value;
-	}
-
-	public DslProperty getContentType() {
-		return contentType;
-	}
-
-	public void setContentType(DslProperty contentType) {
-		this.contentType = contentType;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		NamedProperty that = (NamedProperty) o;
-		return Objects.equals(name, that.name) && Objects.equals(value, that.value)
-				&& Objects.equals(contentType, that.contentType);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(name, value, contentType);
-	}
-
 	@Override
 	public String toString() {
-		return "NamedProperty{" + "name=" + name + ", value=" + value + ", contentType=" + contentType + '}';
+		return "NamedProperty{" + "name=" + super.getFilename() + ", value=" + super.getBody() + ", contentType="
+				+ super.getContentType() + '}';
 	}
 
 }
