@@ -49,7 +49,6 @@ subprojects {
 		mavenLocal()
 		maven(url = "https://repo.spring.io/snapshot")
 		maven(url = "https://repo.spring.io/milestone")
-		maven(url = "https://repo.spring.io/release")
 	}
 
 	dependencies {
