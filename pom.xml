@@ -56,7 +56,7 @@
 		<hamcrest.version>2.2</hamcrest.version>
 
 		<!-- We need to have compatibility with Gradle -->
-		<groovy.version>4.0.16</groovy.version>
+		<groovy.version>4.0.21</groovy.version>
 		<!-- We need to have compatibility with Boot -->
 		<maven.version>3.9.4</maven.version>
 		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
