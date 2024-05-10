@@ -3,8 +3,8 @@ pluginManagement {
     repositories {
         mavenCentral()
         mavenLocal()
+        maven { url "https://repo.spring.vmware.com/artifactory/spring-commercial-release-local" }
         maven { url "https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local" }
-        maven { url "https://repo.spring.vmware.com/artifactory/spring-commercial" }
         gradlePluginPortal()
     }
 // end::repos[]
