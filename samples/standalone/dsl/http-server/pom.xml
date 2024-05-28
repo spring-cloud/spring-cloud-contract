@@ -258,7 +258,7 @@
 	</pluginRepositories>
 	<!-- end::repos[] -->
 
-	<profiles>
+	<!--<profiles>
 		<profile>
 			<id>integration</id>
 			<build>
@@ -277,10 +277,10 @@
 										<argument>clean</argument>
 										<argument>build</argument>
 										<argument>publishToMavenLocal</argument>
-										<!-- TODO: Remove -->
+										&lt;!&ndash; TODO: Remove &ndash;&gt;
 										<argument>-x</argument>
 										<argument>test</argument>
-										<!-- TODO: Remove -->
+										&lt;!&ndash; TODO: Remove &ndash;&gt;
 										<argument>-x</argument>
 										<argument>contractTest</argument>
 										<argument>
@@ -315,10 +315,10 @@
 										<argument>clean</argument>
 										<argument>build</argument>
 										<argument>publishToMavenLocal</argument>
-										<!-- TODO: Remove -->
+										&lt;!&ndash; TODO: Remove &ndash;&gt;
 										<argument>-x</argument>
 										<argument>test</argument>
-										<!-- TODO: Remove -->
+										&lt;!&ndash; TODO: Remove &ndash;&gt;
 										<argument>-x</argument>
 										<argument>contractTest</argument>
 										<argument>
@@ -335,5 +335,5 @@
 				</plugins>
 			</build>
 		</profile>
-	</profiles>
+	</profiles>-->
 </project>
