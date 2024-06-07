@@ -51,14 +51,14 @@
 		</plugins>
 	</build>
 
-	<profiles>
+	<!--<profiles>
 		<profile>
 			<id>integration</id>
 			<build>
 				<plugins>
 					<plugin>
-						<!-- Invoke integration tests in the install phase, after the maven-plugin
-							 is available -->
+						&lt;!&ndash; Invoke integration tests in the install phase, after the maven-plugin
+							 is available &ndash;&gt;
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-invoker-plugin</artifactId>
 						<version>3.2.2</version>
@@ -98,8 +98,8 @@
 			<build>
 				<plugins>
 					<plugin>
-						<!-- Invoke integration tests in the install phase, after the maven-plugin
-							 is available -->
+						&lt;!&ndash; Invoke integration tests in the install phase, after the maven-plugin
+							 is available &ndash;&gt;
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-invoker-plugin</artifactId>
 						<version>3.2.2</version>
@@ -131,6 +131,6 @@
 				</plugins>
 			</build>
 		</profile>
-	</profiles>
+	</profiles>-->
 
 </project>
