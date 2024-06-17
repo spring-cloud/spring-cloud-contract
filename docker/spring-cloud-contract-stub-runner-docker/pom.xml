@@ -18,7 +18,7 @@
 	<description>Spring Cloud Contract Stub Runner Docker</description>
 
 	<properties>
-		<thin.repo>https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local</thin.repo>
+		<thin.repo>https://usw1.packages.broadcom.com/artifactory/spring-enterprise-maven-dev-local</thin.repo>
 	</properties>
 
 	<dependencies>

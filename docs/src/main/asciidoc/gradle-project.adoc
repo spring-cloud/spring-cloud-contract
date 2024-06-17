@@ -72,7 +72,7 @@ pluginManagement {
         // to pick from local .m2
         mavenLocal()
         // for snapshots
-        maven { url "https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local" }
+        maven { url "https://usw1.packages.broadcom.com/artifactory/spring-enterprise-maven-dev-local" }
         // for GA versions
         gradlePluginPortal()
     }

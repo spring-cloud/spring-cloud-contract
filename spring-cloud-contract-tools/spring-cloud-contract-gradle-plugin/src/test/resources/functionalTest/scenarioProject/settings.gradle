@@ -20,13 +20,13 @@ pluginManagement {
         mavenLocal()
         maven {
             name "spring-commercial-release"
-            url "https://repo.spring.vmware.com/artifactory/spring-commercial-release-local/"
+            url "https://usw1.packages.broadcom.com/artifactory/spring-enterprise-maven-prod-local/"
             credentials {
                 username System.env.ARTIFACTORY_USERNAME
                 password System.env.ARTIFACTORY_PASSWORD
             }
         }
-        maven { url "https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local"
+        maven { url "https://usw1.packages.broadcom.com/artifactory/spring-enterprise-maven-dev-local"
             credentials {
                 username System.env.ARTIFACTORY_USERNAME
                 password System.env.ARTIFACTORY_PASSWORD

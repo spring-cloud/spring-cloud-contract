@@ -429,7 +429,7 @@
 		<repository>
 			<id>spring-commercial-snapshot</id>
 			<name>Spring Commercial Snapshot Repository</name>
-			<url>https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local</url>
+			<url>https://usw1.packages.broadcom.com/artifactory/spring-enterprise-maven-dev-local</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
@@ -450,7 +450,7 @@
 		<pluginRepository>
 			<id>spring-commercial-snapshot</id>
 			<name>Spring Commercial Snapshot Repository</name>
-			<url>https://repo.spring.vmware.com/artifactory/spring-commercial-snapshot-local</url>
+			<url>https://usw1.packages.broadcom.com/artifactory/spring-enterprise-maven-dev-local</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
