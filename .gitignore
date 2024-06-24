@@ -18,7 +18,7 @@ src/ant/.ant-targets-upload-dist.xml
 node
 node_modules
 build
-package.json
+docs/package.json
 package-lock.json
 .gradle
 dependency-reduced-pom.xml
