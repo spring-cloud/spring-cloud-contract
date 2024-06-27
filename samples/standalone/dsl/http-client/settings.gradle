@@ -2,7 +2,7 @@ pluginManagement {
     repositories {
         mavenCentral()
         mavenLocal()
-        maven { url "https://usw1.packages.broadcom.com/artifactory/spring-commercial" }
+        maven { url "https://usw1.packages.broadcom.com/artifactory/spring-enterprise-maven-prod" }
         maven { url "https://usw1.packages.broadcom.com/artifactory/spring-enterprise-maven-dev-local" }
         gradlePluginPortal()
     }

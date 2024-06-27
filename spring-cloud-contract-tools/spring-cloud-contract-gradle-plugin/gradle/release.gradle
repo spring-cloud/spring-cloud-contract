@@ -55,8 +55,8 @@ ext {
 	}
 
 	repoUrl = isReleaseToCentral ?
-			"https://usw1.packages.broadcom.com/artifactory/spring-commercial/" :
-			"https://usw1.packages.broadcom.com/artifactory/${resolveRepoName(project)}"
+			"https://usw1.packages.broadcom.com/artifactory/spring-enterprise-maven-prod/" :
+			"https://usw1.packages.broadcom.com/artifactory/spring-enterprise-maven-dev/"
 }
 
 String getProp(String propName) {
