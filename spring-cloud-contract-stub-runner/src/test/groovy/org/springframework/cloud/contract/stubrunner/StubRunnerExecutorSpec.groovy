@@ -40,7 +40,7 @@ class StubRunnerExecutorSpec extends Specification {
 	def setup() {
 		portScanner = new AvailablePortScanner(MIN_PORT, MAX_PORT)
 		repository = new StubRepository(new File('src/test/resources/repository'),
-				[], new StubRunnerOptionsBuilder().build())
+				[], stubRunnerOptions, null)
 	}
 
 	def 'should provide URL for given relative path of stub'() {
@@ -173,7 +173,7 @@ class StubRunnerExecutorSpec extends Specification {
 		when:
 			executor.runStubs(stubRunnerOptions,
 					new StubRepository(new File('src/test/resources/repository/httpcontract'),
-							[], new StubRunnerOptionsBuilder().build()), stubConf)
+							[], new StubRunnerOptionsBuilder().build(), null), stubConf)
 		then:
 			!executor.trigger()
 			!executor.trigger("missing", "label")
@@ -186,10 +186,11 @@ class StubRunnerExecutorSpec extends Specification {
 		given:
 			def stubConf = new StubConfiguration('asd', 'asd', 'asd', '')
 			StubRunnerExecutor executor = new StubRunnerExecutor(portScanner)
+			stubRunnerOptions = new StubRunnerOptionsBuilder().withFailOnNoStubs(false).build()
 		when:
 			RunningStubs stubs = executor.runStubs(stubRunnerOptions,
 					new StubRepository(new File('src/test/resources/emptyrepo'),
-							[], new StubRunnerOptionsBuilder().build()), stubConf)
+							[], stubRunnerOptions, null), stubConf)
 		then:
 			stubs.getPort('asd') == -1
 		cleanup:
@@ -204,7 +205,7 @@ class StubRunnerExecutorSpec extends Specification {
 			def stubConf = new StubConfiguration('asd', 'asd', 'asd', '')
 			executor.runStubs(stubRunnerOptions,
 					new StubRepository(new File('src/test/resources/messages'),
-							[], new StubRunnerOptionsBuilder().build()), stubConf)
+							[], new StubRunnerOptionsBuilder().build(), null), stubConf)
 			boolean triggered = executor.trigger("trigger")
 		then:
 			triggered

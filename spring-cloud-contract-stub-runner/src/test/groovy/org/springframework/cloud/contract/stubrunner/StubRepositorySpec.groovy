@@ -25,7 +25,7 @@ class StubRepositorySpec extends Specification {
 	def 'should retrieve all descriptors for given project'() {
 		given:
 			StubRepository repository = new StubRepository(REPOSITORY_LOCATION,
-					[], new StubRunnerOptionsBuilder().build())
+					[], new StubRunnerOptionsBuilder().build(), null)
 			int expectedDescriptorsSize = 8
 		when:
 			List<File> descriptors = repository.getStubs()
@@ -33,20 +33,18 @@ class StubRepositorySpec extends Specification {
 			descriptors.size() == expectedDescriptorsSize
 	}
 
-	def 'should return empty list if files are missing'() {
-		given:
-			StubRepository repository = new StubRepository(new File('src/test/resources/emptyrepo'),
-					[], new StubRunnerOptionsBuilder().build())
+	def 'should throw an exception when no stubs or contracts are present'() {
 		when:
-			List<File> descriptors = repository.getStubs()
+			new StubRepository(new File('src/test/resources/emptyrepo'),
+					[], new StubRunnerOptionsBuilder().build(), null)
 		then:
-			descriptors.empty
+			thrown(IllegalStateException)
 	}
 
 	def 'should throw an exception if directory with mappings is missing'() {
 		when:
 			new StubRepository(new File('src/test/resources/nonexistingrepo'), [],
-					new StubRunnerOptionsBuilder().build())
+					new StubRunnerOptionsBuilder().build(), null)
 		then:
 			thrown(IllegalArgumentException)
 	}
@@ -56,7 +54,7 @@ class StubRepositorySpec extends Specification {
 			StubRepository repository = new StubRepository(REPOSITORY_LOCATION,
 					[], new StubRunnerOptionsBuilder()
 					.withStubPerConsumer(true)
-					.withConsumerName("ping").build())
+					.withConsumerName("ping").build(), null)
 			int expectedDescriptorsSize = 1
 		when:
 			List<File> descriptors = repository.stubs

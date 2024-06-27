@@ -36,7 +36,7 @@ public class StubRepositoryTest {
 	public void should_prefer_custom_yaml_converter_over_standard() {
 		// given:
 		StubRepository repository = new StubRepository(YAML_REPOSITORY_LOCATION, new ArrayList<>(),
-				new StubRunnerOptionsBuilder().build());
+				new StubRunnerOptionsBuilder().build(), null);
 		int expectedDescriptorsSize = 1;
 
 		// when:

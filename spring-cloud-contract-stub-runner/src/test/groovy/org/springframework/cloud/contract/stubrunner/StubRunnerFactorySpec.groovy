@@ -24,6 +24,22 @@ import org.springframework.cloud.contract.verifier.messaging.noop.NoOpStubMessag
 
 class StubRunnerFactorySpec extends Specification {
 
+	static final String MAPPING = '''
+{
+  "request": {
+    "method": "GET",
+    "url": "/hello"
+  },
+  "response": {
+    "status": 200,
+    "body": "Hello world!",
+    "headers": {
+      "Content-Type": "text/plain"
+    }
+  }
+}
+'''
+
 	@Rule
 	TemporaryFolder folder = new TemporaryFolder()
 
@@ -42,6 +58,7 @@ class StubRunnerFactorySpec extends Specification {
 	def "Should download stub definitions many times"() {
 		given:
 			folder.newFolder("mappings")
+			folder.newFile("hello.json").text = MAPPING
 			1 * downloader.downloadAndUnpackStubJar(_) >> new AbstractMap.SimpleEntry(new StubConfiguration('a:b'), folder.root)
 			1 * downloader.downloadAndUnpackStubJar(_) >> new AbstractMap.SimpleEntry(new StubConfiguration('c:d'), folder.root)
 		when:

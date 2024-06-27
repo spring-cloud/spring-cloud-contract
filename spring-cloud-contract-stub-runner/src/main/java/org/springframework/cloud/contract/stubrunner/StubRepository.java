@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import io.micrometer.common.lang.Nullable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -57,7 +58,8 @@ class StubRepository {
 
 	private final StubRunnerOptions options;
 
-	StubRepository(File repository, List<HttpServerStub> httpServerStubs, StubRunnerOptions options) {
+	StubRepository(File repository, List<HttpServerStub> httpServerStubs, StubRunnerOptions options,
+			@Nullable StubConfiguration stubConfiguration) {
 		if (!repository.isDirectory()) {
 			throw new IllegalArgumentException("Missing descriptor repository under path [" + repository + "]");
 		}
@@ -70,13 +72,18 @@ class StubRepository {
 		this.options = options;
 		this.stubs = stubs();
 		this.contracts = contracts();
+		if (options.isFailOnNoStubs() && this.stubs.isEmpty() && this.contracts.isEmpty()) {
+			throw new IllegalStateException("No stubs or contracts were found for ["
+					+ (stubConfiguration != null ? stubConfiguration.toColonSeparatedDependencyNotation() : null)
+					+ "] and the switch to fail on no stubs was set.");
+		}
 		if (log.isTraceEnabled()) {
 			log.trace("Found the following contracts " + this.contracts);
 		}
 	}
 
 	StubRepository(File repository) {
-		this(repository, new ArrayList<>(), new StubRunnerOptionsBuilder().build());
+		this(repository, new ArrayList<>(), new StubRunnerOptionsBuilder().build(), null);
 	}
 
 	public File getPath() {
