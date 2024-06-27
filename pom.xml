@@ -651,7 +651,7 @@
 				<repository>
 					<id>spring-commercial-release</id>
 					<name>Spring Commercial Release Repository</name>
-					<url>https://repo.spring.vmware.com/artifactory/spring-commercial</url>
+					<url>https://usw1.packages.broadcom.com/artifactory/spring-commercial</url>
 					<snapshots>
 						<enabled>false</enabled>
 					</snapshots>
@@ -672,7 +672,7 @@
 				<pluginRepository>
 					<id>spring-commercial-release</id>
 					<name>Spring Commercial Release Repository</name>
-					<url>https://repo.spring.vmware.com/artifactory/spring-commercial</url>
+					<url>https://usw1.packages.broadcom.com/artifactory/spring-commercial</url>
 					<snapshots>
 						<enabled>false</enabled>
 					</snapshots>
