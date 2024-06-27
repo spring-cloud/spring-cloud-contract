@@ -460,7 +460,7 @@ $ curl -X GET http://localhost:9876/api/books
 
 IMPORTANT: If you want use the stubs that you have built locally, on your host,
 you should set the `-e STUBRUNNER_STUBS_MODE=LOCAL` environment variable and mount
-the volume of your local m2 (`-v "$\{HOME}/.m2/:/home/scc/.m2:ro"`).
+the volume of your local m2 (`-v "$\{HOME}/.m2/:/home/scc/.m2:rw"`).
 
 [[docker-stubrunner-example-messaging]]
 === Example of Usage with Messaging
@@ -578,7 +578,7 @@ $ docker run \
     -e "STUBRUNNER_REPOSITORY_ROOT=git://https://github.com/marcingrzejszczak/cdct_python_contracts.git" \ <3>
     -e ADDITIONAL_OPTS="--thin.properties.dependencies.rabbitmq=org.apache.camel.springboot:camel-rabbitmq-starter:3.4.0" \ <4>
     -e "STUBRUNNER_STUBS_MODE=REMOTE" \ <5>
-    -v "${HOME}/.m2/:/home/scc/.m2:ro" \ <6>
+    -v "${HOME}/.m2/:/home/scc/.m2:rw" \ <6>
     -p 8750:8750 \ <7>
     springcloud/spring-cloud-contract-stub-runner:3.0.4-SNAPSHOT <8>
 ```
