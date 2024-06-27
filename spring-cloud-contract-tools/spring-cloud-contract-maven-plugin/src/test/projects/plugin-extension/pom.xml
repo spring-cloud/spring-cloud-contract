@@ -100,7 +100,7 @@
 		<repository>
 			<id>spring-commercial-release</id>
 			<name>Spring Commercial Release Repository</name>
-			<url>https://usw1.packages.broadcom.com/artifactory/spring-enterprise-maven-prod</url>
+			<url>https://usw1.packages.broadcom.com/artifactory/spring-enterprise-maven-prod-local</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -121,7 +121,7 @@
 		<pluginRepository>
 			<id>spring-commercial-release</id>
 			<name>Spring Commercial Release Repository</name>
-			<url>https://usw1.packages.broadcom.com/artifactory/spring-enterprise-maven-prod</url>
+			<url>https://usw1.packages.broadcom.com/artifactory/spring-enterprise-maven-prod-local</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
