@@ -68,7 +68,10 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 		return stringValue.replaceAll("\"", "\\\\\"");
 	}
 
-	private static String wrapValueWithQuotes(Object value) {
+	static String wrapValueWithQuotes(Object value) {
+		if (value == null) {
+			return null;
+		}
 		return value instanceof String ? "\"" + stringWithEscapedQuotes(value) + "\"" : value.toString();
 	}
 
@@ -198,8 +201,8 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 			readyToCheck.methodsBuffer.offer(".value()");
 		}
 		else {
-			readyToCheck.appendMethodWithValue("isEqualTo",
-					value instanceof Long ? String.valueOf(value).concat("L") : String.valueOf(value));
+			readyToCheck.appendMethodWithValue("isEqualTo", value instanceof Long ? String.valueOf(value).concat("L")
+					: (value == null ? null : String.valueOf(value)));
 		}
 		return readyToCheck;
 	}
