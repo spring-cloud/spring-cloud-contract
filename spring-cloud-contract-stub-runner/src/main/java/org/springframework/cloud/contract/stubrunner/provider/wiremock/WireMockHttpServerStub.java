@@ -19,12 +19,11 @@ package org.springframework.cloud.contract.stubrunner.provider.wiremock;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,14 +41,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import wiremock.com.github.jknack.handlebars.Helper;
 
 import org.springframework.cloud.contract.stubrunner.HttpServerStub;
 import org.springframework.cloud.contract.stubrunner.HttpServerStubConfiguration;
 import org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer;
-import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsEscapeHelper;
-import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsJsonPathHelper;
-import org.springframework.cloud.contract.verifier.dsl.wiremock.DefaultResponseTransformer;
+import org.springframework.cloud.contract.verifier.dsl.wiremock.HandlebarsEscapeHelperExtension;
+import org.springframework.cloud.contract.verifier.dsl.wiremock.HandlebarsJsonHelperExtension;
 import org.springframework.cloud.contract.verifier.dsl.wiremock.SpringCloudContractRequestMatcher;
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockExtensions;
 import org.springframework.cloud.contract.wiremock.WireMockSpring;
@@ -95,17 +92,10 @@ public class WireMockHttpServerStub implements HttpServerStub {
 			}
 		}
 		else {
-			extensions.addAll(Arrays.asList(new DefaultResponseTransformer(false, helpers()),
+			extensions.addAll(Arrays.asList(new HandlebarsEscapeHelperExtension(), new HandlebarsJsonHelperExtension(),
 					new SpringCloudContractRequestMatcher()));
 		}
 		return extensions.toArray(new Extension[extensions.size()]);
-	}
-
-	private Map<String, Helper<?>> helpers() {
-		Map<String, Helper<?>> helpers = new HashMap<>();
-		helpers.put(HandlebarsJsonPathHelper.NAME, new HandlebarsJsonPathHelper());
-		helpers.put(HandlebarsEscapeHelper.NAME, new HandlebarsEscapeHelper());
-		return helpers;
 	}
 
 	@Override
@@ -212,7 +202,7 @@ public class WireMockHttpServerStub implements HttpServerStub {
 
 	StubMapping getMapping(File file) {
 		try (InputStream stream = Files.newInputStream(file.toPath())) {
-			return StubMapping.buildFrom(StreamUtils.copyToString(stream, Charset.forName("UTF-8")));
+			return StubMapping.buildFrom(StreamUtils.copyToString(stream, StandardCharsets.UTF_8));
 		}
 		catch (IOException | JsonException e) {
 			throw new IllegalStateException("Cannot read file", e);

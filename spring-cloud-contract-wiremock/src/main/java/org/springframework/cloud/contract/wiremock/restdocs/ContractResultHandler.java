@@ -19,12 +19,14 @@ package org.springframework.cloud.contract.wiremock.restdocs;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,12 +34,12 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.http.Body;
 import com.github.tomakehurst.wiremock.http.ContentTypeHeader;
 import com.github.tomakehurst.wiremock.http.Cookie;
+import com.github.tomakehurst.wiremock.http.FormParameter;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import com.github.tomakehurst.wiremock.http.QueryParameter;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
-import wiremock.com.google.common.base.Optional;
 import wiremock.org.apache.commons.io.IOUtils;
 
 import org.springframework.http.MediaType;
@@ -194,6 +196,18 @@ public class ContractResultHandler extends WireMockVerifyHelper<MvcResult, Contr
 			}
 
 			@Override
+			public FormParameter formParameter(String key) {
+				return new FormParameter(key, Arrays.stream(result.getRequest().getParameterValues(key)).toList());
+			}
+
+			@Override
+			public Map<String, FormParameter> formParameters() {
+				return result.getRequest().getParameterMap().entrySet().stream()
+						.collect(Collectors.toMap(Map.Entry::getKey,
+								(value) -> new FormParameter(value.getKey(), Arrays.asList(value.getValue()))));
+			}
+
+			@Override
 			public byte[] getBody() {
 				return result.getRequest().getContentAsByteArray();
 			}
@@ -270,7 +284,7 @@ public class ContractResultHandler extends WireMockVerifyHelper<MvcResult, Contr
 
 			@Override
 			public Optional<Request> getOriginalRequest() {
-				return Optional.absent();
+				return Optional.empty();
 			}
 
 			@Override

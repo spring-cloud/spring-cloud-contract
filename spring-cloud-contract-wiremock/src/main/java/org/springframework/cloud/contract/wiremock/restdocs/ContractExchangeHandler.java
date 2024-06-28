@@ -18,7 +18,7 @@ package org.springframework.cloud.contract.wiremock.restdocs;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -34,12 +35,12 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.http.Body;
 import com.github.tomakehurst.wiremock.http.ContentTypeHeader;
 import com.github.tomakehurst.wiremock.http.Cookie;
+import com.github.tomakehurst.wiremock.http.FormParameter;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.QueryParameter;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
 import org.apache.commons.codec.binary.Base64;
-import wiremock.com.google.common.base.Optional;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -56,7 +57,6 @@ import org.springframework.web.multipart.support.StandardMultipartHttpServletReq
 
 /**
  * @author Dave Syer
- *
  */
 public class ContractExchangeHandler extends WireMockVerifyHelper<EntityExchangeResult<?>, ContractExchangeHandler>
 		implements Consumer<EntityExchangeResult<byte[]>> {
@@ -115,7 +115,7 @@ class WireMockHttpRequestAdapter implements Request {
 
 	private static final boolean SERVLET_API_PRESENT = ClassUtils.isPresent("jakarta.servlet.http.Part", null);
 
-	private EntityExchangeResult<?> result;
+	private final EntityExchangeResult<?> result;
 
 	WireMockHttpRequestAdapter(EntityExchangeResult<?> result) {
 		this.result = result;
@@ -228,13 +228,32 @@ class WireMockHttpRequestAdapter implements Request {
 	}
 
 	@Override
+	public FormParameter formParameter(String key) {
+		for (String pair : this.getBodyAsString().split("&")) {
+			String[] split = pair.split("=");
+			return new FormParameter(split[0], List.of(split[1]));
+		}
+		return FormParameter.absent(key);
+	}
+
+	@Override
+	public Map<String, FormParameter> formParameters() {
+		var value = new HashMap<String, FormParameter>();
+		for (String pair : this.getBodyAsString().split("&")) {
+			String[] split = pair.split("=");
+			value.put(split[0], new FormParameter(split[0], List.of(split[1])));
+		}
+		return value;
+	}
+
+	@Override
 	public byte[] getBody() {
 		return this.result.getRequestBodyContent();
 	}
 
 	@Override
 	public String getBodyAsString() {
-		return new String(this.result.getRequestBodyContent(), Charset.forName("UTF-8"));
+		return new String(this.result.getRequestBodyContent(), StandardCharsets.UTF_8);
 	}
 
 	@Override
@@ -323,7 +342,7 @@ class WireMockHttpRequestAdapter implements Request {
 
 	@Override
 	public Optional<Request> getOriginalRequest() {
-		return Optional.absent();
+		return Optional.empty();
 	}
 
 	@Override

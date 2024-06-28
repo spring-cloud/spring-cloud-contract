@@ -176,7 +176,7 @@ private void test(String test) {
 		String className = className(test)
 		String fqnClassName = "com.example.${className}"
 		test = test.replaceAll("class FooTest", "class " + className)
-		.replaceAll("import javax.ws.rs.core.Response", "import javax.ws.rs.core.Response; import javax.ws.rs.client.WebTarget;")
+		.replaceAll("import javax.ws.rs.core.Response;", "import javax.ws.rs.core.Response; import javax.ws.rs.client.WebTarget;")
 		return compileJava(fqnClassName, test)
 
 	}
