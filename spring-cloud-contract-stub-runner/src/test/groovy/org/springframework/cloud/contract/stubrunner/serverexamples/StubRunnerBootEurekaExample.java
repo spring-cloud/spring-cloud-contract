@@ -40,8 +40,8 @@ public class StubRunnerBootEurekaExample {
 /*
  *
  * // tag::stubrunnereureka_args[]
- * -Dstubrunner.repositoryRoot=https://usw1.packages.broadcom.com/artifactory/spring-enterprise-maven-dev-local
- *  (1) -Dstubrunner.cloud.stubbed.discovery.enabled=false (2)
+ * -Dstubrunner.repositoryRoot=https://usw1.packages.broadcom.com/artifactory/spring-
+ * enterprise-maven-dev-local (1) -Dstubrunner.cloud.stubbed.discovery.enabled=false (2)
  * -Dstubrunner.ids=org.springframework.cloud.contract.verifier.stubs:loanIssuance,org.
  * springframework.cloud.contract.verifier.stubs:fraudDetectionServer,org.springframework.
  * cloud.contract.verifier.stubs:bootService (3)
