@@ -16,8 +16,11 @@
 
 package org.springframework.cloud.contract.wiremock.restdocs;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import com.github.tomakehurst.wiremock.client.BasicCredentials;
@@ -26,10 +29,13 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.ScenarioMappingBuilder;
 import com.github.tomakehurst.wiremock.common.Metadata;
 import com.github.tomakehurst.wiremock.extension.Parameters;
+import com.github.tomakehurst.wiremock.extension.ServeEventListener.RequestPhase;
+import com.github.tomakehurst.wiremock.extension.ServeEventListenerDefinition;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.matching.ContentPattern;
+import com.github.tomakehurst.wiremock.matching.MultiValuePattern;
 import com.github.tomakehurst.wiremock.matching.MultipartValuePatternBuilder;
 import com.github.tomakehurst.wiremock.matching.RequestPattern;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
@@ -42,7 +48,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 
 class BasicMappingBuilder implements ScenarioMappingBuilder {
 
-	private RequestPatternBuilder requestPatternBuilder;
+	private final RequestPatternBuilder requestPatternBuilder;
 
 	private ResponseDefinitionBuilder responseDefBuilder;
 
@@ -60,7 +66,9 @@ class BasicMappingBuilder implements ScenarioMappingBuilder {
 
 	private boolean isPersistent = false;
 
-	private Map<String, Parameters> postServeActions = new LinkedHashMap<>();
+	private final Map<String, Parameters> postServeActions = new LinkedHashMap<>();
+
+	private final List<ServeEventListenerDefinition> serveEventListeners = new ArrayList<>();
 
 	private Metadata metadata = new Metadata();
 
@@ -74,6 +82,10 @@ class BasicMappingBuilder implements ScenarioMappingBuilder {
 
 	BasicMappingBuilder(String customRequestMatcherName, Parameters parameters) {
 		this.requestPatternBuilder = new RequestPatternBuilder(customRequestMatcherName, parameters);
+	}
+
+	private static <P> Parameters resolveParameters(P parameters) {
+		return parameters instanceof Parameters ? (Parameters) parameters : Parameters.of(parameters);
 	}
 
 	@Override
@@ -113,6 +125,18 @@ class BasicMappingBuilder implements ScenarioMappingBuilder {
 	}
 
 	@Override
+	public ScenarioMappingBuilder withHeader(String key, MultiValuePattern headerPattern) {
+		this.requestPatternBuilder.withHeader(key, headerPattern);
+		return this;
+	}
+
+	@Override
+	public MappingBuilder withPathParam(String name, StringValuePattern pattern) {
+		this.requestPatternBuilder.withPathParam(name, pattern);
+		return this;
+	}
+
+	@Override
 	public BasicMappingBuilder withCookie(String name, StringValuePattern cookieValuePattern) {
 		this.requestPatternBuilder.withCookie(name, cookieValuePattern);
 		return this;
@@ -121,6 +145,24 @@ class BasicMappingBuilder implements ScenarioMappingBuilder {
 	@Override
 	public BasicMappingBuilder withQueryParam(String key, StringValuePattern queryParamPattern) {
 		this.requestPatternBuilder.withQueryParam(key, queryParamPattern);
+		return this;
+	}
+
+	@Override
+	public ScenarioMappingBuilder withQueryParam(String key, MultiValuePattern queryParamPattern) {
+		this.requestPatternBuilder.withQueryParam(key, queryParamPattern);
+		return this;
+	}
+
+	@Override
+	public ScenarioMappingBuilder withFormParam(String key, StringValuePattern formParamPattern) {
+		this.requestPatternBuilder.withFormParam(key, formParamPattern);
+		return this;
+	}
+
+	@Override
+	public ScenarioMappingBuilder withFormParam(String key, MultiValuePattern formParamPattern) {
+		this.requestPatternBuilder.withFormParam(key, formParamPattern);
 		return this;
 	}
 
@@ -196,6 +238,20 @@ class BasicMappingBuilder implements ScenarioMappingBuilder {
 	public <P> BasicMappingBuilder withPostServeAction(String extensionName, P parameters) {
 		Parameters params = parameters instanceof Parameters ? (Parameters) parameters : Parameters.of(parameters);
 		this.postServeActions.put(extensionName, params);
+		return this;
+	}
+
+	@Override
+	public <P> MappingBuilder withServeEventListener(Set<RequestPhase> requestPhases, String extensionName,
+			P parameters) {
+		this.serveEventListeners
+				.add(new ServeEventListenerDefinition(extensionName, requestPhases, resolveParameters(parameters)));
+		return this;
+	}
+
+	@Override
+	public <P> MappingBuilder withServeEventListener(String extensionName, P parameters) {
+		this.serveEventListeners.add(new ServeEventListenerDefinition(extensionName, resolveParameters(parameters)));
 		return this;
 	}
 

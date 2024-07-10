@@ -115,8 +115,12 @@
 			<artifactId>javax.inject</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock-jre8-standalone</artifactId>
+			<groupId>jakarta.annotation</groupId>
+			<artifactId>jakarta.annotation-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.wiremock</groupId>
+			<artifactId>wiremock-standalone</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.toomuchcoding.jsonassert</groupId>

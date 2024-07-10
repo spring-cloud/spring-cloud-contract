@@ -18,8 +18,7 @@ package org.springframework.cloud.contract.verifier.messaging.internal;
 
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
+import jakarta.annotation.Nullable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

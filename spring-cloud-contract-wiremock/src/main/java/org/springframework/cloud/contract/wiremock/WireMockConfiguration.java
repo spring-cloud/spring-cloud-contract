@@ -26,7 +26,6 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.Notifier;
 import com.github.tomakehurst.wiremock.core.Options;
-import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import jakarta.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
@@ -104,7 +103,7 @@ public class WireMockConfiguration implements SmartLifecycle {
 			registerFiles(factory);
 			factory.notifier(new Slf4jNotifier(true));
 			if (this.wireMock.getPlaceholders().isEnabled()) {
-				factory.extensions(new ResponseTemplateTransformer(false));
+				factory.templatingEnabled(true).globalTemplating(false);
 			}
 			this.options = factory;
 			if (this.customizers != null) {
