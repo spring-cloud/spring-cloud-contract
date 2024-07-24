@@ -122,10 +122,13 @@ public class PushStubsToScmMojo extends AbstractMojo {
 
 	StubRunnerOptions buildOptions() {
 		StubRunnerOptionsBuilder builder = new StubRunnerOptionsBuilder()
-				.withOptions(StubRunnerOptions.fromSystemProps()).withStubRepositoryRoot(this.contractsRepositoryUrl)
-				.withStubsMode(this.contractsMode).withUsername(this.contractsRepositoryUsername)
-				.withPassword(this.contractsRepositoryPassword).withDeleteStubsAfterTest(this.deleteStubsAfterTest)
-				.withProperties(this.contractsProperties);
+			.withOptions(StubRunnerOptions.fromSystemProps())
+			.withStubRepositoryRoot(this.contractsRepositoryUrl)
+			.withStubsMode(this.contractsMode)
+			.withUsername(this.contractsRepositoryUsername)
+			.withPassword(this.contractsRepositoryPassword)
+			.withDeleteStubsAfterTest(this.deleteStubsAfterTest)
+			.withProperties(this.contractsProperties);
 		return builder.build();
 	}
 

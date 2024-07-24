@@ -79,9 +79,13 @@ public class RecursiveFilesConverter {
 	}
 
 	public void processFiles() {
-		ContractFileScanner scanner = ContractFileScanner.builder().baseDir(contractsDslDir)
-				.excluded(new HashSet<>(excludedFiles)).ignored(new HashSet<>()).included(new HashSet<>())
-				.includeMatcher(includedContracts).build();
+		ContractFileScanner scanner = ContractFileScanner.builder()
+			.baseDir(contractsDslDir)
+			.excluded(new HashSet<>(excludedFiles))
+			.ignored(new HashSet<>())
+			.included(new HashSet<>())
+			.includeMatcher(includedContracts)
+			.build();
 		MultiValueMap<Path, ContractMetadata> contracts = scanner.findContractsRecursively();
 		if (log.isDebugEnabled()) {
 			log.debug("Found the following contracts " + contracts);
@@ -115,7 +119,7 @@ public class RecursiveFilesConverter {
 
 					for (StubGenerator stubGenerator : stubGenerators) {
 						Map<Contract, String> convertedContent = stubGenerator
-								.convertContents(last(entryKey).toString(), contract);
+							.convertContents(last(entryKey).toString(), contract);
 						if (convertedContent == null || convertedContent.isEmpty()) {
 							continue;
 						}

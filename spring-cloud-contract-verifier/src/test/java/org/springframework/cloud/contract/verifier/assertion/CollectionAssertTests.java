@@ -94,8 +94,9 @@ public class CollectionAssertTests {
 	public void should_not_throw_an_exception_when_flattened_size_is_greater_than_or_equal_to_provided_size() {
 		Collection collection = nestedCollection();
 
-		SpringCloudContractAssertions.assertThat(collection).hasFlattenedSizeGreaterThanOrEqualTo(0)
-				.hasFlattenedSizeGreaterThanOrEqualTo(7);
+		SpringCloudContractAssertions.assertThat(collection)
+			.hasFlattenedSizeGreaterThanOrEqualTo(0)
+			.hasFlattenedSizeGreaterThanOrEqualTo(7);
 	}
 
 	@Test
@@ -128,8 +129,9 @@ public class CollectionAssertTests {
 	public void should_not_throw_an_exception_when_flattened_size_is_less_than_or_equal_to_provided_size() {
 		Collection collection = nestedCollection();
 
-		SpringCloudContractAssertions.assertThat(collection).hasFlattenedSizeLessThanOrEqualTo(8)
-				.hasFlattenedSizeLessThanOrEqualTo(7);
+		SpringCloudContractAssertions.assertThat(collection)
+			.hasFlattenedSizeLessThanOrEqualTo(8)
+			.hasFlattenedSizeLessThanOrEqualTo(7);
 	}
 
 	@Test
@@ -162,8 +164,9 @@ public class CollectionAssertTests {
 	public void should_not_throw_an_exception_when_flattened_size_is_between_the_provided_sizes() {
 		Collection collection = nestedCollection();
 
-		SpringCloudContractAssertions.assertThat(collection).hasFlattenedSizeBetween(1, 8).hasFlattenedSizeBetween(7,
-				7);
+		SpringCloudContractAssertions.assertThat(collection)
+			.hasFlattenedSizeBetween(1, 8)
+			.hasFlattenedSizeBetween(7, 7);
 	}
 
 	@Test
@@ -196,8 +199,9 @@ public class CollectionAssertTests {
 	public void should_not_throw_an_exception_when_size_is_greater_than_or_equal_to_provided_size() {
 		Collection collection = collection();
 
-		SpringCloudContractAssertions.assertThat(collection).hasSizeGreaterThanOrEqualTo(0)
-				.hasSizeGreaterThanOrEqualTo(3);
+		SpringCloudContractAssertions.assertThat(collection)
+			.hasSizeGreaterThanOrEqualTo(0)
+			.hasSizeGreaterThanOrEqualTo(3);
 	}
 
 	@Test
@@ -289,7 +293,7 @@ public class CollectionAssertTests {
 		}
 		catch (AssertionError e) {
 			Assertions.assertThat(e)
-					.hasMessageContaining("[for jsonpath x.y.z] The size <3> is not between <5> and <7>");
+				.hasMessageContaining("[for jsonpath x.y.z] The size <3> is not between <5> and <7>");
 		}
 	}
 

@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ContractVerifierJmsConfigurationTests {
 
 	private ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-			.withConfiguration(AutoConfigurations.of(ContractVerifierJmsConfiguration.class));
+		.withConfiguration(AutoConfigurations.of(ContractVerifierJmsConfiguration.class));
 
 	@Test
 	public void shouldCreateBeansByDefault() {

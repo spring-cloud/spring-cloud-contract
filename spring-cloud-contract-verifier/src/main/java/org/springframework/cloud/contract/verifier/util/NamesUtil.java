@@ -145,8 +145,10 @@ public final class NamesUtil {
 	 * Converts the path format to a Java package notation.
 	 */
 	public static String directoryToPackage(String directory) {
-		return directory.replace('.', '_').replace(File.separatorChar, '.').replaceAll("\\.([0-9])", "._$1")
-				.replaceAll("^([0-9].*)", "_$1");
+		return directory.replace('.', '_')
+			.replace(File.separatorChar, '.')
+			.replaceAll("\\.([0-9])", "._$1")
+			.replaceAll("^([0-9].*)", "_$1");
 	}
 
 	/**

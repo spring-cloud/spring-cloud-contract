@@ -203,8 +203,9 @@ class GitStubDownloader implements StubDownloader {
 	}
 
 	private void registerShutdownHook() {
-		Runtime.getRuntime().addShutdownHook(
-				new Thread(() -> TemporaryFileStorage.cleanup(GitStubDownloader.this.deleteStubsAfterTest)));
+		Runtime.getRuntime()
+			.addShutdownHook(
+					new Thread(() -> TemporaryFileStorage.cleanup(GitStubDownloader.this.deleteStubsAfterTest)));
 	}
 
 }
@@ -351,9 +352,10 @@ class FileWalker extends SimpleFileVisitor<Path> {
 		if (versions.size() > 1 && this.latestSnapshotVersion) {
 			// 2.0.1.BUILD-SNAPSHOT, 2.0.0.BUILD-SNAPSHOT
 			// 2.0.0.BUILD-SNAPSHOT, 2.0.0.RELEASE
-			DefaultArtifactVersionWrapper sameVersionButSnapshot = versions.stream().filter(
-					w -> w.projectVersion.isSameWithoutSuffix(latestFoundVersion.projectVersion) && w.isSnapshot())
-					.findFirst().orElse(latestFoundVersion);
+			DefaultArtifactVersionWrapper sameVersionButSnapshot = versions.stream()
+				.filter(w -> w.projectVersion.isSameWithoutSuffix(latestFoundVersion.projectVersion) && w.isSnapshot())
+				.findFirst()
+				.orElse(latestFoundVersion);
 			// 2.0.0 vs 2.0.0
 			// replace the RELEASE one with SNAPSHOT
 			if (sameVersionButSnapshot != latestFoundVersion) {
@@ -366,17 +368,22 @@ class FileWalker extends SimpleFileVisitor<Path> {
 	private File folderWithPredefinedName(File[] files) {
 		if (this.latestSnapshotVersion) {
 			return Arrays.stream(files)
-					.filter(file -> LATEST.stream().anyMatch(s -> s.equals(file.getName().toLowerCase()))).findFirst()
-					.orElse(null);
-		}
-		return Arrays.stream(files).filter(file -> RELEASE.equals(file.getName().toLowerCase())).findFirst()
+				.filter(file -> LATEST.stream().anyMatch(s -> s.equals(file.getName().toLowerCase())))
+				.findFirst()
 				.orElse(null);
+		}
+		return Arrays.stream(files)
+			.filter(file -> RELEASE.equals(file.getName().toLowerCase()))
+			.findFirst()
+			.orElse(null);
 	}
 
 	private List<DefaultArtifactVersionWrapper> pickLatestVersion(File[] files) {
-		return Arrays.stream(files).map(DefaultArtifactVersionWrapper::new)
-				.filter(wrapper -> this.latestSnapshotVersion || wrapper.isNotSnapshot()).sorted()
-				.collect(Collectors.toList());
+		return Arrays.stream(files)
+			.map(DefaultArtifactVersionWrapper::new)
+			.filter(wrapper -> this.latestSnapshotVersion || wrapper.isNotSnapshot())
+			.sorted()
+			.collect(Collectors.toList());
 	}
 
 }

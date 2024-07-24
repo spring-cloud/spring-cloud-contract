@@ -57,20 +57,34 @@ public class WiremockServerWebTestClientApplicationTests {
 
 	@Test
 	public void contextLoads() throws Exception {
-		this.client.get().uri("/resource").exchange().expectBody(String.class).isEqualTo("Hello World")
-				.consumeWith(document("resource"));
+		this.client.get()
+			.uri("/resource")
+			.exchange()
+			.expectBody(String.class)
+			.isEqualTo("Hello World")
+			.consumeWith(document("resource"));
 	}
 
 	@Test
 	public void statusIsMaintained() throws Exception {
-		this.client.get().uri("/status").exchange().expectStatus().isAccepted().expectBody(String.class)
-				.isEqualTo("Hello World").consumeWith(document("status"));
+		this.client.get()
+			.uri("/status")
+			.exchange()
+			.expectStatus()
+			.isAccepted()
+			.expectBody(String.class)
+			.isEqualTo("Hello World")
+			.consumeWith(document("status"));
 	}
 
 	@Test
 	public void stubsRenderLinksWithPlaceholder() throws Exception {
-		this.client.get().uri("/link").exchange().expectBody(String.class).value(containsString("link:"))
-				.consumeWith(document("link"));
+		this.client.get()
+			.uri("/link")
+			.exchange()
+			.expectBody(String.class)
+			.value(containsString("link:"))
+			.consumeWith(document("link"));
 
 		File file = new File("target/snippets/webtestclient/stubs", "link.json");
 		BDDAssertions.then(file).exists();

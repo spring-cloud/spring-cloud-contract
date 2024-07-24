@@ -235,8 +235,9 @@ public final class WireMockRestServiceServer {
 		}
 		for (final ContentPattern<?> pattern : request.getBodyPatterns()) {
 			if (pattern instanceof MatchesJsonPathPattern) {
-				expect.andExpect(MockRestRequestMatchers
-						.jsonPath(((MatchesJsonPathPattern) pattern).getMatchesJsonPath()).exists());
+				expect
+					.andExpect(MockRestRequestMatchers.jsonPath(((MatchesJsonPathPattern) pattern).getMatchesJsonPath())
+						.exists());
 			}
 			else if (pattern instanceof MatchesXPathPattern) {
 				expect.andExpect(xpath((MatchesXPathPattern) pattern));
@@ -320,7 +321,8 @@ public final class WireMockRestServiceServer {
 
 	private DefaultResponseCreator response(ResponseDefinition response) {
 		return withStatus(HttpStatus.valueOf(response.getStatus())).body(body(response))
-				.contentType(contentType(response)).headers(responseHeaders(response));
+			.contentType(contentType(response))
+			.headers(responseHeaders(response));
 	}
 
 	private byte[] body(ResponseDefinition response) {
@@ -371,7 +373,7 @@ public final class WireMockRestServiceServer {
 					@Override
 					public void describeTo(Description description) {
 						description.appendText("should match header: " + header + " with ")
-								.appendText(pattern.getExpected());
+							.appendText(pattern.getExpected());
 					}
 				}));
 			}

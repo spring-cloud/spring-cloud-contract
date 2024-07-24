@@ -67,9 +67,13 @@ public final class ContractScanner {
 	 */
 	public static Collection<Contract> collectContractDescriptors(File rootDirectory, Predicate<File> predicate) {
 		try {
-			return Files.walk(rootDirectory.toPath()).map(Path::toFile).filter(file -> !file.isDirectory())
-					.filter(predicate).map(ContractScanner::doCollectContractDescriptors).flatMap(Collection::stream)
-					.collect(Collectors.toList());
+			return Files.walk(rootDirectory.toPath())
+				.map(Path::toFile)
+				.filter(file -> !file.isDirectory())
+				.filter(predicate)
+				.map(ContractScanner::doCollectContractDescriptors)
+				.flatMap(Collection::stream)
+				.collect(Collectors.toList());
 		}
 		catch (IOException e) {
 			log.warn("Exception occurred while trying to parse file", e);
@@ -92,8 +96,11 @@ public final class ContractScanner {
 	}
 
 	private static ContractConverter<?> contractConverter(File file) {
-		return SpringFactoriesLoader.loadFactories(ContractConverter.class, null).stream()
-				.filter(converter -> converter.isAccepted(file)).findFirst().orElse(null);
+		return SpringFactoriesLoader.loadFactories(ContractConverter.class, null)
+			.stream()
+			.filter(converter -> converter.isAccepted(file))
+			.findFirst()
+			.orElse(null);
 	}
 
 	private static boolean isContractDescriptor(File file) {

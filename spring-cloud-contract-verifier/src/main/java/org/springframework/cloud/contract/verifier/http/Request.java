@@ -67,8 +67,12 @@ public class Request {
 	 * @return content type from headers
 	 */
 	public String contentType() {
-		Object value = this.headers.entrySet().stream().filter(e -> e.getKey().toLowerCase().equals("content-type"))
-				.findFirst().orElse(new AbstractMap.SimpleEntry<>("", null)).getValue();
+		Object value = this.headers.entrySet()
+			.stream()
+			.filter(e -> e.getKey().toLowerCase().equals("content-type"))
+			.findFirst()
+			.orElse(new AbstractMap.SimpleEntry<>("", null))
+			.getValue();
 		if (value == null) {
 			return null;
 		}
@@ -144,9 +148,13 @@ public class Request {
 	 * @return a builder with request data filled in
 	 */
 	public static Request.Builder from(Request request) {
-		return new MethodBuilder().method(request.method.getMethodName(), request.path).scheme(request.scheme)
-				.protocol(request.protocol).queryParams(request.queryParameters).headers(request.headers)
-				.cookies(request.cookies).body(request.body);
+		return new MethodBuilder().method(request.method.getMethodName(), request.path)
+			.scheme(request.scheme)
+			.protocol(request.protocol)
+			.queryParams(request.queryParameters)
+			.headers(request.headers)
+			.cookies(request.cookies)
+			.body(request.body);
 	}
 
 	/**

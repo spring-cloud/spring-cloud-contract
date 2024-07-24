@@ -56,8 +56,12 @@ public class Response {
 	 * @return header value or null if not present
 	 */
 	public String header(String key) {
-		return this.headers.entrySet().stream().filter(e -> e.getKey().equalsIgnoreCase(key)).findFirst()
-				.map(e -> e.getValue().toString()).orElse(null);
+		return this.headers.entrySet()
+			.stream()
+			.filter(e -> e.getKey().equalsIgnoreCase(key))
+			.findFirst()
+			.map(e -> e.getValue().toString())
+			.orElse(null);
 	}
 
 	/**
@@ -65,8 +69,12 @@ public class Response {
 	 * @return header value or null if not present
 	 */
 	public String cookie(String key) {
-		return this.cookies.entrySet().stream().filter(e -> e.getKey().equalsIgnoreCase(key)).findFirst()
-				.map(e -> e.getValue().toString()).orElse(null);
+		return this.cookies.entrySet()
+			.stream()
+			.filter(e -> e.getKey().equalsIgnoreCase(key))
+			.findFirst()
+			.map(e -> e.getValue().toString())
+			.orElse(null);
 	}
 
 	/**
@@ -102,8 +110,10 @@ public class Response {
 	 * @return builder filled with response data
 	 */
 	public static Builder from(Response response) {
-		return new Builder().headers(response.headers).statusCode(response.statusCode).cookies(response.cookies)
-				.body(response.body);
+		return new Builder().headers(response.headers)
+			.statusCode(response.statusCode)
+			.cookies(response.cookies)
+			.body(response.body);
 	}
 
 	/**

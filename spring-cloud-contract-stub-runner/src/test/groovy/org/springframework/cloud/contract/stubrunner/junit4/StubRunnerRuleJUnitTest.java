@@ -39,9 +39,9 @@ public class StubRunnerRuleJUnitTest {
 	// tag::classrule[]
 	@ClassRule
 	public static StubRunnerRule rule = new StubRunnerRule().repoRoot(repoRoot())
-			.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
-			.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")
-			.downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer");
+		.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
+		.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")
+		.downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer");
 
 	@BeforeClass
 	@AfterClass
@@ -68,14 +68,14 @@ public class StubRunnerRuleJUnitTest {
 		then(rule.findStubUrl("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")).isNotNull();
 		then(rule.findStubUrl("loanIssuance")).isNotNull();
 		then(rule.findStubUrl("loanIssuance"))
-				.isEqualTo(rule.findStubUrl("org.springframework.cloud.contract.verifier.stubs", "loanIssuance"));
+			.isEqualTo(rule.findStubUrl("org.springframework.cloud.contract.verifier.stubs", "loanIssuance"));
 		then(rule.findStubUrl("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")).isNotNull();
 		// and:
 		then(rule.findAllRunningStubs().isPresent("loanIssuance")).isTrue();
-		then(rule.findAllRunningStubs().isPresent("org.springframework.cloud.contract.verifier.stubs",
-				"fraudDetectionServer")).isTrue();
 		then(rule.findAllRunningStubs()
-				.isPresent("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")).isTrue();
+			.isPresent("org.springframework.cloud.contract.verifier.stubs", "fraudDetectionServer")).isTrue();
+		then(rule.findAllRunningStubs()
+			.isPresent("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")).isTrue();
 		// and: 'Stubs were registered'
 		then(httpGet(rule.findStubUrl("loanIssuance").toString() + "/name")).isEqualTo("loanIssuance");
 		then(httpGet(rule.findStubUrl("fraudDetectionServer").toString() + "/name")).isEqualTo("fraudDetectionServer");

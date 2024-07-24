@@ -55,7 +55,7 @@ class Issue178ListenerConfiguration {
 				System.out.println("received: " + message);
 				try {
 					String payload = new ObjectMapper()
-							.writeValueAsString(new MyPojo("992e46d8-ab05-4a26-a740-6ef7b0daeab3", "CREATED"));
+						.writeValueAsString(new MyPojo("992e46d8-ab05-4a26-a740-6ef7b0daeab3", "CREATED"));
 					Message outputMessage = MessageBuilder.withBody(payload.getBytes()).build();
 					rabbitTemplate.send(issue178OutputExchange().getName(), "routingkey", outputMessage);
 				}
@@ -83,8 +83,9 @@ class Issue178ListenerConfiguration {
 
 	@Bean
 	Binding binding() {
-		return BindingBuilder.bind(issue178InputQueue()).to(issue178InputExchange())
-				.with("rated-item-service.rated-item-event.exchange");
+		return BindingBuilder.bind(issue178InputQueue())
+			.to(issue178InputExchange())
+			.with("rated-item-service.rated-item-event.exchange");
 	}
 
 	static class MyPojo {

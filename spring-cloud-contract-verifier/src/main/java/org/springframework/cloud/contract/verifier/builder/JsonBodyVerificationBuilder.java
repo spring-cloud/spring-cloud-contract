@@ -110,7 +110,7 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 		convertedResponseBody = MapConverter.transformValues(convertedResponseBody,
 				returnReferencedEntries(templateModel), parsingFunction);
 		JsonPaths jsonPaths = new JsonToJsonPathsConverter(assertJsonSize)
-				.transformToJsonPathWithTestsSideValues(convertedResponseBody, parsingFunction, includeEmptyCheck);
+			.transformToJsonPathWithTestsSideValues(convertedResponseBody, parsingFunction, includeEmptyCheck);
 
 		DocumentContext finalParsedRequestBody = parsedRequestBody;
 		jsonPaths.forEach(it -> {
@@ -214,12 +214,10 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 			Object object = parsedRequestBody.read(jsonPathEntry);
 			if (!(object instanceof String)) {
 				return method
-						.replace('"' + contractTemplate.escapedOpeningTemplate(),
-								contractTemplate.escapedOpeningTemplate())
-						.replace(contractTemplate.escapedClosingTemplate() + '"',
-								contractTemplate.escapedClosingTemplate())
-						.replace('"' + contractTemplate.openingTemplate(), contractTemplate.openingTemplate())
-						.replace(contractTemplate.closingTemplate() + '"', contractTemplate.closingTemplate());
+					.replace('"' + contractTemplate.escapedOpeningTemplate(), contractTemplate.escapedOpeningTemplate())
+					.replace(contractTemplate.escapedClosingTemplate() + '"', contractTemplate.escapedClosingTemplate())
+					.replace('"' + contractTemplate.openingTemplate(), contractTemplate.openingTemplate())
+					.replace(contractTemplate.closingTemplate() + '"', contractTemplate.closingTemplate());
 			}
 		}
 		return method;

@@ -76,13 +76,17 @@ public class ContractMetadata {
 		this.ignored = ignored;
 		this.order = order;
 		this.convertedContract.addAll(convertedContract);
-		this.convertedContractWithMetadata.addAll(this.convertedContract.stream().filter(Objects::nonNull)
-				.map(it -> new SingleContractMetadata(it, this)).collect(toList()));
+		this.convertedContractWithMetadata.addAll(this.convertedContract.stream()
+			.filter(Objects::nonNull)
+			.map(it -> new SingleContractMetadata(it, this))
+			.collect(toList()));
 	}
 
 	public SingleContractMetadata forContract(Contract contract) {
-		return this.convertedContractWithMetadata.stream().filter(it -> it.getContract().equals(contract)).findFirst()
-				.orElse(null);
+		return this.convertedContractWithMetadata.stream()
+			.filter(it -> it.getContract().equals(contract))
+			.findFirst()
+			.orElse(null);
 	}
 
 	public boolean anyInProgress() {

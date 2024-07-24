@@ -32,11 +32,11 @@ public class StubsStubDownloaderTests {
 	public void should_pick_stubs_from_a_given_location() {
 		String path = url.getPath();
 		StubRunnerOptions options = new StubRunnerOptionsBuilder().withStubRepositoryRoot("stubs://file://" + path)
-				.build();
+			.build();
 		StubsStubDownloader downloader = new StubsStubDownloader(options);
 
 		Map.Entry<StubConfiguration, File> entry = downloader
-				.downloadAndUnpackStubJar(new StubConfiguration("lv.spring.cloud:bye"));
+			.downloadAndUnpackStubJar(new StubConfiguration("lv.spring.cloud:bye"));
 
 		BDDAssertions.then(entry).isNotNull();
 		BDDAssertions.then(entry.getValue()).exists();
@@ -48,11 +48,12 @@ public class StubsStubDownloaderTests {
 	public void should_pick_stubs_from_a_given_location_for_a_find_producer_with_ga() {
 		String path = url.getPath();
 		StubRunnerOptions options = new StubRunnerOptionsBuilder().withStubRepositoryRoot("stubs://file://" + path)
-				.withProperties(propsWithFindProducer()).build();
+			.withProperties(propsWithFindProducer())
+			.build();
 		StubsStubDownloader downloader = new StubsStubDownloader(options);
 
 		Map.Entry<StubConfiguration, File> entry = downloader
-				.downloadAndUnpackStubJar(new StubConfiguration("lv.spring.cloud:bye"));
+			.downloadAndUnpackStubJar(new StubConfiguration("lv.spring.cloud:bye"));
 
 		BDDAssertions.then(entry).isNotNull();
 		File stub = new File(entry.getValue().getPath(), "lv/spring/cloud/bye/lv_bye.json");
@@ -63,11 +64,12 @@ public class StubsStubDownloaderTests {
 	public void should_pick_stubs_from_a_given_location_for_a_find_producer_with_gav() {
 		String path = url.getPath();
 		StubRunnerOptions options = new StubRunnerOptionsBuilder().withStubRepositoryRoot("stubs://file://" + path)
-				.withProperties(propsWithFindProducer()).build();
+			.withProperties(propsWithFindProducer())
+			.build();
 		StubsStubDownloader downloader = new StubsStubDownloader(options);
 
 		Map.Entry<StubConfiguration, File> entry = downloader
-				.downloadAndUnpackStubJar(new StubConfiguration("lv.spring:cloud:bye"));
+			.downloadAndUnpackStubJar(new StubConfiguration("lv.spring:cloud:bye"));
 
 		BDDAssertions.then(entry).isNotNull();
 		File stub = new File(entry.getValue().getPath(), "lv/spring/cloud/bye/lv_bye.json");

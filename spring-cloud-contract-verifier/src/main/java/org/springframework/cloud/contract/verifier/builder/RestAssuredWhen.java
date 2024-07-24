@@ -54,9 +54,12 @@ class RestAssuredWhen implements When, BodyMethodVisitor, RestAssuredAcceptor {
 	}
 
 	private void addResponseWhenLine(SingleContractMetadata singleContractMetadata) {
-		this.responseWhens.stream().filter(when -> when.accept(singleContractMetadata)).findFirst().orElseThrow(
-				() -> new IllegalStateException("No matching request building When implementation for Rest Assured"))
-				.apply(singleContractMetadata);
+		this.responseWhens.stream()
+			.filter(when -> when.accept(singleContractMetadata))
+			.findFirst()
+			.orElseThrow(() -> new IllegalStateException(
+					"No matching request building When implementation for Rest Assured"))
+			.apply(singleContractMetadata);
 	}
 
 	@Override

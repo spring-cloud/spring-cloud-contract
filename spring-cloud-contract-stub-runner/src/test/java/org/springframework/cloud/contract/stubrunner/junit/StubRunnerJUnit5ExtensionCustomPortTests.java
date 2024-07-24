@@ -38,9 +38,10 @@ class StubRunnerJUnit5ExtensionCustomPortTests {
 
 	@RegisterExtension
 	static StubRunnerExtension stubRunnerExtension = new StubRunnerExtension().repoRoot(repoRoot())
-			.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
-			.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance").withPort(22345)
-			.downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:22346");
+		.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
+		.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")
+		.withPort(22345)
+		.downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer:22346");
 
 	@BeforeAll
 	@AfterAll
@@ -61,23 +62,23 @@ class StubRunnerJUnit5ExtensionCustomPortTests {
 	@Test
 	void should_start_wiremock_servers() throws Exception {
 		then(stubRunnerExtension.findStubUrl("org.springframework.cloud.contract.verifier.stubs", "loanIssuance"))
-				.isNotNull();
+			.isNotNull();
 		then(stubRunnerExtension.findStubUrl("loanIssuance")).isNotNull();
 		then(stubRunnerExtension.findStubUrl("loanIssuance")).isEqualTo(
 				stubRunnerExtension.findStubUrl("org.springframework.cloud.contract.verifier.stubs", "loanIssuance"));
 		then(stubRunnerExtension.findStubUrl("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"))
-				.isNotNull();
+			.isNotNull();
 		then(stubRunnerExtension.findAllRunningStubs().isPresent("loanIssuance")).isTrue();
-		then(stubRunnerExtension.findAllRunningStubs().isPresent("org.springframework.cloud.contract.verifier.stubs",
-				"fraudDetectionServer")).isTrue();
 		then(stubRunnerExtension.findAllRunningStubs()
-				.isPresent("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")).isTrue();
+			.isPresent("org.springframework.cloud.contract.verifier.stubs", "fraudDetectionServer")).isTrue();
+		then(stubRunnerExtension.findAllRunningStubs()
+			.isPresent("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")).isTrue();
 		then(httpGet(stubRunnerExtension.findStubUrl("loanIssuance").toString() + "/name")).isEqualTo("loanIssuance");
 		then(httpGet(stubRunnerExtension.findStubUrl("fraudDetectionServer").toString() + "/name"))
-				.isEqualTo("fraudDetectionServer");
+			.isEqualTo("fraudDetectionServer");
 		then(stubRunnerExtension.findStubUrl("loanIssuance")).isEqualTo(URI.create("http://localhost:22345").toURL());
 		then(stubRunnerExtension.findStubUrl("fraudDetectionServer"))
-				.isEqualTo(URI.create("http://localhost:22346").toURL());
+			.isEqualTo(URI.create("http://localhost:22346").toURL());
 	}
 
 	private String httpGet(String url) throws Exception {

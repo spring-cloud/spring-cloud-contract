@@ -126,11 +126,14 @@ class GeneratedTestClassBuilder {
 	 */
 	GeneratedTestClass build() {
 		// picks a matching class meta data
-		ClassMetaData classMetaData = this.metaData.stream().filter(Acceptor::accept).findFirst()
-				.orElseThrow(() -> new IllegalStateException("There is no matching class meta data"));
-		classMetaData.setupLineEnding().setupLabelPrefix()
-				// package com.example
-				.packageDefinition();
+		ClassMetaData classMetaData = this.metaData.stream()
+			.filter(Acceptor::accept)
+			.findFirst()
+			.orElseThrow(() -> new IllegalStateException("There is no matching class meta data"));
+		classMetaData.setupLineEnding()
+			.setupLabelPrefix()
+			// package com.example
+			.packageDefinition();
 		// \n
 		this.blockBuilder.addEmptyLine();
 		// import ... \n

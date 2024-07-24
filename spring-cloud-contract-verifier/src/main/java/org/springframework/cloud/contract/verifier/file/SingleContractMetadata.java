@@ -99,20 +99,28 @@ public class SingleContractMetadata {
 		DslProperty<?> outputBody = outputBody(currentContract);
 		Header inputContentType = contentTypeHeader(inputHeaders);
 		Header outputContentType = contentTypeHeader(outputHeaders);
-		this.definedInputTestContentType = Optional.ofNullable(inputContentType).map(DslProperty::getServerValue)
-				.map(Object::toString).orElse("");
+		this.definedInputTestContentType = Optional.ofNullable(inputContentType)
+			.map(DslProperty::getServerValue)
+			.map(Object::toString)
+			.orElse("");
 		this.evaluatedInputTestContentType = tryToEvaluateTestContentType(inputHeaders, inputBody);
 		this.inputTestContentType = inputBody != null ? this.evaluatedInputTestContentType : UNKNOWN;
-		this.definedOutputTestContentType = Optional.ofNullable(outputContentType).map(DslProperty::getServerValue)
-				.map(Object::toString).orElse("");
+		this.definedOutputTestContentType = Optional.ofNullable(outputContentType)
+			.map(DslProperty::getServerValue)
+			.map(Object::toString)
+			.orElse("");
 		this.evaluatedOutputTestContentType = tryToEvaluateTestContentType(outputHeaders, outputBody);
 		this.outputTestContentType = outputBody != null ? this.evaluatedOutputTestContentType : UNKNOWN;
-		this.definedInputStubContentType = Optional.ofNullable(inputContentType).map(DslProperty::getClientValue)
-				.map(Object::toString).orElse("");
+		this.definedInputStubContentType = Optional.ofNullable(inputContentType)
+			.map(DslProperty::getClientValue)
+			.map(Object::toString)
+			.orElse("");
 		this.evaluatedInputStubContentType = tryToEvaluateStubContentType(inputHeaders, inputBody);
 		this.inputStubContentType = inputBody != null ? this.evaluatedInputStubContentType : UNKNOWN;
-		this.definedOutputStubContentType = Optional.ofNullable(outputContentType).map(DslProperty::getClientValue)
-				.map(Object::toString).orElse("");
+		this.definedOutputStubContentType = Optional.ofNullable(outputContentType)
+			.map(DslProperty::getClientValue)
+			.map(Object::toString)
+			.orElse("");
 		this.evaluatedOutputStubContentType = tryToEvaluateStubContentType(outputHeaders, outputBody);
 		this.outputStubContentType = outputBody != null ? this.evaluatedOutputStubContentType : UNKNOWN;
 		this.http = currentContract.getRequest() != null;
@@ -120,8 +128,12 @@ public class SingleContractMetadata {
 	}
 
 	private Header contentTypeHeader(Headers headers) {
-		return headers == null ? null : headers.getEntries().stream()
-				.filter(it -> "Content-Type".equalsIgnoreCase(it.getName())).findFirst().orElse(null);
+		return headers == null ? null
+				: headers.getEntries()
+					.stream()
+					.filter(it -> "Content-Type".equalsIgnoreCase(it.getName()))
+					.findFirst()
+					.orElse(null);
 	}
 
 	private ContentType tryToEvaluateStubContentType(Headers mainHeaders, DslProperty<?> body) {
@@ -181,8 +193,10 @@ public class SingleContractMetadata {
 	}
 
 	private DslProperty<?> inputBody(Contract contract) {
-		return Optional.ofNullable(contract.getRequest()).map(Request::getBody).map(DslProperty.class::cast)
-				.orElse(null);
+		return Optional.ofNullable(contract.getRequest())
+			.map(Request::getBody)
+			.map(DslProperty.class::cast)
+			.orElse(null);
 	}
 
 	private Headers inputHeaders(Contract contract) {
@@ -190,14 +204,17 @@ public class SingleContractMetadata {
 	}
 
 	private DslProperty<?> outputBody(Contract contract) {
-		return Optional.ofNullable(contract.getResponse()).map(Response::getBody).map(DslProperty.class::cast)
-				.orElseGet(() -> Optional.ofNullable(contract.getOutputMessage()).map(OutputMessage::getBody)
-						.orElse(null));
+		return Optional.ofNullable(contract.getResponse())
+			.map(Response::getBody)
+			.map(DslProperty.class::cast)
+			.orElseGet(() -> Optional.ofNullable(contract.getOutputMessage()).map(OutputMessage::getBody).orElse(null));
 	}
 
 	private Headers outputHeaders(Contract contract) {
-		return Optional.ofNullable(contract.getResponse()).map(Response::getHeaders).orElseGet(
-				() -> Optional.ofNullable(contract.getOutputMessage()).map(OutputMessage::getHeaders).orElse(null));
+		return Optional.ofNullable(contract.getResponse())
+			.map(Response::getHeaders)
+			.orElseGet(
+					() -> Optional.ofNullable(contract.getOutputMessage()).map(OutputMessage::getHeaders).orElse(null));
 	}
 
 	public String methodName() {

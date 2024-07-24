@@ -49,7 +49,7 @@ public class AutoConfigureWireMockWithResetAfterEachTestApplicationTests {
 	@Test
 	public void _01_test() throws Exception {
 		this.wireMockServer
-				.givenThat(WireMock.get("/should_register_mapping").willReturn(WireMock.aResponse().withBody("bar")));
+			.givenThat(WireMock.get("/should_register_mapping").willReturn(WireMock.aResponse().withBody("bar")));
 
 		String result = new RestTemplate().getForObject("http://" + this.hostname + "/should_register_mapping",
 				String.class);

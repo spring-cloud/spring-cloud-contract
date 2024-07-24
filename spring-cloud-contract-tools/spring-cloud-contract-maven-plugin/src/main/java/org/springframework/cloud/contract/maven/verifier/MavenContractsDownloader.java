@@ -101,7 +101,7 @@ class MavenContractsDownloader {
 			this.log.info("Another mojo has downloaded the contracts - will reuse them from [" + downloadedContractsDir
 					+ "]");
 			final ContractDownloader.InclusionProperties inclusionProperties = contractDownloader()
-					.createNewInclusionProperties(downloadedContractsDir);
+				.createNewInclusionProperties(downloadedContractsDir);
 			config.setIncludedContracts(inclusionProperties.getIncludedContracts());
 			config.setIncludedRootFolderAntPattern(inclusionProperties.getIncludedRootFolderAntPattern());
 			return downloadedContractsDir;
@@ -111,7 +111,7 @@ class MavenContractsDownloader {
 			final ContractDownloader contractDownloader = contractDownloader();
 			final File downloadedContracts = contractDownloader.unpackAndDownloadContracts();
 			final ContractDownloader.InclusionProperties inclusionProperties = contractDownloader
-					.createNewInclusionProperties(downloadedContracts);
+				.createNewInclusionProperties(downloadedContracts);
 			config.setIncludedContracts(inclusionProperties.getIncludedContracts());
 			config.setIncludedRootFolderAntPattern(inclusionProperties.getIncludedRootFolderAntPattern());
 			this.project.getProperties().setProperty(directoryProperty(), downloadedContracts.getAbsolutePath());
@@ -147,10 +147,13 @@ class MavenContractsDownloader {
 
 	StubRunnerOptions buildOptions() {
 		StubRunnerOptionsBuilder builder = new StubRunnerOptionsBuilder()
-				.withOptions(StubRunnerOptions.fromSystemProps()).withStubsMode(this.stubsMode)
-				.withUsername(this.repositoryUsername).withPassword(this.repositoryPassword)
-				.withDeleteStubsAfterTest(this.deleteStubsAfterTest).withProperties(this.contractsProperties)
-				.withFailOnNoStubs(this.failOnNoStubs);
+			.withOptions(StubRunnerOptions.fromSystemProps())
+			.withStubsMode(this.stubsMode)
+			.withUsername(this.repositoryUsername)
+			.withPassword(this.repositoryPassword)
+			.withDeleteStubsAfterTest(this.deleteStubsAfterTest)
+			.withProperties(this.contractsProperties)
+			.withFailOnNoStubs(this.failOnNoStubs);
 		if (StringUtils.hasText(this.contractsRepositoryUrl)) {
 			builder.withStubRepositoryRoot(this.contractsRepositoryUrl);
 		}

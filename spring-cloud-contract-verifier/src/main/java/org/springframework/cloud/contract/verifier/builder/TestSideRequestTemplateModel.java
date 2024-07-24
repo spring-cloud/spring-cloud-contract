@@ -133,19 +133,22 @@ public class TestSideRequestTemplateModel {
 		if (!headersEntriesPresent) {
 			return new HashMap<>();
 		}
-		return new HashMap<>(request.getHeaders().getEntries().stream()
-				.collect(Collectors.groupingBy(Header::getName,
-						Collectors.mapping((Function<Object, String>) o -> MapConverter.getTestSideValues(o).toString(),
-								Collectors.toList()))));
+		return new HashMap<>(request.getHeaders()
+			.getEntries()
+			.stream()
+			.collect(Collectors.groupingBy(Header::getName,
+					Collectors.mapping((Function<Object, String>) o -> MapConverter.getTestSideValues(o).toString(),
+							Collectors.toList()))));
 	}
 
 	private static String fullUrl(String url, Map<String, List<Object>> query, boolean queryParamsPresent) {
 		if (queryParamsPresent) {
 			return url;
 		}
-		String joinedParams = query.entrySet().stream().map(
-				entry -> entry.getValue().stream().map(s -> entry.getKey() + "=" + s).collect(Collectors.joining("&")))
-				.collect(Collectors.joining("&"));
+		String joinedParams = query.entrySet()
+			.stream()
+			.map(entry -> entry.getValue().stream().map(s -> entry.getKey() + "=" + s).collect(Collectors.joining("&")))
+			.collect(Collectors.joining("&"));
 		return url + "?" + joinedParams;
 	}
 
@@ -153,8 +156,10 @@ public class TestSideRequestTemplateModel {
 		if (queryParameters == null) {
 			return new HashMap<>();
 		}
-		return new HashMap<>(queryParameters.getParameters().stream().collect(Collectors.groupingBy(
-				QueryParameter::getName, Collectors.mapping(MapConverter::getTestSideValues, Collectors.toList()))));
+		return new HashMap<>(queryParameters.getParameters()
+			.stream()
+			.collect(Collectors.groupingBy(QueryParameter::getName,
+					Collectors.mapping(MapConverter::getTestSideValues, Collectors.toList()))));
 	}
 
 	private static List<String> buildPathsFromUrl(String url) {

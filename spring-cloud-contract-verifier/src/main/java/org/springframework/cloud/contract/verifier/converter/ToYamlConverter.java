@@ -95,9 +95,12 @@ public final class ToYamlConverter {
 	 */
 	public static void replaceContractWithYaml(File baseDir) {
 		try {
-			Files.walk(baseDir.toPath()).map(Path::toFile)
-					.forEach(file -> CONTRACT_CONVERTERS.stream().filter(converter -> converter.isAccepted(file))
-							.findFirst().ifPresent(converter -> doReplaceContractWithYaml(converter, file)));
+			Files.walk(baseDir.toPath())
+				.map(Path::toFile)
+				.forEach(file -> CONTRACT_CONVERTERS.stream()
+					.filter(converter -> converter.isAccepted(file))
+					.findFirst()
+					.ifPresent(converter -> doReplaceContractWithYaml(converter, file)));
 		}
 		catch (IOException e) {
 			throw new RuntimeException(e);

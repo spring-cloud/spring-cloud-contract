@@ -37,7 +37,7 @@ public class FileStubDownloaderTests {
 		Assertions.assertThat(expectedUnixResource).isEqualTo(fileStubDownloader.resolve(unixFileFormat, null));
 		Assertions.assertThat(expectedWindowsResource).isEqualTo(fileStubDownloader.resolve(windowsFileFormat, null));
 		Assertions.assertThat(expectedWindowsResource)
-				.isEqualTo(fileStubDownloader.resolve(windowsFileFormatCorrectPathStart, null));
+			.isEqualTo(fileStubDownloader.resolve(windowsFileFormatCorrectPathStart, null));
 	}
 
 }

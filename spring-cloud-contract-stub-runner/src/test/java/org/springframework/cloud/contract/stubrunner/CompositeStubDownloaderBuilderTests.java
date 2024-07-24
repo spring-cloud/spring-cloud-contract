@@ -76,7 +76,7 @@ public class CompositeStubDownloaderBuilderTests {
 		StubDownloader downloader = builder.build(new StubRunnerOptionsBuilder().withFailOnNoStubs(true).build());
 
 		BDDAssertions.thenThrownBy(() -> downloader.downloadAndUnpackStubJar(new StubConfiguration("a:b:v")))
-				.isInstanceOf(IllegalArgumentException.class);
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 }

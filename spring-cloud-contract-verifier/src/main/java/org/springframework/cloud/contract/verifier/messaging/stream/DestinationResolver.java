@@ -40,10 +40,10 @@ class DestinationResolver {
 	String resolvedDestination(String destination, DefaultChannels defaultChannel) {
 		try {
 			BindingServiceProperties channelBindingServiceProperties = this.context
-					.getBean(BindingServiceProperties.class);
+				.getBean(BindingServiceProperties.class);
 			Map<String, String> channels = new HashMap<>();
 			for (Map.Entry<String, BindingProperties> entry : channelBindingServiceProperties.getBindings()
-					.entrySet()) {
+				.entrySet()) {
 				if (destination.equals(entry.getValue().getDestination())) {
 					if (log.isDebugEnabled()) {
 						log.debug("Found a channel named [" + entry.getKey() + "] with destination [" + destination

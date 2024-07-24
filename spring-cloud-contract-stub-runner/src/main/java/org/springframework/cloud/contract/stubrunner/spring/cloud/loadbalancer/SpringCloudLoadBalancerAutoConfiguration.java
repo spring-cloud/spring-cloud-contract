@@ -151,8 +151,8 @@ class StubbedServiceInstance implements ServiceInstance {
 		}
 		RunningStubs runningStubs = this.stubFinder.findAllRunningStubs();
 		String mappedServiceName = StringUtils
-				.hasText(this.stubMapperProperties.fromServiceIdToIvyNotation(this.serviceId))
-						? this.stubMapperProperties.fromServiceIdToIvyNotation(this.serviceId) : this.serviceId;
+			.hasText(this.stubMapperProperties.fromServiceIdToIvyNotation(this.serviceId))
+					? this.stubMapperProperties.fromServiceIdToIvyNotation(this.serviceId) : this.serviceId;
 		entry = runningStubs.getEntry(mappedServiceName);
 		CACHE.put(this.serviceId, entry);
 		return entry;

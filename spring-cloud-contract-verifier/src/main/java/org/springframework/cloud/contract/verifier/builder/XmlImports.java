@@ -43,8 +43,10 @@ class XmlImports implements Imports {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.listOfFiles.stream().anyMatch(metadata -> metadata
-				.getConvertedContractWithMetadata().stream().anyMatch(SingleContractMetadata::isXml));
+		return this.generatedClassMetaData.listOfFiles.stream()
+			.anyMatch(metadata -> metadata.getConvertedContractWithMetadata()
+				.stream()
+				.anyMatch(SingleContractMetadata::isXml));
 	}
 
 }

@@ -58,10 +58,10 @@ public class AutoConfigureWireMockApplicationTests {
 	@Test
 	public void contextLoads() throws Exception {
 		stubFor(get(urlEqualTo("/test"))
-				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
+			.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 		assertThat(this.output.getOut()).as("Must contain debug logging for WireMock")
-				.contains("Matched response definition:");
+			.contains("Matched response definition:");
 	}
 
 	@Test

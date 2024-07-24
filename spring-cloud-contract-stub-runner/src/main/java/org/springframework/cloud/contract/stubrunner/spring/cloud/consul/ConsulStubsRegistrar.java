@@ -99,7 +99,7 @@ public class ConsulStubsRegistrar implements StubsRegistrar {
 
 	protected String name(StubConfiguration stubConfiguration) {
 		String resolvedName = this.stubMapperProperties
-				.fromIvyNotationToId(stubConfiguration.toColonSeparatedDependencyNotation());
+			.fromIvyNotationToId(stubConfiguration.toColonSeparatedDependencyNotation());
 		if (StringUtils.hasText(resolvedName)) {
 			return resolvedName;
 		}

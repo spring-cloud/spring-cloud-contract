@@ -35,17 +35,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AutoConfigureMessageVerifierTests {
 
 	private ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-			.withUserConfiguration(Configuration.class);
+		.withUserConfiguration(Configuration.class);
 
 	@Test
 	public void shouldConfigureForNoOpWhenMissingImplementation() {
-		this.contextRunner.withClassLoader(
-				new FilteredClassLoader(org.apache.camel.Message.class, org.springframework.messaging.Message.class,
-						JmsTemplate.class, KafkaTemplate.class, RabbitTemplate.class, Binder.class))
-				.run((context) -> {
-					assertThat(context.getBeansOfType(MessageVerifierSender.class)).hasSize(1);
-					assertThat(context.getBeansOfType(NoOpStubMessages.class)).hasSize(1);
-				});
+		this.contextRunner
+			.withClassLoader(
+					new FilteredClassLoader(org.apache.camel.Message.class, org.springframework.messaging.Message.class,
+							JmsTemplate.class, KafkaTemplate.class, RabbitTemplate.class, Binder.class))
+			.run((context) -> {
+				assertThat(context.getBeansOfType(MessageVerifierSender.class)).hasSize(1);
+				assertThat(context.getBeansOfType(NoOpStubMessages.class)).hasSize(1);
+			});
 	}
 
 	@AutoConfigureMessageVerifier

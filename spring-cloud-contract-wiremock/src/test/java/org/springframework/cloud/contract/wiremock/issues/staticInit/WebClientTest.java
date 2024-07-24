@@ -72,7 +72,7 @@ class WebClientTest {
 		Stubber(WireMockServer wireMockServer) {
 			log.info("Setting up GET");
 			wireMockServer
-					.stubFor(get(urlEqualTo("/resources")).willReturn(aResponse().withBody("Everything seems fine!")));
+				.stubFor(get(urlEqualTo("/resources")).willReturn(aResponse().withBody("Everything seems fine!")));
 		}
 
 	}

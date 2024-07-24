@@ -37,10 +37,10 @@ import java.util.regex.Pattern;
 public class Headers {
 
 	private static final BiFunction<String, Header, Object> CLIENT_SIDE = (s, header) -> ContractUtils
-			.convertStubSideRecursively(header);
+		.convertStubSideRecursively(header);
 
 	private static final BiFunction<String, Header, Object> SERVER_SIDE = (s, header) -> ContractUtils
-			.convertTestSideRecursively(header);
+		.convertTestSideRecursively(header);
 
 	private Set<Header> entries = new LinkedHashSet<>();
 

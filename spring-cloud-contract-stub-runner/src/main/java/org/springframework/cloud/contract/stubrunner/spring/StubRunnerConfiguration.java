@@ -82,7 +82,8 @@ public class StubRunnerConfiguration {
 		}
 		StubRunnerOptions stubRunnerOptions = stubRunnerOptions(builder);
 		BatchStubRunner batchStubRunner = new BatchStubRunnerFactory(stubRunnerOptions,
-				this.provider.get(stubRunnerOptions), new LazyMessageVerifier(beanFactory)).buildBatchStubRunner();
+				this.provider.get(stubRunnerOptions), new LazyMessageVerifier(beanFactory))
+			.buildBatchStubRunner();
 		// TODO: Consider running it in a separate thread
 		RunningStubs runningStubs = batchStubRunner.runStubs();
 		registerPort(runningStubs);
@@ -101,20 +102,23 @@ public class StubRunnerConfiguration {
 
 	private StubRunnerOptionsBuilder builder(StubRunnerProperties props) {
 		return new StubRunnerOptionsBuilder()
-				.withMinMaxPort(Integer.valueOf(resolvePlaceholder(props.getMinPort(), props.getMinPort())),
-						Integer.valueOf(resolvePlaceholder(props.getMaxPort(), props.getMaxPort())))
-				.withStubRepositoryRoot(props.getRepositoryRoot())
-				.withStubsMode(resolvePlaceholder(props.getStubsMode()))
-				.withStubsClassifier(resolvePlaceholder(props.getClassifier()))
-				.withStubs(resolvePlaceholder(props.getIds())).withUsername(resolvePlaceholder(props.getUsername()))
-				.withPassword(resolvePlaceholder(props.getPassword()))
-				.withStubPerConsumer(Boolean.parseBoolean(resolvePlaceholder(props.isStubsPerConsumer())))
-				.withConsumerName(consumerName(props))
-				.withMappingsOutputFolder(resolvePlaceholder(props.getMappingsOutputFolder()))
-				.withDeleteStubsAfterTest(Boolean.parseBoolean(resolvePlaceholder(props.isDeleteStubsAfterTest())))
-				.withGenerateStubs(Boolean.parseBoolean(resolvePlaceholder(props.isGenerateStubs())))
-				.withProperties(props.getProperties()).withHttpServerStubConfigurer(props.getHttpServerStubConfigurer())
-				.withServerId(resolvePlaceholder(props.getServerId())).withFailOnNoStubs(props.isFailOnNoStubs());
+			.withMinMaxPort(Integer.valueOf(resolvePlaceholder(props.getMinPort(), props.getMinPort())),
+					Integer.valueOf(resolvePlaceholder(props.getMaxPort(), props.getMaxPort())))
+			.withStubRepositoryRoot(props.getRepositoryRoot())
+			.withStubsMode(resolvePlaceholder(props.getStubsMode()))
+			.withStubsClassifier(resolvePlaceholder(props.getClassifier()))
+			.withStubs(resolvePlaceholder(props.getIds()))
+			.withUsername(resolvePlaceholder(props.getUsername()))
+			.withPassword(resolvePlaceholder(props.getPassword()))
+			.withStubPerConsumer(Boolean.parseBoolean(resolvePlaceholder(props.isStubsPerConsumer())))
+			.withConsumerName(consumerName(props))
+			.withMappingsOutputFolder(resolvePlaceholder(props.getMappingsOutputFolder()))
+			.withDeleteStubsAfterTest(Boolean.parseBoolean(resolvePlaceholder(props.isDeleteStubsAfterTest())))
+			.withGenerateStubs(Boolean.parseBoolean(resolvePlaceholder(props.isGenerateStubs())))
+			.withProperties(props.getProperties())
+			.withHttpServerStubConfigurer(props.getHttpServerStubConfigurer())
+			.withServerId(resolvePlaceholder(props.getServerId()))
+			.withFailOnNoStubs(props.isFailOnNoStubs());
 	}
 
 	private String[] resolvePlaceholder(String[] string) {
@@ -172,7 +176,7 @@ class LazyMessageVerifier implements MessageVerifierSender, MessageVerifierRecei
 	private MessageVerifierSender messageVerifierSender() {
 		if (this.messageVerifierSender == null) {
 			this.messageVerifierSender = this.beanFactory.getBeanProvider(MessageVerifierSender.class)
-					.getIfAvailable(NoOpStubMessages::new);
+				.getIfAvailable(NoOpStubMessages::new);
 		}
 		return this.messageVerifierSender;
 	}
@@ -180,7 +184,7 @@ class LazyMessageVerifier implements MessageVerifierSender, MessageVerifierRecei
 	private MessageVerifierReceiver messageVerifierReceiver() {
 		if (this.messageVerifierReceiver == null) {
 			this.messageVerifierReceiver = this.beanFactory.getBeanProvider(MessageVerifierReceiver.class)
-					.getIfAvailable(NoOpStubMessages::new);
+				.getIfAvailable(NoOpStubMessages::new);
 		}
 		return this.messageVerifierReceiver;
 	}

@@ -46,13 +46,13 @@ class LeftOverPrevention {
 		this.generatedDirectory = generatedDirectory;
 		this.incrementalBuildHelper = new IncrementalBuildHelper(mojoExecution, session);
 		this.incrementalBuildHelper
-				.beforeRebuildExecution(new IncrementalBuildHelperRequest().outputDirectory(generatedDirectory));
+			.beforeRebuildExecution(new IncrementalBuildHelperRequest().outputDirectory(generatedDirectory));
 	}
 
 	void deleteLeftOvers() throws MojoExecutionException {
 		if (generatedDirectory.exists()) {
 			incrementalBuildHelper
-					.afterRebuildExecution(new IncrementalBuildHelperRequest().outputDirectory(generatedDirectory));
+				.afterRebuildExecution(new IncrementalBuildHelperRequest().outputDirectory(generatedDirectory));
 		}
 	}
 

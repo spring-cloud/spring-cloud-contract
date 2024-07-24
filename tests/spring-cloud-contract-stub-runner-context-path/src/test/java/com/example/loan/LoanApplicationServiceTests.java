@@ -57,8 +57,8 @@ public class LoanApplicationServiceTests {
 
 	@Before
 	public void setPort() {
-		this.service.setFraudUrl(
-				this.stubFinder.findStubUrl("contextPathFraudDetectionServer").toString() + "/fraud-path/");
+		this.service
+			.setFraudUrl(this.stubFinder.findStubUrl("contextPathFraudDetectionServer").toString() + "/fraud-path/");
 	}
 
 	@Test
@@ -89,7 +89,7 @@ public class LoanApplicationServiceTests {
 		LoanApplicationResult loanApplication = this.service.loanApplication(application);
 		// then:
 		assertThat(loanApplication.getLoanApplicationStatus())
-				.isEqualTo(LoanApplicationStatus.LOAN_APPLICATION_REJECTED);
+			.isEqualTo(LoanApplicationStatus.LOAN_APPLICATION_REJECTED);
 		assertThat(loanApplication.getRejectionReason()).isEqualTo("Amount too high");
 	}
 	// end::client_tdd[]

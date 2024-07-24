@@ -22,7 +22,6 @@ import org.springframework.cloud.contract.verifier.http.HttpVerifier;
  * Provides different testing modes.
  *
  * @author Jakub Kubrynski, codearte.io
- *
  * @since 1.0.0
  */
 public enum TestMode {

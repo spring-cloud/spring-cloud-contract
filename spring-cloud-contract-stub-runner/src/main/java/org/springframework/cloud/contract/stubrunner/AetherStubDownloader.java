@@ -153,7 +153,7 @@ public class AetherStubDownloader implements StubDownloader {
 		for (int i = 0; i < repos.length; i++) {
 			if (StringUtils.hasText(repos[i])) {
 				final RemoteRepository.Builder builder = new RemoteRepository.Builder("remote" + i, "default", repos[i])
-						.setAuthentication(resolveAuthentication(stubRunnerOptions));
+					.setAuthentication(resolveAuthentication(stubRunnerOptions));
 				if (stubRunnerOptions.getProxyOptions() != null) {
 					final StubRunnerProxyOptions p = stubRunnerOptions.getProxyOptions();
 					builder.setProxy(new Proxy(null, p.getProxyHost(), p.getProxyPort()));
@@ -176,7 +176,9 @@ public class AetherStubDownloader implements StubDownloader {
 				}
 				SettingsDecryptionRequest settingsDecryptionRequest = new DefaultSettingsDecryptionRequest(stubServer);
 				String stubServerPassword = new MavenSettings().createSettingsDecrypter()
-						.decrypt(settingsDecryptionRequest).getServer().getPassword();
+					.decrypt(settingsDecryptionRequest)
+					.getServer()
+					.getPassword();
 				return buildAuthentication(stubServerPassword, stubServer.getUsername());
 			}
 		}
@@ -272,8 +274,9 @@ public class AetherStubDownloader implements StubDownloader {
 	}
 
 	private void registerShutdownHook() {
-		Runtime.getRuntime().addShutdownHook(
-				new Thread(() -> TemporaryFileStorage.cleanup(AetherStubDownloader.this.deleteStubsAfterTest)));
+		Runtime.getRuntime()
+			.addShutdownHook(
+					new Thread(() -> TemporaryFileStorage.cleanup(AetherStubDownloader.this.deleteStubsAfterTest)));
 	}
 
 }

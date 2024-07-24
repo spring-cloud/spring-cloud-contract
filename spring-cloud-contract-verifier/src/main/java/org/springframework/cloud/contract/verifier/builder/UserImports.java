@@ -32,7 +32,7 @@ class UserImports implements Imports {
 	@Override
 	public Imports call() {
 		Arrays.stream(this.generatedClassMetaData.configProperties.getImports())
-				.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
+			.forEach(s -> this.blockBuilder.addLineWithEnding("import " + s));
 		return this;
 	}
 

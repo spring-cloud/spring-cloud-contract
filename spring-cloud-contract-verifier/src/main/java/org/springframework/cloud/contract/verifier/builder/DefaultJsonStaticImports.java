@@ -41,8 +41,10 @@ class DefaultJsonStaticImports implements Imports {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.listOfFiles.stream().anyMatch(metadata -> metadata
-				.getConvertedContractWithMetadata().stream().anyMatch(SingleContractMetadata::isJson));
+		return this.generatedClassMetaData.listOfFiles.stream()
+			.anyMatch(metadata -> metadata.getConvertedContractWithMetadata()
+				.stream()
+				.anyMatch(SingleContractMetadata::isJson));
 	}
 
 }

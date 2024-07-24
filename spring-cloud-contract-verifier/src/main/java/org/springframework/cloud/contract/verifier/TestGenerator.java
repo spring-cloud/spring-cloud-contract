@@ -84,10 +84,14 @@ public class TestGenerator {
 
 	public TestGenerator(ContractVerifierConfigProperties configProperties, SingleTestGenerator generator,
 			FileSaver saver) {
-		this(configProperties, generator, saver, ContractFileScanner.builder()
-				.baseDir(configProperties.getContractsDslDir()).excluded(toSet(configProperties.getExcludedFiles()))
-				.ignored(toSet(configProperties.getIgnoredFiles())).included(toSet(configProperties.getIncludedFiles()))
-				.includeMatcher(configProperties.getIncludedContracts()).build());
+		this(configProperties, generator, saver,
+				ContractFileScanner.builder()
+					.baseDir(configProperties.getContractsDslDir())
+					.excluded(toSet(configProperties.getExcludedFiles()))
+					.ignored(toSet(configProperties.getIgnoredFiles()))
+					.included(toSet(configProperties.getIncludedFiles()))
+					.includeMatcher(configProperties.getIncludedContracts())
+					.build());
 	}
 
 	private static Set<String> toSet(List<String> files) {
@@ -133,8 +137,10 @@ public class TestGenerator {
 
 		Set<Map.Entry<Path, List<ContractMetadata>>> inProgress = inProgress(contracts);
 		if (!inProgress.isEmpty() && configProperties.isFailOnInProgress()) {
-			String inProgressContractsPaths = inProgress.stream().map(Map.Entry::getKey).map(Path::toString)
-					.collect(Collectors.joining(","));
+			String inProgressContractsPaths = inProgress.stream()
+				.map(Map.Entry::getKey)
+				.map(Path::toString)
+				.collect(Collectors.joining(","));
 			throw new IllegalStateException("In progress contracts found in paths [" + inProgressContractsPaths
 					+ "] and the switch [failOnInProgress] is set to [true]. Either unmark those contracts as in progress, or set the switch to [false].");
 		}
@@ -142,14 +148,17 @@ public class TestGenerator {
 	}
 
 	private Set<Map.Entry<Path, List<ContractMetadata>>> inProgress(MultiValueMap<Path, ContractMetadata> contracts) {
-		return contracts.entrySet().stream()
-				.filter(entry -> entry.getValue().stream().anyMatch(ContractMetadata::anyInProgress))
-				.collect(Collectors.toSet());
+		return contracts.entrySet()
+			.stream()
+			.filter(entry -> entry.getValue().stream().anyMatch(ContractMetadata::anyInProgress))
+			.collect(Collectors.toSet());
 	}
 
 	void processAll(MultiValueMap<Path, ContractMetadata> contracts, final String basePackageName) {
-		contracts.entrySet().stream().forEach(
-				entry -> processIncludedDirectory(relativizeContractPath(entry), entry.getValue(), basePackageName));
+		contracts.entrySet()
+			.stream()
+			.forEach(entry -> processIncludedDirectory(relativizeContractPath(entry), entry.getValue(),
+					basePackageName));
 	}
 
 	private String relativizeContractPath(Map.Entry<Path, List<ContractMetadata>> entry) {
@@ -169,9 +178,9 @@ public class TestGenerator {
 					convertIllegalPackageChars(includedDirectoryRelativePath));
 			Path classPath = saver.pathToClass(dir, convertedClassName);
 			byte[] classBytes = generator
-					.buildClass(configProperties, contracts, includedDirectoryRelativePath,
-							new SingleTestGenerator.GeneratedClassData(convertedClassName, packageName, classPath))
-					.getBytes(StandardCharsets.UTF_8);
+				.buildClass(configProperties, contracts, includedDirectoryRelativePath,
+						new SingleTestGenerator.GeneratedClassData(convertedClassName, packageName, classPath))
+				.getBytes(StandardCharsets.UTF_8);
 			saver.saveClassFile(classPath, classBytes);
 			counter.incrementAndGet();
 		}

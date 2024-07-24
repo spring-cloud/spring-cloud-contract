@@ -50,23 +50,27 @@ class MavenContractsDownloaderTests {
 		MavenContractsDownloader mavenContractsDownloader = contractsDownloader(mavenProject, one,
 				this.fileForDependencyOne);
 		File dependencyOneFile = mavenContractsDownloader
-				.downloadAndUnpackContractsIfRequired(new ContractVerifierConfigProperties(), this.defaultFolder);
-		BDDAssertions.then(dependencyOneFile).as("Location for dependency 1 should be computed since it's not cached")
-				.isEqualTo(this.fileForDependencyOne);
+			.downloadAndUnpackContractsIfRequired(new ContractVerifierConfigProperties(), this.defaultFolder);
+		BDDAssertions.then(dependencyOneFile)
+			.as("Location for dependency 1 should be computed since it's not cached")
+			.isEqualTo(this.fileForDependencyOne);
 
 		mavenContractsDownloader = contractsDownloader(mavenProject, one, this.fileForDependencyOne);
 		File fileForDependencyOneAgain = mavenContractsDownloader
-				.downloadAndUnpackContractsIfRequired(new ContractVerifierConfigProperties(), this.defaultFolder);
-		BDDAssertions.then(dependencyOneFile).as("Location for dependency 1 should be taken from cache")
-				.isEqualTo(fileForDependencyOneAgain);
+			.downloadAndUnpackContractsIfRequired(new ContractVerifierConfigProperties(), this.defaultFolder);
+		BDDAssertions.then(dependencyOneFile)
+			.as("Location for dependency 1 should be taken from cache")
+			.isEqualTo(fileForDependencyOneAgain);
 
 		Dependency two = dependency(2);
 		mavenContractsDownloader = contractsDownloader(mavenProject, two, this.fileForDependencyTwo);
 		File dependencyTwoFile = mavenContractsDownloader
-				.downloadAndUnpackContractsIfRequired(new ContractVerifierConfigProperties(), this.defaultFolder);
+			.downloadAndUnpackContractsIfRequired(new ContractVerifierConfigProperties(), this.defaultFolder);
 
-		BDDAssertions.then(dependencyTwoFile).as("Location for dependency 2 should be computed again")
-				.isNotEqualTo(dependencyOneFile).isEqualTo(this.fileForDependencyTwo);
+		BDDAssertions.then(dependencyTwoFile)
+			.as("Location for dependency 2 should be computed again")
+			.isNotEqualTo(dependencyOneFile)
+			.isEqualTo(this.fileForDependencyTwo);
 	}
 
 	private MavenContractsDownloader contractsDownloader(MavenProject mavenProject, Dependency one, File file) {

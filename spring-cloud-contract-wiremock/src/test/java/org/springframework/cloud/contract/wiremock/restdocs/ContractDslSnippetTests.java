@@ -78,24 +78,28 @@ public class ContractDslSnippetTests {
 	@Before
 	public void setUp() {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
-				.apply(documentationConfiguration(this.restDocumentation).snippets()
-						.withAdditionalDefaults(new WireMockSnippet()))
-				.build();
+			.apply(documentationConfiguration(this.restDocumentation).snippets()
+				.withAdditionalDefaults(new WireMockSnippet()))
+			.build();
 	}
 
 	@Test
 	public void should_create_contract_template_and_doc() throws Exception {
 		// tag::contract_snippet[]
 		this.mockMvc
-				.perform(post("/foo").accept(MediaType.APPLICATION_PDF).accept(MediaType.APPLICATION_JSON)
-						.contentType(MediaType.APPLICATION_JSON).content("{\"foo\": 23, \"bar\" : \"baz\" }"))
-				.andExpect(status().isOk()).andExpect(content().string("bar"))
-				// first WireMock
-				.andDo(WireMockRestDocs.verify().jsonPath("$[?(@.foo >= 20)]")
-						.jsonPath("$[?(@.bar in ['baz','bazz','bazzz'])]")
-						.contentType(MediaType.valueOf("application/json")))
-				// then Contract DSL documentation
-				.andDo(document("index", SpringCloudContractRestDocs.dslContract(Maps.of("priority", 1))));
+			.perform(post("/foo").accept(MediaType.APPLICATION_PDF)
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"foo\": 23, \"bar\" : \"baz\" }"))
+			.andExpect(status().isOk())
+			.andExpect(content().string("bar"))
+			// first WireMock
+			.andDo(WireMockRestDocs.verify()
+				.jsonPath("$[?(@.foo >= 20)]")
+				.jsonPath("$[?(@.bar in ['baz','bazz','bazzz'])]")
+				.contentType(MediaType.valueOf("application/json")))
+			// then Contract DSL documentation
+			.andDo(document("index", SpringCloudContractRestDocs.dslContract(Maps.of("priority", 1))));
 		// end::contract_snippet[]
 
 		then(file("/contracts/index.groovy")).exists();
@@ -123,15 +127,19 @@ public class ContractDslSnippetTests {
 	@Test
 	public void should_create_contract_template_and_doc_with_placeholder_names() throws Exception {
 		this.mockMvc
-				.perform(post("/foo").accept(MediaType.APPLICATION_PDF).accept(MediaType.APPLICATION_JSON)
-						.contentType(MediaType.APPLICATION_JSON).content("{\"foo\": 23, \"bar\" : \"baz\" }"))
-				.andExpect(status().isOk()).andExpect(content().string("bar"))
-				// first WireMock
-				.andDo(WireMockRestDocs.verify().jsonPath("$[?(@.foo >= 20)]")
-						.jsonPath("$[?(@.bar in ['baz','bazz','bazzz'])]")
-						.contentType(MediaType.valueOf("application/json")))
-				// then Contract DSL documentation
-				.andDo(document("{methodName}", SpringCloudContractRestDocs.dslContract()));
+			.perform(post("/foo").accept(MediaType.APPLICATION_PDF)
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"foo\": 23, \"bar\" : \"baz\" }"))
+			.andExpect(status().isOk())
+			.andExpect(content().string("bar"))
+			// first WireMock
+			.andDo(WireMockRestDocs.verify()
+				.jsonPath("$[?(@.foo >= 20)]")
+				.jsonPath("$[?(@.bar in ['baz','bazz','bazzz'])]")
+				.contentType(MediaType.valueOf("application/json")))
+			// then Contract DSL documentation
+			.andDo(document("{methodName}", SpringCloudContractRestDocs.dslContract()));
 
 		then(file("/contracts/should_create_contract_template_and_doc_with_placeholder_names.groovy")).exists();
 		then(file("/stubs/should_create_contract_template_and_doc_with_placeholder_names.json")).exists();
@@ -157,7 +165,8 @@ public class ContractDslSnippetTests {
 	@Test
 	public void should_create_contract_template_and_doc_without_body_and_headers() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/foo").param("one", "newValueOne").param("two", "newValueTwo"))
-				.andExpect(status().isOk()).andDo(document("empty", dslContract()));
+			.andExpect(status().isOk())
+			.andDo(document("empty", dslContract()));
 
 		then(file("/contracts/empty.groovy")).exists();
 		then(file("/empty/dsl-contract.adoc")).exists();
@@ -181,8 +190,10 @@ public class ContractDslSnippetTests {
 	}
 
 	private QueryParameter parameter(List<QueryParameter> parameters, String name) {
-		return parameters.stream().filter(queryParameter -> queryParameter.getName().equals(name)).findFirst()
-				.orElseThrow(() -> new AssertionError("Missing entry"));
+		return parameters.stream()
+			.filter(queryParameter -> queryParameter.getName().equals(name))
+			.findFirst()
+			.orElseThrow(() -> new AssertionError("Missing entry"));
 	}
 
 	private Set<String> headerNames(Set<Header> headers) {

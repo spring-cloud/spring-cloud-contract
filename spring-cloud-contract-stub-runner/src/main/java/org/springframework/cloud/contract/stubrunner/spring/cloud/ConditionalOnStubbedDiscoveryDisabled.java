@@ -28,7 +28,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
  * Conditional that checks if the user turned off the stubbed discovery mode.
  *
  * @author Marcin Grzejszczak
- *
  * @since 1.0.0
  */
 @Retention(RetentionPolicy.RUNTIME)

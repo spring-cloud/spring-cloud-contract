@@ -38,7 +38,7 @@ class KafkaMetadataTests {
 		// @formatter:on
 
 		KafkaMetadata metadata = KafkaMetadata
-				.fromMetadata(this.mapper.readerForMapOf(Object.class).readValue(yamlEntry));
+			.fromMetadata(this.mapper.readerForMapOf(Object.class).readValue(yamlEntry));
 
 		String serialized = this.mapper.writer().forType(KafkaMetadata.class).writeValueAsString(metadata);
 		BDDAssertions.then(serialized).isEqualToNormalizingPunctuationAndWhitespace(yamlEntry.replace("kafka:\n", ""));

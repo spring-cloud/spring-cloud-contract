@@ -63,7 +63,7 @@ public class StubMapperProperties {
 			return id;
 		}
 		String groupAndArtifact = this.idsToServiceIds
-				.get(stubConfiguration.getGroupId() + ":" + stubConfiguration.getArtifactId());
+			.get(stubConfiguration.getGroupId() + ":" + stubConfiguration.getArtifactId());
 		if (StringUtils.hasText(groupAndArtifact)) {
 			return groupAndArtifact;
 		}

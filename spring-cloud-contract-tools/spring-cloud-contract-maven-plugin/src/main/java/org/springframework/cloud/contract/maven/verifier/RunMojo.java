@@ -132,15 +132,17 @@ public class RunMojo extends AbstractMojo {
 		}
 		BatchStubRunner batchStubRunner = null;
 		StubRunnerOptionsBuilder optionsBuilder = new StubRunnerOptionsBuilder()
-				.withStubsClassifier(this.stubsClassifier);
+			.withStubsClassifier(this.stubsClassifier);
 		if (!StringUtils.hasText(this.stubs)) {
 			StubRunnerOptions options = optionsBuilder.withMinMaxPort(this.httpPort, this.httpPort).build();
 			StubRunner stubRunner = this.localStubRunner.run(resolveStubsDirectory().getAbsolutePath(), options);
 			batchStubRunner = new BatchStubRunner(Collections.singleton(stubRunner));
 		}
 		else {
-			StubRunnerOptions options = optionsBuilder.withStubs(this.stubs).withMinMaxPort(this.minPort, this.maxPort)
-					.withServerId(this.serverId).build();
+			StubRunnerOptions options = optionsBuilder.withStubs(this.stubs)
+				.withMinMaxPort(this.minPort, this.maxPort)
+				.withServerId(this.serverId)
+				.build();
 			batchStubRunner = this.remoteStubRunner.run(options, this.repoSession);
 		}
 		pressAnyKeyToContinue();

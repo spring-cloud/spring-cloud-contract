@@ -34,8 +34,9 @@ public class StubRunnerJUnit5ExtensionExceptionThrowingTests {
 
 	@RegisterExtension
 	static StubRunnerExtension stubRunnerExtension = new StubRunnerExtension()
-			.stubsMode(StubRunnerProperties.StubsMode.REMOTE).repoRoot(repoRoot())
-			.downloadStub("org.springframework.cloud.contract.verifier.stubs", "bootService");
+		.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
+		.repoRoot(repoRoot())
+		.downloadStub("org.springframework.cloud.contract.verifier.stubs", "bootService");
 
 	@BeforeAll
 	@AfterAll

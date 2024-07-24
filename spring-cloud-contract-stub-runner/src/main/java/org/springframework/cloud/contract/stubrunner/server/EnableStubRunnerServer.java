@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Import;
 
 /**
  * Annotation to enable a Stub runner server.
+ *
  * @author Dave Syer
  * @author Tim Ysewyn
  */

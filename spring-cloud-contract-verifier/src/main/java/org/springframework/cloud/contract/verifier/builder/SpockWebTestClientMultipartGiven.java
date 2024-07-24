@@ -30,7 +30,7 @@ public class SpockWebTestClientMultipartGiven implements Given, WebTestClientAcc
 	@Override
 	public MethodVisitor<Given> apply(SingleContractMetadata metadata) {
 		getMultipartParameters(metadata).entrySet()
-				.forEach(entry -> this.blockBuilder.addLine(getMultipartParameterLine(metadata, entry)));
+			.forEach(entry -> this.blockBuilder.addLine(getMultipartParameterLine(metadata, entry)));
 		return this;
 	}
 

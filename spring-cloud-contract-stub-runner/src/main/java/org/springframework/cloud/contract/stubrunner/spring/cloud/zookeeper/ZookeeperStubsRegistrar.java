@@ -87,8 +87,12 @@ public class ZookeeperStubsRegistrar implements StubsRegistrar {
 
 	protected ServiceInstance serviceInstance(StubConfiguration stubConfiguration, int port) {
 		try {
-			return ServiceInstance.builder().uriSpec(new UriSpec(this.zookeeperDiscoveryProperties.getUriSpec()))
-					.address("localhost").port(port).name(name(stubConfiguration)).build();
+			return ServiceInstance.builder()
+				.uriSpec(new UriSpec(this.zookeeperDiscoveryProperties.getUriSpec()))
+				.address("localhost")
+				.port(port)
+				.name(name(stubConfiguration))
+				.build();
 		}
 		catch (Exception e) {
 			throw new IllegalStateException(e);
@@ -97,7 +101,7 @@ public class ZookeeperStubsRegistrar implements StubsRegistrar {
 
 	private String name(StubConfiguration stubConfiguration) {
 		String resolvedName = this.stubMapperProperties
-				.fromIvyNotationToId(stubConfiguration.toColonSeparatedDependencyNotation());
+			.fromIvyNotationToId(stubConfiguration.toColonSeparatedDependencyNotation());
 		if (StringUtils.hasText(resolvedName)) {
 			return resolvedName;
 		}
@@ -105,8 +109,11 @@ public class ZookeeperStubsRegistrar implements StubsRegistrar {
 	}
 
 	protected ServiceDiscovery serviceDiscovery(ServiceInstance serviceInstance) {
-		return ServiceDiscoveryBuilder.builder(Void.class).basePath(this.zookeeperDiscoveryProperties.getRoot())
-				.client(this.curatorFramework).thisInstance(serviceInstance).build();
+		return ServiceDiscoveryBuilder.builder(Void.class)
+			.basePath(this.zookeeperDiscoveryProperties.getRoot())
+			.client(this.curatorFramework)
+			.thisInstance(serviceInstance)
+			.build();
 	}
 
 	@Override

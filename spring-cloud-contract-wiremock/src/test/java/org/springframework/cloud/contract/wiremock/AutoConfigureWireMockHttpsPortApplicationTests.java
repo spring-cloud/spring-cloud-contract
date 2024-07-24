@@ -51,21 +51,21 @@ public class AutoConfigureWireMockHttpsPortApplicationTests {
 	@Test
 	public void contextLoads() throws Exception {
 		stubFor(get(urlEqualTo("/test"))
-				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
+			.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 	}
 
 	@Test
 	public void contextLoadsWithApacheClient() throws Exception {
 		stubFor(get(urlEqualTo("/test"))
-				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
+			.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 		assertThat(this.service.goWithApacheClient()).isEqualTo("Hello World!");
 	}
 
 	@Test
 	public void contextLoadsWithApacheClientAndAdditonalInterceptor() throws Exception {
 		stubFor(get(urlEqualTo("/test"))
-				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
+			.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 		assertThat(this.service.goWithApacheClientAndAdditonalInterceptor()).isEqualTo("Hello World!");
 	}
 
