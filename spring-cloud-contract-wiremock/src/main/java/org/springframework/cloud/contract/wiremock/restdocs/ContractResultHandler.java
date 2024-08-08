@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.wiremock.restdocs;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -44,7 +45,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultHandler;
-import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -211,7 +211,7 @@ public class ContractResultHandler extends WireMockVerifyHelper<MvcResult, Contr
 
 			@Override
 			public String getBodyAsBase64() {
-				return Base64Utils.encodeToString(result.getRequest().getContentAsByteArray());
+				return Base64.getEncoder().encodeToString(result.getRequest().getContentAsByteArray());
 			}
 
 			@Override
