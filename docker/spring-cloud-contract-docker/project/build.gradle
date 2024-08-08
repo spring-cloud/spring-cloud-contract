@@ -4,9 +4,7 @@ buildscript {
 	repositories {
 		mavenLocal()
 		mavenCentral()
-		if ("${verifierVersion}".contains("SNAPSHOT")) {
 			maven { url "https://repo.spring.io/snapshot" }
-		} else if ("${verifierVersion}".contains("M") || "${verifierVersion}".contains("RC")) {
 			maven { url "https://repo.spring.io/milestone" }
 		}
 	}
@@ -52,9 +50,7 @@ version = getProp(envVars, "PROJECT_VERSION") ?: '0.0.1-SNAPSHOT'
 repositories {
 	mavenLocal()
 	mavenCentral()
-	if ("${verifierVersion}".contains("SNAPSHOT")) {
 		maven { url "https://repo.spring.io/snapshot" }
-	} else if ("${verifierVersion}".contains("M") || "${verifierVersion}".contains("RC")) {
 		maven { url "https://repo.spring.io/milestone" }
 	}
 }
