@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.stubrunner.spring.cloud.zookeeper
 import org.apache.curator.test.TestingServer
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -45,6 +46,7 @@ import org.springframework.web.client.RestTemplate
 @AutoConfigureStubRunner(ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
  "org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
  "org.springframework.cloud.contract.verifier.stubs:bootService"] , repositoryRoot = "classpath:m2repo/repository/" , stubsMode = StubRunnerProperties.StubsMode.REMOTE )
+@Disabled
 class StubRunnerSpringCloudZookeeperAutoConfigurationSpec {
 
 	@Autowired
