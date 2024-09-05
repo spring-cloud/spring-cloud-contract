@@ -10,12 +10,12 @@
 		<relativePath/>
 	</parent>
 	<artifactId>spring-cloud-contract-dependencies</artifactId>
-	<version>4.0.9-SNAPSHOT</version>
+	<version>4.0.8-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>spring-cloud-contract-dependencies</name>
 	<description>Spring Cloud Contract Dependencies</description>
 	<properties>
-		<wiremock.version>2.35.1</wiremock.version>
+		<wiremock.version>2.35.2</wiremock.version>
 		<jsonassert.version>0.8.0</jsonassert.version>
 	</properties>
 	<dependencyManagement>

@@ -13,7 +13,7 @@
 
 	<artifactId>spring-cloud-contract-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>4.0.9-SNAPSHOT</version>
+	<version>4.0.8-SNAPSHOT</version>
 
 	<name>Spring Cloud Contract</name>
 	<description>Spring Cloud Contract</description>
@@ -47,14 +47,14 @@
 
 		<junit-vintage.version>5.9.1</junit-vintage.version>
 		<junit-jupiter.version>5.9.1</junit-jupiter.version>
-		<gmavenplus-plugin.version>1.13.0</gmavenplus-plugin.version>
+		<gmavenplus-plugin.version>1.13.1</gmavenplus-plugin.version>
 		<maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>  <!-- @releaser:version-check-off -->
 		<awaitility.version>4.2.0</awaitility.version>
 		<artemis.version>2.26.0</artemis.version>
 		<testcontainers.version>1.17.6</testcontainers.version>
 
 		<!-- We need to have compatibility with Gradle -->
-		<groovy.version>4.0.21</groovy.version>
+		<groovy.version>4.0.22</groovy.version>
 		<!-- We need to have compatibility with Boot -->
 		<maven.version>3.6.3</maven.version>
 		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
