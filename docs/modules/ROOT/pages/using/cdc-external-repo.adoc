@@ -114,8 +114,6 @@ $ ./mvnw clean install
 . Sets up the plugin to fetch the contract definitions from a JAR instead of from
 `src/test/resources/contracts`, as follows:
 +
-[tabs]
-===
 Maven::
 +
 [source,xml,indent=0,subs="verbatim",role="primary"]
@@ -153,11 +151,8 @@ contracts {
 	// Additional configuration
 }
 ----
-===
 . Runs the build to generate tests and stubs, as follows:
 +
-[tabs]
-===
 Maven::
 +
 [source,bash,indent=0,subs="verbatim",role="primary"]
@@ -171,7 +166,6 @@ Gradle::
 ----
 ./gradlew clean build
 ----
-===
 . Writes the missing implementation, to make the tests pass.
 . Merges the pull request to the repository with contract definitions, as follows:
 +
@@ -189,8 +183,6 @@ the contract definitions to Nexus or Artifactory.
 . Sets up the plugin so that the contract definitions are no longer taken from the local
 storage but from a remote location, as follows:
 +
-[tabs]
-===
 Maven::
 +
 [source,xml,indent=0,subs="verbatim",role="primary"]
@@ -228,7 +220,6 @@ contracts {
 	// Additional configuration
 }
 ----
-===
 . Merges the producer code with the new implementation.
 . The CI system:
 ** Builds the project.

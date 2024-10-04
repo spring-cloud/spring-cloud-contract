@@ -15,8 +15,6 @@ You can read xref:getting-started/first-application.adoc[Developing Your First S
 
 For the consumer side, you can use a JUnit rule. That way, you need not start a Spring context. The following listing shows such a rule (in JUnit4 and JUnit 5);
 
-[tabs]
-===
 JUnit 4 Rule::
 +
 [source,java,indent=0,subs="verbatim",role="primary"]
@@ -38,7 +36,6 @@ JUnit 5 Extension::
 			.repoRoot("git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git")
 			.stubsMode(StubRunnerProperties.StubsMode.REMOTE);
 ----
-===
 
 [[flows-provider-non-spring-producer]]
 == Setting up the Producer
@@ -82,8 +79,6 @@ public class DemoApplication {
 Given that application, we can set up the plugin to use the `EXPLICIT` mode (that is, to
 send out requests to a real port), as follows:
 
-[tabs]
-===
 Maven::
 +
 [source,xml,indent=0,role="primary"]
@@ -111,7 +106,6 @@ contracts {
 	baseClassForTests = "com.example.demo.BaseClass"
 }
 ----
-===
 
 The base class might resemble the following:
 

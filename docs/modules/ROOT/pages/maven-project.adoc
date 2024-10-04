@@ -10,14 +10,28 @@ To add the Spring Cloud Contract BOM, include the following section in your `pom
 
 [source,xml,indent=0]
 ----
-include::{standalone_samples_path}/http-server/pom.xml[tags=contract_bom,indent=0]
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-contract-dependencies</artifactId>
+				<version>${spring-cloud-contract.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 ----
 
 Next, add the `Spring Cloud Contract Verifier` Maven plugin, as follows:
 
 [source,xml,indent=0]
 ----
-include::{standalone_samples_path}/http-server/pom.xml[tags=contract_maven_plugin,indent=0]
+			<plugin>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-contract-maven-plugin</artifactId>
+				<version>${spring-cloud-contract.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<packageWithBaseClasses>com.example.fraud</packageWithBaseClasses>
+				</configuration>
+			</plugin>
 ----
 
 You can read more in the
@@ -114,7 +128,42 @@ To use Snapshot and Milestone versions, you have to add the following section to
 
 [source,xml,indent=0]
 ----
-include::{standalone_samples_path}/http-server/pom.xml[tags=repos,indent=0]
+	<repositories>
+		<repository>
+			<id>spring-snapshots</id>
+			<name>Spring Snapshots</name>
+			<url>https://repo.spring.io/snapshot</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>spring-snapshots</id>
+			<name>Spring Snapshots</name>
+			<url>https://repo.spring.io/snapshot</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 ----
 
 [[maven-add-stubs]]

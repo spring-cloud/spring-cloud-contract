@@ -49,8 +49,6 @@ In order to fetch the stubs from a git repository instead of Nexus or Artifactor
 need to use the `git` protocol in the URL of the `repositoryRoot` property in Stub Runner.
 The following example shows how to set it up:
 
-[tabs]
-===
 Annotation::
 +
 [source,java,indent=0,subs="verbatim",role="primary"]
@@ -82,7 +80,6 @@ JUnit 5 Extension::
 			.repoRoot("git://git@github.com:spring-cloud-samples/spring-cloud-contract-nodejs-contracts-git.git")
 			.stubsMode(StubRunnerProperties.StubsMode.REMOTE);
 ----
-===
 
 [[flows-provider-git-producer]]
 == Setting up the Producer
@@ -92,8 +89,6 @@ to use the `git` protocol in the URL of the plugin setup. Also you need to expli
 the plugin to push the stubs at the end of the build process. The following examples show
 how to do so in both Maven and Gradle:
 
-[tabs]
-===
 Maven::
 +
 [source,xml,indent=0,role="primary"]
@@ -162,7 +157,6 @@ the `publish` task is run
 */
 publish.dependsOn("publishStubsToScm")
 ----
-===
 
 You can read more about setting up a git repository in the
 xref:../howto/how-to-use-git-as-storage.adoc[How To section] of the documentation.

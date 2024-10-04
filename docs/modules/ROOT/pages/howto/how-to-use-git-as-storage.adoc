@@ -95,8 +95,6 @@ repository.
 
 The following listing includes the relevant parts both Maven and Gradle build files:
 
-[tabs]
-======
 Maven::
 +
 [source,xml,indent=0,role="primary"]
@@ -165,7 +163,6 @@ the `publish` task is invoked
 */
 publish.dependsOn("publishStubsToScm")
 ----
-======
 
 You can also further customize the `publishStubsToScm` gradle task. In the following example,
 the task is customized to pick contracts from a local git repository:

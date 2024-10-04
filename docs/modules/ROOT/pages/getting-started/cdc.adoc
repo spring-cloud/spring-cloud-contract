@@ -24,7 +24,7 @@ Social remarks
 discuss changes while going through the process.
 * CDC is all about communication.
 
-The server-side code is available under Spring Cloud Contract's repository `samples/standalone/dsl/http-server` path, and the client-side code is available under Spring Cloud Contract's repository `samples/standalone/dsl/http-client` path.
+The server-side code is available under {samples_code}[Spring Cloud Contract Samples] repository `samples/standalone/dsl/http-server` path, and the client-side code is available under Spring Cloud Contract's repository `samples/standalone/dsl/http-client` path.
 
 TIP: In this case, the producer owns the contracts. Physically, all the contracts are
 in the producer's repository.
@@ -32,26 +32,7 @@ in the producer's repository.
 [[getting-started-cdc-technical-note]]
 == Technical Note
 
-If you use the SNAPSHOT, Milestone, or Release Candidate versions, you need to add the
-following section to your build:
-
-[tabs]
-======
-Maven::
-+
-[source,xml,indent=0,subs="verbatim",role="primary"]
-----
-include::{samples_path}/standalone/dsl/http-server/pom.xml[tags=repos,indent=0]
-----
-======
-////
-
-////
-[source,groovy,indent=0,subs="verbatim",role="secondary"]
-.Gradle
-----
-include::{samples_path}/standalone/dsl/http-server/build.gradle[tags=deps_repos,indent=0]
-----
+IMPORTANT:All the code is available under {samples_code}[spring Cloud Contract Samples repo].
 
 For simplicity, we use the following acronyms:
 
@@ -113,10 +94,7 @@ We start with the loan issuance flow, which the following UML diagram shows:
 The following listing shows a test that we might use to check whether a loan amount is too
 large:
 
-[source,groovy,indent=0]
-----
-include::{samples_path}/standalone/dsl/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[tags=client_tdd,indent=0]
-----
+{samples_code}/standalone/dsl/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[Click here to see the code]
 
 Assume that you have written a test of your new feature. If a loan application for a big
 amount is received, the system should reject that loan application with some description.
@@ -129,10 +107,7 @@ that you need to send the request containing the ID of the client and the amount
 client wants to borrow. You want to send it to the `/fraudcheck` URL by using the `PUT` method.
 To do so, you might use code similar to the following:
 
-[source,groovy,indent=0]
-----
-include::{samples_path}/standalone/dsl/http-client/src/main/java/com/example/loan/LoanApplicationService.java[tags=client_call_server,indent=0]
-----
+{samples_code}/standalone/dsl/http-client/src/main/java/com/example/loan/LoanApplicationService.java[Click here to see the code]
 
 For simplicity, the port of the Fraud Detection service is set to `8080`, and the
 application runs on `8090`.
@@ -162,16 +137,9 @@ is important because the producer's test base class name references that folder.
 
 The following example shows our contract, in both Groovy and YAML:
 
-[source,groovy,indent=0,role="primary"]
-----
-include::{samples_path}/standalone/dsl/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.groovy[]
-----
+{samples_code}/standalone/dsl/http-server/src/test/resources/contracts/fraud/shouldMarkClientAsFraud.groovy[Click here to see the Groovy code]
 
-[source,yaml,indent=0,role="secondary"]
-.yaml
-----
-include::{samples_path}/standalone/dsl/http-server/src/test/resources/contracts/yml/fraud/shouldMarkClientAsFraud.yml[]
-----
+{samples_code}/standalone/dsl/http-server/src/test/resources/contracts/yml/fraud/shouldMarkClientAsFraud.yml[Click here to see the YAML code]
 
 The YML contract is quite straightforward. However, when you take a look at the contract
 written with a statically typed Groovy DSL, you might wonder what the
@@ -207,17 +175,11 @@ install the stubs locally.
 We can add either a Maven or a Gradle plugin. In this example, we show how to add Maven.
 First, we add the `Spring Cloud Contract` BOM, as the following example shows:
 
-[source,xml,indent=0]
-----
-include::{samples_path}/standalone/dsl/http-server/pom.xml[tags=contract_bom,indent=0]
-----
+{samples_code}/standalone/dsl/http-server/pom.xml[Click here to see the code]
 
 Next, add the `Spring Cloud Contract Verifier` Maven plugin, as the following example shows:
 
-[source,xml,indent=0]
-----
-include::{samples_path}/standalone/dsl/http-server/pom.xml[tags=contract_maven_plugin,indent=0]
-----
+{samples_code}/standalone/dsl/http-server/pom.xml[Click here to see the code]
 
 Since the plugin was added, you get the `Spring Cloud Contract Verifier` features, which,
 from the provided contracts:
@@ -271,26 +233,17 @@ Application service`):
 
 . Add the `Spring Cloud Contract` BOM, as follows:
 +
-[source,xml,indent=0]
-----
-include::{samples_path}/standalone/dsl/http-client/pom.xml[tags=contract_bom,indent=0]
-----
+{samples_code}/standalone/dsl/http-client/pom.xml[Click here to see the code]
 
 . Add the dependency to `Spring Cloud Contract Stub Runner`, as follows:
 +
-[source,xml,indent=0]
-----
-include::{samples_path}/standalone/dsl/http-client/pom.xml[tags=stub_runner,indent=0]
-----
+{samples_code}/standalone/dsl/http-client/pom.xml[Click here to see the code]
 
 . Annotate your test class with `@AutoConfigureStubRunner`. In the annotation, provide the
 `group-id` and `artifact-id` for the Stub Runner to download the stubs of your
 collaborators.
 +
-[source,groovy,indent=0]
-----
-include::{samples_path}/standalone/dsl/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[tags=autoconfigure_stubrunner,indent=0]
-----
+{samples_code}/standalone/dsl/http-client/src/test/java/com/example/loan/LoanApplicationServiceTests.java[Click here to see the code]
 
 .  (Optional) Because you are playing with the collaborators offline, you
 can also provide the offline work switch (`StubRunnerProperties.StubsMode.LOCAL`).
@@ -359,12 +312,7 @@ The following UML diagram shows the fraud detection flow:
 
 As a reminder, the following listing shows the initial implementation:
 
-[source,java,indent=0]
-----
-include::{samples_path}/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
-include::{samples_path}/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
-}
-----
+{samples_code}/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[Click here to see the code]
 
 Then you can run the following commands:
 
@@ -376,17 +324,11 @@ $ git pull https://your-git-server.com/server-side-fork.git contract-change-pr
 
 You must add the dependencies needed by the autogenerated tests, as follows:
 
-[source,xml,indent=0]
-----
-include::{samples_path}/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
-----
+{samples_code}/standalone/dsl/http-server/pom.xml[Click here to see the code]
 
 In the configuration of the Maven plugin, you must pass the `packageWithBaseClasses` property, as follows:
 
-[source,xml,indent=0]
-----
-include::{samples_path}/standalone/dsl/http-server/pom.xml[tags=contract_maven_plugin,indent=0]
-----
+{samples_code}/standalone/dsl/http-server/pom.xml[Click here to see the code]
 
 IMPORTANT: This example uses "`convention-based`" naming by setting the
 `packageWithBaseClasses` property. Doing so means that the two last packages combine to
@@ -400,10 +342,7 @@ or whatever is necessary. In this case, you should use https://github.com/rest-a
 start the server side `FraudDetectionController`. The following listing shows the
 `FraudBase` class:
 
-[source,java,indent=0]
-----
-include::{samples_path}/standalone/dsl/http-server/src/test/java/com/example/fraud/FraudBase.java[]
-----
+{samples_code}/standalone/dsl/http-server/src/test/java/com/example/fraud/FraudBase.java[Click here to see the code]
 
 Now, if you run the `./mvnw clean install`, you get something like the following output:
 
@@ -458,13 +397,7 @@ in the response. In other words, you have the `red` part of `red`, `green`, and
 Because you know the expected input and expected output, you can write the missing
 implementation as follows:
 
-[source,java,indent=0]
-----
-include::{samples_path}/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=server_api,indent=0]
-include::{samples_path}/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=new_impl,indent=0]
-include::{samples_path}/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[tags=initial_impl,indent=0]
-}
-----
+{samples_code}/standalone/dsl/http-server/src/main/java/com/example/fraud/FraudDetectionController.java[Click here to see the code]
 
 When you run `./mvnw clean install` again, the tests pass. Since the Spring Cloud
 Contract Verifier plugin adds the tests to the `generated-test-sources`, you can
@@ -532,10 +465,7 @@ side are automatically downloaded from Nexus/Artifactory. You can set the value 
 `stubsMode` to `REMOTE`. The following code shows an example of
 achieving the same thing by changing the properties:
 
-[source,yaml,indent=0]
-----
-include::{samples_path}/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
-----
+{samples_code}/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[Click here to see the code]
 
 That's it. You have finished the tutorial.
 

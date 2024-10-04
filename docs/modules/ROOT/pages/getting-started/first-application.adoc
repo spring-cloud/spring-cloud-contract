@@ -39,10 +39,7 @@ The following UML diagram shows the relationship of the parts of Spring Cloud Co
 To start working with `Spring Cloud Contract`, you can add the Spring Cloud Contract Verifier
 dependency and plugin to your build file, as the following example shows:
 
-[source,xml,indent=0]
-----
-include::{samples_path}/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
-----
+{samples_code}/standalone/dsl/http-server/pom.xml[Click here to see the code]
 
 The following listing shows how to add the plugin, which should go in the build/plugins
 portion of the file:
@@ -78,8 +75,6 @@ For the HTTP stubs, a contract defines what kind of response should be returned 
 given request (taking into account the HTTP methods, URLs, headers, status codes, and so
 on). The following example shows an HTTP stub contract in both Groovy and YAML:
 
-[tabs]
-======
 groovy::
 +
 [source,groovy,indent=0,role="primary"]
@@ -136,8 +131,6 @@ response:
   headers:
     Content-Type: application/json;charset=UTF-8
 ----
-======
-
 If you need to use messaging, you can define:
 
 * The input and output messages (taking into account from where it
@@ -147,8 +140,6 @@ was sent, the message body, and the header).
 
 The following example shows a Camel messaging contract:
 
-[tabs]
-======
 groovy::
 +
 [source,groovy,indent=0,role="primary"]
@@ -162,7 +153,6 @@ yaml::
 ----
 include::{verifier_root_path}/src/test/resources/yml/contract_message_scenario1.yml[indent=0]
 ----
-======
 
 Running `./mvnw clean install` automatically generates tests that verify the application
 compliance with the added contracts. By default, the generated tests are under
@@ -183,8 +173,6 @@ of the other frameworks, add its library to your classpath.
 
 The following listing shows samples for all frameworks:
 
-[tabs]
-======
 mockmvc::
 +
 [source,java,indent=0,role="primary"]
@@ -271,7 +259,6 @@ webtestclient::
 			assertThatJson(parsedJson).field("['status']").isEqualTo("NOT_OK");
 	}
 ----
-======
 
 As the implementation of the functionalities described by the contracts is not yet
 present, the tests fail.
@@ -432,10 +419,7 @@ WireMock instance or messaging route that simulates the actual service.
 
 To get started, add the dependency to `Spring Cloud Contract Stub Runner`, as follows:
 
-[source,xml,indent=0]
-----
-include::{samples_path}/standalone/dsl/http-client/pom.xml[tags=stub_runner,indent=0]
-----
+{samples_code}/standalone/dsl/http-client/pom.xml[Click here to see the code]
 
 You can get the Producer-side stubs installed in your Maven repository in either of two
 ways:
@@ -455,10 +439,7 @@ in place, so the automatically-generated contract tests fail.
 pass the stub artifact IDs and artifact repository URL as `Spring Cloud Contract Stub
 Runner` properties, as the following example shows:
 +
-[source,yaml,indent=0]
-----
-include::{samples_path}/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
-----
+{samples_code}/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[Click here to see the code]
 
 Now you can annotate your test class with `@AutoConfigureStubRunner`. In the annotation,
 provide the `group-id` and `artifact-id` for `Spring Cloud Contract Stub Runner` to run

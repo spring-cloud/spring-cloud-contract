@@ -7,17 +7,6 @@ include::partial$_attributes.adoc[]
 You can add the additional snapshot repository to your build file to use snapshot
 versions, which are automatically uploaded after every successful build, as follows:
 
-====
-[source,xml,indent=0,subs="verbatim",role="primary"]
-.Maven
-----
-include::{standalone_samples_path}/http-server/pom.xml[tags=repos,indent=0]
-----
+{samples_code}/standalone/dsl/http-server/pom.xml[Click here to see the Maven code]
 
-[source,groovy,indent=0,subs="verbatim",role="secondary"]
-.Gradle (`settings.xml`)
-----
-include::{standalone_samples_path}/http-server/settings.gradle[tags=repos,indent=0]
-----
-====
-
+{samples_code}/standalone/dsl/http-server/settings.gradle[Click here to see the Gradle code]

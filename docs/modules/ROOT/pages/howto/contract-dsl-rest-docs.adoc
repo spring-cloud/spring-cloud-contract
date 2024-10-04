@@ -7,42 +7,16 @@ When you want to include the requests and responses of your API by using Spring 
 you only need to make some minor changes to your setup if you are using MockMvc and RestAssuredMockMvc.
 To do so, include the following dependencies (if you have not already done so):
 
-[tabs]
-======
-maven::
-+
-[source,xml,indent=0,subs="verbatim",role="primary"]
-----
-include::{standalone_restdocs_path}/http-server/pom.xml[tags=dependencies,indent=0]
-----
+{samples_code}/standalone/dsl/http-server/pom.xml[Click here to see the Maven code]
 
-gradle::
-+
-[source,groovy,indent=0,subs="verbatim",role="secondary"]
-----
-include::{standalone_restdocs_path}/http-server/build.gradle[tags=dependencies,indent=0]
-----
-======
+{samples_code}/standalone/dsl/http-server/build.gradle[Click here to see the Gradle code]
 
 Next, you need to make some changes to your base class. The following examples use
 `WebAppContext` and the standalone option with RestAssured:
 
-[tabs]
-======
-WebAppContext::
-+
-[source,java,indent=0,subs="verbatim",role="primary"]
-----
-include::{standalone_restdocs_path}/http-server/src/test/java/com/example/fraud/FraudBaseWithWebAppSetup.java[tags=base_class,indent=0]
-----
+{samples_code}/standalone/dsl/http-server/src/test/java/com/example/fraud/FraudBaseWithWebAppSetup.java[Click here to see the WebAppContext code]
 
-Standalone::
-+
-[source,java,indent=0,subs="verbatim",role="secondary"]
-----
-include::{standalone_restdocs_path}/http-server/src/test/java/com/example/fraud/FraudBaseWithStandaloneSetup.java[tags=base_class,indent=0]
-----
-======
+{samples_code}/standalone/dsl/http-server/src/test/java/com/example/fraud/FraudBaseWithStandaloneSetup.java[Click here to see the standalone code]
 
 TIP: You need not specify the output directory for the generated snippets (since version 1.2.0.RELEASE of Spring REST Docs).
 

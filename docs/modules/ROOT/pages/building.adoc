@@ -71,8 +71,7 @@ The following list describes each of the top-level folders in the project struct
 
 - `config`: Folder contains setup for Spring Cloud Release Tools automated release process
 - `docker`: Folder contains docker images
-- `samples`: Folder contains test samples together with standalone ones used also to build documentation
-- `scripts`: Contains scripts to build and test `Spring Cloud Contract` with Maven, Gradle and standalone projects
+- `scripts`: Contains scripts to build and test `Spring Cloud Contract` with Maven, Gradle
 - `specs`: Contains specifications for the Contract DSL.
 - `spring-cloud-contract-dependencies`: Contains Spring Cloud Contract BOM
 - `spring-cloud-contract-shade`: Shaded dependencies used by the plugins
@@ -95,9 +94,7 @@ command:
 ./mvnw clean install -P integration
 ```
 
-Calling that function builds the core, the Maven plugin, and the Gradle plugin and runs
-end-to_end tests on the
-standalone samples in the proper order (both for Maven and Gradle).
+Calling that function builds the core, the Maven plugin, and the Gradle plugin.
 
 To build only the Gradle Plugin, you can run the following commands:
 
