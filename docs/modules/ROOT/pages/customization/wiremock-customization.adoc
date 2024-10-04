@@ -52,10 +52,7 @@ With version 3.0.0 you're able to set `metadata` in your contracts. If you set a
 will be a valid WireMock's `StubMapping` JSON / map or an actual `StubMapping` object, Spring Cloud Contract will patch the generated
 stub with part of your customization. Let's look at the following example
 
-[source,yaml,indent=0]
-----
-include::{standalone_samples_path}/http-server/src/test/resources/contracts/yml/fraud/shouldReturnFraudStats.yml[tags=metadata,indent=0]
-----
+{samples_code}/standalone/dsl/http-server/src/test/resources/contracts/yml/fraud/shouldReturnFraudStats.yml[Click here to see the code]
 
 In the `metadata` section we've set an entry with key `wiremock` and its value is a JSON `StubMapping` that sets a delay in the generated stub. Such code allowed us to get the following merged WireMock JSON stub.
 

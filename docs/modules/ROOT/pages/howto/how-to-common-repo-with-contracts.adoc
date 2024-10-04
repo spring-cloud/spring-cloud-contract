@@ -45,10 +45,7 @@ one-to-one to the contents of the repository.
 
 The following example shows a `pom.xml` file inside the `server` folder:
 
-[source,xml,indent=0]
-----
-include::{samples_path}/standalone/contracts/com/example/server/pom.xml[indent=0]
-----
+{samples_code}/standalone/dsl/contracts/com/example/server/pom.xml[Click here to see the code]
 
 There are no dependencies other than the Spring Cloud Contract Maven Plugin.
 Those `pom.xml` files are necessary for the consumer side to run `mvn clean install -DskipTests` to locally install
@@ -56,18 +53,12 @@ the stubs of the producer project.
 
 The `pom.xml` file in the root folder can look like the following:
 
-[source,xml,indent=0]
-----
-include::{samples_path}/standalone/contracts/pom.xml[indent=0]
-----
+{samples_code}/standalone/dsl/contracts/pom.xml[Click here to see the code]
 
 It uses the assembly plugin to build the JAR with all the contracts. The following example
 shows such a setup:
 
-[source,xml,indent=0]
-----
-include::{samples_path}/standalone/contracts/src/assembly/contracts.xml[indent=0]
-----
+{samples_code}/standalone/dsl/contracts/src/assembly/contracts.xml[Click here to see the code]
 
 [[how-to-workflow]]
 == Workflow

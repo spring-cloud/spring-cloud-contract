@@ -42,10 +42,7 @@ expressed in either Groovy DSL or YAML to the contracts directory, which is set 
 Then you can add the Spring Cloud Contract Verifier dependency and plugin to your build file, as
 the following example shows:
 
-[source,xml,indent=0]
-----
-include::{samples_path}/standalone/dsl/http-server/pom.xml[tags=verifier_test_dependencies,indent=0]
-----
+{samples_code}/standalone/dsl/http-server/pom.xml[Click here to see the code]
 
 The following listing shows how to add the plugin, which should go in the build/plugins
 portion of the file:
@@ -112,10 +109,7 @@ WireMock instance or messaging route that simulates the actual service.
 To do so, add the dependency to `Spring Cloud Contract Stub Runner`, as the
 following example shows:
 
-[source,xml,indent=0]
-----
-include::{samples_path}/standalone/dsl/http-client/pom.xml[tags=stub_runner,indent=0]
-----
+{samples_code}/standalone/dsl/http-client/pom.xml[Click here to see the code]
 
 You can get the Producer-side stubs installed in your Maven repository in either of two
 ways:
@@ -136,10 +130,7 @@ in place yet, so the automatically-generated contract tests fail.
 pass the stub artifact IDs and artifact repository URL as `Spring Cloud Contract
 Stub Runner` properties, as the following example shows:
 +
-[source,yaml,indent=0]
-----
-include::{samples_path}/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[]
-----
+{samples_code}/standalone/dsl/http-client/src/test/resources/application-test-repo.yaml[Click here to see the code]
 
 Now you can annotate your test class with `@AutoConfigureStubRunner`. In the annotation,
 provide the `group-id` and `artifact-id` values for `Spring Cloud Contract Stub Runner` to

@@ -180,8 +180,6 @@ in case of polyglot applications) then you'll have to have the following prerequ
 
 The contract needs to call a `triggerMessage(...)` method. That method is already provided in the base class for all tests in the docker image and will send out a request to the HTTP endpoint on the producer side. Below you can find examples of such contracts.
 
-[tabs]
-======
 Groovy::
 +
 [source,groovy,indent=0,subs="verbatim",role="primary"]
@@ -240,7 +238,7 @@ metadata:
             messageProperties:
                 receivedRoutingKey: '#'
 ----
-======
+
 
 [[docker-example-of-usage-messaging-endpoint]]
 ==== HTTP Endpoint to Trigger a Message

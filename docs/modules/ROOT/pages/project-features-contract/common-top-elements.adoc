@@ -263,19 +263,11 @@ an example of using the `wiremock` key. Its value is a map whose key is `stubMap
 patch parts of your generated stub mapping with your custom code. You may want to do that in order to add webhooks, custom
 delays or integrate with third party WireMock extensions.
 
+{samples_code}/standalone/dsl/http-server/src/test/resources/contracts/fraud/shouldReturnFraudStats.groovy[Click here to see the Groovy code]
+
+{samples_code}/standalone/dsl/http-server/src/test/resources/contracts/yml/fraud/shouldReturnFraudStats.yml[Click here to see the YAML code]
+
 ====
-[source,groovy,indent=0,role="primary"]
-.groovy
-----
-include::{standalone_samples_path}/http-server/src/test/resources/contracts/fraud/shouldReturnFraudStats.groovy[tags=metadata,indent=0]
-----
-
-[source,yaml,indent=0,role="secondary"]
-.yml
-----
-include::{standalone_samples_path}/http-server/src/test/resources/contracts/yml/fraud/shouldReturnFraudStats.yml[tags=metadata,indent=0]
-----
-
 [source,java,indent=0,subs="verbatim",role="secondary"]
 .java
 ----

@@ -13,8 +13,6 @@ As a producer, we:
 . Write RESTDocs tests of our API.
 . Add Spring Cloud Contract Stub Runner starter to our build (`spring-cloud-starter-contract-stub-runner`), as follows:
 +
-[tabs]
-======
 Maven::
 +
 [source,xml,indent=0,role="primary"]
@@ -54,11 +52,8 @@ dependencyManagement {
 	}
 }
 ----
-======
 . We set up the build tool to package our stubs, as follows:
 +
-[tabs]
-======
 Maven::
 +
 [source,xml,indent=0,role="primary"]
@@ -124,7 +119,6 @@ task stubsJar(type: Jar) {
 stubsJar.dependsOn(test)
 bootJar.dependsOn(stubsJar)
 ----
-======
 
 Now, when we run the tests, stubs are automatically published and packaged.
 
