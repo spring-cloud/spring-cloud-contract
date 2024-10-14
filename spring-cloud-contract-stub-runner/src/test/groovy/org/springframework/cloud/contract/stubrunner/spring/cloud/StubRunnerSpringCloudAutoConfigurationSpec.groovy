@@ -19,7 +19,6 @@ package org.springframework.cloud.contract.stubrunner.spring.cloud
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -52,7 +51,6 @@ import org.springframework.web.client.RestTemplate
 		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 		repositoryRoot = "classpath:m2repo/repository/")
 // end::autoconfigure[]
-@Disabled
 class StubRunnerSpringCloudAutoConfigurationSpec {
 
 	@Autowired
