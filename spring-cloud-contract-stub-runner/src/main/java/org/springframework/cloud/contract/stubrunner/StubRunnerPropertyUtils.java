@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.stubrunner;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -81,7 +82,7 @@ public final class StubRunnerPropertyUtils {
 	}
 
 	private static String appendPrefixIfNecessary(String prop) {
-		if (prop.toLowerCase().startsWith("stubrunner")) {
+		if (prop.toLowerCase(Locale.ROOT).startsWith("stubrunner")) {
 			return prop;
 		}
 		return STUBRUNNER_PROPERTIES + "." + prop;
@@ -95,7 +96,7 @@ public final class StubRunnerPropertyUtils {
 			}
 			return systemProp;
 		}
-		String convertedEnvProp = stubRunnerProp.replaceAll("\\.", "_").replaceAll("-", "_").toUpperCase();
+		String convertedEnvProp = stubRunnerProp.replaceAll("\\.", "_").replaceAll("-", "_").toUpperCase(Locale.ROOT);
 		String envVar = FETCHER.envVar(convertedEnvProp);
 		if (log.isTraceEnabled()) {
 			log.trace("Environment variable [" + convertedEnvProp + "] has value [" + envVar + "]");

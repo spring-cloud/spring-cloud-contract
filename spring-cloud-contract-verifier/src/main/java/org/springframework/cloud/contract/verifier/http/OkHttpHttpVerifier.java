@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -78,7 +79,7 @@ public class OkHttpHttpVerifier implements HttpVerifier {
 	}
 
 	private String url(Request request) {
-		String url = request.scheme().name().toLowerCase() + ":" + this.hostAndPort
+		String url = request.scheme().name().toLowerCase(Locale.ROOT) + ":" + this.hostAndPort
 				+ (request.path().startsWith("/") ? request.path() : "/" + request.path());
 		if (!request.queryParams().isEmpty()) {
 			return url + "?"

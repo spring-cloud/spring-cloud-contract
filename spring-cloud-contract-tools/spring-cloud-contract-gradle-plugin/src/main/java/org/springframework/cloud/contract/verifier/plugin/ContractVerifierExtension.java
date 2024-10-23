@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -269,7 +270,7 @@ public class ContractVerifierExtension implements Serializable {
 	}
 
 	public void setTestFramework(String testFramework) {
-		this.testFramework.set(TestFramework.valueOf(testFramework.toUpperCase()));
+		this.testFramework.set(TestFramework.valueOf(testFramework.toUpperCase(Locale.ROOT)));
 	}
 
 	public Property<TestMode> getTestMode() {
@@ -281,7 +282,7 @@ public class ContractVerifierExtension implements Serializable {
 	}
 
 	public void setTestMode(String testMode) {
-		this.testMode.set(TestMode.valueOf(testMode.toUpperCase()));
+		this.testMode.set(TestMode.valueOf(testMode.toUpperCase(Locale.ROOT)));
 	}
 
 	public Property<String> getBasePackageForTests() {
@@ -469,7 +470,7 @@ public class ContractVerifierExtension implements Serializable {
 	}
 
 	public void setContractsMode(String contractsMode) {
-		this.contractsMode.set(StubRunnerProperties.StubsMode.valueOf(contractsMode.toUpperCase()));
+		this.contractsMode.set(StubRunnerProperties.StubsMode.valueOf(contractsMode.toUpperCase(Locale.ROOT)));
 	}
 
 	public Property<String> getPackageWithBaseClasses() {

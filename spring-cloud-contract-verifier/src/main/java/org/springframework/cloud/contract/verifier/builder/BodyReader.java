@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -71,7 +72,7 @@ class BodyReader {
 	private String byteBodyToAFileForTestMethod(SingleContractMetadata metadata, FromFileProperty property,
 			CommunicationType side) {
 		GeneratedClassDataForMethod classDataForMethod = classDataForMethod(metadata);
-		String newFileName = classDataForMethod.getMethodName() + "_" + side.name().toLowerCase() + "_"
+		String newFileName = classDataForMethod.getMethodName() + "_" + side.name().toLowerCase(Locale.ROOT) + "_"
 				+ property.fileName();
 		writeFileForBothIdeAndBuildTool(metadata, property.asBytes(), newFileName);
 		return newFileName;

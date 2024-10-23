@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -273,7 +274,7 @@ public class YamlContract {
 			return Arrays.stream(values())
 				.filter(matchingType -> matchingType.name()
 					.replace("_", "")
-					.equalsIgnoreCase(string.toLowerCase().replace("_", "")))
+					.equalsIgnoreCase(string.toLowerCase(Locale.ROOT).replace("_", "")))
 				.findFirst()
 				.orElse(null);
 		}

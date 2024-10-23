@@ -21,6 +21,7 @@ import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -169,7 +170,7 @@ public class WireMockSnippet implements Snippet {
 		org.springframework.http.HttpHeaders headers = operation.getRequest().getHeaders();
 		// TODO: whitelist headers
 		for (String name : headers.keySet()) {
-			if (!this.headerBlackList.contains(name.toLowerCase())) {
+			if (!this.headerBlackList.contains(name.toLowerCase(Locale.ROOT))) {
 				if ("content-type".equalsIgnoreCase(name) && this.contentType != null) {
 					continue;
 				}
@@ -239,7 +240,7 @@ public class WireMockSnippet implements Snippet {
 		org.springframework.http.HttpHeaders headers = operation.getResponse().getHeaders();
 		HttpHeaders result = new HttpHeaders();
 		for (String name : headers.keySet()) {
-			if (!this.headerBlackList.contains(name.toLowerCase())) {
+			if (!this.headerBlackList.contains(name.toLowerCase(Locale.ROOT))) {
 				result = result.plus(new HttpHeader(name, headers.get(name)));
 			}
 		}

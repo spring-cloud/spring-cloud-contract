@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -213,7 +214,7 @@ public class StubRunnerOptions {
 		Set<String> propertyNames = properties.stringPropertyNames();
 		propertyNames.stream()
 			// stubrunner.properties.foo.bar=baz
-			.filter(s -> s.toLowerCase().startsWith("stubrunner.properties"))
+			.filter(s -> s.toLowerCase(Locale.ROOT).startsWith("stubrunner.properties"))
 			// foo.bar=baz
 			.forEach(s -> map.put(s.substring("stubrunner.properties".length() + 1), System.getProperty(s)));
 		return map;
