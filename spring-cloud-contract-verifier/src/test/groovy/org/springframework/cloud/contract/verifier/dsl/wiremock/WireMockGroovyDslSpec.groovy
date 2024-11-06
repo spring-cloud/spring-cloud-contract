@@ -2084,7 +2084,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			ResponseEntity<String> entity = call(port)
 		then:
 			entity.headers.
-					find { it.key == "Authorization" && it.value.contains("secret;foo") }
+					find { it.key == "authorization" && it.value.contains("secret;foo") }
 			AssertionUtil.assertThatJsonsAreEqual(('''
 				{
 				  "url" : "/api/v1/xxxx?foo=bar&foo=bar2",
@@ -2236,7 +2236,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		then:
 			ResponseEntity<String> entity = call(port)
 			entity.headers.
-					find { it.key == "Authorization" && it.value.contains("secret;foo") }
+					find { it.key == "authorization" && it.value.contains("secret;foo") }
 		and:
 			AssertionUtil.assertThatJsonsAreEqual(('''
 				{  
