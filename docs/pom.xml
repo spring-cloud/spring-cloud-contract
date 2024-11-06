@@ -124,7 +124,7 @@
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
 						<executions>
-							<execution>
+							<!--<execution>
 								<id>generate-docker-env-vars</id>
 								<phase>${generate-cloud-resources.phase}</phase>
 								<goals>
@@ -137,7 +137,7 @@
 										<argument>${maven.multiModuleProjectDirectory}/docs/modules/ROOT/partials/</argument>
 									</arguments>
 								</configuration>
-							</execution>
+							</execution>-->
 							<execution>
 								<id>generate-adoc-resources</id>
 								<phase>${generate-adoc-resource.phase}</phase>
