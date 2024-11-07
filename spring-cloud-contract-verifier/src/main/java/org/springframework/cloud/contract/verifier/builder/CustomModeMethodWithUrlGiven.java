@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.builder;
 
+import java.util.Locale;
+
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty;
 import org.springframework.cloud.contract.spec.internal.Request;
 import org.springframework.cloud.contract.spec.internal.Url;
@@ -51,7 +53,7 @@ class CustomModeMethodWithUrlGiven implements Given {
 
 	private void addUrl(Url buildUrl, Request request) {
 		Object testSideUrl = MapConverter.getTestSideValues(buildUrl);
-		String method = request.getMethod().getServerValue().toString().toLowerCase();
+		String method = request.getMethod().getServerValue().toString().toLowerCase(Locale.ROOT);
 		String url = testSideUrl.toString();
 		if (!(testSideUrl instanceof ExecutionProperty)) {
 			url = this.bodyParser.quotedShortText(testSideUrl.toString());

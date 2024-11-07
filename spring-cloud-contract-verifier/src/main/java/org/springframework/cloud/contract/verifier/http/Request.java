@@ -20,6 +20,7 @@ import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.cloud.contract.spec.internal.HttpMethods;
@@ -69,7 +70,7 @@ public class Request {
 	public String contentType() {
 		Object value = this.headers.entrySet()
 			.stream()
-			.filter(e -> e.getKey().toLowerCase().equals("content-type"))
+			.filter(e -> e.getKey().toLowerCase(Locale.ROOT).equals("content-type"))
 			.findFirst()
 			.orElse(new AbstractMap.SimpleEntry<>("", null))
 			.getValue();
@@ -169,7 +170,7 @@ public class Request {
 		 * @return builder
 		 */
 		public Request.Builder method(String method, String path) {
-			return new Request.Builder(HttpMethods.HttpMethod.valueOf(method.toUpperCase()), path);
+			return new Request.Builder(HttpMethods.HttpMethod.valueOf(method.toUpperCase(Locale.ROOT)), path);
 		}
 
 		/**

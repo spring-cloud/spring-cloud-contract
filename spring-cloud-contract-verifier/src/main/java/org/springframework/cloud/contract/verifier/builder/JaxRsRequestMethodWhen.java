@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.builder;
 
+import java.util.Locale;
+
 import org.springframework.cloud.contract.spec.internal.ExecutionProperty;
 import org.springframework.cloud.contract.spec.internal.FromFileProperty;
 import org.springframework.cloud.contract.spec.internal.Request;
@@ -43,7 +45,7 @@ class JaxRsRequestMethodWhen implements When, JaxRsBodyParser {
 	void appendMethodAndBody(SingleContractMetadata metadata) {
 		Request request = metadata.getContract().getRequest();
 		ContentType type = metadata.getInputTestContentType();
-		String method = request.getMethod().getServerValue().toString().toLowerCase();
+		String method = request.getMethod().getServerValue().toString().toLowerCase(Locale.ROOT);
 		if (request.getBody() != null) {
 			String contentType = StringUtils.hasText(metadata.getDefinedInputTestContentType())
 					? metadata.getDefinedInputTestContentType() : type.getMimeType();
@@ -61,11 +63,11 @@ class JaxRsRequestMethodWhen implements When, JaxRsBodyParser {
 			else {
 				value = "\"" + requestBodyAsString(metadata) + "\"";
 			}
-			this.blockBuilder.addIndented(
-					".build(\"" + method.toUpperCase() + "\", entity(" + value + ", \"" + contentType + "\"))");
+			this.blockBuilder.addIndented(".build(\"" + method.toUpperCase(Locale.ROOT) + "\", entity(" + value + ", \""
+					+ contentType + "\"))");
 		}
 		else {
-			this.blockBuilder.addIndented(".build(\"" + method.toUpperCase() + "\")");
+			this.blockBuilder.addIndented(".build(\"" + method.toUpperCase(Locale.ROOT) + "\")");
 		}
 	}
 

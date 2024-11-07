@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.verifier.messaging.stream;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -60,9 +61,9 @@ class DestinationResolver {
 					log.debug("Found following channels [" + channels + "] for destination [" + destination + "]. "
 							+ "Will pick the one that matches the default channel name or the first one if none is matching");
 				}
-				String defaultChannelName = channels.get(defaultChannel.name().toLowerCase());
+				String defaultChannelName = channels.get(defaultChannel.name().toLowerCase(Locale.ROOT));
 				String matchingChannelName = StringUtils.hasText(defaultChannelName)
-						? defaultChannel.name().toLowerCase() : channels.keySet().iterator().next();
+						? defaultChannel.name().toLowerCase(Locale.ROOT) : channels.keySet().iterator().next();
 				if (log.isDebugEnabled()) {
 					log.debug("Picked channel name is [" + matchingChannelName + "]");
 				}

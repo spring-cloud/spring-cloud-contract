@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.contract.stubrunner;
 
+import java.util.Locale;
+
 import org.springframework.util.StringUtils;
 
 /**
@@ -128,7 +130,7 @@ public class StubConfiguration {
 	 * @return {@code true} for a snapshot or a LATEST (+) version.
 	 */
 	public boolean isVersionChanging() {
-		return DEFAULT_VERSION.equals(this.version) || this.version.toLowerCase().contains("snapshot");
+		return DEFAULT_VERSION.equals(this.version) || this.version.toLowerCase(Locale.ROOT).contains("snapshot");
 	}
 
 	public String getGroupId() {

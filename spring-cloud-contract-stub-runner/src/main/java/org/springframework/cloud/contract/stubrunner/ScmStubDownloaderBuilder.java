@@ -31,6 +31,7 @@ import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -295,8 +296,9 @@ class FileWalker extends SimpleFileVisitor<Path> {
 	Path foundFile;
 
 	FileWalker(StubConfiguration stubConfiguration) {
-		this.latestSnapshotVersion = LATEST.stream().anyMatch(s -> s.equals(stubConfiguration.version.toLowerCase()));
-		this.latestReleaseVersion = RELEASE.equals(stubConfiguration.version.toLowerCase());
+		this.latestSnapshotVersion = LATEST.stream()
+			.anyMatch(s -> s.equals(stubConfiguration.version.toLowerCase(Locale.ROOT)));
+		this.latestReleaseVersion = RELEASE.equals(stubConfiguration.version.toLowerCase(Locale.ROOT));
 		this.matcherWithDot = FileSystems.getDefault().getPathMatcher("glob:" + matcherGlob(stubConfiguration, "."));
 		this.matcherWithoutDot = FileSystems.getDefault().getPathMatcher("glob:" + matcherGlob(stubConfiguration, "/"));
 	}
@@ -368,12 +370,12 @@ class FileWalker extends SimpleFileVisitor<Path> {
 	private File folderWithPredefinedName(File[] files) {
 		if (this.latestSnapshotVersion) {
 			return Arrays.stream(files)
-				.filter(file -> LATEST.stream().anyMatch(s -> s.equals(file.getName().toLowerCase())))
+				.filter(file -> LATEST.stream().anyMatch(s -> s.equals(file.getName().toLowerCase(Locale.ROOT))))
 				.findFirst()
 				.orElse(null);
 		}
 		return Arrays.stream(files)
-			.filter(file -> RELEASE.equals(file.getName().toLowerCase()))
+			.filter(file -> RELEASE.equals(file.getName().toLowerCase(Locale.ROOT)))
 			.findFirst()
 			.orElse(null);
 	}

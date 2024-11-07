@@ -26,6 +26,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.Locale;
 
 /**
  * A utility class that helps to convert names.
@@ -104,7 +105,7 @@ public final class NamesUtil {
 		if (isEmpty(className)) {
 			return className;
 		}
-		String firstChar = className.substring(0, 1).toLowerCase();
+		String firstChar = className.substring(0, 1).toLowerCase(Locale.ROOT);
 		return firstChar + className.substring(1);
 	}
 
@@ -115,7 +116,7 @@ public final class NamesUtil {
 		if (isEmpty(className)) {
 			return className;
 		}
-		String firstChar = className.substring(0, 1).toUpperCase();
+		String firstChar = className.substring(0, 1).toUpperCase(Locale.ROOT);
 		return firstChar + className.substring(1);
 	}
 
