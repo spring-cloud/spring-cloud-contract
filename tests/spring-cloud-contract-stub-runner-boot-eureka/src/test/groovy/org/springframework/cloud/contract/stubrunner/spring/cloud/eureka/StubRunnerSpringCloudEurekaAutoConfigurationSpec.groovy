@@ -57,6 +57,9 @@ import org.springframework.web.client.RestTemplate
         properties = ["stubrunner.cloud.eureka.enabled=true",
                 "stubrunner.cloud.stubbed.discovery.enabled=false",
                 "eureka.client.enabled=true",
+				"eureka.client.restclient.enabled=false",
+				"eureka.client.webclient.enabled=false",
+				"eureka.client.jersey.enabled=false",
 				"debug=true",
                 "eureka.instance.leaseRenewalIntervalInSeconds=1"])
 @AutoConfigureStubRunner(ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
