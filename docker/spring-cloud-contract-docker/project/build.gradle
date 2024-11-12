@@ -178,6 +178,7 @@ task cleanOutput(type: Delete) {
 
 task copyOutput(type: Copy) {
 	dependsOn("cleanOutput")
+	mustRunAfter("build", "generatePomFileForMavenPublication")
 	from 'build'
 	into '/spring-cloud-contract-output'
 }
