@@ -33,8 +33,8 @@ VOLUME /tmp
 COPY --chown=scc:scc target/maven_dependencies /home/scc/.m2/repository/
 COPY --chown=scc:scc target/libs/stub-runner-boot.jar stub-runner-boot.jar
 RUN echo "Fetching dependencies, please wait..."
-RUN java -Dthin.dryrun=true -jar stub-runner-boot.jar --thin.repo=https://repo.spring.io/milestone
-RUN java -Dthin.dryrun=true -jar stub-runner-boot.jar --thin.profile=rabbit --thin.repo=https://repo.spring.io/milestone
-RUN java -Dthin.dryrun=true -jar stub-runner-boot.jar --thin.profile=kafka --thin.repo=https://repo.spring.io/milestone
+RUN java -Dthin.dryrun=true -jar stub-runner-boot.jar --thin.repo=${THIN_REPO}
+RUN java -Dthin.dryrun=true -jar stub-runner-boot.jar --thin.profile=rabbit --thin.repo=${THIN_REPO}
+RUN java -Dthin.dryrun=true -jar stub-runner-boot.jar --thin.profile=kafka --thin.repo=${THIN_REPO}
 COPY --chown=scc:scc run.sh run.sh
 ENTRYPOINT ["./run.sh"]
