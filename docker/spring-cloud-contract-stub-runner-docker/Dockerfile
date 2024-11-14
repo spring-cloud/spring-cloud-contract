@@ -30,8 +30,8 @@ ENV PATH "${PATH}:${JAVA_HOME}/bin"
 # Spring Cloud Contract
 ENV SERVER_PORT 8750
 VOLUME /tmp
-RUN chmod -R 777 target/maven_dependencies
-RUN chmod -R 777 target/libs/stub-runner-boot.jar
+RUN echo "$( pwd )"
+RUN echo "$( ls -a )"
 COPY --chown=scc:scc target/maven_dependencies /home/scc/.m2/repository/
 COPY --chown=scc:scc target/libs/stub-runner-boot.jar stub-runner-boot.jar
 RUN echo "Fetching dependencies, please wait..."
