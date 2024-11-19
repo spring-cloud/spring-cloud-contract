@@ -18,7 +18,7 @@ asciidoc:
     hide-uri-scheme: '@'
     tabs-sync-option: '@'
     chomp: 'all'
-    kroki-fetch-diagram: false
+    kroki-fetch-diagram: true
   extensions:
     - '@asciidoctor/tabs'
     - '@springio/asciidoctor-extensions' #TODO: Add plantuml rendering
