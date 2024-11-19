@@ -15,7 +15,7 @@ RUN useradd -u1000 -m scc
 
 # Install sdkman and java
 COPY sdkman/ /usr/local/bin/
-RUN chmod +x /usr/local/bin/sdkman-wrapper.sh
+RUN chmod +r+x /usr/local/bin/sdkman-wrapper.sh
 
 USER scc
 WORKDIR /home/scc
