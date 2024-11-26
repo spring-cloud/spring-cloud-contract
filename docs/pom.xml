@@ -27,7 +27,6 @@
 	</properties>
 	
 	<dependencies>
-		<!--
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
@@ -40,7 +39,6 @@
 			<groupId>org.springframework.amqp</groupId>
 			<artifactId>spring-amqp</artifactId>
 		</dependency>
-		-->
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
 			<artifactId>jackson-module-jsonSchema</artifactId>
