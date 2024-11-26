@@ -25,6 +25,7 @@
 		<groovy.version>4.0.6</groovy.version>
 		<generate-adoc-resource.phase>process-classes</generate-adoc-resource.phase>
 	</properties>
+	<!--
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -44,6 +45,7 @@
 			<artifactId>spring-amqp</artifactId>
 		</dependency>
 	</dependencies>
+	-->
 	<build>
 		<plugins>
 			<plugin>
