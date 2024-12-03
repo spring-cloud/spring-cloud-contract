@@ -25,26 +25,7 @@
 		<groovy.version>4.0.6</groovy.version>
 		<generate-adoc-resource.phase>process-classes</generate-adoc-resource.phase>
 	</properties>
-	
-	<dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>spring-cloud-starter-contract-verifier</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.amqp</groupId>
-			<artifactId>spring-amqp</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.module</groupId>
-			<artifactId>jackson-module-jsonSchema</artifactId>
-			<version>${jackson-module-jsonSchema.version}</version>
-		</dependency>
-	</dependencies>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -183,6 +164,33 @@
 			<properties>
 				<generate-adoc-resource.phase>none</generate-adoc-resource.phase>
 			</properties>
+		</profile>
+		<profile>
+			<id>enable-configuration-properties</id>
+			<activation>
+				<property>
+					<name>!disableConfigurationProperties</name>
+				</property>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>spring-cloud-starter-contract-verifier</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework.amqp</groupId>
+					<artifactId>spring-amqp</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>com.fasterxml.jackson.module</groupId>
+					<artifactId>jackson-module-jsonSchema</artifactId>
+					<version>${jackson-module-jsonSchema.version}</version>
+				</dependency>
+			</dependencies>
 		</profile>
 	</profiles>
 </project>
