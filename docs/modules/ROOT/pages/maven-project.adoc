@@ -34,10 +34,6 @@ Next, add the `Spring Cloud Contract Verifier` Maven plugin, as follows:
 			</plugin>
 ----
 
-You can read more in the
-spring-cloud-contract-maven-plugin/index.html[Spring
-Cloud Contract Maven Plugin Documentation].
-
 Sometimes, regardless of the picked IDE, you can see that the `target/generated-test-source` folder is not visible on the IDE's classpath. To ensure that it is always there, you can add the following entry to your `pom.xml`
 
 [source,xml,indent=0]
@@ -367,10 +363,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.context.WebApplicationContext;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = SomeConfig.class, properties="some=property")
 public abstract class BaseTestClass {
 
