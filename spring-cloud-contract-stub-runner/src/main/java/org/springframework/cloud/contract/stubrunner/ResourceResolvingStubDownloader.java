@@ -109,8 +109,9 @@ class ResourceResolvingStubDownloader implements StubDownloader {
 	}
 
 	private void registerShutdownHook() {
-		Runtime.getRuntime().addShutdownHook(
-				new Thread(() -> TemporaryFileStorage.cleanup(stubRunnerOptions.isDeleteStubsAfterTest())));
+		Runtime.getRuntime()
+			.addShutdownHook(
+					new Thread(() -> TemporaryFileStorage.cleanup(stubRunnerOptions.isDeleteStubsAfterTest())));
 	}
 
 	private void copyTheFoundFiles(File tmp, Resource resource, String relativePath) throws IOException {

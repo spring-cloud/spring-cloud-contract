@@ -106,10 +106,12 @@ public final class MetadataUtil {
 					yamlProcessor.setResources(new ByteArrayResource(bytes));
 					Properties properties = yamlProcessor.getObject();
 					T props = (T) new Binder(
-							new MapConfigurationPropertySource(properties.entrySet().stream()
-									.collect(Collectors.toMap(entry -> entry.getKey().toString(),
-											entry -> entry.getValue().toString())))).bind("", objectToMerge.getClass())
-													.get();
+							new MapConfigurationPropertySource(properties.entrySet()
+								.stream()
+								.collect(Collectors.toMap(entry -> entry.getKey().toString(),
+										entry -> entry.getValue().toString()))))
+						.bind("", objectToMerge.getClass())
+						.get();
 					BeanUtils.copyProperties(props, objectToMerge);
 					return objectToMerge;
 				}
@@ -212,9 +214,9 @@ class VerifierObjectMapper extends ObjectMapper {
 
 	VerifierObjectMapper() {
 		setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
-				.setDefaultPropertyInclusion(JsonInclude.Include.NON_DEFAULT)
-				.setDefaultPropertyInclusion(JsonInclude.Include.NON_EMPTY)
-				.setDefaultPropertyInclusion(JsonInclude.Include.NON_ABSENT);
+			.setDefaultPropertyInclusion(JsonInclude.Include.NON_DEFAULT)
+			.setDefaultPropertyInclusion(JsonInclude.Include.NON_EMPTY)
+			.setDefaultPropertyInclusion(JsonInclude.Include.NON_ABSENT);
 		configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		FilterProvider filters = new SimpleFilterProvider().addFilter("non default properties", new MyFilter());
 		addMixIn(Object.class, PropertyFilterMixIn.class);

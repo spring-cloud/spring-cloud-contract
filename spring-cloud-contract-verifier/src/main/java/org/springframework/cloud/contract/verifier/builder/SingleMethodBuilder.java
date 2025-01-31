@@ -90,29 +90,29 @@ class SingleMethodBuilder {
 
 	SingleMethodBuilder restAssured() {
 		return given(new JavaRestAssuredGiven(this.blockBuilder, this.generatedClassMetaData))
-				.given(new SpockRestAssuredGiven(this.blockBuilder, this.generatedClassMetaData))
-				.when(new JavaRestAssuredWhen(this.blockBuilder, this.generatedClassMetaData))
-				.when(new SpockRestAssuredWhen(this.blockBuilder, this.generatedClassMetaData))
-				.then(new JavaRestAssuredThen(this.blockBuilder, this.generatedClassMetaData))
-				.then(new SpockRestAssuredThen(this.blockBuilder, this.generatedClassMetaData))
-				.methodPostProcessor(new TemplateUpdatingMethodPostProcessor(this.blockBuilder));
+			.given(new SpockRestAssuredGiven(this.blockBuilder, this.generatedClassMetaData))
+			.when(new JavaRestAssuredWhen(this.blockBuilder, this.generatedClassMetaData))
+			.when(new SpockRestAssuredWhen(this.blockBuilder, this.generatedClassMetaData))
+			.then(new JavaRestAssuredThen(this.blockBuilder, this.generatedClassMetaData))
+			.then(new SpockRestAssuredThen(this.blockBuilder, this.generatedClassMetaData))
+			.methodPostProcessor(new TemplateUpdatingMethodPostProcessor(this.blockBuilder));
 	}
 
 	SingleMethodBuilder customMode() {
 		return given(new CustomModeGiven(this.blockBuilder, this.generatedClassMetaData, CustomModeBodyParser.INSTANCE))
-				.when(new CustomModeWhen(this.blockBuilder, this.generatedClassMetaData))
-				.then(new CustomModeThen(this.blockBuilder, this.generatedClassMetaData, CustomModeBodyParser.INSTANCE,
-						ComparisonBuilder.JAVA_HTTP_INSTANCE))
-				.methodPostProcessor(new TemplateUpdatingMethodPostProcessor(this.blockBuilder));
+			.when(new CustomModeWhen(this.blockBuilder, this.generatedClassMetaData))
+			.then(new CustomModeThen(this.blockBuilder, this.generatedClassMetaData, CustomModeBodyParser.INSTANCE,
+					ComparisonBuilder.JAVA_HTTP_INSTANCE))
+			.methodPostProcessor(new TemplateUpdatingMethodPostProcessor(this.blockBuilder));
 	}
 
 	SingleMethodBuilder jaxRs() {
 		return given(new JaxRsGiven(this.generatedClassMetaData))
-				.when(new JavaJaxRsWhen(this.blockBuilder, this.generatedClassMetaData))
-				.when(new SpockJaxRsWhen(this.blockBuilder, this.generatedClassMetaData))
-				.then(new JavaJaxRsThen(this.blockBuilder, this.generatedClassMetaData))
-				.then(new SpockJaxRsThen(this.blockBuilder, this.generatedClassMetaData))
-				.methodPostProcessor(new TemplateUpdatingMethodPostProcessor(this.blockBuilder));
+			.when(new JavaJaxRsWhen(this.blockBuilder, this.generatedClassMetaData))
+			.when(new SpockJaxRsWhen(this.blockBuilder, this.generatedClassMetaData))
+			.then(new JavaJaxRsThen(this.blockBuilder, this.generatedClassMetaData))
+			.then(new SpockJaxRsThen(this.blockBuilder, this.generatedClassMetaData))
+			.methodPostProcessor(new TemplateUpdatingMethodPostProcessor(this.blockBuilder));
 	}
 
 	SingleMethodBuilder messaging() {
@@ -205,14 +205,17 @@ class SingleMethodBuilder {
 
 	private boolean shouldStopProcessing(SingleContractMetadata metaData) {
 		List<MethodPreProcessor> matchingPreProcessors = this.methodPreProcessors.stream()
-				.filter(m -> m.accept(metaData)).collect(Collectors.toCollection(LinkedList::new));
+			.filter(m -> m.accept(metaData))
+			.collect(Collectors.toCollection(LinkedList::new));
 		matchingPreProcessors.forEach(m -> m.apply(metaData));
 		return matchingPreProcessors.stream().anyMatch(m -> !m.shouldContinue());
 	}
 
 	private MethodMetadata pickMetadatum() {
-		return this.methodMetadata.stream().filter(Acceptor::accept).findFirst()
-				.orElseThrow(() -> new IllegalStateException("No matching method metadata found"));
+		return this.methodMetadata.stream()
+			.filter(Acceptor::accept)
+			.findFirst()
+			.orElseThrow(() -> new IllegalStateException("No matching method metadata found"));
 	}
 
 	private boolean visit(List<? extends MethodVisitor> list, SingleContractMetadata metaData) {
@@ -220,8 +223,9 @@ class SingleMethodBuilder {
 	}
 
 	private boolean visit(List<? extends MethodVisitor> list, SingleContractMetadata metaData, boolean addLineEnding) {
-		List<? extends MethodVisitor> visitors = list.stream().filter(o -> o.accept(metaData))
-				.collect(Collectors.toList());
+		List<? extends MethodVisitor> visitors = list.stream()
+			.filter(o -> o.accept(metaData))
+			.collect(Collectors.toList());
 		Iterator<? extends MethodVisitor> iterator = visitors.iterator();
 		while (iterator.hasNext()) {
 			MethodVisitor visitor = iterator.next();

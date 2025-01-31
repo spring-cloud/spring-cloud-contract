@@ -59,16 +59,16 @@ public class GitRepoTests extends AbstractGitTest {
 	@Test
 	public void should_throw_exception_when_there_is_no_repo() throws IOException, URISyntaxException {
 		thenThrownBy(() -> this.gitRepo.cloneProject(GitRepoTests.class.getResource("/git_samples/").toURI()))
-				.isInstanceOf(IllegalStateException.class)
-				.hasMessageContaining("Exception occurred while cloning repo");
+			.isInstanceOf(IllegalStateException.class)
+			.hasMessageContaining("Exception occurred while cloning repo");
 	}
 
 	@Test
 	public void should_throw_an_exception_when_failed_to_initialize_the_repo() throws IOException {
 		thenThrownBy(() -> new GitRepo(this.tmpFolder, new ExceptionThrowingJGitFactory())
-				.cloneProject(this.project.toURI())).isInstanceOf(IllegalStateException.class)
-						.hasMessageContaining("Exception occurred while cloning repo")
-						.hasCauseInstanceOf(CustomException.class);
+			.cloneProject(this.project.toURI())).isInstanceOf(IllegalStateException.class)
+			.hasMessageContaining("Exception occurred while cloning repo")
+			.hasCauseInstanceOf(CustomException.class);
 	}
 
 	@Test

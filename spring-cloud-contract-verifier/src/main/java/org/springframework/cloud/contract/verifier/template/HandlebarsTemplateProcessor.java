@@ -43,10 +43,10 @@ import org.springframework.cloud.contract.verifier.builder.handlebars.Handlebars
 public class HandlebarsTemplateProcessor implements TemplateProcessor, ContractTemplate {
 
 	private static final Pattern ESCAPED_LEGACY_JSON_PATH_PATTERN = Pattern
-			.compile("^.*\\{\\{\\{jsonpath this '(.*)'}}}.*$");
+		.compile("^.*\\{\\{\\{jsonpath this '(.*)'}}}.*$");
 
 	private static final Pattern ESCAPED_JSON_PATH_PATTERN = Pattern
-			.compile("^.*\\{\\{\\{jsonPath request.body '(.*)'}}}.*$");
+		.compile("^.*\\{\\{\\{jsonPath request.body '(.*)'}}}.*$");
 
 	private static final Pattern LEGACY_JSON_PATH_PATTERN = Pattern.compile("^.*\\{\\{jsonpath this '(.*)'}}.*$");
 
@@ -117,8 +117,9 @@ public class HandlebarsTemplateProcessor implements TemplateProcessor, ContractT
 			final Handlebars handlebars = new Handlebars();
 			handlebars.registerHelper(HandlebarsJsonPathHelper.NAME, new HandlebarsJsonPathHelper());
 			handlebars.registerHelper(WireMockHelpers.jsonPath.name(), new HandlebarsJsonPathHelper());
-			Arrays.stream(WireMockHelpers.values()).filter(helper -> !helper.equals(WireMockHelpers.jsonPath))
-					.forEach(helper -> handlebars.registerHelper(helper.name(), helper));
+			Arrays.stream(WireMockHelpers.values())
+				.filter(helper -> !helper.equals(WireMockHelpers.jsonPath))
+				.forEach(helper -> handlebars.registerHelper(helper.name(), helper));
 			return handlebars.compileInline(content);
 		}
 		catch (IOException e) {

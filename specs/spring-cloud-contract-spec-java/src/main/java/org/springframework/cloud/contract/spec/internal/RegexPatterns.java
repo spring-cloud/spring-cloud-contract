@@ -68,16 +68,16 @@ public final class RegexPatterns {
 	protected static final Pattern HTTPS_URL = UrlHelper.HTTPS_URL;
 
 	protected static final Pattern UUID = Pattern
-			.compile("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", Pattern.CASE_INSENSITIVE);
+		.compile("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", Pattern.CASE_INSENSITIVE);
 
 	protected static final Pattern UUID4 = Pattern
-			.compile("[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}", Pattern.CASE_INSENSITIVE);
+		.compile("[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}", Pattern.CASE_INSENSITIVE);
 
 	protected static final Pattern ANY_DATE = Pattern
-			.compile("(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])");
+		.compile("(\\d\\d\\d\\d)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])");
 
-	protected static final Pattern ANY_DATE_TIME = Pattern.compile(
-			"([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
+	protected static final Pattern ANY_DATE_TIME = Pattern
+		.compile("([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
 
 	protected static final Pattern ANY_TIME = Pattern.compile("(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])");
 
@@ -89,9 +89,9 @@ public final class RegexPatterns {
 			"([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\\.\\d+)?(Z|[+-][01]\\d:[0-5]\\d)");
 
 	protected static Pattern anyOf(String... values) {
-		return Pattern
-				.compile(Arrays.stream(values).map(it -> '^' + RegexpUtils.escapeSpecialRegexWithSingleEscape(it) + '$')
-						.collect(Collectors.joining("|")));
+		return Pattern.compile(Arrays.stream(values)
+			.map(it -> '^' + RegexpUtils.escapeSpecialRegexWithSingleEscape(it) + '$')
+			.collect(Collectors.joining("|")));
 	}
 
 	public static String multipartParam(Object name, Object value) {

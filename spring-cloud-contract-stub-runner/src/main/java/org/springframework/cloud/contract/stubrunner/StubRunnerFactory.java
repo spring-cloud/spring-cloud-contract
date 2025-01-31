@@ -132,7 +132,7 @@ class StubRunnerFactory {
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 					File potentialStubMapping = file.toFile();
 					Collection<StubGenerator> stubGenerators = this.provider
-							.allOrDefault(new DslToWireMockClientConverter());
+						.allOrDefault(new DslToWireMockClientConverter());
 					if (stubGenerators.stream().anyMatch(s -> s.canReadStubMapping(potentialStubMapping))) {
 						if (log.isDebugEnabled()) {
 							log.debug("Deleting file [" + file.toString() + "] since it contains a valid mapping.");

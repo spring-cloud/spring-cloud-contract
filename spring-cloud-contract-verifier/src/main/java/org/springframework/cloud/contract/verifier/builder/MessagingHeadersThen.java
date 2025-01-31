@@ -52,8 +52,8 @@ class MessagingHeadersThen implements Then, BodyMethodVisitor {
 	}
 
 	private void appendLineWithHeaderNotNull(String property) {
-		this.blockBuilder.addLineWithEnding(
-				this.comparisonBuilder.assertThatIsNotNull("response.getHeader(\"" + property + "\")"));
+		this.blockBuilder
+			.addLineWithEnding(this.comparisonBuilder.assertThatIsNotNull("response.getHeader(\"" + property + "\")"));
 	}
 
 	private void processHeaderElement(String property, Object value) {
@@ -79,8 +79,8 @@ class MessagingHeadersThen implements Then, BodyMethodVisitor {
 
 	private void processHeaderElement(String property, Number value) {
 		appendLineWithHeaderNotNull(property);
-		blockBuilder.addLineWithEnding(
-				this.comparisonBuilder.assertThat("response.getHeader(\"" + property + "\")", value));
+		blockBuilder
+			.addLineWithEnding(this.comparisonBuilder.assertThat("response.getHeader(\"" + property + "\")", value));
 	}
 
 	private void processHeaderElement(String property, Pattern pattern) {

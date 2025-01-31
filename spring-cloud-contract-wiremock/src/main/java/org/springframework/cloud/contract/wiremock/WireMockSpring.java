@@ -51,7 +51,9 @@ public abstract class WireMockSpring {
 				HttpsURLConnection.setDefaultHostnameVerifier(NoopHostnameVerifier.INSTANCE);
 				try {
 					HttpsURLConnection.setDefaultSSLSocketFactory(SSLContexts.custom()
-							.loadTrustMaterial(null, TrustSelfSignedStrategy.INSTANCE).build().getSocketFactory());
+						.loadTrustMaterial(null, TrustSelfSignedStrategy.INSTANCE)
+						.build()
+						.getSocketFactory());
 				}
 				catch (Exception e) {
 					throw new AssertionError("Cannot install custom socket factory: [" + e.getMessage() + "]");

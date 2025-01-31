@@ -254,8 +254,8 @@ public class GenerateTestsMojo extends AbstractMojo {
 						+ this.skip);
 			}
 			if (this.mavenTestSkip) {
-				getLog().info(
-						"Skipping Spring Cloud Contract Verifier execution: maven.test.skip=" + this.mavenTestSkip);
+				getLog()
+					.info("Skipping Spring Cloud Contract Verifier execution: maven.test.skip=" + this.mavenTestSkip);
 			}
 			return;
 		}
@@ -267,7 +267,8 @@ public class GenerateTestsMojo extends AbstractMojo {
 				this.contractsPath, this.contractsRepositoryUrl, this.contractsMode, getLog(),
 				this.contractsRepositoryUsername, this.contractsRepositoryPassword, this.contractsRepositoryProxyHost,
 				this.contractsRepositoryProxyPort, this.deleteStubsAfterTest, this.contractsProperties,
-				this.failOnNoContracts).downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
+				this.failOnNoContracts)
+			.downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
 		getLog().info("Directory with contract is present at [" + contractsDirectory + "]");
 		throwExceptionWhenFailOnNoContracts(contractsDirectory, this.contractsRepositoryUrl);
 
@@ -307,8 +308,8 @@ public class GenerateTestsMojo extends AbstractMojo {
 			throws MojoExecutionException {
 		if (StringUtils.hasText(contractsRepository)) {
 			if (getLog().isDebugEnabled()) {
-				getLog().debug(
-						"Contracts repository is set, will not throw an exception that the contracts are not found");
+				getLog()
+					.debug("Contracts repository is set, will not throw an exception that the contracts are not found");
 			}
 			return;
 		}

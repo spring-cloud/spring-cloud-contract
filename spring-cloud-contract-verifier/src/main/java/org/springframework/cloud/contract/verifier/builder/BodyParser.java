@@ -101,8 +101,9 @@ interface BodyParser extends BodyThen {
 			else if (bodyValue instanceof List) {
 				// ["a=3", "b=4"] == "a=3&b=4"
 				return ((List) bodyValue).stream()
-						.map(o -> convertUnicodeEscapesIfRequired(MapConverter.getTestSideValuesForText(o).toString()))
-						.collect(Collectors.joining("&")).toString();
+					.map(o -> convertUnicodeEscapesIfRequired(MapConverter.getTestSideValuesForText(o).toString()))
+					.collect(Collectors.joining("&"))
+					.toString();
 			}
 			else if (bodyValue instanceof String) {
 				return (String) bodyValue;

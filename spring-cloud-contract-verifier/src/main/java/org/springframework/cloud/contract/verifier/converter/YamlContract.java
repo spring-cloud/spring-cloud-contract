@@ -270,8 +270,12 @@ public class YamlContract {
 		equal_to, containing, matching, not_matching, equal_to_json, equal_to_xml, absent, binary_equal_to;
 
 		static MatchingType from(String string) {
-			return Arrays.stream(values()).filter(matchingType -> matchingType.name().replace("_", "")
-					.equalsIgnoreCase(string.toLowerCase().replace("_", ""))).findFirst().orElse(null);
+			return Arrays.stream(values())
+				.filter(matchingType -> matchingType.name()
+					.replace("_", "")
+					.equalsIgnoreCase(string.toLowerCase().replace("_", "")))
+				.findFirst()
+				.orElse(null);
 		}
 
 	}

@@ -152,10 +152,11 @@ class StubsStubDownloader implements StubDownloader {
 			String schemeSpecific = schemeSpecificPart();
 			log.info("Stubs are present under [" + schemeSpecific + "]. Will copy them to a temporary directory.");
 			return new ResourceResolvingStubDownloader(stubRunnerOptions, this::repoRootForSchemeSpecificPart,
-					this::anyPattern).downloadAndUnpackStubJar(stubConfiguration);
+					this::anyPattern)
+				.downloadAndUnpackStubJar(stubConfiguration);
 		}
 		return new ResourceResolvingStubDownloader(stubRunnerOptions, this::repoRoot, this::gavPattern)
-				.downloadAndUnpackStubJar(stubConfiguration);
+			.downloadAndUnpackStubJar(stubConfiguration);
 	}
 
 	private RepoRoots repoRootForSchemeSpecificPart(StubRunnerOptions stubRunnerOptions,

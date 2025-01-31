@@ -54,20 +54,20 @@ class contract_docs_examples implements Supplier<Collection<Contract>> {
 	// end::http_dsl[]
 
 	org.springframework.cloud.contract.spec.Contract methodDsl = org.springframework.cloud.contract.spec.Contract
-			.make(c -> {
-				c.request(r -> {
-					// tag::method[]
-					r.method(r.GET());
-					// end::method[]
-					r.url("/foo");
-				});
-
-				c.response(r -> {
-					r.status(200);
-				});
-
-				c.priority(1);
+		.make(c -> {
+			c.request(r -> {
+				// tag::method[]
+				r.method(r.GET());
+				// end::method[]
+				r.url("/foo");
 			});
+
+			c.response(r -> {
+				r.status(200);
+			});
+
+			c.priority(1);
+		});
 
 	org.springframework.cloud.contract.spec.Contract request =
 			// tag::request[]
@@ -273,8 +273,9 @@ class contract_docs_examples implements Supplier<Collection<Contract>> {
 				});
 				c.response(r -> {
 					r.status(r.OK());
-					r.body(ContractVerifierUtil.map().entry("id", r.$(r.anyNumber())).entry("surname",
-							r.$(r.consumer("Kowalsky"), r.producer(r.regex("[a-zA-Z]+")))));
+					r.body(ContractVerifierUtil.map()
+						.entry("id", r.$(r.anyNumber()))
+						.entry("surname", r.$(r.consumer("Kowalsky"), r.producer(r.regex("[a-zA-Z]+")))));
 					r.headers(h -> {
 						h.header("Content-Type", "text/plain");
 					});
@@ -295,17 +296,17 @@ class contract_docs_examples implements Supplier<Collection<Contract>> {
 						h.contentType(h.applicationJson());
 					});
 					r.body(ContractVerifierUtil.map()
-							.entry("email", r.$(r.consumer(r.optional(r.regex(r.email()))), r.producer("abc@abc.com")))
-							.entry("callback_url",
-									r.$(r.consumer(r.regex(r.hostname())), r.producer("https://partners.com"))));
+						.entry("email", r.$(r.consumer(r.optional(r.regex(r.email()))), r.producer("abc@abc.com")))
+						.entry("callback_url",
+								r.$(r.consumer(r.regex(r.hostname())), r.producer("https://partners.com"))));
 				});
 				c.response(r -> {
 					r.status(404);
 					r.headers(h -> {
 						h.header("Content-Type", "application/json");
 					});
-					r.body(ContractVerifierUtil.map().entry("code",
-							r.value(r.consumer("123123"), r.producer(r.optional("123123")))));
+					r.body(ContractVerifierUtil.map()
+						.entry("code", r.value(r.consumer("123123"), r.producer(r.optional("123123")))));
 				});
 			});
 
@@ -324,9 +325,9 @@ class contract_docs_examples implements Supplier<Collection<Contract>> {
 				});
 				c.response(r -> {
 					r.body(ContractVerifierUtil.map()
-							.entry("path", r.$(r.consumer("/api/12"), r.producer(r.regex("^/api/[0-9]{2}$"))))
-							.entry("correlationId",
-									r.$(r.consumer("1223456"), r.producer(r.execute("isProperCorrelationId($it)")))));
+						.entry("path", r.$(r.consumer("/api/12"), r.producer(r.regex("^/api/[0-9]{2}$"))))
+						.entry("correlationId",
+								r.$(r.consumer("1223456"), r.producer(r.execute("isProperCorrelationId($it)")))));
 					r.status(r.OK());
 				});
 			});

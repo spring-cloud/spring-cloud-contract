@@ -78,8 +78,10 @@ public class DslToWireMockClientConverter extends DslToWireMockConverter {
 	}
 
 	private List<Contract> httpContracts(ContractMetadata contract) {
-		return contract.getConvertedContract().stream().filter(c -> c.getRequest() != null)
-				.collect(Collectors.toList());
+		return contract.getConvertedContract()
+			.stream()
+			.filter(c -> c.getRequest() != null)
+			.collect(Collectors.toList());
 	}
 
 	private Map<Contract, String> convertContracts(String rootName, ContractMetadata contract,

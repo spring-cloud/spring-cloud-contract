@@ -158,7 +158,7 @@ class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 		}
 		Object stubMapping = WireMockMetaData.fromMetadata(contract.getMetadata()).getStubMapping();
 		return WireMockMetaData.APPLICABLE_CLASSES.stream()
-				.anyMatch(aClass -> aClass.isAssignableFrom(stubMapping.getClass()));
+			.anyMatch(aClass -> aClass.isAssignableFrom(stubMapping.getClass()));
 	}
 
 }

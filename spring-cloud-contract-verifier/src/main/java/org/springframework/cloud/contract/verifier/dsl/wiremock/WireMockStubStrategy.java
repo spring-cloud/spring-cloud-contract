@@ -77,8 +77,8 @@ public class WireMockStubStrategy {
 		}
 		if (contract.getOrder() != null) {
 			stubMapping.setScenarioName("Scenario_" + rootName);
-			stubMapping.setRequiredScenarioState(
-					contract.getOrder() == 0 ? STEP_START : STEP_PREFIX + contract.getOrder());
+			stubMapping
+				.setRequiredScenarioState(contract.getOrder() == 0 ? STEP_START : STEP_PREFIX + contract.getOrder());
 			if (contract.getOrder() < contract.getGroupSize() - 1) {
 				stubMapping.setNewScenarioState(STEP_PREFIX + (contract.getOrder() + 1));
 			}

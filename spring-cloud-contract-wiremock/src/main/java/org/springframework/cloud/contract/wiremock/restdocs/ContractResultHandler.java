@@ -67,8 +67,9 @@ public class ContractResultHandler extends WireMockVerifyHelper<MvcResult, Contr
 		MockHttpServletResponse response = result.getResponse();
 		ResponseDefinitionBuilder definition;
 		try {
-			definition = ResponseDefinitionBuilder.responseDefinition().withBody(response.getContentAsString())
-					.withStatus(response.getStatus());
+			definition = ResponseDefinitionBuilder.responseDefinition()
+				.withBody(response.getContentAsString())
+				.withStatus(response.getStatus());
 			addResponseHeaders(definition, response);
 			return definition;
 		}

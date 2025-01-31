@@ -123,7 +123,7 @@ class StubRunnerDiscoveryClientWrapper implements BeanPostProcessor {
 	boolean isStubbedDiscoveryEnabled() {
 		if (this.stubbedDiscoveryEnabled == null) {
 			this.stubbedDiscoveryEnabled = Boolean.valueOf(this.beanFactory.getBean(Environment.class)
-					.getProperty("stubrunner.cloud.stubbed.discovery.enabled", "true"));
+				.getProperty("stubrunner.cloud.stubbed.discovery.enabled", "true"));
 		}
 		return this.stubbedDiscoveryEnabled;
 	}
@@ -131,7 +131,7 @@ class StubRunnerDiscoveryClientWrapper implements BeanPostProcessor {
 	boolean isCloudDelegateEnabled() {
 		if (this.cloudDelegateEnabled == null) {
 			this.cloudDelegateEnabled = Boolean.valueOf(this.beanFactory.getBean(Environment.class)
-					.getProperty("stubrunner.cloud.delegate.enabled", "false"));
+				.getProperty("stubrunner.cloud.delegate.enabled", "false"));
 		}
 		return this.cloudDelegateEnabled;
 	}

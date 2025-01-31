@@ -45,7 +45,7 @@ class AmqpMetadataTests {
 		// @formatter:on
 
 		AmqpMetadata metadata = AmqpMetadata
-				.fromMetadata(this.mapper.readerForMapOf(Object.class).readValue(yamlEntry));
+			.fromMetadata(this.mapper.readerForMapOf(Object.class).readValue(yamlEntry));
 
 		then(metadata.getInput().getConnectToBroker().getAdditionalOptions()).isEqualTo("foo1");
 		then(metadata.getInput().getConnectToBroker().getDeclareQueueWithName()).isEqualTo("foo2");

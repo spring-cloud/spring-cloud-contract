@@ -39,10 +39,10 @@ class StubRunnerJUnit5MethodExtensionTests {
 	// Visible for Junit
 	@RegisterExtension
 	StubRunnerExtension stubRunnerExtension = new StubRunnerExtension().repoRoot(repoRoot())
-			.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
-			.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")
-			.downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")
-			.withMappingsOutputFolder("target/outputmappingsforrule");
+		.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
+		.downloadStub("org.springframework.cloud.contract.verifier.stubs", "loanIssuance")
+		.downloadStub("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")
+		.withMappingsOutputFolder("target/outputmappingsforrule");
 
 	@BeforeEach
 	@AfterEach
@@ -64,12 +64,12 @@ class StubRunnerJUnit5MethodExtensionTests {
 	@Test
 	void should_start_WireMock_servers() {
 		assertThat(stubRunnerExtension.findStubUrl("org.springframework.cloud.contract.verifier.stubs", "loanIssuance"))
-				.isNotNull();
+			.isNotNull();
 		assertThat(stubRunnerExtension.findStubUrl("loanIssuance")).isNotNull();
 		assertThat(stubRunnerExtension.findStubUrl("loanIssuance")).isEqualTo(
 				stubRunnerExtension.findStubUrl("org.springframework.cloud.contract.verifier.stubs", "loanIssuance"));
 		assertThat(stubRunnerExtension
-				.findStubUrl("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")).isNotNull();
+			.findStubUrl("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer")).isNotNull();
 	}
 
 	@Test

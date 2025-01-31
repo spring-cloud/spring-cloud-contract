@@ -219,8 +219,9 @@ class GitRepo {
 		if (log.isDebugEnabled()) {
 			log.debug("Project git url [" + projectGitUrl + "]");
 		}
-		CloneCommand command = this.gitFactory.getCloneCommandByCloneRepository().setURI(projectGitUrl)
-				.setDirectory(destinationFolder);
+		CloneCommand command = this.gitFactory.getCloneCommandByCloneRepository()
+			.setURI(projectGitUrl)
+			.setDirectory(destinationFolder);
 		try {
 			Git git = command.call();
 			if (git.getRepository().getRemoteNames().isEmpty()) {
@@ -278,8 +279,10 @@ class GitRepo {
 	}
 
 	private void trackBranch(CheckoutCommand checkout, String label) {
-		checkout.setCreateBranch(true).setName(label).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
-				.setStartPoint("origin/" + label);
+		checkout.setCreateBranch(true)
+			.setName(label)
+			.setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
+			.setStartPoint("origin/" + label);
 	}
 
 	private boolean isBranch(Git git, String label) throws GitAPIException {
@@ -389,8 +392,9 @@ class GitRepo {
 		}
 
 		CloneCommand getCloneCommandByCloneRepository() {
-			return Git.cloneRepository().setCredentialsProvider(this.provider)
-					.setTransportConfigCallback(this.callback);
+			return Git.cloneRepository()
+				.setCredentialsProvider(this.provider)
+				.setTransportConfigCallback(this.callback);
 		}
 
 		PushCommand push(Git git) {

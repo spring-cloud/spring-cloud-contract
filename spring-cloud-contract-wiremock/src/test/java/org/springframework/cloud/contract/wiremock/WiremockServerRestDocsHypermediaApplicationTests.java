@@ -56,8 +56,10 @@ public class WiremockServerRestDocsHypermediaApplicationTests {
 
 	@Test
 	public void stubsRenderLinksWithoutPlaceholder() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/link")).andExpect(status().isOk())
-				.andExpect(content().string(containsString("link:"))).andDo(document("link"));
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/link"))
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("link:")))
+			.andDo(document("link"));
 
 		File file = new File("target/snippets/stubs", "link.json");
 		BDDAssertions.then(file).exists();
@@ -74,7 +76,7 @@ public class WiremockServerRestDocsHypermediaApplicationTests {
 		@RequestMapping("/link")
 		public String resource(HttpServletRequest request) {
 			UriComponents uriComponents = UriComponentsBuilder.fromHttpRequest(new ServletServerHttpRequest(request))
-					.build();
+				.build();
 			return "link: " + uriComponents.toUriString();
 		}
 

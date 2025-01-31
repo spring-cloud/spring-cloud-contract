@@ -39,14 +39,16 @@ class XmlBodyVerificationBuilder implements BodyMethodGeneration {
 	}
 
 	private void addXmlProcessingLines(final BlockBuilder blockBuilder, String responseString) {
-		Arrays.asList("DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance()",
-				"builderFactory.setNamespaceAware(true)",
-				"DocumentBuilder documentBuilder = builderFactory.newDocumentBuilder()",
-				"Document parsedXml = documentBuilder.parse(new InputSource(new StringReader(" + responseString + ")))")
-				.forEach(it -> {
-					blockBuilder.addLine(it);
-					addColonIfRequired(lineSuffix, blockBuilder);
-				});
+		Arrays
+			.asList("DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance()",
+					"builderFactory.setNamespaceAware(true)",
+					"DocumentBuilder documentBuilder = builderFactory.newDocumentBuilder()",
+					"Document parsedXml = documentBuilder.parse(new InputSource(new StringReader(" + responseString
+							+ ")))")
+			.forEach(it -> {
+				blockBuilder.addLine(it);
+				addColonIfRequired(lineSuffix, blockBuilder);
+			});
 	}
 
 	@Override

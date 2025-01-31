@@ -97,8 +97,10 @@ class RequestMatcherFactory {
 	}
 
 	RequestMatcher pick(String tool) {
-		return this.matchers.stream().filter(m -> m.isApplicable(tool)).findFirst()
-				.orElse(new NotMatchingRequestMatcher());
+		return this.matchers.stream()
+			.filter(m -> m.isApplicable(tool))
+			.findFirst()
+			.orElse(new NotMatchingRequestMatcher());
 	}
 
 }

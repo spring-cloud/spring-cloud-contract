@@ -101,7 +101,9 @@ public class EurekaStubsRegistrar implements StubsRegistrar {
 			EurekaClient client = new CloudEurekaClient(applicationInfoManager, this.eurekaClientConfigBean,
 					transportClientFactories, args, this.context);
 			EurekaRegistration registration = EurekaRegistration.builder(instance)
-					.with(this.eurekaClientConfigBean, this.context).with(client).build();
+				.with(this.eurekaClientConfigBean, this.context)
+				.with(client)
+				.build();
 			EurekaHealthCheckHandler eurekaHealthCheckHandler = new EurekaHealthCheckHandler(
 					StatusAggregator.getDefault());
 			eurekaHealthCheckHandler.setApplicationContext(context);
@@ -165,7 +167,7 @@ public class EurekaStubsRegistrar implements StubsRegistrar {
 
 	private String name(StubConfiguration stubConfiguration) {
 		String resolvedName = this.stubMapperProperties
-				.fromIvyNotationToId(stubConfiguration.toColonSeparatedDependencyNotation());
+			.fromIvyNotationToId(stubConfiguration.toColonSeparatedDependencyNotation());
 		if (StringUtils.hasText(resolvedName)) {
 			return resolvedName;
 		}

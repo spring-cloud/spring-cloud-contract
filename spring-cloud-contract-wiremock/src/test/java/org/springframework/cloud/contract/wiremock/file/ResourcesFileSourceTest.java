@@ -79,7 +79,7 @@ class ResourcesFileSourceTest {
 		when(classpathFileSource1.getUri()).thenReturn(new URI(bannerStubPathInJar));
 		when(classpathFileSource1.exists()).thenReturn(true);
 		when(classpathFileSource1.getBinaryFileNamed(bannerStubFilename))
-				.thenReturn(new BinaryFile(new URI(bannerStubPathInJar + "/response-bannerList-success.json")));
+			.thenReturn(new BinaryFile(new URI(bannerStubPathInJar + "/response-bannerList-success.json")));
 		ResourcesFileSource resourcesFileSource = new ResourcesFileSource(classpathFileSource1);
 
 		// when & then

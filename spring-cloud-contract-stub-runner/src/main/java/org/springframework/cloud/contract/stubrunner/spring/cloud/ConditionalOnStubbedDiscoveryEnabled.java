@@ -29,7 +29,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
  * is turned on by default.
  *
  * @author Marcin Grzejszczak
- *
  * @since 1.0.0
  */
 @Retention(RetentionPolicy.RUNTIME)

@@ -43,8 +43,11 @@ class JaxRsRequestCookiesWhen implements When {
 	}
 
 	private void appendCookies(Request request) {
-		Iterator<Cookie> iterator = request.getCookies().getEntries().stream()
-				.filter(cookie -> !cookieOfAbsentType(cookie)).iterator();
+		Iterator<Cookie> iterator = request.getCookies()
+			.getEntries()
+			.stream()
+			.filter(cookie -> !cookieOfAbsentType(cookie))
+			.iterator();
 		while (iterator.hasNext()) {
 			Cookie cookie = iterator.next();
 			String value = ".cookie(" + this.bodyParser.quotedShortText(cookie.getKey()) + ", "

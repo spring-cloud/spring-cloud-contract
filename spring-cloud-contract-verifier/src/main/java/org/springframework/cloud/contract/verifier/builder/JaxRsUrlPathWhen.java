@@ -71,8 +71,10 @@ class JaxRsUrlPathWhen implements When, JaxRsAcceptor, QueryParamsResolver {
 			return;
 		}
 		this.blockBuilder.addEmptyLine();
-		Iterator<QueryParameter> iterator = queryParameters.getParameters().stream().filter(this::allowedQueryParameter)
-				.iterator();
+		Iterator<QueryParameter> iterator = queryParameters.getParameters()
+			.stream()
+			.filter(this::allowedQueryParameter)
+			.iterator();
 		while (iterator.hasNext()) {
 			QueryParameter param = iterator.next();
 			String queryParamValue = getQueryParamValue(param);

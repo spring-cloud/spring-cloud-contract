@@ -28,7 +28,6 @@ import org.springframework.cloud.contract.verifier.config.framework.TestNGDefini
  *
  * @author Jakub Kubrynski, codearte.io
  * @author Olga Maciaszek-Sharma
- *
  * @since 1.0.0
  */
 public enum TestFramework {

@@ -42,9 +42,11 @@ class StubRunnerJUnit5ExtensionCustomMessageVerifierTests {
 	// Visible for testing
 	@RegisterExtension
 	static StubRunnerExtension stubRunnerExtension = new StubRunnerExtension()
-			.stubsMode(StubRunnerProperties.StubsMode.REMOTE).repoRoot(repoRoot())
-			.downloadStub("org.springframework.cloud.contract.verifier.stubs", "bootService")
-			.messageVerifierSender(new MyMessageVerifier()).messageVerifierReceiver(new MyMessageVerifier());
+		.stubsMode(StubRunnerProperties.StubsMode.REMOTE)
+		.repoRoot(repoRoot())
+		.downloadStub("org.springframework.cloud.contract.verifier.stubs", "bootService")
+		.messageVerifierSender(new MyMessageVerifier())
+		.messageVerifierReceiver(new MyMessageVerifier());
 
 	@BeforeAll
 	@AfterAll

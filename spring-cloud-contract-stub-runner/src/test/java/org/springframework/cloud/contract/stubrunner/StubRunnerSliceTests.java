@@ -65,19 +65,19 @@ public class StubRunnerSliceTests {
 		assertThat(this.loanIssuancePort).isBetween(10001, 10020);
 
 		assertThat(this.stubFinder.findStubUrl("org.springframework.cloud.contract.verifier.stubs", "loanIssuance"))
-				.isNotNull();
+			.isNotNull();
 		assertThat(this.stubFinder.findStubUrl("loanIssuance")).isNotNull();
 		assertThat(this.stubFinder.findStubUrl("loanIssuance")).isEqualTo(
 				this.stubFinder.findStubUrl("org.springframework.cloud.contract.verifier.stubs", "loanIssuance"));
-		assertThat(this.stubFinder.findStubUrl("loanIssuance")).isEqualTo(
-				this.stubFinder.findStubUrl("org.springframework.cloud.contract.verifier.stubs:loanIssuance"));
+		assertThat(this.stubFinder.findStubUrl("loanIssuance"))
+			.isEqualTo(this.stubFinder.findStubUrl("org.springframework.cloud.contract.verifier.stubs:loanIssuance"));
 		assertThat(this.stubFinder
-				.findStubUrl("org.springframework.cloud.contract.verifier.stubs:loanIssuance:0.0.1-SNAPSHOT"))
-						.isEqualTo(this.stubFinder.findStubUrl(
-								"org.springframework.cloud.contract.verifier.stubs:loanIssuance:0.0.1-SNAPSHOT:stubs"));
+			.findStubUrl("org.springframework.cloud.contract.verifier.stubs:loanIssuance:0.0.1-SNAPSHOT"))
+			.isEqualTo(this.stubFinder
+				.findStubUrl("org.springframework.cloud.contract.verifier.stubs:loanIssuance:0.0.1-SNAPSHOT:stubs"));
 		assertThat(
 				this.stubFinder.findStubUrl("org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer"))
-						.isNotNull();
+			.isNotNull();
 		assertThat(this.properties.getProperties()).containsEntry("hello", "world").containsEntry("foo", "bar");
 	}
 

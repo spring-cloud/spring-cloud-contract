@@ -29,7 +29,7 @@ class MessagingAssertThatThen implements Then {
 	@Override
 	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
 		this.blockBuilder
-				.addLineWithEnding(metadata.getContract().getOutputMessage().getAssertThat().getExecutionCommand());
+			.addLineWithEnding(metadata.getContract().getOutputMessage().getAssertThat().getExecutionCommand());
 		return this;
 	}
 

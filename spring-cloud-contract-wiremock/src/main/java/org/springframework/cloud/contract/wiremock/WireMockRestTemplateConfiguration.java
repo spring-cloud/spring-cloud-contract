@@ -62,7 +62,7 @@ public class WireMockRestTemplateConfiguration {
 					if (requestFactoryField != null) {
 						requestFactoryField.setAccessible(true);
 						ClientHttpRequestFactory requestFactory = (ClientHttpRequestFactory) ReflectionUtils
-								.getField(requestFactoryField, restTemplate);
+							.getField(requestFactoryField, restTemplate);
 						if (requestFactory instanceof HttpComponentsClientHttpRequestFactory factory) {
 							factory.setHttpClient(createSslHttpClient());
 						}
@@ -74,13 +74,15 @@ public class WireMockRestTemplateConfiguration {
 				try {
 
 					SSLConnectionSocketFactoryBuilder sslConnectionSocketFactoryBuilder = SSLConnectionSocketFactoryBuilder
-							.create();
+						.create();
 					sslConnectionSocketFactoryBuilder
-							.setSslContext(new SSLContextBuilder()
-									.loadTrustMaterial(null, TrustSelfSignedStrategy.INSTANCE).build())
-							.setHostnameVerifier(INSTANCE);
+						.setSslContext(new SSLContextBuilder().loadTrustMaterial(null, TrustSelfSignedStrategy.INSTANCE)
+							.build())
+						.setHostnameVerifier(INSTANCE);
 					PoolingHttpClientConnectionManager connectionManager = PoolingHttpClientConnectionManagerBuilder
-							.create().setSSLSocketFactory(sslConnectionSocketFactoryBuilder.build()).build();
+						.create()
+						.setSSLSocketFactory(sslConnectionSocketFactoryBuilder.build())
+						.build();
 					return HttpClients.custom().setConnectionManager(connectionManager).build();
 				}
 				catch (Exception ex) {

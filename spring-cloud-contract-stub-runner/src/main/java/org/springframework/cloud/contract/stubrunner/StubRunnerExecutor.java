@@ -91,7 +91,7 @@ class StubRunnerExecutor implements StubFinder {
 			return runningStubs();
 		}
 		HttpServerStubConfigurer configurer = BeanUtils
-				.instantiateClass(stubRunnerOptions.getHttpServerStubConfigurer());
+			.instantiateClass(stubRunnerOptions.getHttpServerStubConfigurer());
 		startStubServers(configurer, stubRunnerOptions, stubConfiguration, repository);
 		RunningStubs runningCollaborators = runningStubs();
 		log.info("All stubs are now running " + runningCollaborators.toString());
@@ -262,7 +262,7 @@ class StubRunnerExecutor implements StubFinder {
 		}
 		else {
 			payload = JsonOutput
-					.toJson(BodyExtractor.extractClientValueFromBody(body == null ? null : body.getClientValue()));
+				.toJson(BodyExtractor.extractClientValueFromBody(body == null ? null : body.getClientValue()));
 		}
 
 		this.messageVerifierSender.send(payload, headers == null ? null : headers.asStubSideMap(),
@@ -291,20 +291,20 @@ class StubRunnerExecutor implements StubFinder {
 				log.debug("There are no HTTP related contracts. Won't start any servers");
 			}
 			this.stubServer = new StubServer(stubConfiguration, mappings, contracts, new NoOpHttpServerStub())
-					.start(configuration);
+				.start(configuration);
 			return this.stubServer;
 		}
 		if (!randomPort) {
 			this.stubServer = new StubServer(stubConfiguration, mappings, contracts, httpServerStub())
-					.start(configuration);
+				.start(configuration);
 		}
 		else {
 			this.stubServer = this.portScanner.tryToExecuteWithFreePort(new PortCallback<StubServer>() {
 				@Override
 				public StubServer call(int availablePort) {
 					return new StubServer(stubConfiguration, mappings, contracts, httpServerStub())
-							.start(new HttpServerStubConfiguration(configurer, stubRunnerOptions, stubConfiguration,
-									availablePort, true));
+						.start(new HttpServerStubConfiguration(configurer, stubRunnerOptions, stubConfiguration,
+								availablePort, true));
 				}
 			});
 		}

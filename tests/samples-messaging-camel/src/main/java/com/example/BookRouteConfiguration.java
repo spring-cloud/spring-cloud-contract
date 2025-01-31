@@ -43,8 +43,12 @@ public class BookRouteConfiguration {
 				component.setAddresses("localhost:" + port);
 
 				// scenario 1 - from bean to output
-				from("direct:start").unmarshal().json(JsonLibrary.Jackson, BookReturned.class).bean(bookService)
-						.marshal().json(JsonLibrary.Jackson, BookReturned.class).to("rabbitmq:output?queue=output");
+				from("direct:start").unmarshal()
+					.json(JsonLibrary.Jackson, BookReturned.class)
+					.bean(bookService)
+					.marshal()
+					.json(JsonLibrary.Jackson, BookReturned.class)
+					.to("rabbitmq:output?queue=output");
 			}
 
 		};

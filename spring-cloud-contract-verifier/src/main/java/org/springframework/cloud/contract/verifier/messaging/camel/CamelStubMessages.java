@@ -63,9 +63,9 @@ public class CamelStubMessages implements MessageVerifierSender<Message>, Messag
 			Exchange exchange = new DefaultExchange(this.context);
 			exchange.setIn(message);
 			StandaloneMetadata standaloneMetadata = StandaloneMetadata
-					.fromMetadata(contract != null ? contract.metadata : null);
+				.fromMetadata(contract != null ? contract.metadata : null);
 			ContractVerifierMessageMetadata verifierMessageMetadata = ContractVerifierMessageMetadata
-					.fromMetadata(contract != null ? contract.metadata : null);
+				.fromMetadata(contract != null ? contract.metadata : null);
 			String finalDestination = finalDestination(destination,
 					additionalOptions(verifierMessageMetadata, standaloneMetadata), verifierMessageMetadata);
 			log.info("Will send a message to URI [" + finalDestination + "]");
@@ -105,9 +105,9 @@ public class CamelStubMessages implements MessageVerifierSender<Message>, Messag
 	public Message receive(String destination, long timeout, TimeUnit timeUnit, YamlContract contract) {
 		try {
 			StandaloneMetadata standaloneMetadata = StandaloneMetadata
-					.fromMetadata(contract != null ? contract.metadata : null);
+				.fromMetadata(contract != null ? contract.metadata : null);
 			ContractVerifierMessageMetadata verifierMessageMetadata = ContractVerifierMessageMetadata
-					.fromMetadata(contract != null ? contract.metadata : null);
+				.fromMetadata(contract != null ? contract.metadata : null);
 			String finalDestination = finalDestination(destination,
 					additionalOptions(verifierMessageMetadata, standaloneMetadata), verifierMessageMetadata);
 			log.info("Will receive a message from URI [" + finalDestination + "]");

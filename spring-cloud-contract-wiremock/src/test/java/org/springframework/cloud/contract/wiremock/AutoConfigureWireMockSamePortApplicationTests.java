@@ -43,7 +43,7 @@ public class AutoConfigureWireMockSamePortApplicationTests {
 	@Test
 	public void contextLoads() throws Exception {
 		stubFor(get(urlEqualTo("/test2"))
-				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World2!")));
+			.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World2!")));
 		assertThat(this.service.go2()).isEqualTo("Hello World2!");
 	}
 

@@ -61,8 +61,9 @@ public class ContractProjectUpdaterTest extends AbstractGitTest {
 		this.gitRepo.checkout(this.project, "master");
 		setOriginOnProjectToTmp(this.origin, this.project, true);
 		StubRunnerOptions options = new StubRunnerOptionsBuilder()
-				.withStubRepositoryRoot("file://" + this.project.getAbsolutePath() + "/")
-				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE).build();
+			.withStubRepositoryRoot("file://" + this.project.getAbsolutePath() + "/")
+			.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
+			.build();
 		this.updater = new ContractProjectUpdater(options);
 	}
 
@@ -80,7 +81,7 @@ public class ContractProjectUpdaterTest extends AbstractGitTest {
 			git.reset().setMode(ResetCommand.ResetType.HARD).call();
 		}
 		BDDAssertions.then(new File(this.project, "META-INF/com.example/hello-world/0.0.2/mappings/someMapping.json"))
-				.exists();
+			.exists();
 		BDDAssertions.then(this.gitRepo.gitFactory.provider).isNull();
 		BDDAssertions.then(this.outputCapture.toString()).contains("No custom credentials provider will be set");
 	}
@@ -88,13 +89,15 @@ public class ContractProjectUpdaterTest extends AbstractGitTest {
 	@Test
 	public void should_push_changes_to_current_branch_using_credentials() throws Exception {
 		StubRunnerOptions options = new StubRunnerOptionsBuilder()
-				.withStubRepositoryRoot("file://" + this.project.getAbsolutePath() + "/")
-				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE).withProperties(new HashMap<String, String>() {
-					{
-						put("git.username", "foo");
-						put("git.password", "bar");
-					}
-				}).build();
+			.withStubRepositoryRoot("file://" + this.project.getAbsolutePath() + "/")
+			.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
+			.withProperties(new HashMap<String, String>() {
+				{
+					put("git.username", "foo");
+					put("git.password", "bar");
+				}
+			})
+			.build();
 		ContractProjectUpdater updater = new ContractProjectUpdater(options);
 		File stubs = new File(GitRepoTests.class.getResource("/git_samples/sample_stubs").toURI());
 
@@ -108,16 +111,19 @@ public class ContractProjectUpdaterTest extends AbstractGitTest {
 			git.reset().setMode(ResetCommand.ResetType.HARD).call();
 		}
 		BDDAssertions.then(new File(this.project, "META-INF/com.example/hello-world/0.0.2/mappings/someMapping.json"))
-				.exists();
+			.exists();
 		BDDAssertions.then(this.outputCapture.toString())
-				.contains("Passed username and password - will set a custom credentials provider");
+			.contains("Passed username and password - will set a custom credentials provider");
 	}
 
 	@Test
 	public void should_push_changes_to_current_branch_using_root_credentials() throws Exception {
 		StubRunnerOptions options = new StubRunnerOptionsBuilder()
-				.withStubRepositoryRoot("file://" + this.project.getAbsolutePath() + "/")
-				.withStubsMode(StubRunnerProperties.StubsMode.REMOTE).withUsername("foo").withPassword("bar").build();
+			.withStubRepositoryRoot("file://" + this.project.getAbsolutePath() + "/")
+			.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)
+			.withUsername("foo")
+			.withPassword("bar")
+			.build();
 		ContractProjectUpdater updater = new ContractProjectUpdater(options);
 		File stubs = new File(GitRepoTests.class.getResource("/git_samples/sample_stubs").toURI());
 
@@ -131,9 +137,9 @@ public class ContractProjectUpdaterTest extends AbstractGitTest {
 			git.reset().setMode(ResetCommand.ResetType.HARD).call();
 		}
 		BDDAssertions.then(new File(this.project, "META-INF/com.example/hello-world/0.0.2/mappings/someMapping.json"))
-				.exists();
+			.exists();
 		BDDAssertions.then(this.outputCapture.toString())
-				.contains("Passed username and password - will set a custom credentials provider");
+			.contains("Passed username and password - will set a custom credentials provider");
 	}
 
 	@Test
@@ -151,7 +157,7 @@ public class ContractProjectUpdaterTest extends AbstractGitTest {
 			then(revCommit.getShortMessage()).isEqualTo(initialCommit);
 		}
 		BDDAssertions.then(new File(this.project, "META-INF/com.example/hello-world/0.0.2/mappings/someMapping.json"))
-				.doesNotExist();
+			.doesNotExist();
 	}
 
 }

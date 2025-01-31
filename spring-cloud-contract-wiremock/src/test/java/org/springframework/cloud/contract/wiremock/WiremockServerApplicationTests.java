@@ -46,7 +46,7 @@ public class WiremockServerApplicationTests {
 	@Test
 	public void hello() throws Exception {
 		stubFor(get(urlEqualTo("/test"))
-				.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
+			.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 		assertThat(this.service.go()).isEqualTo("Hello World!");
 	}
 

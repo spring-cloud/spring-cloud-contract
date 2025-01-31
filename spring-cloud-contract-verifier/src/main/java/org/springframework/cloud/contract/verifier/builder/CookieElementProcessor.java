@@ -54,7 +54,7 @@ interface CookieElementProcessor {
 		if (value instanceof NotToEscapePattern) {
 			verifyCookieNotNull(property);
 			return comparisonBuilder().assertThat(cookieValue(property)) + comparisonBuilder()
-					.matches(((NotToEscapePattern) value).getServerValue().pattern().replace("\\", "\\\\"));
+				.matches(((NotToEscapePattern) value).getServerValue().pattern().replace("\\", "\\\\"));
 		}
 		else if (value instanceof String || value instanceof Pattern) {
 			verifyCookieNotNull(property);

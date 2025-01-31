@@ -47,7 +47,7 @@ public class JmsStubMessagesTests {
 		springJmsStubMessages.send(anyString(), null, anyString(), null);
 
 		final ArgumentCaptor<MessageCreator> messageCreatorArgumentCaptor = ArgumentCaptor
-				.forClass(MessageCreator.class);
+			.forClass(MessageCreator.class);
 
 		verify(jmsTemplate, times(1)).send(anyString(), messageCreatorArgumentCaptor.capture());
 

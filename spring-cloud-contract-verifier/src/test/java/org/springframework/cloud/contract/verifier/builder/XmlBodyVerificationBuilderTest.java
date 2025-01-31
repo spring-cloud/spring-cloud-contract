@@ -24,9 +24,10 @@ public class XmlBodyVerificationBuilderTest {
 		// Then
 		String test = blockBuilder.toString();
 		assertThat(test).contains("DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();")
-				.contains("builderFactory.setNamespaceAware(true);")
-				.contains("DocumentBuilder documentBuilder = builderFactory.newDocumentBuilder();")
-				.contains("Document parsedXml = documentBuilder.parse(new InputSource(new StringReader(").contains(xml);
+			.contains("builderFactory.setNamespaceAware(true);")
+			.contains("DocumentBuilder documentBuilder = builderFactory.newDocumentBuilder();")
+			.contains("Document parsedXml = documentBuilder.parse(new InputSource(new StringReader(")
+			.contains(xml);
 	}
 
 }

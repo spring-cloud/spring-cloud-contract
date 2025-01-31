@@ -77,8 +77,9 @@ public class AmqpMessagingApplication {
 
 		@Bean
 		public Binding binding() {
-			return BindingBuilder.bind(new Queue("test.queue")).to(new DirectExchange("contract-test.exchange"))
-					.with("#");
+			return BindingBuilder.bind(new Queue("test.queue"))
+				.to(new DirectExchange("contract-test.exchange"))
+				.with("#");
 		}
 		// end::amqp_binding[]
 

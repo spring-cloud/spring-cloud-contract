@@ -246,7 +246,7 @@ public class ConvertMojo extends AbstractMojo {
 			throws MojoExecutionException {
 		File outputFolderWithOriginals = new File(this.stubsDirectory, rootPath + ORIGINAL_PATH);
 		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering, config)
-				.copy(contractsDirectory, outputFolderWithOriginals);
+			.copy(contractsDirectory, outputFolderWithOriginals);
 		return outputFolderWithOriginals;
 	}
 
@@ -255,7 +255,7 @@ public class ConvertMojo extends AbstractMojo {
 		File outputFolderWithContracts = this.stubsDirectory.getPath().endsWith("contracts") ? this.stubsDirectory
 				: new File(this.stubsDirectory, rootPath + CONTRACTS_PATH);
 		new CopyContracts(this.project, this.mavenSession, this.mavenResourcesFiltering, config)
-				.copy(contractsDirectory, outputFolderWithContracts);
+			.copy(contractsDirectory, outputFolderWithContracts);
 		return outputFolderWithContracts;
 	}
 
@@ -285,7 +285,7 @@ public class ConvertMojo extends AbstractMojo {
 				this.contractsRepositoryUrl, this.contractsMode, getLog(), this.contractsRepositoryUsername,
 				this.contractsRepositoryPassword, this.contractsRepositoryProxyHost, this.contractsRepositoryProxyPort,
 				this.deleteStubsAfterTest, this.contractsProperties, this.failOnNoContracts)
-						.downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
+			.downloadAndUnpackContractsIfRequired(config, this.contractsDirectory);
 	}
 
 	private File stubsOutputDir(String rootPath) {

@@ -125,8 +125,8 @@ public class ContractVerifierDslConverter implements ContractConverter<Collectio
 	private static ClassLoader updatedClassLoader(File rootFolder, ClassLoader classLoader) {
 		ClassLoader urlCl;
 		try {
-			urlCl = URLClassLoader.newInstance(
-					Collections.singletonList(rootFolder.toURI().toURL()).toArray(new URL[0]), classLoader);
+			urlCl = URLClassLoader
+				.newInstance(Collections.singletonList(rootFolder.toURI().toURL()).toArray(new URL[0]), classLoader);
 		}
 		catch (MalformedURLException e) {
 			LOG.error("Exception occurred while trying to construct the URL from the root folder at path ["
@@ -194,11 +194,12 @@ public class ContractVerifierDslConverter implements ContractConverter<Collectio
 						fileManager.getJavaFileObjectsFromFiles(List.of(dsl)));
 				boolean success = task.call();
 				if (!success) {
-					throw new IllegalStateException("Exceptions occurred while trying to compile the file \n"
-							+ diagnostics.getDiagnostics().stream()
-									.map(d -> "Error " + d.getMessage(Locale.getDefault()) + " on line "
-											+ d.getLineNumber() + " in " + d.getSource())
-									.collect(Collectors.joining("\n")));
+					throw new IllegalStateException(
+							"Exceptions occurred while trying to compile the file \n" + diagnostics.getDiagnostics()
+								.stream()
+								.map(d -> "Error " + d.getMessage(Locale.getDefault()) + " on line " + d.getLineNumber()
+										+ " in " + d.getSource())
+								.collect(Collectors.joining("\n")));
 				}
 				try {
 					// Add the folder with compiled classes to the class loader

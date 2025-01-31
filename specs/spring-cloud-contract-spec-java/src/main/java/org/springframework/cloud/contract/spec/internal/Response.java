@@ -742,8 +742,8 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 		@Override
 		public DslProperty matching(final String value) {
 			return this.common.$(
-					this.common.p(
-							notEscaped(Pattern.compile(RegexpUtils.escapeSpecialRegexWithSingleEscape(value) + ".*"))),
+					this.common
+						.p(notEscaped(Pattern.compile(RegexpUtils.escapeSpecialRegexWithSingleEscape(value) + ".*"))),
 					this.common.c(value));
 		}
 

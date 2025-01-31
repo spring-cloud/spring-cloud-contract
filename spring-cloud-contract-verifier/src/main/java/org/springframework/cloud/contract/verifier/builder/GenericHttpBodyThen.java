@@ -42,11 +42,11 @@ class GenericHttpBodyThen implements Then, BodyMethodVisitor {
 		this.bodyParser = bodyParser;
 		this.comparisonBuilder = comparisonBuilder;
 		this.templateProcessor = new HandlebarsTemplateProcessor();
-		this.thens.addAll(
-				Arrays.asList(new GenericBinaryBodyThen(blockBuilder, metaData, this.bodyParser, comparisonBuilder),
-						new GenericTextBodyThen(blockBuilder, metaData, this.bodyParser, this.comparisonBuilder),
-						new GenericJsonBodyThen(blockBuilder, metaData, this.bodyParser, this.comparisonBuilder),
-						new GenericXmlBodyThen(blockBuilder, this.bodyParser)));
+		this.thens
+			.addAll(Arrays.asList(new GenericBinaryBodyThen(blockBuilder, metaData, this.bodyParser, comparisonBuilder),
+					new GenericTextBodyThen(blockBuilder, metaData, this.bodyParser, this.comparisonBuilder),
+					new GenericJsonBodyThen(blockBuilder, metaData, this.bodyParser, this.comparisonBuilder),
+					new GenericXmlBodyThen(blockBuilder, this.bodyParser)));
 	}
 
 	@Override

@@ -42,8 +42,10 @@ class MessagingFields implements Field {
 
 	@Override
 	public boolean accept() {
-		return this.generatedClassMetaData.listOfFiles.stream().anyMatch(metadata -> metadata
-				.getConvertedContractWithMetadata().stream().anyMatch(SingleContractMetadata::isMessaging));
+		return this.generatedClassMetaData.listOfFiles.stream()
+			.anyMatch(metadata -> metadata.getConvertedContractWithMetadata()
+				.stream()
+				.anyMatch(SingleContractMetadata::isMessaging));
 	}
 
 }

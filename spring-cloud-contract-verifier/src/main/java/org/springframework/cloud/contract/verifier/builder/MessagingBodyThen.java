@@ -50,8 +50,9 @@ class MessagingBodyThen implements Then, BodyMethodVisitor {
 	public MethodVisitor<Then> apply(SingleContractMetadata singleContractMetadata) {
 		endBodyBlock(this.blockBuilder);
 		startBodyBlock(this.blockBuilder, "and:");
-		this.thens.stream().filter(then -> then.accept(singleContractMetadata))
-				.forEach(then -> then.apply(singleContractMetadata));
+		this.thens.stream()
+			.filter(then -> then.accept(singleContractMetadata))
+			.forEach(then -> then.apply(singleContractMetadata));
 		return this;
 	}
 

@@ -85,7 +85,7 @@ public class ContractDslSnippet extends TemplatedSnippet {
 	public void document(Operation operation) throws IOException {
 		TemplateEngine templateEngine = (TemplateEngine) operation.getAttributes().get(TemplateEngine.class.getName());
 		String renderedContract = templateEngine.compileTemplate(getTemplate())
-				.render(createModelForContract(operation));
+			.render(createModelForContract(operation));
 		this.model.put("contract", renderedContract);
 		storeDslContract(operation, renderedContract);
 		super.document(operation);
@@ -170,7 +170,7 @@ public class ContractDslSnippet extends TemplatedSnippet {
 
 	private void storeDslContract(Operation operation, String content) throws IOException {
 		RestDocumentationContext context = (RestDocumentationContext) operation.getAttributes()
-				.get(RestDocumentationContext.class.getName());
+			.get(RestDocumentationContext.class.getName());
 		RestDocumentationContextPlaceholderResolver resolver = new RestDocumentationContextPlaceholderResolver(context);
 		String resolvedName = replacePlaceholders(resolver, operation.getName());
 		File output = new File(context.getOutputDirectory(), CONTRACTS_FOLDER + "/" + resolvedName + ".groovy");

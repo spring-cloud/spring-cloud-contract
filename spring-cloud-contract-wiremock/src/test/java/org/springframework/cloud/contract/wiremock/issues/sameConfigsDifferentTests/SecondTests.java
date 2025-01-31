@@ -54,7 +54,7 @@ public class SecondTests {
 	@Test
 	public void shouldBeRejectedDueToAbnormalLoanAmount() throws Exception {
 		server.addStubMapping(StubMapping
-				.buildFrom(StreamUtils.copyToString(markClientAsNotFraud.getInputStream(), Charset.forName("UTF-8"))));
+			.buildFrom(StreamUtils.copyToString(markClientAsNotFraud.getInputStream(), Charset.forName("UTF-8"))));
 		// given:
 		LoanApplication loanApplication = new LoanApplication(new Client("1234567890"), 123.123);
 

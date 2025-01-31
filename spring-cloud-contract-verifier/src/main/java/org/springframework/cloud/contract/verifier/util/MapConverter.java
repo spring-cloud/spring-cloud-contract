@@ -126,8 +126,9 @@ public class MapConverter {
 			return convert((Map) value, function, parsingFunction);
 		}
 		else if (value instanceof Collection) {
-			return ((Collection) value).stream().map((v) -> transformValues(v, function, parsingFunction))
-					.collect(Collectors.toList());
+			return ((Collection) value).stream()
+				.map((v) -> transformValues(v, function, parsingFunction))
+				.collect(Collectors.toList());
 		}
 		return transformValue(function, value, parsingFunction);
 	}

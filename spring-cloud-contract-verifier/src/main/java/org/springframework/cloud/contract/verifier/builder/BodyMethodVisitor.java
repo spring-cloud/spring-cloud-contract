@@ -64,8 +64,9 @@ interface BodyMethodVisitor {
 	 */
 	default List<MethodVisitor> filterVisitors(List<? extends MethodVisitor> methodVisitors,
 			SingleContractMetadata singleContractMetadata) {
-		return methodVisitors.stream().filter(given -> given.accept(singleContractMetadata))
-				.collect(Collectors.toList());
+		return methodVisitors.stream()
+			.filter(given -> given.accept(singleContractMetadata))
+			.collect(Collectors.toList());
 	}
 
 	/**

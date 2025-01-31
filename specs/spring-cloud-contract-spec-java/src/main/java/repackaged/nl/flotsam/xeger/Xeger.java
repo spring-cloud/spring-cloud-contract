@@ -59,8 +59,8 @@ public class Xeger {
 		assert random != null;
 		// https://stackoverflow.com/questions/1578789/how-do-i-generate-text-matching-a-regular-expression-from-a-regular-expression
 		String pattern = regex.replace("\\d", "[0-9]") // Used d=Digit
-				.replace("\\w", "[A-Za-z0-9_]") // Used =Word
-				.replace("\\s", "[ \t\r\n]"); // Used s="White"Space
+			.replace("\\w", "[A-Za-z0-9_]") // Used =Word
+			.replace("\\s", "[ \t\r\n]"); // Used s="White"Space
 		this.automaton = new RegExp(pattern).toAutomaton();
 		this.random = random;
 		String generatedCharsSysProp = System.getProperty("springCloudContractGeneratedCharsFromRegex");

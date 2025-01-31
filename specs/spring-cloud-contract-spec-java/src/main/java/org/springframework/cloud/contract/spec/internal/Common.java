@@ -40,10 +40,11 @@ import java.util.stream.Collectors;
 public class Common {
 
 	public Map<String, DslProperty> convertObjectsToDslProperties(Map<String, Object> body) {
-		return body.entrySet().stream()
-				.collect(Collectors.toMap((Function<Map.Entry, String>) t -> t.getKey().toString(),
-						(Function<Map.Entry, DslProperty>) t -> toDslProperty(t.getValue()), throwingMerger(),
-						LinkedHashMap::new));
+		return body.entrySet()
+			.stream()
+			.collect(Collectors.toMap((Function<Map.Entry, String>) t -> t.getKey().toString(),
+					(Function<Map.Entry, DslProperty>) t -> toDslProperty(t.getValue()), throwingMerger(),
+					LinkedHashMap::new));
 	}
 
 	private static <T> BinaryOperator<T> throwingMerger() {

@@ -169,7 +169,7 @@ public class WireMockSnippetTests {
 		StubMapping stubMapping = WireMockStubMapping.buildFrom(new String(Files.readAllBytes(stub.toPath())));
 		assertThat(stubMapping.getRequest().getUrlPath()).isEqualTo("/bar");
 		assertThat(stubMapping.getRequest().getQueryParameters())
-				.containsOnly(Assertions.entry("myParam", MultiValuePattern.of(equalTo(("myValue")))));
+			.containsOnly(Assertions.entry("myParam", MultiValuePattern.of(equalTo(("myValue")))));
 	}
 
 	private Operation operation(OperationRequest request, OperationResponse response,

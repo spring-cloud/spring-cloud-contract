@@ -44,8 +44,11 @@ class JaxRsRequestHeadersWhen implements When {
 	}
 
 	private void appendHeaders(Request request) {
-		Iterator<Header> iterator = request.getHeaders().getEntries().stream().filter(header -> !headerToIgnore(header))
-				.iterator();
+		Iterator<Header> iterator = request.getHeaders()
+			.getEntries()
+			.stream()
+			.filter(header -> !headerToIgnore(header))
+			.iterator();
 		while (iterator.hasNext()) {
 			Header header = iterator.next();
 			String text = ".header(\"" + header.getName() + "\", " + headerValue(header) + ")";
