@@ -170,6 +170,7 @@ private void test(String test) {
 	private static String updatedTest(String test, String className) {
 		test.replaceAll("class FooTest", "class " + className)
 				.replaceAll("import javax.ws.rs.core.Response", "import javax.ws.rs.core.Response; import javax.ws.rs.client.WebTarget;")
+				.replaceAll(";;", ";")
 	}
 
 	private static GString getStaticImports(String builderName) {
