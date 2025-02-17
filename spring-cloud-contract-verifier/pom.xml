@@ -248,12 +248,6 @@
 			<scope>test</scope>
 		</dependency>-->
 		<dependency>
-			<groupId>org.mdkt.compiler</groupId>
-			<artifactId>InMemoryJavaCompiler</artifactId>
-			<version>${InMemoryJavaCompiler.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<artifactId>jetty-ee10-servlet</artifactId>
 			<groupId>org.eclipse.jetty.ee10</groupId>
 			<scope>test</scope>
