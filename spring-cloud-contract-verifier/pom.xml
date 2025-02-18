@@ -253,11 +253,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<artifactId>jetty-ee10-servlet</artifactId>
-			<groupId>org.eclipse.jetty.ee10</groupId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<artifactId>jetty-ee10-servlets</artifactId>
 			<groupId>org.eclipse.jetty.ee10</groupId>
 			<scope>test</scope>

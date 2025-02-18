@@ -170,6 +170,7 @@ private void test(String test) {
 	private static String updatedTest(String test, String className) {
 		test.replaceAll("class FooTest", "class " + className)
 				.replaceAll("import javax.ws.rs.core.Response", "import javax.ws.rs.core.Response; import javax.ws.rs.client.WebTarget;")
+				.replaceAll(";;", ";")
 	}
 
 	private static GString getStaticImports(String builderName) {
@@ -184,6 +185,7 @@ private void test(String test) {
 		String fqnClassName = "com.example.${className}"
 		test = test.replaceAll("class FooTest", "class " + className)
 				.replaceAll("import javax.ws.rs.core.Response", "import javax.ws.rs.core.Response; import javax.ws.rs.client.WebTarget;")
+				.replaceAll(";;", ";")
 		return compileJava(fqnClassName, test)
 
 	}
@@ -200,7 +202,7 @@ private void test(String test) {
 				new StringWriter(),
 				fileManager,
 				diagnostics,
-				null,
+				List.of("-Xlint:-options"),
 				null,
 				Collections.singletonList(javaFile)
 		)
