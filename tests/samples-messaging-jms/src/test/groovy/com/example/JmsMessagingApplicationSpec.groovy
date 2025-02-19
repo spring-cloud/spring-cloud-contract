@@ -16,6 +16,9 @@
 
 package com.example
 
+import org.junit.jupiter.api.condition.EnabledForJreRange
+import org.junit.jupiter.api.condition.JRE
+
 import javax.inject.Inject
 
 import com.jayway.jsonpath.DocumentContext
@@ -41,6 +44,7 @@ import org.springframework.jms.core.MessagePostProcessor
 // Context configuration would end up in base class
 @AutoConfigureMessageVerifier
 @SpringBootTest(classes = JmsMessagingApplication)
+@EnabledForJreRange(max = JRE.JAVA_22)
 class JmsMessagingApplicationSpec {
 
 	// ALL CASES
