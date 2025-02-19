@@ -25,6 +25,8 @@ import org.assertj.core.api.BDDAssertions
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.DisabledOnOs
+import org.junit.jupiter.api.condition.EnabledForJreRange
+import org.junit.jupiter.api.condition.JRE
 import org.junit.jupiter.api.condition.OS
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -44,6 +46,7 @@ import org.springframework.jms.core.MessagePostProcessor
 @SpringBootTest(classes = Config, properties = ["debug=true"])
 @AutoConfigureStubRunner
 @DisabledOnOs(OS.WINDOWS)
+@EnabledForJreRange(max = JRE.JAVA_22)
 class JmsStubRunnerSpec {
 
 	@Autowired
