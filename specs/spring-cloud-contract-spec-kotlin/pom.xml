@@ -77,7 +77,11 @@
 							<goal>compile</goal>
 						</goals>
 						<configuration>
-							<javaParameters>-XX:ReservedCodeCacheSize=256m</javaParameters>
+							<args>
+								<arg>-Xjvm-default=all</arg>
+								<arg>-Xbackend-threads=0</arg>
+							</args>
+							<javaParameters>true</javaParameters>
 							<sourceDirs>
 								<sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
 							</sourceDirs>
@@ -90,7 +94,6 @@
 							<goal>test-compile</goal>
 						</goals>
 						<configuration>
-							<javaParameters>-XX:ReservedCodeCacheSize=256m</javaParameters>
 							<sourceDirs>
 								<sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
 							</sourceDirs>
