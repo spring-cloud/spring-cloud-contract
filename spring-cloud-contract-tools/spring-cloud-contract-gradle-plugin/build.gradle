@@ -101,7 +101,7 @@ task libtest() {
 }
 
 test {
-	useJUnitPlatform()
+	useJUnitPlatform("5.12.1")
 	testLogging {
 		exceptionFormat = 'full'
 	}

@@ -114,7 +114,7 @@ dependencies {
 }
 
 contractTest {
-	useJUnitPlatform()
+	useJUnitPlatform("5.12.1")
 	if (getProp(envVars, "MESSAGING_TYPE") != "") {
 		systemProperty("spring.profiles.active", "messagingtype")
 	} else if (getProp(envVars, "STANDALONE_PROTOCOL") != "") {
