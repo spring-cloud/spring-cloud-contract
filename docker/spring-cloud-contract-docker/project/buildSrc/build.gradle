@@ -16,5 +16,7 @@ dependencies {
 }
 
 test {
-	useJUnitPlatform("5.12.1")
+	useJUnitPlatform {
+		version = "5.12.1"
+	}
 }
