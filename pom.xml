@@ -23,7 +23,7 @@
 	<inceptionYear>2016</inceptionYear>
 
 	<properties>
-		<spring-boot.version>3.5.0-M2</spring-boot.version>
+		<spring-boot.version>3.5.0-M3</spring-boot.version>
 		<!-- Align it also in Docker image under [docker/spring-cloud-contract-docker/project/gradle.properties] -->
 		<camel.version>3.21.4</camel.version>
 		<jsch-agent.version>0.0.9</jsch-agent.version>
