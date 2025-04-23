@@ -191,6 +191,7 @@ class ResourceResolvingStubDownloader implements StubDownloader {
 				throw new IllegalStateException(e);
 			}
 		}
+		resolver.clearCache();
 		return resources;
 	}
 
