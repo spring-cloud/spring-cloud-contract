@@ -1,6 +1,48 @@
 version: 2
+registries:
+  repo-spring-io-spring-commercial-release:
+    type: maven-repository
+    url: https://repo.spring.io/artifactory/spring-commercial-release-remote
+    username: ${{ secrets.ARTIFACTORY_RO_USERNAME }}
+    password: ${{ secrets.ARTIFACTORY_RO_PASSWORD }}
+  repo-spring-io-spring-commercial-snapshot:
+    type: maven-repository
+    url: https://repo.spring.io/artifactory/spring-commercial-snapshot-remote
+    username: ${{ secrets.ARTIFACTORY_RO_USERNAME }}
+    password: ${{ secrets.ARTIFACTORY_RO_PASSWORD }}
 updates:
-- package-ecosystem: "github-actions"
-  directory: "/"
-  schedule:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    target-branch: "4.0.x"
+    schedule:
       interval: "weekly"
+  - package-ecosystem: maven
+    registries:
+      - repo-spring-io-spring-commercial-release
+      - repo-spring-io-spring-commercial-snapshot
+    directory: /
+    schedule:
+      interval: daily
+    target-branch: 4.0.x
+    ignore:
+      # only upgrade patch versions for maintenance branch
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
+          - version-update:semver-minor
+# Enable once we are using antora in commercial repos
+#  - package-ecosystem: npm
+#    target-branch: docs-build
+#    directory: /
+#    schedule:
+#      interval: weekly
+#  - package-ecosystem: npm
+#    target-branch: main
+#    directory: /docs
+#    schedule:
+#      interval: weekly
+#  - package-ecosystem: npm
+#    target-branch: 4.1.x
+#    directory: /docs
+#    schedule:
+#      interval: weekly
