@@ -119,7 +119,7 @@
 			<groupId>com.example.github</groupId>
 			<artifactId>github-webhook</artifactId>
 			<classifier>stubs</classifier>
-			<version>1.0.0.M1-20180806_102441-VERSION</version><!-- @releaser:version-check-off -->
+			<version>1.0.0.M1180817_093549-VERSION</version><!-- @releaser:version-check-off -->
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
