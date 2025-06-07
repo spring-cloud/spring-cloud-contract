@@ -76,7 +76,7 @@ public class ContractExchangeHandler extends WireMockVerifyHelper<EntityExchange
 	}
 
 	private void addResponseHeaders(ResponseDefinitionBuilder definition, HttpHeaders httpHeaders) {
-		for (String name : httpHeaders.keySet()) {
+		for (String name : httpHeaders.headerNames()) {
 			definition.withHeader(name, httpHeaders.get(name).toArray(new String[0]));
 		}
 	}
@@ -160,13 +160,13 @@ class WireMockHttpRequestAdapter implements Request {
 	@Override
 	public String getHeader(String key) {
 		HttpHeaders headers = this.result.getRequestHeaders();
-		return headers.containsKey(key) ? headers.getFirst(key) : null;
+		return headers.containsHeader(key) ? headers.getFirst(key) : null;
 	}
 
 	@Override
 	public HttpHeader header(String key) {
 		HttpHeaders headers = this.result.getRequestHeaders();
-		return headers.containsKey(key) ? new HttpHeader(key, headers.getValuesAsList(key)) : null;
+		return headers.containsHeader(key) ? new HttpHeader(key, headers.getValuesAsList(key)) : null;
 	}
 
 	@Override
@@ -182,7 +182,7 @@ class WireMockHttpRequestAdapter implements Request {
 	public com.github.tomakehurst.wiremock.http.HttpHeaders getHeaders() {
 		com.github.tomakehurst.wiremock.http.HttpHeaders target = new com.github.tomakehurst.wiremock.http.HttpHeaders();
 		HttpHeaders headers = this.result.getRequestHeaders();
-		for (String key : headers.keySet()) {
+		for (String key : headers.headerNames()) {
 			target = target.plus(new HttpHeader(key, headers.getValuesAsList(key)));
 		}
 		return target;
@@ -190,12 +190,12 @@ class WireMockHttpRequestAdapter implements Request {
 
 	@Override
 	public boolean containsHeader(String key) {
-		return this.result.getRequestHeaders().containsKey(key);
+		return this.result.getRequestHeaders().containsHeader(key);
 	}
 
 	@Override
 	public Set<String> getAllHeaderKeys() {
-		return this.result.getRequestHeaders().keySet();
+		return this.result.getRequestHeaders().headerNames();
 	}
 
 	@Override

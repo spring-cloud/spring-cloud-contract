@@ -169,7 +169,7 @@ public class WireMockSnippet implements Snippet {
 	private MappingBuilder requestHeaders(MappingBuilder request, Operation operation) {
 		org.springframework.http.HttpHeaders headers = operation.getRequest().getHeaders();
 		// TODO: whitelist headers
-		for (String name : headers.keySet()) {
+		for (String name : headers.headerNames()) {
 			if (!this.headerBlackList.contains(name.toLowerCase(Locale.ROOT))) {
 				if ("content-type".equalsIgnoreCase(name) && this.contentType != null) {
 					continue;
@@ -239,7 +239,7 @@ public class WireMockSnippet implements Snippet {
 	private HttpHeaders responseHeaders(Operation operation) {
 		org.springframework.http.HttpHeaders headers = operation.getResponse().getHeaders();
 		HttpHeaders result = new HttpHeaders();
-		for (String name : headers.keySet()) {
+		for (String name : headers.headerNames()) {
 			if (!this.headerBlackList.contains(name.toLowerCase(Locale.ROOT))) {
 				result = result.plus(new HttpHeader(name, headers.get(name)));
 			}

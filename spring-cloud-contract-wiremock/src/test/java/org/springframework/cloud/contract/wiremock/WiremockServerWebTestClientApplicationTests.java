@@ -39,8 +39,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.ForwardedHeaderUtils;
 import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
@@ -106,7 +106,9 @@ public class WiremockServerWebTestClientApplicationTests {
 		@ResponseBody
 		@RequestMapping("/link")
 		public String link(ServerHttpRequest request) {
-			UriComponents uriComponents = UriComponentsBuilder.fromHttpRequest(request).build();
+			UriComponents uriComponents = ForwardedHeaderUtils
+				.adaptFromForwardedHeaders(request.getURI(), request.getHeaders())
+				.build();
 			return "link: " + uriComponents.toUriString();
 		}
 

@@ -7,13 +7,13 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-build</artifactId>
-		<version>4.3.1-SNAPSHOT</version>
+		<version>5.0.0-SNAPSHOT</version>
 		<relativePath/>
 	</parent>
 
 	<artifactId>spring-cloud-contract-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>4.3.1-SNAPSHOT</version>
+	<version>5.0.0-SNAPSHOT</version>
 
 	<name>Spring Cloud Contract</name>
 	<description>Spring Cloud Contract</description>
@@ -23,16 +23,16 @@
 	<inceptionYear>2016</inceptionYear>
 
 	<properties>
-		<spring-boot.version>3.5.0</spring-boot.version>
+		<spring-boot.version>4.0.0-SNAPSHOT</spring-boot.version>
 		<!-- Align it also in Docker image under [docker/spring-cloud-contract-docker/project/gradle.properties] -->
 		<camel.version>3.21.4</camel.version>
 		<jsch-agent.version>0.0.9</jsch-agent.version>
-		<spring-cloud-build.version>4.3.1-SNAPSHOT</spring-cloud-build.version>
-		<spring-cloud-zookeeper.version>4.3.1-SNAPSHOT</spring-cloud-zookeeper.version>
+		<spring-cloud-build.version>5.0.0-SNAPSHOT</spring-cloud-build.version>
+		<spring-cloud-zookeeper.version>5.0.0-SNAPSHOT</spring-cloud-zookeeper.version>
 		<spring-cloud-stream.version>4.3.1-SNAPSHOT</spring-cloud-stream.version>
-		<spring-cloud-netflix.version>4.3.1-SNAPSHOT</spring-cloud-netflix.version>
-		<spring-cloud-consul.version>4.3.1-SNAPSHOT</spring-cloud-consul.version>
-		<spring-cloud-commons.version>4.3.1-SNAPSHOT</spring-cloud-commons.version>
+		<spring-cloud-netflix.version>5.0.0-SNAPSHOT</spring-cloud-netflix.version>
+		<spring-cloud-consul.version>5.0.0-SNAPSHOT</spring-cloud-consul.version>
+		<spring-cloud-commons.version>5.0.0-SNAPSHOT</spring-cloud-commons.version>
 		<jopt-simple.version>5.0.4</jopt-simple.version>
 		<cglib.version>3.3.0</cglib.version>
 		<spock-spring.version>2.3-groovy-4.0</spock-spring.version> <!-- @releaser:version-check-off -->
@@ -67,7 +67,7 @@
 		<jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
 		<exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
 
-		<contract.kotlin.version>1.8.22</contract.kotlin.version>
+		<contract.kotlin.version>2.1.10</contract.kotlin.version>
 		<commons-beanutils.version>1.9.4</commons-beanutils.version>
 		<sisu-inject-plexus.version>2.6.0</sisu-inject-plexus.version>
 

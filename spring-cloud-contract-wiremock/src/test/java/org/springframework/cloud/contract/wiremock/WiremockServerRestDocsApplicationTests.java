@@ -44,8 +44,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.ForwardedHeaderUtils;
 import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -123,7 +123,8 @@ public class WiremockServerRestDocsApplicationTests {
 		@ResponseBody
 		@RequestMapping("/link")
 		public String link(HttpServletRequest request) {
-			UriComponents uriComponents = UriComponentsBuilder.fromHttpRequest(new ServletServerHttpRequest(request))
+			ServletServerHttpRequest req = new ServletServerHttpRequest(request);
+			UriComponents uriComponents = ForwardedHeaderUtils.adaptFromForwardedHeaders(req.getURI(), req.getHeaders())
 				.build();
 			return "link: " + uriComponents.toUriString();
 		}

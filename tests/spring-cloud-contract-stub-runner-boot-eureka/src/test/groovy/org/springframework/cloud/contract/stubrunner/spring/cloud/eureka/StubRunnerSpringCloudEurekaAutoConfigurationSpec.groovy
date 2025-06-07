@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.stubrunner.spring.cloud.eureka
 import org.springframework.cloud.netflix.eureka.http.EurekaClientHttpRequestFactorySupplier
 import org.springframework.cloud.netflix.eureka.http.RestTemplateDiscoveryClientOptionalArgs
 import org.springframework.cloud.netflix.eureka.http.RestTemplateTransportClientFactories
+import org.springframework.http.HttpMethod
 
 import java.util.concurrent.TimeUnit
 
@@ -127,9 +128,9 @@ class StubRunnerSpringCloudEurekaAutoConfigurationSpec {
 			def template = new RestTemplate()
 			template.errorHandler = new DefaultResponseErrorHandler() {
 				@Override
-				void handleError(ClientHttpResponse response) throws IOException {
+				void handleError(URI url, HttpMethod method, ClientHttpResponse response) throws IOException {
 					try {
-						super.handleError(response)
+						super.handleError(url, method, response)
 					}
 					catch (Exception e) {
 						throw new AssertionError(e)
