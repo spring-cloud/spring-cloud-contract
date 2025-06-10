@@ -16,21 +16,20 @@
 
 package org.springframework.cloud.contract.maven.verifier.stubrunner;
 
-import javax.inject.Named;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;
 import org.springframework.cloud.contract.stubrunner.StubRunner;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
+import org.springframework.stereotype.Component;
 
 /**
  * Allows running stubs from the given directory.
  *
  * @author Mariusz Smykula
  */
-@Named
+@Component
 public class LocalStubRunner {
 
 	private static final Log log = LogFactory.getLog(LocalStubRunner.class);

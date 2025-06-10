@@ -19,10 +19,11 @@ package org.springframework.cloud.contract.verifier.http;
 import java.util.Arrays;
 import java.util.Map;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.cloud.contract.verifier.util.MetadataUtil;
 import org.springframework.cloud.contract.verifier.util.SpringCloudContractMetadata;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 
 /**
  * Metadata representation of the Contract Verifier's HTTP communication.
@@ -49,8 +50,7 @@ public class ContractVerifierHttpMetaData implements SpringCloudContractMetadata
 	 */
 	private Protocol protocol = Protocol.HTTP_1_1;
 
-	@NonNull
-	public static ContractVerifierHttpMetaData fromMetadata(Map<String, Object> metadata) {
+	public static @NonNull ContractVerifierHttpMetaData fromMetadata(Map<String, Object> metadata) {
 		return MetadataUtil.fromMetadata(metadata, METADATA_KEY, new ContractVerifierHttpMetaData());
 	}
 
@@ -106,8 +106,7 @@ public class ContractVerifierHttpMetaData implements SpringCloudContractMetadata
 		/**
 		 * Builds an enum from string.
 		 */
-		@Nullable
-		public static Scheme fromString(String scheme) {
+		public static @Nullable Scheme fromString(String scheme) {
 			return Arrays.stream(values()).filter(p -> p.name().equalsIgnoreCase(scheme)).findFirst().orElse(null);
 		}
 
@@ -179,8 +178,7 @@ public class ContractVerifierHttpMetaData implements SpringCloudContractMetadata
 		/**
 		 * Builds an enum from string.
 		 */
-		@Nullable
-		public static Protocol fromString(String protocol) {
+		public static @Nullable Protocol fromString(String protocol) {
 			return Arrays.stream(values()).filter(p -> p.protocol.equalsIgnoreCase(protocol)).findFirst().orElse(null);
 		}
 

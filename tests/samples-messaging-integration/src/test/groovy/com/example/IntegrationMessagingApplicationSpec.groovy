@@ -16,7 +16,6 @@
 
 package com.example
 
-import javax.inject.Inject
 
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
@@ -37,7 +36,7 @@ import org.springframework.messaging.Message
 class IntegrationMessagingApplicationSpec {
 
 	// ALL CASES
-	@Inject
+	@Autowired
 	ContractVerifierMessaging<Message<?>> contractVerifierMessaging
 	ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()
 

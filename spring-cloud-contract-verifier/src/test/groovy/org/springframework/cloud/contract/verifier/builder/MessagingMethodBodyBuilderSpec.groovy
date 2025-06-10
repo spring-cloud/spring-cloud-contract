@@ -105,7 +105,7 @@ package com.example
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import spock.lang.Specification
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
@@ -118,8 +118,8 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 class FooSpec extends Specification {
-	@Inject ContractVerifierMessaging contractVerifierMessaging
-	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+	@Autowired ContractVerifierMessaging contractVerifierMessaging
+	@Autowired ContractVerifierObjectMapper contractVerifierObjectMapper
 
 	def validate_foo() throws Exception {
 		when:
@@ -191,7 +191,7 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
 import org.junit.Rule;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
@@ -204,8 +204,8 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 public class FooTest {
-	@Inject ContractVerifierMessaging contractVerifierMessaging;
-	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+	@Autowired ContractVerifierMessaging contractVerifierMessaging;
+	@Autowired ContractVerifierObjectMapper contractVerifierObjectMapper;
 
 	@Test
 	public void validate_foo() throws Exception {
@@ -269,7 +269,7 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
 import org.junit.Rule;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
@@ -282,8 +282,8 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 public class FooTest {
-	@Inject ContractVerifierMessaging contractVerifierMessaging;
-	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+	@Autowired ContractVerifierMessaging contractVerifierMessaging;
+	@Autowired ContractVerifierObjectMapper contractVerifierObjectMapper;
 
 	@Test
 	public void validate_foo() throws Exception {
@@ -479,7 +479,7 @@ package com.example
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import spock.lang.Specification
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
@@ -492,8 +492,8 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 class FooSpec extends Specification {
-	@Inject ContractVerifierMessaging contractVerifierMessaging
-	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+	@Autowired ContractVerifierMessaging contractVerifierMessaging
+	@Autowired ContractVerifierObjectMapper contractVerifierObjectMapper
 
 	def validate_foo() throws Exception {
 		when:
@@ -551,7 +551,7 @@ package com.example
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import spock.lang.Specification
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
@@ -564,8 +564,8 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 class FooSpec extends Specification {
-	@Inject ContractVerifierMessaging contractVerifierMessaging
-	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+	@Autowired ContractVerifierMessaging contractVerifierMessaging
+	@Autowired ContractVerifierObjectMapper contractVerifierObjectMapper
 
 	def validate_foo() throws Exception {
 		when:
@@ -623,7 +623,7 @@ package com.example
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import spock.lang.Specification
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
@@ -636,8 +636,8 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 class FooSpec extends Specification {
-	@Inject ContractVerifierMessaging contractVerifierMessaging
-	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+	@Autowired ContractVerifierMessaging contractVerifierMessaging
+	@Autowired ContractVerifierObjectMapper contractVerifierObjectMapper
 
 	def validate_foo() throws Exception {
 		when:
@@ -697,7 +697,7 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
 import org.junit.Rule;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
@@ -710,8 +710,8 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 public class FooTest {
-	@Inject ContractVerifierMessaging contractVerifierMessaging;
-	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+	@Autowired ContractVerifierMessaging contractVerifierMessaging;
+	@Autowired ContractVerifierObjectMapper contractVerifierObjectMapper;
 
 	@Test
 	public void validate_foo() throws Exception {
@@ -776,7 +776,7 @@ package com.example
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import spock.lang.Specification
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
@@ -789,8 +789,8 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 class FooSpec extends Specification {
-	@Inject ContractVerifierMessaging contractVerifierMessaging
-	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+	@Autowired ContractVerifierMessaging contractVerifierMessaging
+	@Autowired ContractVerifierObjectMapper contractVerifierObjectMapper
 
 	def validate_foo() throws Exception {
 		when:
@@ -819,7 +819,7 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
 import org.junit.Rule;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
@@ -832,8 +832,8 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 public class FooTest {
-	@Inject ContractVerifierMessaging contractVerifierMessaging;
-	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+	@Autowired ContractVerifierMessaging contractVerifierMessaging;
+	@Autowired ContractVerifierObjectMapper contractVerifierObjectMapper;
 
 	@Test
 	public void validate_foo() throws Exception {
@@ -905,7 +905,7 @@ package com.example
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import spock.lang.Specification
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
@@ -918,8 +918,8 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 class FooSpec extends Specification {
-	@Inject ContractVerifierMessaging contractVerifierMessaging
-	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+	@Autowired ContractVerifierMessaging contractVerifierMessaging
+	@Autowired ContractVerifierObjectMapper contractVerifierObjectMapper
 
 	def validate_foo() throws Exception {
 		when:
@@ -961,7 +961,7 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
 import org.junit.Rule;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
@@ -974,8 +974,8 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 public class FooTest {
-	@Inject ContractVerifierMessaging contractVerifierMessaging;
-	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+	@Autowired ContractVerifierMessaging contractVerifierMessaging;
+	@Autowired ContractVerifierObjectMapper contractVerifierObjectMapper;
 
 	@Test
 	public void validate_foo() throws Exception {
@@ -1046,7 +1046,7 @@ package com.example
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import spock.lang.Specification
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging
@@ -1059,8 +1059,8 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 class FooSpec extends Specification {
-	@Inject ContractVerifierMessaging contractVerifierMessaging
-	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper
+	@Autowired ContractVerifierMessaging contractVerifierMessaging
+	@Autowired ContractVerifierObjectMapper contractVerifierObjectMapper
 
 	def validate_foo() throws Exception {
 		when:
@@ -1088,7 +1088,7 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
 import org.junit.Rule;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage;
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging;
@@ -1101,8 +1101,8 @@ import static org.springframework.cloud.contract.verifier.util.ContractVerifierU
 
 @SuppressWarnings("rawtypes")
 public class FooTest {
-	@Inject ContractVerifierMessaging contractVerifierMessaging;
-	@Inject ContractVerifierObjectMapper contractVerifierObjectMapper;
+	@Autowired ContractVerifierMessaging contractVerifierMessaging;
+	@Autowired ContractVerifierObjectMapper contractVerifierObjectMapper;
 
 	@Test
 	public void validate_foo() throws Exception {

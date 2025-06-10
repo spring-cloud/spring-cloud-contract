@@ -20,8 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 
-import javax.inject.Inject;
-
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -31,6 +29,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.eclipse.aether.RepositorySystemSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.maven.verifier.stubrunner.LocalStubRunner;
 import org.springframework.cloud.contract.maven.verifier.stubrunner.RemoteStubRunner;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
@@ -118,7 +117,7 @@ public class RunMojo extends AbstractMojo {
 	@Parameter(property = "spring.cloud.contract.verifier.server-id")
 	private String serverId;
 
-	@Inject
+	@Autowired
 	public RunMojo(LocalStubRunner localStubRunner, RemoteStubRunner remoteStubRunner) {
 		this.localStubRunner = localStubRunner;
 		this.remoteStubRunner = remoteStubRunner;

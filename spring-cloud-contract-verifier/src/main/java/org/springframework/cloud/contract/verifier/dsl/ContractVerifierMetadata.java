@@ -18,9 +18,10 @@ package org.springframework.cloud.contract.verifier.dsl;
 
 import java.util.Map;
 
+import org.jspecify.annotations.NonNull;
+
 import org.springframework.cloud.contract.verifier.util.MetadataUtil;
 import org.springframework.cloud.contract.verifier.util.SpringCloudContractMetadata;
-import org.springframework.lang.NonNull;
 
 /**
  * Metadata representation of the Contract Verifier.
@@ -52,8 +53,7 @@ public class ContractVerifierMetadata implements SpringCloudContractMetadata {
 		this.tool = tool;
 	}
 
-	@NonNull
-	public static ContractVerifierMetadata fromMetadata(Map<String, Object> metadata) {
+	public static @NonNull ContractVerifierMetadata fromMetadata(Map<String, Object> metadata) {
 		return MetadataUtil.fromMetadata(metadata, METADATA_KEY, new ContractVerifierMetadata());
 	}
 

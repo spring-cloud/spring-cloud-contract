@@ -18,7 +18,7 @@ package org.springframework.cloud.contract.verifier.messaging;
 
 import java.util.Map;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
 

@@ -25,7 +25,7 @@ The following example shows a generated test:
 package com.example.beer;
 
 import com.example.BeerRestBase;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.verifier.http.HttpVerifier;
 import org.springframework.cloud.contract.verifier.http.Request;
 import org.springframework.cloud.contract.verifier.http.Response;
@@ -38,7 +38,7 @@ import static org.springframework.cloud.contract.verifier.http.Request.given;
 
 @SuppressWarnings("rawtypes")
 public class RestTest extends BeerRestBase {
-	@Inject HttpVerifier httpVerifier;
+	@Autowired HttpVerifier httpVerifier;
 
 	@Test
 	public void validate_shouldGrantABeerIfOldEnough() throws Exception {

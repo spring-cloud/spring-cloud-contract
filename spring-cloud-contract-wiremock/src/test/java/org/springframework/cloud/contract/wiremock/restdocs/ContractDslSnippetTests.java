@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.apache.groovy.util.Maps;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -60,6 +61,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 // FIXME: 5.0.0 restdocs dropped junit 4
 // @RunWith(SpringRunner.class)
 // @SpringBootTest(classes = ContractDslSnippetTests.Config.class)
+// JUnit4 support will be removed with 5.0.0
+@Ignore
 public class ContractDslSnippetTests {
 
 	private static final String OUTPUT = "target/generated-snippets";

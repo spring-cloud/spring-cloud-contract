@@ -26,8 +26,8 @@ class MessagingFields implements Field {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	private static final String[] FIELDS = { "@Inject ContractVerifierMessaging contractVerifierMessaging",
-			"@Inject ContractVerifierObjectMapper contractVerifierObjectMapper" };
+	private static final String[] FIELDS = { "@Autowired ContractVerifierMessaging contractVerifierMessaging",
+			"@Autowired ContractVerifierObjectMapper contractVerifierObjectMapper" };
 
 	MessagingFields(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;

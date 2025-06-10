@@ -16,11 +16,6 @@
 
 package com.example
 
-import org.junit.jupiter.api.condition.EnabledForJreRange
-import org.junit.jupiter.api.condition.JRE
-
-import javax.inject.Inject
-
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.toomuchcoding.jsonassert.JsonAssertion
@@ -28,6 +23,8 @@ import jakarta.jms.JMSException
 import jakarta.jms.Message
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.EnabledForJreRange
+import org.junit.jupiter.api.condition.JRE
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -38,6 +35,7 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.jms.core.JmsTemplate
 import org.springframework.jms.core.MessagePostProcessor
+
 /**
  * SPIKE ON TESTS FROM NOTES IN MessagingSpec
  */
@@ -50,9 +48,9 @@ class JmsMessagingApplicationSpec {
 	// ALL CASES
 	@Autowired
 	JmsTemplate jmsTemplate
-	@Inject
+	@Autowired
 	ContractVerifierMessaging contractVerifierMessaging
-	@Inject
+	@Autowired
 	ContractVerifierObjectMapper contractVerifierObjectMapper
 
 	@BeforeAll

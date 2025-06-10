@@ -26,7 +26,7 @@ class MessagingImports implements Imports {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	private static final String[] IMPORTS = { "javax.inject.Inject",
+	private static final String[] IMPORTS = { "org.springframework.beans.factory.annotation.Autowired",
 			"org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper",
 			"org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage",
 			"org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessaging" };

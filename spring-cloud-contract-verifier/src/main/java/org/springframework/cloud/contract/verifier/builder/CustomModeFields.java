@@ -24,7 +24,7 @@ class CustomModeFields implements Field, CustomModeAcceptor {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	private static final String[] FIELDS = { "@Inject HttpVerifier httpVerifier" };
+	private static final String[] FIELDS = { "@Autowired HttpVerifier httpVerifier" };
 
 	CustomModeFields(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;

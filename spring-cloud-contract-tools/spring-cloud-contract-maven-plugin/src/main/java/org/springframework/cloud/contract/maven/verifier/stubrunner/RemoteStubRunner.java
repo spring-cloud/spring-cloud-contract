@@ -16,32 +16,31 @@
 
 package org.springframework.cloud.contract.maven.verifier.stubrunner;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.aether.RepositorySystemSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunner;
 import org.springframework.cloud.contract.stubrunner.BatchStubRunnerFactory;
 import org.springframework.cloud.contract.stubrunner.RunningStubs;
 import org.springframework.cloud.contract.stubrunner.StubDownloader;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
+import org.springframework.stereotype.Component;
 
 /**
  * Fetches stubs from a remote location.
  *
  * @author Mariusz Smykula
  */
-@Named
+@Component
 public class RemoteStubRunner {
 
 	private static final Log log = LogFactory.getLog(RemoteStubRunner.class);
 
 	private final AetherStubDownloaderFactory aetherStubDownloaderFactory;
 
-	@Inject
+	@Autowired
 	public RemoteStubRunner(AetherStubDownloaderFactory aetherStubDownloaderFactory) {
 		this.aetherStubDownloaderFactory = aetherStubDownloaderFactory;
 	}

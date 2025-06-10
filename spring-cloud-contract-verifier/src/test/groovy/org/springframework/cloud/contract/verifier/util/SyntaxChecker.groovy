@@ -18,7 +18,6 @@ package org.springframework.cloud.contract.verifier.util
 
 import java.lang.reflect.Method
 
-import javax.inject.Inject
 import javax.tools.Diagnostic
 import javax.tools.DiagnosticCollector
 import javax.tools.FileObject
@@ -48,6 +47,7 @@ import org.junit.Test
 import org.w3c.dom.Document
 import org.xml.sax.InputSource
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierMessage
@@ -72,7 +72,7 @@ class SyntaxChecker {
 			Rule.name,
 			DocumentContext.name,
 			JsonPath.name,
-			Inject.name,
+			Autowired.name,
 			ContractVerifierObjectMapper.name,
 			ContractVerifierMessage.name,
 			ContractVerifierMessaging.name,

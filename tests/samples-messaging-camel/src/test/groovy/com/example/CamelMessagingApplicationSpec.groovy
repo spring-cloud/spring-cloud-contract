@@ -16,7 +16,6 @@
 
 package com.example
 
-import javax.inject.Inject
 
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
@@ -35,6 +34,7 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 import org.springframework.cloud.contract.verifier.messaging.internal.ContractVerifierObjectMapper
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
+
 /**
  * SPIKE ON TESTS FROM NOTES IN MessagingSpec
  */
@@ -47,7 +47,7 @@ class CamelMessagingApplicationSpec {
 	// ALL CASES
 	@Autowired
 	ModelCamelContext camelContext
-	@Inject
+	@Autowired
 	ContractVerifierMessaging contractVerifierMessaging
 
 	ContractVerifierObjectMapper contractVerifierObjectMapper = new ContractVerifierObjectMapper()

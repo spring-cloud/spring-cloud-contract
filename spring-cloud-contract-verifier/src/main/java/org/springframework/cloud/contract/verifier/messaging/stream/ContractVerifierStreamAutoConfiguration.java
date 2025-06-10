@@ -19,7 +19,7 @@ package org.springframework.cloud.contract.verifier.messaging.stream;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

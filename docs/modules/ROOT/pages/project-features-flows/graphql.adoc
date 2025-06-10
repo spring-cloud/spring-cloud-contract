@@ -91,7 +91,8 @@ metadata:
 ----
 ====
 
-Adding the metadata section will change the way the default, WireMock stub is built. It will now use the Spring Cloud Contract request matcher, so that e.g. the `query` part of the GraphQL request gets compared against the real request by ignoring whitespaces.
+Adding the metadata section will change the way the default, WireMock stub is built.
+It will now use the Spring Cloud Contract request matcher, so that e.g. the `query` part of the GraphQL request gets compared against the real request by ignoring whitespaces.
 
 [[features-graphql-producer]]
 == Producer Side Setup
@@ -177,7 +178,7 @@ public class BeerControllerGraphQLTest {
 						.contentType(MediaType.APPLICATION_JSON)
 						.body(REQUEST_BODY), String.class);
 
-		BDDAssertions.then(responseEntity.getStatusCodeValue()).isEqualTo(200);
+		BDDAssertions.then(responseEntity.getStatusCode().value()).isEqualTo(200);
 
 	}
 }

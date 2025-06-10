@@ -34,42 +34,44 @@ import org.springframework.cloud.contract.verifier.converter.YamlContractConvert
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.AssertionUtil
 import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConverter
+import org.springframework.cloud.test.TestSocketUtils
 import org.springframework.http.RequestEntity
 import org.springframework.http.ResponseEntity
-import org.springframework.cloud.test.TestSocketUtils
 
 class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifier {
 
 	def 'should convert groovy dsl stub to wireMock stub for the client side'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method('GET')
-							url $(consumer(~/\/[0-9]{2}/), producer('/12'))
-						}
-						response {
-							status OK()
-							body(
-									id: value(
-											consumer('123'),
-											producer(regex('[0-9]+'))
-									),
-									surname: $(
-											consumer('Kowalsky'),
-											producer(regex('[a-zA-Z]+'))
-									),
-									name: 'Jan',
-									created: $(consumer('2014-02-02 12:23:43'),
-											producer(execute('currentDate($it)')))
-							)
-							headers {
-								header 'Content-Type': 'application/json'
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method('GET')
+									url $(consumer(~/\/[0-9]{2}/), producer('/12'))
+								}
+								response {
+									status OK()
+									body(
+											id: value(
+													consumer('123'),
+													producer(regex('[0-9]+'))
+											),
+											surname: $(
+													consumer('Kowalsky'),
+													producer(regex('[a-zA-Z]+'))
+											),
+											name: 'Jan',
+											created: $(consumer('2014-02-02 12:23:43'),
+													producer(execute('currentDate($it)')))
+									)
+									headers {
+										header 'Content-Type': 'application/json'
+									}
+								}
 							}
-						}
-					}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			AssertionUtil.assertThatJsonsAreEqual('''
@@ -95,29 +97,31 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue("#79")
 	def 'should convert groovy dsl stub to wireMock stub for the client side with a body containing a map'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method 'GET'
-							url '/ingredients'
-							headers {
-								header 'Content-Type': 'application/vnd.pl.devoxx.aggregatr.v1+json'
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method 'GET'
+									url '/ingredients'
+									headers {
+										header 'Content-Type': 'application/vnd.pl.devoxx.aggregatr.v1+json'
+									}
+								}
+								response {
+									status OK()
+									body(
+											ingredients: [
+													[type: 'MALT', quantity: 100],
+													[type: 'WATER', quantity: 200],
+													[type: 'HOP', quantity: 300],
+													[type: 'YIEST', quantity: 400]
+											]
+									)
+								}
 							}
-						}
-						response {
-							status OK()
-							body(
-									ingredients: [
-											[type: 'MALT', quantity: 100],
-											[type: 'WATER', quantity: 200],
-											[type: 'HOP', quantity: 300],
-											[type: 'YIEST', quantity: 400]
-									]
-							)
-						}
-					}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			AssertionUtil.assertThatJsonsAreEqual('''
@@ -145,34 +149,36 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue("#86")
 	def 'should convert groovy dsl stub with GString and regexp'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method('POST')
-							url('/ws/payments')
-							headers {
-								header("Content-Type": 'application/x-www-form-urlencoded')
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method('POST')
+									url('/ws/payments')
+									headers {
+										header("Content-Type": 'application/x-www-form-urlencoded')
+									}
+									body("""paymentType=INCOMING&transferType=BANK&amount=${
+										value(consumer(regex('[0-9]{3}\\.[0-9]{2}')),
+												producer(500.00))
+									}&bookingDate=${
+										value(consumer(
+												regex('[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])')),
+												producer('2015-05-18'))
+									}""")
+								}
+								response {
+									status 204
+									body(
+											paymentId: value(consumer('4'),
+													producer(regex('[1-9][0-9]*'))),
+											foundExistingPayment: false
+									)
+								}
 							}
-							body("""paymentType=INCOMING&transferType=BANK&amount=${
-								value(consumer(regex('[0-9]{3}\\.[0-9]{2}')),
-										producer(500.00))
-							}&bookingDate=${
-								value(consumer(
-										regex('[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])')),
-										producer('2015-05-18'))
-							}""")
-						}
-						response {
-							status 204
-							body(
-									paymentId: value(consumer('4'),
-											producer(regex('[1-9][0-9]*'))),
-									foundExistingPayment: false
-							)
-						}
-					}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			AssertionUtil.assertThatJsonsAreEqual('''
@@ -204,35 +210,38 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should convert groovy dsl stub with Body as String to wireMock stub for the client side'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method('GET')
-							url $(consumer(~/\/[0-9]{2}/), producer('/12'))
-						}
-						response {
-							status OK()
-							body("""\
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method('GET')
+									url $(consumer(~/\/[0-9]{2}/), producer('/12'))
+								}
+								response {
+									status OK()
+									body("""\
 							{
 								"id": "${value(consumer('123'), producer('321'))}",
 								"surname": "${
-								value(consumer('Kowalsky'), producer(regex('[a-zA-Z]+')))
-							}",
+										value(consumer('Kowalsky'),
+												producer(regex('[a-zA-Z]+')))
+									}",
 								"name": "Jan",
 								"created" : "${
-								$(consumer('2014-02-02 12:23:43'),
-										producer('2999-09-09 01:23:45'))
-							}"
+										$(consumer('2014-02-02 12:23:43'),
+												producer('2999-09-09 01:23:45'))
+									}"
 							}
 						"""
-							)
-							headers {
-								header 'Content-Type': 'application/json'
+									)
+									headers {
+										header 'Content-Type': 'application/json'
+									}
+								}
 							}
-						}
-					}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			def actual = new JsonSlurper().parseText(wireMockStub)
@@ -264,32 +273,34 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should convert groovy dsl stub with simple Body as String to wireMock stub for the client side'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method('GET')
-							url $(consumer(regex('/[0-9]{2}')), producer('/12'))
-							body """
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method('GET')
+									url $(consumer(regex('/[0-9]{2}')), producer('/12'))
+									body """
 						{
 							"name": "Jan"
 						}
 						"""
-						}
-						response {
-							status OK()
-							body("""\
+								}
+								response {
+									status OK()
+									body("""\
 							{
 								"name": "Jan"
 							}
 						"""
-							)
-							headers {
-								header 'Content-Type': 'application/json'
+									)
+									headers {
+										header 'Content-Type': 'application/json'
+									}
+								}
 							}
-						}
-					}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			AssertionUtil.assertThatJsonsAreEqual('''
@@ -317,31 +328,33 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should use equalToJson when body match is defined as map'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method('GET')
-							url $(consumer(~/\/[0-9]{2}/), producer('/12'))
-							body(
-									id: value(
-											consumer(regex('[0-9]+')),
-											producer('123'),
-									),
-									surname: $(
-											consumer(regex('[a-zA-Z]+')),
-											producer('Kowalsky'),
-									),
-									name: 'Jan',
-									created: $(consumer('2014-02-02 12:23:43'),
-											producer(execute('currentDate($it)')))
-							)
-						}
-						response {
-							status OK()
-						}
-					}
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method('GET')
+									url $(consumer(~/\/[0-9]{2}/), producer('/12'))
+									body(
+											id: value(
+													consumer(regex('[0-9]+')),
+													producer('123'),
+											),
+											surname: $(
+													consumer(regex('[a-zA-Z]+')),
+													producer('Kowalsky'),
+											),
+											name: 'Jan',
+											created: $(consumer('2014-02-02 12:23:43'),
+													producer(execute('currentDate($it)')))
+									)
+								}
+								response {
+									status OK()
+								}
+							}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			AssertionUtil.assertThatJsonsAreEqual(('''
@@ -371,24 +384,25 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should use equalToJson when content type ends with json'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method 'GET'
-							url "/users"
-							headers {
-								header "Content-Type", "customtype/json"
-							}
-							body """
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method 'GET'
+									url "/users"
+									headers {
+										header "Content-Type", "customtype/json"
+									}
+									body """
 							{
 								"name": "Jan"
 							}
 							"""
-						}
-						response {
-							status OK()
-						}
-					}
+								}
+								response {
+									status OK()
+								}
+							}
 		when:
 			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
@@ -418,24 +432,26 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should use xml matchers when content type ends with xml'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method 'GET'
-							url "/users"
-							headers {
-								header "Content-Type", "customtype/xml"
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method 'GET'
+									url "/users"
+									headers {
+										header "Content-Type", "customtype/xml"
+									}
+									body """<foo><name>${
+										value(consumer('Jozo'), producer('Denis'))
+									}</name><jobId>${
+										value(consumer("&lt;test&gt;"),
+												producer('1234567890'))
+									}</jobId></foo>"""
+								}
+								response {
+									status OK()
+								}
 							}
-							body """<foo><name>${
-								value(consumer('Jozo'), producer('Denis'))
-							}</name><jobId>${
-								value(consumer("&lt;test&gt;"), producer('1234567890'))
-							}</jobId></foo>"""
-						}
-						response {
-							status OK()
-						}
-					}
 		when:
 			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
@@ -479,21 +495,23 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should use xml matchers when content type is parsable xml'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method 'GET'
-							url "/users"
-							body """<user><name>${
-								value(consumer('Jozo'), producer('Denis'))
-							}</name><jobId>${
-								value(consumer("&lt;test&gt;"), producer('1234567890'))
-							}</jobId></user>"""
-						}
-						response {
-							status OK()
-						}
-					}
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method 'GET'
+									url "/users"
+									body """<user><name>${
+										value(consumer('Jozo'), producer('Denis'))
+									}</name><jobId>${
+										value(consumer("&lt;test&gt;"),
+												producer('1234567890'))
+									}</jobId></user>"""
+								}
+								response {
+									status OK()
+								}
+							}
 		when:
 			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
@@ -532,21 +550,22 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should support xml as a response body'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method 'GET'
-							url "/users"
-						}
-						response {
-							status OK()
-							body """<user><name>${
-								value(consumer('Jozo'), producer('Denis'))
-							}</name><jobId>${
-								value(consumer("<test>"), producer('1234567890'))
-							}</jobId></user>"""
-						}
-					}
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method 'GET'
+									url "/users"
+								}
+								response {
+									status OK()
+									body """<user><name>${
+										value(consumer('Jozo'), producer('Denis'))
+									}</name><jobId>${
+										value(consumer("<test>"), producer('1234567890'))
+									}</jobId></user>"""
+								}
+							}
 		when:
 			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
@@ -569,17 +588,18 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should use equalToJson'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method 'GET'
-							url "/users"
-							body equalToJson('''{"name":"Jan"}''')
-						}
-						response {
-							status OK()
-						}
-					}
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method 'GET'
+									url "/users"
+									body equalToJson('''{"name":"Jan"}''')
+								}
+								response {
+									status OK()
+								}
+							}
 		when:
 			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
@@ -606,23 +626,24 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should use equalToJson and bodyMatchers with json content type'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method 'GET'
-							url "/users"
-							headers {
-								header 'Content-Type': 'application/json'
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method 'GET'
+									url "/users"
+									headers {
+										header 'Content-Type': 'application/json'
+									}
+									body equalToJson('''{"name":"Jan"}''')
+									bodyMatchers {
+										jsonPath('$.name', byRegex('[A-Z]{3}'))
+									}
+								}
+								response {
+									status OK()
+								}
 							}
-							body equalToJson('''{"name":"Jan"}''')
-							bodyMatchers {
-								jsonPath('$.name', byRegex('[A-Z]{3}'))
-							}
-						}
-						response {
-							status OK()
-						}
-					}
 		when:
 			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
@@ -652,21 +673,23 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should use equalToXml'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method 'GET'
-							url "/users"
-							body equalToXml("""<foo><name>${
-								value(consumer('Jozo'), producer('Denis'))
-							}</name><jobId>${
-								value(consumer("&lt;test&gt;"), producer('1234567890'))
-							}</jobId></foo>""")
-						}
-						response {
-							status OK()
-						}
-					}
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method 'GET'
+									url "/users"
+									body equalToXml("""<foo><name>${
+										value(consumer('Jozo'), producer('Denis'))
+									}</name><jobId>${
+										value(consumer("&lt;test&gt;"),
+												producer('1234567890'))
+									}</jobId></foo>""")
+								}
+								response {
+									status OK()
+								}
+							}
 		when:
 			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
@@ -693,28 +716,29 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should use equalToXml and bodyMatchers with xml content type'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method 'GET'
-							url "/users"
-							headers {
-								header "Content-Type", "customtype/xml"
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method 'GET'
+									url "/users"
+									headers {
+										header "Content-Type", "customtype/xml"
+									}
+									body equalToXml(
+											"""<foo><name>${
+												value(consumer('Jozo'),
+														producer('Denis'))
+											}</name><jobId>1234567890</jobId></foo>"""
+									)
+									bodyMatchers {
+										xPath('/foo/jobId/text()', byRegex('[0-9]{10}'))
+									}
+								}
+								response {
+									status OK()
+								}
 							}
-							body equalToXml(
-									"""<foo><name>${
-										value(consumer('Jozo'),
-												producer('Denis'))
-									}</name><jobId>1234567890</jobId></foo>"""
-							)
-							bodyMatchers {
-								xPath('/foo/jobId/text()', byRegex('[0-9]{10}'))
-							}
-						}
-						response {
-							status OK()
-						}
-					}
 		when:
 			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
@@ -744,20 +768,21 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should create stub with body from the file'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method 'GET'
-							headers {
-								header 'Content-Type': 'application/xml'
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method 'GET'
+									headers {
+										header 'Content-Type': 'application/xml'
+									}
+									url "/users"
+									body file('classpath/request.xml')
+								}
+								response {
+									status OK()
+								}
 							}
-							url "/users"
-							body file('classpath/request.xml')
-						}
-						response {
-							status OK()
-						}
-					}
 		when:
 			String json = toWireMockClientJsonStub(groovyDsl)
 		then:
@@ -793,35 +818,37 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should convert groovy dsl stub with regexp Body as String to wireMock stub for the client side'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method('GET')
-							url $(consumer(regex('/[0-9]{2}')), producer('/12'))
-							body """
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method('GET')
+									url $(consumer(regex('/[0-9]{2}')), producer('/12'))
+									body """
 						{
 							"personalId": "${
-								value(consumer(regex('^[0-9]{11}$')),
-										producer('57593728525'))
-							}"
+										value(consumer(regex('^[0-9]{11}$')),
+												producer('57593728525'))
+									}"
 						}
 						"""
-						}
-						response {
-							status OK()
-							body("""\
+								}
+								response {
+									status OK()
+									body("""\
 							{
 								"name": "Jan"
 							}
 					 """
-							)
-							headers {
-								header 'Content-Type': 'application/json'
+									)
+									headers {
+										header 'Content-Type': 'application/json'
+									}
+								}
 							}
-						}
-					}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			AssertionUtil.assertThatJsonsAreEqual(('''
@@ -849,41 +876,43 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should convert groovy dsl stub with a regexp and an integer in request body'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method 'PUT'
-							url '/fraudcheck'
-							body("""
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method 'PUT'
+									url '/fraudcheck'
+									body("""
 						{
 						"clientPesel":"${
-								value(consumer(regex('[0-9]{10}')),
-										producer('1234567890'))
-							}",
+										value(consumer(regex('[0-9]{10}')),
+												producer('1234567890'))
+									}",
 						"loanAmount":123.123
 						}
 					"""
-							)
-							headers {
-								header('Content-Type', 'application/vnd.fraud.v1+json')
-							}
+									)
+									headers {
+										header('Content-Type', 'application/vnd.fraud.v1+json')
+									}
 
-						}
-						response {
-							status OK()
-							body(
-									fraudCheckStatus: "OK",
-									rejectionReason: $(consumer(null), producer(
-											execute('assertThatRejectionReasonIsNull($it)')))
-							)
-							headers {
-								header('Content-Type': 'application/vnd.fraud.v1+json')
-							}
-						}
+								}
+								response {
+									status OK()
+									body(
+											fraudCheckStatus: "OK",
+											rejectionReason: $(consumer(null), producer(
+													execute('assertThatRejectionReasonIsNull($it)')))
+									)
+									headers {
+										header('Content-Type': 'application/vnd.fraud.v1+json')
+									}
+								}
 
-					}
+							}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			AssertionUtil.assertThatJsonsAreEqual(('''
@@ -918,34 +947,40 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def "should generate request with urlPath and queryParameters for client side"() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method 'GET'
-							urlPath($(consumer("users"), producer("items"))) {
-								queryParameters {
-									parameter 'limit':
-									$(consumer(equalTo("20")), producer("10"))
-									parameter 'offset':
-									$(consumer(containing("10")), producer("10"))
-									parameter 'filter': "email"
-									parameter 'sort': $(consumer(~/^[0-9]{10}$/),
-											producer("1234567890"))
-									parameter 'search':
-									$(consumer(notMatching(~/^\/[0-9]{2}$/)),
-											producer("10"))
-									parameter 'age': $(consumer(notMatching("^\\w*\$")),
-											producer(10))
-									parameter 'name': $(consumer(matching("Denis.*")),
-											producer("Denis"))
-									parameter 'credit': absent()
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method 'GET'
+									urlPath($(consumer("users"), producer("items"))) {
+										queryParameters {
+											parameter 'limit':
+													$(consumer(equalTo("20")),
+															producer("10"))
+											parameter 'offset':
+													$(consumer(containing("10")),
+															producer("10"))
+											parameter 'filter': "email"
+											parameter 'sort': $(consumer(~/^[0-9]{10}$/),
+													producer("1234567890"))
+											parameter 'search':
+													$(consumer(
+															notMatching(~/^\/[0-9]{2}$/)),
+															producer("10"))
+											parameter 'age':
+													$(consumer(notMatching("^\\w*\$")),
+															producer(10))
+											parameter 'name':
+													$(consumer(matching("Denis.*")),
+															producer("Denis"))
+											parameter 'credit': absent()
+										}
+									}
+								}
+								response {
+									status OK()
 								}
 							}
-						}
-						response {
-							status OK()
-						}
-					}
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
@@ -994,19 +1029,20 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue("#353")
 	def "should generate request with absent header for client side"() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method 'GET'
-							urlPath('/some/path/*')
-							headers {
-								header('''Authentication''', absent())
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method 'GET'
+									urlPath('/some/path/*')
+									headers {
+										header('''Authentication''', absent())
+									}
+								}
+								response {
+									status OK()
+								}
 							}
-						}
-						response {
-							status OK()
-						}
-					}
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
@@ -1035,24 +1071,26 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	def "should generate request with urlPathPattern and queryParameters for client side\
 			when both contains regular expressions"() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method 'GET'
-							urlPath($(
-									consumer(regex("/users/[0-9]+")),
-									producer("/users/1"))) {
-								queryParameters {
-									parameter 'search':
-									$(consumer(notMatching(~/^\/[0-9]{2}$/)),
-											producer("10"))
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method 'GET'
+									urlPath($(
+											consumer(regex("/users/[0-9]+")),
+											producer("/users/1"))) {
+										queryParameters {
+											parameter 'search':
+													$(consumer(
+															notMatching(~/^\/[0-9]{2}$/)),
+															producer("10"))
+										}
+									}
+								}
+								response {
+									status OK()
 								}
 							}
-						}
-						response {
-							status OK()
-						}
-					}
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
@@ -1080,16 +1118,17 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def "should generate request with urlPath for client side"() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method 'GET'
-							urlPath $(consumer("boxes"), producer("items"))
-						}
-						response {
-							status OK()
-						}
-					}
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method 'GET'
+									urlPath $(consumer("boxes"), producer("items"))
+								}
+								response {
+									status OK()
+								}
+							}
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
@@ -1111,16 +1150,17 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def "should generate simple request with urlPath for client side"() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method 'GET'
-							urlPath "boxes"
-						}
-						response {
-							status OK()
-						}
-					}
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method 'GET'
+									urlPath "boxes"
+								}
+								response {
+									status OK()
+								}
+							}
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
@@ -1158,7 +1198,9 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			}
 		then:
 			def e = thrown(IllegalStateException)
-			e.message.contains "Query parameter 'age' can't be of a matching type: NOT_MATCHING for the server side"
+			e
+					.message
+					.contains "Query parameter 'age' can't be of a matching type: NOT_MATCHING for the server side"
 	}
 
 	def "should not allow regexp in query parameter for server value"() {
@@ -1199,7 +1241,9 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			}
 		then:
 			def e = thrown(IllegalStateException)
-			e.message.contains "Query parameter 'age' can't be of a matching type: NOT_MATCHING for the server side"
+			e
+					.message
+					.contains "Query parameter 'age' can't be of a matching type: NOT_MATCHING for the server side"
 	}
 
 	def "should not allow query parameter with a different absent variation for server/client"() {
@@ -1255,24 +1299,27 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def "should generate request with url and queryParameters for client side"() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method 'GET'
-							url($(consumer(regex(/users\/[0-9]*/)),
-									producer("users/123"))) {
-								queryParameters {
-									parameter 'age': $(consumer(notMatching("^\\w*\$")),
-											producer(10))
-									parameter 'name': $(consumer(matching("Denis.*")),
-											producer("Denis"))
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method 'GET'
+									url($(consumer(regex(/users\/[0-9]*/)),
+											producer("users/123"))) {
+										queryParameters {
+											parameter 'age':
+													$(consumer(notMatching("^\\w*\$")),
+															producer(10))
+											parameter 'name':
+													$(consumer(matching("Denis.*")),
+															producer("Denis"))
+										}
+									}
+								}
+								response {
+									status OK()
 								}
 							}
-						}
-						response {
-							status OK()
-						}
-					}
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
@@ -1302,55 +1349,58 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should convert groovy dsl stub with rich tree Body as String to wireMock stub for the client side'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method('GET')
-							url $(consumer(~/\/[0-9]{2}/), producer('/12'))
-							body """\
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method('GET')
+									url $(consumer(~/\/[0-9]{2}/), producer('/12'))
+									body """\
 						{
 						  "personalId": "${
-								value(consumer(regex('[0-9]{11}')),
-										producer('57593728525'))
-							}",
+										value(consumer(regex('[0-9]{11}')),
+												producer('57593728525'))
+									}",
 						  "firstName": "${value(consumer(regex('.*')), producer('Bruce'))}",
 						  "lastName": "${value(consumer(regex('.*')), producer('Lee'))}",
 						  "birthDate": "${
-								value(consumer(regex('[0-9]{4}-[0-9]{2}-[0-9]{2}')),
-										producer('1985-12-12'))
-							}",
+										value(consumer(
+												regex('[0-9]{4}-[0-9]{2}-[0-9]{2}')),
+												producer('1985-12-12'))
+									}",
 						  "errors": [
 									{
 									  "propertyName": "${
-								value(consumer(regex('[0-9]{2}')), producer('04'))
-							}",
+										value(consumer(regex('[0-9]{2}')), producer('04'))
+									}",
 									  "providerValue": "Test"
 									},
 									{
 									  "propertyName": "${
-								value(consumer(regex('[0-9]{2}')), producer('08'))
-							}",
+										value(consumer(regex('[0-9]{2}')), producer('08'))
+									}",
 									  "providerValue": "Test"
 									}
 								  ]
 						}
 						"""
-						}
-						response {
-							status OK()
-							body("""\
+								}
+								response {
+									status OK()
+									body("""\
 								{
 									"name": "Jan"
 								}
 							"""
-							)
-							headers {
-								header 'Content-Type': 'application/json'
+									)
+									headers {
+										header 'Content-Type': 'application/json'
+									}
+								}
 							}
-						}
-					}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			AssertionUtil.assertThatJsonsAreEqual(('''
@@ -1386,36 +1436,37 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should use regexp matches when request body match is defined using a map with a pattern'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method 'POST'
-							url '/reissue-payment-order'
-							body(
-									loanNumber: "999997001",
-									amount: value(
-											consumer(regex('[0-9.]+')),
-											producer('100.00')),
-									currency: "DKK",
-									applicationName: value(consumer(regex('.*')),
-											producer("Auto-Repayments")),
-									username: value(consumer(regex('.*')),
-											producer("scheduler")),
-									cardId: 1
-							)
-						}
-						response {
-							status OK()
-							body '''
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method 'POST'
+									url '/reissue-payment-order'
+									body(
+											loanNumber: "999997001",
+											amount: value(
+													consumer(regex('[0-9.]+')),
+													producer('100.00')),
+											currency: "DKK",
+											applicationName: value(consumer(regex('.*')),
+													producer("Auto-Repayments")),
+											username: value(consumer(regex('.*')),
+													producer("scheduler")),
+											cardId: 1
+									)
+								}
+								response {
+									status OK()
+									body '''
 						{
 						"status": "OK"
 						}
 					'''
-							headers {
-								header 'Content-Type': 'application/json'
+									headers {
+										header 'Content-Type': 'application/json'
+									}
+								}
 							}
-						}
-					}
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
@@ -1452,17 +1503,18 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def "should generate stub for empty body"() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method('POST')
-							url("test")
-							body("")
-						}
-						response {
-							status 406
-						}
-					}
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method('POST')
+									url("test")
+									body("")
+								}
+								response {
+									status 406
+								}
+							}
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
@@ -1487,17 +1539,18 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def "should generate stub with priority"() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						priority 9
-						request {
-							method('POST')
-							url("test")
-						}
-						response {
-							status 406
-						}
-					}
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								priority 9
+								request {
+									method('POST')
+									url("test")
+								}
+								response {
+									status 406
+								}
+							}
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
@@ -1519,21 +1572,24 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue("#127")
 	def 'should use "test" as an alias for "server"'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method('POST')
-							url("foo")
-							body(
-									property: value(consumer("value"), producer("value"))
-							)
-						}
-						response {
-							status OK()
-						}
-					}
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method('POST')
+									url("foo")
+									body(
+											property: value(consumer("value"),
+													producer("value"))
+									)
+								}
+								response {
+									status OK()
+								}
+							}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			AssertionUtil.assertThatJsonsAreEqual(('''
@@ -1557,21 +1613,23 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue("#121")
 	def 'should generate stub with empty list as a value of a field'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method('POST')
-							url("foo")
-							body(
-									values: []
-							)
-						}
-						response {
-							status OK()
-						}
-					}
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method('POST')
+									url("foo")
+									body(
+											values: []
+									)
+								}
+								response {
+									status OK()
+								}
+							}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			AssertionUtil.assertThatJsonsAreEqual(('''
@@ -1596,36 +1654,38 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should generate stub properly resolving GString with regular expression'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						priority 1
-						request {
-							method 'POST'
-							url '/users/password'
-							headers {
-								header 'Content-Type': 'application/json'
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								priority 1
+								request {
+									method 'POST'
+									url '/users/password'
+									headers {
+										header 'Content-Type': 'application/json'
+									}
+									body(
+											email: $(
+													consumer(regex(email())),
+													producer('not.existing@user.com')),
+											callback_url: $(consumer(regex(hostname())),
+													producer('https://partners.com'))
+									)
+								}
+								response {
+									status 404
+									headers {
+										header 'Content-Type': 'application/json'
+									}
+									body(
+											code: 4,
+											message: "User not found by email = [${value(producer(regex(email())), consumer('not.existing@user.com'))}]"
+									)
+								}
 							}
-							body(
-									email: $(
-											consumer(regex(email())),
-											producer('not.existing@user.com')),
-									callback_url: $(consumer(regex(hostname())),
-											producer('https://partners.com'))
-							)
-						}
-						response {
-							status 404
-							headers {
-								header 'Content-Type': 'application/json'
-							}
-							body(
-									code: 4,
-									message: "User not found by email = [${value(producer(regex(email())), consumer('not.existing@user.com'))}]"
-							)
-						}
-					}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			AssertionUtil.assertThatJsonsAreEqual(('''
@@ -1661,25 +1721,27 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	def 'should generate stub properly resolving GString with regular expression in url'() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
 
-						request {
-							method 'PUT'
-							url "/partners/${value(consumer(regex('^[0-9]*$')), producer('11'))}/agents/11/customers/09665703Z"
-							headers {
-								header 'Content-Type': 'application/json'
+								request {
+									method 'PUT'
+									url "/partners/${value(consumer(regex('^[0-9]*$')), producer('11'))}/agents/11/customers/09665703Z"
+									headers {
+										header 'Content-Type': 'application/json'
+									}
+									body(
+											first_name: 'Josef',
+									)
+								}
+								response {
+									status 422
+								}
 							}
-							body(
-									first_name: 'Josef',
-							)
-						}
-						response {
-							status 422
-						}
-					}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			AssertionUtil.assertThatJsonsAreEqual(('''
@@ -1709,7 +1771,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue('42')
 	def 'should generate stub without optional parameters'() {
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, contractDsl), contractDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					contractDsl), contractDsl).
 					toWireMockClientStub()
 		then:
 			AssertionUtil.assertThatJsonsAreEqual(('''
@@ -1825,7 +1888,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	}
 
 	String toWireMockClientJsonStub(Contract groovyDsl) {
-		return new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+		return new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+				groovyDsl), groovyDsl).
 				toWireMockClientStub()
 	}
 
@@ -1833,37 +1897,39 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	def 'should generate stub with multipart parameters'() {
 		given:
 			// tag::multipartdsl[]
-			org.springframework.cloud.contract.spec.Contract contractDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method "PUT"
-							url "/multipart"
-							headers {
-								contentType('multipart/form-data;boundary=AaB03x')
+			org.springframework.cloud.contract.spec.Contract contractDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method "PUT"
+									url "/multipart"
+									headers {
+										contentType('multipart/form-data;boundary=AaB03x')
+									}
+									multipart(
+											// key (parameter name), value (parameter value) pair
+											formParameter: $(c(regex('".+"')),
+													p('"formParameterValue"')),
+											someBooleanParameter:
+													$(c(regex(anyBoolean())), p('true')),
+											// a parameter name (e.g. file)
+											file: named(
+													// name of the file
+													name: $(c(regex(nonEmpty())),
+															p('filename.csv')),
+													// content of the file
+													content: $(c(regex(nonEmpty())),
+															p('file content')))
+									)
+								}
+								response {
+									status OK()
+								}
 							}
-							multipart(
-									// key (parameter name), value (parameter value) pair
-									formParameter: $(c(regex('".+"')),
-											p('"formParameterValue"')),
-									someBooleanParameter:
-											$(c(regex(anyBoolean())), p('true')),
-									// a parameter name (e.g. file)
-									file: named(
-											// name of the file
-											name: $(c(regex(nonEmpty())),
-													p('filename.csv')),
-											// content of the file
-											content: $(c(regex(nonEmpty())),
-													p('file content')))
-							)
-						}
-						response {
-							status OK()
-						}
-					}
 			// end::multipartdsl[]
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, contractDsl), contractDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					contractDsl), contractDsl).
 					toWireMockClientStub()
 		then:
 			println wireMockStub
@@ -1902,52 +1968,53 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue('#219')
 	def "should generate request with an optional queryParameter for client side"() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method 'GET'
-							urlPath('/some/api') {
-								queryParameters {
-									parameter 'size': value(
-											consumer(regex('[0-9]+')),
-											producer(1)
-									)
-									parameter 'page': value(
-											consumer(regex('[0-9]+')),
-											producer(0)
-									)
-									parameter sort: value(
-											consumer(optional(regex('^[a-z]+$'))),
-											producer('id')
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method 'GET'
+									urlPath('/some/api') {
+										queryParameters {
+											parameter 'size': value(
+													consumer(regex('[0-9]+')),
+													producer(1)
+											)
+											parameter 'page': value(
+													consumer(regex('[0-9]+')),
+													producer(0)
+											)
+											parameter sort: value(
+													consumer(optional(regex('^[a-z]+$'))),
+													producer('id')
+											)
+										}
+									}
+								}
+								response {
+									status OK()
+									body(
+											content: [[
+															  id   : '00000000-0000-0000-0000-000000000000',
+															  type : 'Extraordinary',
+															  state: 'ACTIVE',
+													  ]],
+											totalPages: 1,
+											totalElements: 1,
+											last: true,
+											sort: [[
+														   direction   : 'ASC',
+														   property    : 'id',
+														   ignoreCase  : false,
+														   nullHandling: 'NATIVE',
+														   ascending   : true
+												   ]],
+											first: true,
+											numberOfElements: 1,
+											size: 1,
+											number: 0
 									)
 								}
 							}
-						}
-						response {
-							status OK()
-							body(
-									content: [[
-													  id   : '00000000-0000-0000-0000-000000000000',
-													  type : 'Extraordinary',
-													  state: 'ACTIVE',
-											  ]],
-									totalPages: 1,
-									totalElements: 1,
-									last: true,
-									sort: [[
-												   direction   : 'ASC',
-												   property    : 'id',
-												   ignoreCase  : false,
-												   nullHandling: 'NATIVE',
-												   ascending   : true
-										   ]],
-									first: true,
-									numberOfElements: 1,
-									size: 1,
-									number: 0
-							)
-						}
-					}
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
@@ -1982,25 +2049,26 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue('#30')
 	def "should not create a stub for a skipped contract"() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							ignored()
-							method 'GET'
-							urlPath('/some/api') {
-								queryParameters {
-									parameter 'size': value(
-											consumer(regex('[0-9]+')),
-											producer(1)
-									)
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									ignored()
+									method 'GET'
+									urlPath('/some/api') {
+										queryParameters {
+											parameter 'size': value(
+													consumer(regex('[0-9]+')),
+													producer(1)
+											)
+										}
+									}
+								}
+								response {
+									status OK()
+									body('')
 								}
 							}
-						}
-						response {
-							status OK()
-							body('')
-						}
-					}
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
@@ -2010,26 +2078,28 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue('#30')
 	def "should not create a stub for a contract matching ignored pattern"() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method 'GET'
-							urlPath('/some/api') {
-								queryParameters {
-									parameter 'size': value(
-											consumer(regex('[0-9]+')),
-											producer(1)
-									)
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method 'GET'
+									urlPath('/some/api') {
+										queryParameters {
+											parameter 'size': value(
+													consumer(regex('[0-9]+')),
+													producer(1)
+											)
+										}
+									}
+								}
+								response {
+									status OK()
+									body('')
 								}
 							}
-						}
-						response {
-							status OK()
-							body('')
-						}
-					}
 		when:
-			def json = new WireMockStubStrategy("Test", new ContractMetadata(null, true, 0, null, groovyDsl), groovyDsl).
+			def json = new WireMockStubStrategy("Test", new ContractMetadata(null, true, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			json == null
@@ -2083,8 +2153,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		when:
 			ResponseEntity<String> entity = call(port)
 		then:
-			entity.headers.
-					find { it.key == "authorization" && it.value.contains("secret;foo") }
+			entity.headers.toSingleValueMap()
+					.find { it.key == "authorization" && it.value.contains("secret;foo") }
 			AssertionUtil.assertThatJsonsAreEqual(('''
 				{
 				  "url" : "/api/v1/xxxx?foo=bar&foo=bar2",
@@ -2126,7 +2196,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		when:
 			ResponseEntity<byte[]> entity = callBytes(port, request)
 		then:
-			entity.statusCodeValue == 200
+			entity.statusCode.value() == 200
 			entity.body == response.bytes
 		cleanup:
 			server?.shutdown()
@@ -2135,58 +2205,66 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue('#540')
 	def "should generate a stub with standard WireMock request template"() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method 'POST'
-							url('/api/v1/xxxx') {
-								queryParameters {
-									parameter("foo", "bar")
-									parameter("foo", "bar2")
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method 'POST'
+									url('/api/v1/xxxx') {
+										queryParameters {
+											parameter("foo", "bar")
+											parameter("foo", "bar2")
+										}
+									}
+									headers {
+										header(authorization(), "secret")
+										header(authorization(), "secret2")
+									}
+									cookies {
+										cookie("foo", "bar")
+									}
+									body(foo: "bar", baz: 5)
+								}
+								response {
+									status OK()
+									headers {
+										header(authorization(), "${fromRequest().header(authorization())};foo")
+									}
+									body(
+											url: fromRequest().url(),
+											path: fromRequest().path(),
+											pathIndex: fromRequest().path(1),
+											param: fromRequest().query("foo"),
+											paramIndex: fromRequest().query("foo", 1),
+											authorization:
+													fromRequest().header("Authorization"),
+											authorization2:
+													fromRequest()
+															.header("Authorization", 1),
+											fullBody: fromRequest().body(),
+											responseFoo: fromRequest().body('$.foo'),
+											responseBaz: fromRequest().body('$.baz'),
+											responseBaz2: "Bla bla ${fromRequest().body('$.foo')} bla bla",
+											rawUrl: fromRequest().rawUrl(),
+											rawPath: fromRequest().rawPath(),
+											rawPathIndex: fromRequest().rawPath(1),
+											rawParam: fromRequest().rawQuery("foo"),
+											rawParamIndex:
+													fromRequest().rawQuery("foo", 1),
+											rawAuthorization:
+													fromRequest()
+															.rawHeader("Authorization"),
+											rawAuthorization2:
+													fromRequest()
+															.rawHeader("Authorization", 1),
+											rawResponseFoo:
+													fromRequest().rawBody('$.foo'),
+											rawResponseBaz:
+													fromRequest().rawBody('$.baz'),
+											rawResponseBaz2: "Bla bla ${fromRequest().rawBody('$.foo')} bla bla"
+									)
 								}
 							}
-							headers {
-								header(authorization(), "secret")
-								header(authorization(), "secret2")
-							}
-							cookies {
-								cookie("foo", "bar")
-							}
-							body(foo: "bar", baz: 5)
-						}
-						response {
-							status OK()
-							headers {
-								header(authorization(), "${fromRequest().header(authorization())};foo")
-							}
-							body(
-									url: fromRequest().url(),
-									path: fromRequest().path(),
-									pathIndex: fromRequest().path(1),
-									param: fromRequest().query("foo"),
-									paramIndex: fromRequest().query("foo", 1),
-									authorization: fromRequest().header("Authorization"),
-									authorization2:
-											fromRequest().header("Authorization", 1),
-									fullBody: fromRequest().body(),
-									responseFoo: fromRequest().body('$.foo'),
-									responseBaz: fromRequest().body('$.baz'),
-									responseBaz2: "Bla bla ${fromRequest().body('$.foo')} bla bla",
-									rawUrl: fromRequest().rawUrl(),
-									rawPath: fromRequest().rawPath(),
-									rawPathIndex: fromRequest().rawPath(1),
-									rawParam: fromRequest().rawQuery("foo"),
-									rawParamIndex: fromRequest().rawQuery("foo", 1),
-									rawAuthorization:
-											fromRequest().rawHeader("Authorization"),
-									rawAuthorization2:
-											fromRequest().rawHeader("Authorization", 1),
-									rawResponseFoo: fromRequest().rawBody('$.foo'),
-									rawResponseBaz: fromRequest().rawBody('$.baz'),
-									rawResponseBaz2: "Bla bla ${fromRequest().rawBody('$.foo')} bla bla"
-							)
-						}
-					}
 		when:
 			def json = toWireMockClientJsonStub(groovyDsl)
 		then:
@@ -2235,8 +2313,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			server.addStubMapping(WireMockStubMapping.buildFrom(json))
 		then:
 			ResponseEntity<String> entity = call(port)
-			entity.headers.
-					find { it.key == "authorization" && it.value.contains("secret;foo") }
+			entity.headers.toSingleValueMap()
+					.find { it.key == "authorization" && it.value.contains("secret;foo") }
 		and:
 			AssertionUtil.assertThatJsonsAreEqual(('''
 				{  
@@ -2431,7 +2509,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			AssertionUtil.assertThatJsonsAreEqual('''
@@ -2496,7 +2575,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			AssertionUtil.assertThatJsonsAreEqual('''
@@ -2551,7 +2631,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			AssertionUtil.assertThatJsonsAreEqual('''
@@ -2616,7 +2697,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			!wireMockStub.contains("&amp;")
@@ -2678,7 +2760,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			AssertionUtil.assertThatJsonsAreEqual('''
@@ -2719,7 +2802,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				}
 			}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			AssertionUtil.assertThatJsonsAreEqual('''
@@ -2798,10 +2882,12 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue("#94")
 	def "should not produce any cursors in the stub"() {
 		given:
-			Contract contractDsl =  Contract.make {
+			Contract contractDsl = Contract.make {
 				request {
 					method 'POST'
-					urlPath $(test('/resource/resourceId/another-resource/another-resource-id/sth'), stub(regex('/resource/[\\w\\.]+/another-resource/([\\w+\\.-]|%[a-fA-F0-9]{2})+/sth')))
+					urlPath $(
+							test('/resource/resourceId/another-resource/another-resource-id/sth'),
+							stub(regex('/resource/[\\w\\.]+/another-resource/([\\w+\\.-]|%[a-fA-F0-9]{2})+/sth')))
 					body($(stub(regex(".+")), test(execute("encrypt('a lot of code')"))))
 				}
 				response {
@@ -2823,11 +2909,11 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue("#894")
 	def "should not fail when matchers don't have dots"() {
 		given:
-			Contract contractDsl =  Contract.make {
+			Contract contractDsl = Contract.make {
 				request {
 					method 'POST'
 					url "/example"
-					body([ "123", "234"])
+					body(["123", "234"])
 					bodyMatchers {
 						jsonPath('$[*]', byRegex(nonEmpty()))
 					}
@@ -2851,7 +2937,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		given:
 			File file = new File(WireMockGroovyDslSpec.getResource("/yml/issue1038.yml").
 					toURI())
-			Contract contractDsl =  new YamlContractConverter().convertFrom(file).first()
+			Contract contractDsl = new YamlContractConverter().convertFrom(file).first()
 		when:
 			String wireMockStub = new WireMockStubStrategy("Test",
 					new ContractMetadata(null, false, 0, null, contractDsl), contractDsl)
@@ -2876,7 +2962,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						contentType(applicationJson())
 					}
 					body(
-							$(c([id: 4, foo:5, whatever:"hello"]), p(execute('hashCode()')))
+							$(c([id: 4, foo: 5, whatever: "hello"]),
+									p(execute('hashCode()')))
 					)
 				}
 				response {
@@ -2885,7 +2972,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 						contentType(applicationJson())
 					}
 					body(
-							$(c([id: 4, foo:5, whatever:"hello"]), p(execute('hashCode()')))
+							$(c([id: 4, foo: 5, whatever: "hello"]),
+									p(execute('hashCode()')))
 					)
 				}
 			}
@@ -2898,7 +2986,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 			wireMockStub.contains('''$[?(@.['whatever'] == 'hello')]''')
 			wireMockStub.contains('''$[?(@.['id'] == 4)]''')
 			wireMockStub.contains('''$[?(@.['foo'] == 5)]''')
-			wireMockStub.contains('''"{\\"id\\":4,\\"foo\\":5,\\"whatever\\":\\"hello\\"}"''')
+			wireMockStub
+					.contains('''"{\\"id\\":4,\\"foo\\":5,\\"whatever\\":\\"hello\\"}"''')
 			stubMappingIsValidWireMockStub(wireMockStub)
 
 	}
@@ -2908,7 +2997,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		given:
 			Contract contractDsl = Contract.make {
 				description "should return all entities"
-				request{
+				request {
 					method GET()
 					url("/api/v1/entities")
 				}
@@ -2956,7 +3045,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		when:
 			ResponseEntity<String> entity = callForStream(port)
 		then:
-			entity.statusCodeValue == 200
+			entity.statusCode.value() == 200
 			entity.body.contains("Entity1")
 			entity.body.contains("Entity2")
 		cleanup:
@@ -2974,7 +3063,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 							channedlId: "UC",
 							operations: [
 									[
-											parameters     : [
+											parameters: [
 													[
 															name : "#POID",
 															value: '70000269814',
@@ -2996,7 +3085,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 					)
 					bodyMatchers {
 						jsonPath('$.operations[0].parameters[0].name', byEquality())
-						jsonPath('$.operations[0].parameters[0].value', byRegex('[0-9]{11}'))
+						jsonPath('$.operations[0].parameters[0].value',
+								byRegex('[0-9]{11}'))
 						jsonPath('$.operations[0].parameters[0].type', byEquality())
 						jsonPath('$.operations[0].parameters[1].name', byEquality())
 						jsonPath('$.operations[0].parameters[1].value', byEquality())
@@ -3024,15 +3114,17 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue("#1257")
 	def "should work with null request element on the client side and optional stub entry"() {
 		given:
-			Contract contractDsl =  Contract.make {
+			Contract contractDsl = Contract.make {
 				description("Creating user")
 				name("Create user")
 				request {
 					method 'POST'
 					url '/api/user'
 					body(
-							address: $(consumer(optional(regex(alphaNumeric()))), producer(null)),
-							name: $(consumer(optional(regex(alphaNumeric()))), producer(''))
+							address: $(consumer(optional(regex(alphaNumeric()))),
+									producer(null)),
+							name: $(consumer(optional(regex(alphaNumeric()))),
+									producer(''))
 					)
 					headers {
 						contentType(applicationJson())
@@ -3057,38 +3149,43 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		when:
 			ResponseEntity<String> entity = callWithOptionalAndEmpty(port)
 		then:
-			entity.statusCodeValue == 201
+			entity.statusCode.value() == 201
 		cleanup:
 			server?.shutdown()
 	}
 
 	def "should work with client DSL properties"() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method('GET')
-							url("/api/foo")
-							headers {
-								header("foo", $(client(anyAlphaNumeric()), server("123")))
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method('GET')
+									url("/api/foo")
+									headers {
+										header("foo", $(client(anyAlphaNumeric()),
+												server("123")))
+									}
+									cookies {
+										cookie("cookie1", $(client("foo"), server("bar")))
+										cookie("cookie2",
+												$(client(~/[a-z]+/), server("bar")))
+										cookie("cookie3", $(client(anyAlphaNumeric()),
+												server("bar")))
+										cookie("cookie4", $(anyAlphaNumeric()))
+									}
+								}
+								response {
+									status OK()
+									body("ok")
+									headers {
+										header 'Content-Type': 'text/plain'
+									}
+								}
 							}
-							cookies {
-								cookie("cookie1", $(client("foo"), server("bar")))
-								cookie("cookie2", $(client(~/[a-z]+/), server("bar")))
-								cookie("cookie3", $(client(anyAlphaNumeric()), server("bar")))
-								cookie("cookie4", $(anyAlphaNumeric()))
-							}
-						}
-						response {
-							status OK()
-							body("ok")
-							headers {
-								header 'Content-Type': 'text/plain'
-							}
-						}
-					}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			AssertionUtil.assertThatJsonsAreEqual('''
@@ -3133,32 +3230,37 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	@Issue("1808")
 	def "should correctly process optional of DslProperty parameters"() {
 		given:
-			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.
-					make {
-						request {
-							method('GET')
-							url("/api/foo")
-							headers {
-								header("Content-Type", "application/json")
-								header("Accept", "application/json")
+			org.springframework.cloud.contract.spec.Contract groovyDsl =
+					org.springframework.cloud.contract.spec.Contract.
+							make {
+								request {
+									method('GET')
+									url("/api/foo")
+									headers {
+										header("Content-Type", "application/json")
+										header("Accept", "application/json")
+									}
+									body(
+											key1: $(client(optional(anyOf("foo", "bar"))),
+													server("bar")),
+											key2: $(client(optional(anyNonBlankString())),
+													server("bar")),
+											key3: $(client(optional(anyEmail())),
+													server("foo@bar.com")),
+											key4: $(optional(anyNumber())),
+									)
+								}
+								response {
+									status OK()
+									body("ok")
+									headers {
+										header 'Content-Type': 'text/plain'
+									}
+								}
 							}
-							body(
-								key1: $(client(optional(anyOf("foo", "bar"))), server("bar")),
-								key2: $(client(optional(anyNonBlankString())), server("bar")),
-								key3: $(client(optional(anyEmail())), server("foo@bar.com")),
-								key4: $(optional(anyNumber())),
-							)
-						}
-						response {
-							status OK()
-							body("ok")
-							headers {
-								header 'Content-Type': 'text/plain'
-							}
-						}
-					}
 		when:
-			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, groovyDsl), groovyDsl).
+			String wireMockStub = new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null,
+					groovyDsl), groovyDsl).
 					toWireMockClientStub()
 		then:
 			AssertionUtil.assertThatJsonsAreEqual('''
@@ -3211,7 +3313,8 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	ResponseEntity<String> call(int port) {
 		return new TestRestTemplate().exchange(
 				RequestEntity.post(URI.
-						create("http://localhost:" + port + "/api/v1/xxxx?foo=bar&foo=bar2"))
+						create("http://localhost:" +
+								port + "/api/v1/xxxx?foo=bar&foo=bar2"))
 						.header("Authorization", "secret")
 						.header("Authorization", "secret2")
 						.header("Cookie", "foo=bar")
@@ -3227,8 +3330,10 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 
 	ResponseEntity<String> callForStream(int port) {
 		return new TestRestTemplate().exchange(
-				RequestEntity.get(URI.create("http://localhost:" + port + "/api/v1/entities"))
-						.header("Content-Type", "application/stream+json").build(), String.class)
+				RequestEntity
+						.get(URI.create("http://localhost:" + port + "/api/v1/entities"))
+						.header("Content-Type", "application/stream+json").build(),
+				String.class)
 	}
 
 	ResponseEntity<byte[]> callBytes(int port, File request) {
@@ -3242,8 +3347,9 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		return new TestRestTemplate().exchange(
 				RequestEntity.
 						post(URI.create("http://localhost:" + port + "/api/categories"))
-							 .header("Content-Type", "application/json;charset=UTF-8")
-							 .body(JsonOutput.
-									 toJson([["Programming", "Java"], ["Programming", "Java", "Spring", "Boot"]])), String.class)
+						.header("Content-Type", "application/json;charset=UTF-8")
+						.body(JsonOutput.
+								toJson([["Programming", "Java"], ["Programming", "Java", "Spring", "Boot"]])),
+				String.class)
 	}
 }

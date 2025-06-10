@@ -71,8 +71,12 @@ class DslToWireMockClientConverterSpec extends Specification {
 				}
 """)
 		when:
-			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(new File("/"), file))).values().first()
+			String json =
+					converter.convertContents("Test", new ContractMetadata(
+							file.toPath(), false, 0, null,
+							ContractVerifierDslConverter
+									.convertAsCollection(new File("/"), file)))
+							.values().first()
 		then:
 			JSONAssert.assertEquals('''
 {"request":{"method":"PUT","urlPattern":"/[0-9]{2}"},"response":{"status":200}}
@@ -115,8 +119,12 @@ class DslToWireMockClientConverterSpec extends Specification {
 	]
 """)
 		when:
-			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(new File("/"), file))).values().first()
+			String json =
+					converter.convertContents("Test", new ContractMetadata(
+							file.toPath(), false, 0, null,
+							ContractVerifierDslConverter
+									.convertAsCollection(new File("/"), file)))
+							.values().first()
 		then:
 			JSONAssert.assertEquals('''
 {"request":{"url":"/multipart","method":"POST","headers":{"Content-Type":{"matches":"multipart/form-data.*"}},"bodyPatterns":[{"matches" : ".*--(.*)\\r?\\nContent-Disposition: form-data; name=\\"file\\"; filename=\\".+\\"\\r?\\n(Content-Type: .*\\r?\\n)?(Content-Transfer-Encoding: .*\\r?\\n)?(Content-Length: \\\\d+\\r?\\n)?\\r?\\n.+\\r?\\n--.*"}]},"response":{"status":200,"body":"hello","transformers":["response-template", "spring-cloud-contract" ]}}
@@ -165,25 +173,32 @@ class DslToWireMockClientConverterSpec extends Specification {
 }
 ''')
 		when:
-			Map<Contract, String> convertedContents = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(new File("/"), file)))
+			Map<Contract, String> convertedContents =
+					converter.convertContents("Test", new ContractMetadata(
+							file.toPath(), false, 0, null,
+							ContractVerifierDslConverter
+									.convertAsCollection(new File("/"), file)))
 		then:
 			convertedContents.size() == 2
-			JSONAssert.assertEquals(jsonResponse(1), convertedContents.values().first(), false)
-			JSONAssert.assertEquals(jsonResponse(2), convertedContents.values().last(), false)
+			JSONAssert.assertEquals(
+					jsonResponse(1), convertedContents.values().first(), false)
+			JSONAssert.assertEquals(
+					jsonResponse(2), convertedContents.values().last(), false)
 		and:
-			StubMapping mapping = stubMappingIsValidWireMockStub(convertedContents.values().first())
-			StubMapping mapping2 = stubMappingIsValidWireMockStub(convertedContents.values().last())
+			StubMapping mapping =
+					stubMappingIsValidWireMockStub(convertedContents.values().first())
+			StubMapping mapping2 =
+					stubMappingIsValidWireMockStub(convertedContents.values().last())
 		and:
 			wireMockRule.addStubMapping(mapping)
 			wireMockRule.addStubMapping(mapping2)
 		and:
 			restTemplate.exchange(RequestEntity.put("${url}/1".toURI())
-											   .header('Content-Type', 'application/json')
-											   .body(""), String)
+					.header('Content-Type', 'application/json')
+					.body(""), String)
 			restTemplate.exchange(RequestEntity.put("${url}/2".toURI())
-											   .header('Content-Type', 'application/json')
-											   .body(""), String)
+					.header('Content-Type', 'application/json')
+					.body(""), String)
 	}
 
 	private String jsonResponse(int index) {
@@ -207,7 +222,8 @@ class DslToWireMockClientConverterSpec extends Specification {
 		when:
 			Map<Contract, String> convertedContents = converter.convertContents("Test",
 					new ContractMetadata(file.toPath(), false, 0, null,
-							ContractVerifierDslConverter.convertAsCollection(new File("/"), file)))
+							ContractVerifierDslConverter
+									.convertAsCollection(new File("/"), file)))
 		then:
 			convertedContents.isEmpty()
 	}
@@ -231,8 +247,12 @@ class DslToWireMockClientConverterSpec extends Specification {
 			}
 """)
 		when:
-			String json = converter.convertContents("test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(new File("/"), file))).values().first()
+			String json =
+					converter.convertContents("test", new ContractMetadata(
+							file.toPath(), false, 0, null,
+							ContractVerifierDslConverter
+									.convertAsCollection(new File("/"), file)))
+							.values().first()
 		then:
 			JSONAssert.assertEquals('''
 {"request":{
@@ -300,8 +320,12 @@ class DslToWireMockClientConverterSpec extends Specification {
 				}
 """)
 		when:
-			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(new File("/"), file))).values().first()
+			String json =
+					converter.convertContents("Test", new ContractMetadata(
+							file.toPath(), false, 0, null,
+							ContractVerifierDslConverter
+									.convertAsCollection(new File("/"), file)))
+							.values().first()
 		then:
 			JSONAssert.assertEquals('''
 {
@@ -358,8 +382,8 @@ class DslToWireMockClientConverterSpec extends Specification {
 			wireMockRule.addStubMapping(mapping)
 		and:
 			restTemplate.exchange(RequestEntity.put("${url}/api/12".toURI())
-											   .header('Content-Type', 'application/vnd.org.springframework.cloud.contract.verifier.twitter-places-analyzer.v1+json')
-											   .body('''
+					.header('Content-Type', 'application/vnd.org.springframework.cloud.contract.verifier.twitter-places-analyzer.v1+json')
+					.body('''
 							[{
 								"created_at": "Sat Jul 26 09:38:57 +0000 2014",
 								"id": 492967299297845248,
@@ -418,8 +442,12 @@ class DslToWireMockClientConverterSpec extends Specification {
 			}
 """)
 		when:
-			String json = converter.convertContents("test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(new File("/"), file))).values().first()
+			String json =
+					converter.convertContents("test", new ContractMetadata(
+							file.toPath(), false, 0, null,
+							ContractVerifierDslConverter
+									.convertAsCollection(new File("/"), file)))
+							.values().first()
 		then:
 			JSONAssert.assertEquals('''
 {"request":{"urlPath":"/foos","method":"GET"},"response":{"body":"[{\\"id\\":\\"123\\"},{\\"id\\":\\"567\\"}]"}}
@@ -429,9 +457,12 @@ class DslToWireMockClientConverterSpec extends Specification {
 		and:
 			wireMockRule.addStubMapping(mapping)
 		and:
-			def response = restTemplate.exchange(RequestEntity.get("${url}/foos".toURI()).build(), String)
+			def response =
+					restTemplate.exchange(
+							RequestEntity.get("${url}/foos".toURI()).build(), String)
 			response.headers.get('Content-Type') == ['application/json']
-			JSONAssert.assertEquals('''[ { "id":"123" }, { "id": "567" } ]''', response.body, false)
+			JSONAssert.assertEquals('''[ { "id":"123" }, { "id": "567" } ]''',
+					response.body, false)
 	}
 
 
@@ -457,8 +488,12 @@ class DslToWireMockClientConverterSpec extends Specification {
 			}
 """)
 		when:
-			String json = converter.convertContents("test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(new File("/"), file))).values().first()
+			String json =
+					converter.convertContents("test", new ContractMetadata(
+							file.toPath(), false, 0, null,
+							ContractVerifierDslConverter
+									.convertAsCollection(new File("/"), file)))
+							.values().first()
 		then:
 			noExceptionThrown()
 		and:
@@ -468,7 +503,9 @@ class DslToWireMockClientConverterSpec extends Specification {
 		and:
 			wireMockRule.addStubMapping(mapping)
 		and:
-			def response = restTemplate.exchange(RequestEntity.get("${url}/foos".toURI()).build(), String)
+			def response =
+					restTemplate.exchange(
+							RequestEntity.get("${url}/foos".toURI()).build(), String)
 			response.body
 	}
 
@@ -504,8 +541,12 @@ class DslToWireMockClientConverterSpec extends Specification {
 			}
 	''')
 		when:
-			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(new File("/"), file))).values().first()
+			String json =
+					converter.convertContents("Test", new ContractMetadata(
+							file.toPath(), false, 0, null,
+							ContractVerifierDslConverter
+									.convertAsCollection(new File("/"), file)))
+							.values().first()
 		then:
 			JSONAssert.assertEquals( // tag::wiremock[]
 					'''
@@ -541,13 +582,17 @@ class DslToWireMockClientConverterSpec extends Specification {
 		and:
 			wireMockRule.addStubMapping(mapping)
 		and:
-			def response = restTemplate.exchange(RequestEntity.post("${url}/users/password".toURI())
-															  .header("Content-Type", "application/json")
-															  .body('''{"email":"abc@abc.com", "callback_url":"https://partners.com"}''')
-					, String)
+			def response =
+					restTemplate
+							.exchange(RequestEntity.post("${url}/users/password".toURI())
+									.header("Content-Type", "application/json")
+									.body('''{"email":"abc@abc.com", "callback_url":"https://partners.com"}''')
+									, String)
 			response.headers.get('Content-Type') == ['application/json']
-			response.statusCodeValue == 404
-			JSONAssert.assertEquals('''{"code":"123123","message":"User not found by email == [not.existing@user.com]"}"''', response.body, false)
+			response.getStatusCode().value() == 404
+			JSONAssert
+					.assertEquals('''{"code":"123123","message":"User not found by email == [not.existing@user.com]"}"''',
+							response.body, false)
 	}
 
 	def 'should convert dsl to wiremock with stub matchers'() {
@@ -692,8 +737,12 @@ class DslToWireMockClientConverterSpec extends Specification {
 			}
 	''')
 		when:
-			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(new File("/"), file))).values().first()
+			String json =
+					converter.convertContents("Test", new ContractMetadata(
+							file.toPath(), false, 0, null,
+							ContractVerifierDslConverter
+									.convertAsCollection(new File("/"), file)))
+							.values().first()
 		then:
 			JSONAssert.assertEquals(//tag::matchers[]
 					'''
@@ -764,47 +813,47 @@ class DslToWireMockClientConverterSpec extends Specification {
 			wireMockRule.addStubMapping(mapping)
 		and:
 			def response = restTemplate.exchange(RequestEntity.post("${url}/get".toURI())
-															  .header("Content-Type", "application/json")
-															  .body(JsonOutput.toJson([
-					duck                : 123,
-					alpha               : "abc",
-					number              : 123,
-					aBoolean            : true,
-					date                : "2017-01-01",
-					dateTime            : "2017-01-01T01:23:45",
-					time                : "01:02:34",
-					valueWithoutAMatcher: "foo",
-					valueWithTypeMatch  : "string",
-					list                : [
-							some     : [
-									nested: [
-											json        : "with value",
-											anothervalue: 4
+					.header("Content-Type", "application/json")
+					.body(JsonOutput.toJson([
+							duck                : 123,
+							alpha               : "abc",
+							number              : 123,
+							aBoolean            : true,
+							date                : "2017-01-01",
+							dateTime            : "2017-01-01T01:23:45",
+							time                : "01:02:34",
+							valueWithoutAMatcher: "foo",
+							valueWithTypeMatch  : "string",
+							list                : [
+									some     : [
+											nested: [
+													json        : "with value",
+													anothervalue: 4
+											]
+									],
+									someother: [
+											nested: [
+													json        : "with value",
+													anothervalue: 4
+											]
 									]
 							],
-							someother: [
-									nested: [
-											json        : "with value",
-											anothervalue: 4
-									]
+							valueWithMin        : [
+									1, 2, 3
+							],
+							valueWithMax        : [
+									1, 2, 3
+							],
+							valueWithMinMax     : [
+									1, 2, 3
+							],
+							valueWithOccurrence : [
+									1, 2, 3, 4
 							]
-					],
-					valueWithMin        : [
-							1, 2, 3
-					],
-					valueWithMax        : [
-							1, 2, 3
-					],
-					valueWithMinMax     : [
-							1, 2, 3
-					],
-					valueWithOccurrence : [
-							1, 2, 3, 4
-					]
-			]))
+					]))
 					, String)
 			response.headers.get('Content-Type') == ['application/json']
-			response.statusCodeValue == 200
+			response.statusCode.value() == 200
 			JSONAssert.assertEquals(JsonOutput.toJson([
 					duck                : 123,
 					alpha               : "abc",
@@ -870,8 +919,12 @@ class DslToWireMockClientConverterSpec extends Specification {
 				}
 		''')
 		when:
-			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(new File("/"), file))).values().first()
+			String json =
+					converter.convertContents("Test", new ContractMetadata(
+							file.toPath(), false, 0, null,
+							ContractVerifierDslConverter
+									.convertAsCollection(new File("/"), file)))
+							.values().first()
 		then:
 			JSONAssert.assertEquals(
 					'''
@@ -906,13 +959,17 @@ class DslToWireMockClientConverterSpec extends Specification {
 		and:
 			wireMockRule.addStubMapping(mapping)
 		and:
-			def response = restTemplate.exchange(RequestEntity.post("${url}/users/password2".toURI())
-															  .header("Content-Type", "application/json")
-															  .body('''{"email":"abc@abc.com", "callback_url":"https://partners.com"}''')
-					, String)
+			def response =
+					restTemplate
+							.exchange(RequestEntity.post("${url}/users/password2".toURI())
+									.header("Content-Type", "application/json")
+									.body('''{"email":"abc@abc.com", "callback_url":"https://partners.com"}''')
+									, String)
 			response.headers.get('Content-Type') == ['application/json']
-			response.statusCodeValue == 404
-			JSONAssert.assertEquals('''{"code":"123123","message":"User not found by email == [not.existing@user.com]"}"''', response.body, false)
+			response.statusCode.value() == 404
+			JSONAssert
+					.assertEquals('''{"code":"123123","message":"User not found by email == [not.existing@user.com]"}"''',
+							response.body, false)
 	}
 
 	@Issue("#515")
@@ -965,8 +1022,12 @@ class DslToWireMockClientConverterSpec extends Specification {
 				}
 		''')
 		when:
-			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(new File("/"), file))).values().first()
+			String json =
+					converter.convertContents("Test", new ContractMetadata(
+							file.toPath(), false, 0, null,
+							ContractVerifierDslConverter
+									.convertAsCollection(new File("/"), file)))
+							.values().first()
 		then:
 			JSONAssert.assertEquals(
 					'''
@@ -1004,13 +1065,16 @@ class DslToWireMockClientConverterSpec extends Specification {
 		and:
 			wireMockRule.addStubMapping(mapping)
 		and:
-			def response = restTemplate.exchange(RequestEntity.post("${url}/users/password2".toURI())
-															  .header("Content-Type", "application/json")
-															  .body('''{"email":"abc@abc.com", "callback_url":"https://partners.com"}''')
-					, String)
+			def response =
+					restTemplate
+							.exchange(RequestEntity.post("${url}/users/password2".toURI())
+									.header("Content-Type", "application/json")
+									.body('''{"email":"abc@abc.com", "callback_url":"https://partners.com"}''')
+									, String)
 			response.headers.get('Content-Type') == ['application/json;charset=UTF-8']
-			response.statusCodeValue == 400
-			JSONAssert.assertEquals('''{"message":"[8.2 Profile/3.7 Bad Request]"}"''', response.body, false)
+			response.statusCode.value() == 400
+			JSONAssert.assertEquals('''{"message":"[8.2 Profile/3.7 Bad Request]"}"''',
+					response.body, false)
 	}
 
 	@Issue("#449")
@@ -1040,8 +1104,12 @@ class DslToWireMockClientConverterSpec extends Specification {
 			}
 		''')
 		when:
-			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(new File("/"), file))).values().first()
+			String json =
+					converter.convertContents("Test", new ContractMetadata(
+							file.toPath(), false, 0, null,
+							ContractVerifierDslConverter
+									.convertAsCollection(new File("/"), file)))
+							.values().first()
 		then:
 			JSONAssert.assertEquals(
 					'''
@@ -1071,7 +1139,7 @@ class DslToWireMockClientConverterSpec extends Specification {
 					.header("X-Smartup-Test", "asd123")
 					.build()
 					, String)
-			response.statusCodeValue == 204
+			response.statusCode.value() == 204
 	}
 
 
@@ -1103,8 +1171,12 @@ class DslToWireMockClientConverterSpec extends Specification {
         }
 """)
 		when:
-			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(new File("/"), file))).values().first()
+			String json =
+					converter.convertContents("Test", new ContractMetadata(
+							file.toPath(), false, 0, null,
+							ContractVerifierDslConverter
+									.convertAsCollection(new File("/"), file)))
+							.values().first()
 		then:
 			JSONAssert.assertEquals("""
 					 {
@@ -1127,10 +1199,14 @@ class DslToWireMockClientConverterSpec extends Specification {
 
 	StubMapping stubMappingIsValidWireMockStub(String mappingDefinition) {
 		StubMapping stubMapping = WireMockStubMapping.buildFrom(mappingDefinition)
-		stubMapping.request.bodyPatterns.findAll { it.isPresent() && it instanceof RegexPattern }.every {
+		stubMapping
+				.request
+				.bodyPatterns
+				.findAll { it.isPresent() && it instanceof RegexPattern }.every {
 			Pattern.compile(it.getValue())
 		}
-		assert !mappingDefinition.contains('org.springframework.cloud.contract.spec.internal')
+		assert !mappingDefinition
+				.contains('org.springframework.cloud.contract.spec.internal')
 		return stubMapping
 	}
 
@@ -1169,8 +1245,12 @@ class DslToWireMockClientConverterSpec extends Specification {
 				}
 			''')
 		when:
-			String json = converter.convertContents("Test", new ContractMetadata(file.toPath(), false, 0, null,
-					ContractVerifierDslConverter.convertAsCollection(new File("/"), file))).values().first()
+			String json =
+					converter.convertContents("Test", new ContractMetadata(
+							file.toPath(), false, 0, null,
+							ContractVerifierDslConverter
+									.convertAsCollection(new File("/"), file)))
+							.values().first()
 		then:
 			JSONAssert.assertEquals('''
 					{

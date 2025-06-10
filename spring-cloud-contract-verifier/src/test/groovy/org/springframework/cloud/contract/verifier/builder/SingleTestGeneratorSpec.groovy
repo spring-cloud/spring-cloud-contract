@@ -357,7 +357,7 @@ class SingleTestGeneratorSpec extends Specification {
 
 		then:
 			classStrings.each { clazz.contains(it) }
-			clazz.contains('@Inject ContractVerifierMessaging')
+			clazz.contains('@Autowired ContractVerifierMessaging')
 
 		and:
 			asserter(clazz)

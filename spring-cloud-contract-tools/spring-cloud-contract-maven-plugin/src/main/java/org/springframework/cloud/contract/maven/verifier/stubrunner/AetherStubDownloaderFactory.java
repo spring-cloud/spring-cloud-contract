@@ -16,10 +16,6 @@
 
 package org.springframework.cloud.contract.maven.verifier.stubrunner;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.maven.project.MavenProject;
@@ -27,12 +23,14 @@ import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import shaded.org.apache.maven.settings.Settings;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.stubrunner.AetherStubDownloader;
 import org.springframework.cloud.contract.stubrunner.StubDownloader;
 import org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Component;
 
 /**
  * Builds {@link StubDownloaderBuilder} for a Maven project.
@@ -40,8 +38,7 @@ import org.springframework.core.io.ResourceLoader;
  * @author Mariusz Smykula
  * @author Eddú Meléndez
  */
-@Named
-@Singleton
+@Component
 public class AetherStubDownloaderFactory {
 
 	private static final Log log = LogFactory.getLog(AetherStubDownloaderFactory.class);
@@ -52,7 +49,7 @@ public class AetherStubDownloaderFactory {
 
 	private final Settings settings;
 
-	@Inject
+	@Autowired
 	public AetherStubDownloaderFactory(RepositorySystem repoSystem, MavenProject project, Settings settings) {
 		this.repoSystem = repoSystem;
 		this.project = project;
