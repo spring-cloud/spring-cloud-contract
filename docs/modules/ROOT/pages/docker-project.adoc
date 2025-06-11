@@ -456,7 +456,7 @@ $ curl -X GET http://localhost:9876/api/books
 # You will receive contents of the JSON
 ----
 
-IMPORTANT: If you want use the stubs that you have built locally, on your host,
+IMPORTANT: If you want to use the stubs that you have built locally, on your host,
 you should set the `-e STUBRUNNER_STUBS_MODE=LOCAL` environment variable and mount
 the volume of your local m2 (`-v "$\{HOME}/.m2/:/home/scc/.m2:rw"`).
 
