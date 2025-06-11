@@ -5,9 +5,9 @@ name: Build
 
 on:
   push:
-    branches: [ main, 3.1.x, 3.0.x ]
+    branches: [ main, 4.3.x, 4.2.x, 4.1.x ]
   pull_request:
-    branches: [ main, 3.1.x, 3.0.x ]
+    branches: [ main, 4.3.x, 4.2.x, 4.1.x ]
 
 jobs:
   build:
@@ -29,4 +29,14 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
     - name: Build with Maven
-      run: ./mvnw clean install -B -U -Pspring,integration,docs
+      run: ./mvnw -s .settings.xml clean org.jacoco:jacoco-maven-plugin:prepare-agent install -U -B -Psonar,spring,integration -nsu --batch-mode -Dmaven.test.redirectTestOutputToFile=true -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+    - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v5
+        if: always() # always run even if the previous step fails
+        with:
+          report_paths: '**/surefire-reports/TEST-*.xml'
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: '**/surefire-reports/*'
