@@ -65,7 +65,7 @@
 		<xpath2.processor.version>2.1.100</xpath2.processor.version>
 		<xerces.version>2.12.2</xerces.version>
 		<jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
-		<exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
+		<exec-maven-plugin.version>3.5.1</exec-maven-plugin.version>
 
 		<contract.kotlin.version>2.1.10</contract.kotlin.version>
 		<commons-beanutils.version>1.9.4</commons-beanutils.version>
