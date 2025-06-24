@@ -35,7 +35,8 @@
 		<spring-cloud-commons.version>4.1.6-SNAPSHOT</spring-cloud-commons.version>
 		<jopt-simple.version>5.0.4</jopt-simple.version>
 		<cglib.version>3.3.0</cglib.version>
-		<spock-spring.version>2.3-groovy-4.0</spock-spring.version> <!-- @releaser:version-check-off -->
+		<spock-spring.version>2.3-groovy-4.0
+		</spock-spring.version> <!-- @releaser:version-check-off -->
 		<hoverfly-junit.version>0.2.2</hoverfly-junit.version>
 		<commons-text.version>1.11.0</commons-text.version>
 		<handlebars.version>4.3.1</handlebars.version>
@@ -49,7 +50,8 @@
 		<junit-vintage.version>5.10.1</junit-vintage.version>
 		<junit-jupiter.version>5.9.1</junit-jupiter.version>
 		<gmavenplus-plugin.version>1.13.0</gmavenplus-plugin.version>
-		<maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>  <!-- @releaser:version-check-off -->
+		<maven-surefire-plugin.version>3.2.5
+		</maven-surefire-plugin.version>  <!-- @releaser:version-check-off -->
 		<awaitility.version>4.2.0</awaitility.version>
 		<artemis.version>2.31.2</artemis.version>
 		<testcontainers.version>1.19.8</testcontainers.version>
@@ -414,9 +416,9 @@
 			</dependency>
 			<dependency>
 				<groupId>org.sonatype.sisu</groupId>
-				 <artifactId>sisu-inject-plexus</artifactId>
+				<artifactId>sisu-inject-plexus</artifactId>
 				<version>${sisu-inject-plexus.version}</version>
-			 </dependency>
+			</dependency>
 			<dependency>
 				<groupId>org.apache.maven.resolver</groupId>
 				<artifactId>maven-resolver</artifactId>
@@ -632,7 +634,9 @@
 		<repository>
 			<id>netflix-candidates</id>
 			<name>Netflix Candidates</name>
-			<url>https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates</url>
+			<url>
+				https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates
+			</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -726,6 +730,22 @@
 							<!-- Sets the VM argument line used when unit tests are run. -->
 							<argLine>${surefireArgLine}</argLine>
 							<argLine>${surefireArgLine}</argLine>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>central</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.sonatype.central</groupId>
+						<artifactId>central-publishing-maven-plugin</artifactId>
+						<configuration>
+							<excludeArtifacts>
+								<artifact>spring-cloud-contract-stub-runner-kafka</artifact>
+							</excludeArtifacts>
 						</configuration>
 					</plugin>
 				</plugins>
