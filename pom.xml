@@ -735,33 +735,6 @@
 				</plugins>
 			</build>
 		</profile>
-		<profile>
-			<id>central</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.sonatype.central</groupId>
-						<artifactId>central-publishing-maven-plugin</artifactId>
-						<configuration>
-							<excludeArtifacts>
-								<artifact>samples-messaging-camel</artifact>
-								<artifact>samples-messaging-integration</artifact>
-								<artifact>samples-messaging-amqp</artifact>
-								<artifact>samples-messaging-jms</artifact>
-								<artifact>spring-cloud-contract-stub-runner-boot-eureka</artifact>
-								<artifact>spring-cloud-contract-stub-runner-boot-zookeeper</artifact>
-								<artifact>spring-cloud-contract-stub-runner-context-path</artifact>
-								<artifact>spring-cloud-contract-stub-runner-integration</artifact>
-								<artifact>spring-cloud-contract-stub-runner-stream</artifact>
-								<artifact>spring-cloud-contract-stub-runner-amqp</artifact>
-								<artifact>spring-cloud-contract-stub-runner-jms</artifact>
-								<artifact>spring-cloud-contract-stub-runner-kafka</artifact>
-							</excludeArtifacts>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
 	</profiles>
 
 </project>
