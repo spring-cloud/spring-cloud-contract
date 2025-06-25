@@ -698,6 +698,7 @@
 						<artifactId>central-publishing-maven-plugin</artifactId>
 						<configuration>
 							<excludeArtifacts>
+								<artifact>spring-cloud-contract-tests</artifact>
 								<artifact>samples-messaging-camel</artifact>
 								<artifact>samples-messaging-integration</artifact>
 								<artifact>samples-messaging-amqp</artifact>
