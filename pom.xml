@@ -712,6 +712,8 @@
 								<artifact>spring-cloud-contract-stub-runner-jms</artifact>
 								<artifact>spring-cloud-contract-stub-runner-kafka</artifact>
 								<artifact>spring-cloud-contract-tests</artifact>
+								<artifact>spring-cloud-contract-gradle-plugin</artifact>
+								<artifact>org.springframework.cloud.contract.gradle.plugin</artifact>
 							</excludeArtifacts>
 						</configuration>
 					</plugin>
