@@ -16,4 +16,5 @@
 
 // Workaround to solve central empty artifact issue
 public class EmptyArtifactWorkaround {
+
 }
