@@ -109,9 +109,9 @@
 				</configuration>
 				<executions>
 					<execution>
-						<phase>pre-site</phase>
+						<phase>package</phase>
 						<goals>
-							<goal>dokka</goal>
+							<goal>javadocJar</goal>
 						</goals>
 					</execution>
 				</executions>
