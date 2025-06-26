@@ -6,5 +6,5 @@ FOLDER=`pwd`
 
 set -e
 
-./mvnw clean install ${@}
+./mvnw clean dokka:javadocJar install ${@}
 ${FOLDER}/scripts/generateDocs.sh ${@}
