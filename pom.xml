@@ -742,6 +742,22 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>central</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.sonatype.central</groupId>
+						<artifactId>central-publishing-maven-plugin</artifactId>
+						<configuration>
+							<excludeArtifacts>
+								<artifact>spring-cloud-contract-stub-runner-boot</artifact>
+							</excludeArtifacts>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 
 </project>
