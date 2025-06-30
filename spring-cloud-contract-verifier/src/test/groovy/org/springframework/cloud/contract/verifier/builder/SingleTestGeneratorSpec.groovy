@@ -838,7 +838,7 @@ class SingleTestGeneratorSpec extends Specification {
 			import io.restassured.RestAssured;
 			import org.junit.Before;
 			import org.springframework.boot.test.context.SpringBootTest;
-			import org.springframework.boot.test.web.server.LocalServerPort;
+			import org.springframework.boot.web.server.test.LocalServerPort;
 			
 			@SpringBootTest(classes = ContextPathTestingBaseClass.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 			class ContextPathTestingBaseClass {

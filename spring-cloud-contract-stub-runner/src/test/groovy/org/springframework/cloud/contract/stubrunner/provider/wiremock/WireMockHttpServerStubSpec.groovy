@@ -23,7 +23,7 @@ import spock.lang.Ignore
 import spock.lang.Specification
 
 import org.springframework.boot.test.system.OutputCaptureRule
-import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.web.server.test.client.TestRestTemplate
 import org.springframework.cloud.contract.stubrunner.HttpServerStubConfiguration
 import org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer
 import org.springframework.cloud.test.TestSocketUtils
