@@ -23,5 +23,26 @@
 			<artifactId>spring-cloud-contract-gradle-plugin</artifactId>
 		</dependency>
 	</dependencies>
+	<profiles>
+		<profile>
+			<id>central</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.sonatype.central</groupId>
+						<artifactId>central-publishing-maven-plugin</artifactId>
+						<configuration>
+							<excludeArtifacts>
+								<artifact>org.springframework.cloud.contract.gradle.plugin</artifact>
+							</excludeArtifacts>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>

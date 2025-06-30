@@ -1,6 +1,8 @@
 [[features-stub-runner-boot]]
 = Using the Stub Runner Boot Application
 
+WARNING:: Due to the limitations in the current artifact repository release tool, we cannot currently release executable jars and as of `4.1.6` we're skipping the release of this artifact. Stub Runner Boot is still available through the xref:../docker-project.adoc#docker-stubrunner[Docker Stub Runner Boot image], which is the preferred way of using the app. You can also access https://github.com/spring-cloud/spring-cloud-contract/https://github.com/spring-cloud/spring-cloud-contract/tree/main/spring-cloud-contract-stub-runner-boot[the sources in the project repository] and build the app yourself. If the required adjustments are made in the artifact repository tooling, we'll resume publishing this jar.
+
 include::partial$_attributes.adoc[]
 
 Spring Cloud Contract Stub Runner Boot is a Spring Boot application that exposes REST endpoints to
