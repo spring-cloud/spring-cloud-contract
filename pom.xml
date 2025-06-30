@@ -46,8 +46,8 @@
 		<slf4j.version>[2.0.0,)</slf4j.version>
 		<thin-jar.version>1.0.30.RELEASE</thin-jar.version>
 
-		<junit-vintage.version>5.12.1</junit-vintage.version>
-		<junit-jupiter.version>5.12.1</junit-jupiter.version>
+		<junit-vintage.version>5.13.1</junit-vintage.version>
+		<junit-jupiter.version>5.13.1</junit-jupiter.version>
 		<gmavenplus-plugin.version>1.13.0</gmavenplus-plugin.version>
 		<maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>  <!-- @releaser:version-check-off -->
 		<awaitility.version>4.2.0</awaitility.version>

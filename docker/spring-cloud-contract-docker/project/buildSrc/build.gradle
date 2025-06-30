@@ -7,7 +7,7 @@ repositories {
 
 ext {
 	roasterVersion = "2.22.3.Final"
-	junit5Version = "5.12.1"
+	junit5Version = "5.13.1"
 }
 
 dependencies {
@@ -17,6 +17,6 @@ dependencies {
 
 test {
 	useJUnitPlatform {
-		version = "5.12.1"
+		version = "5.13.1"
 	}
 }
