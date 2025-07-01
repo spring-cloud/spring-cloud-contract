@@ -26,7 +26,7 @@ import groovy.json.JsonSlurper
 import spock.lang.Issue
 import spock.lang.Specification
 
-import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.web.server.test.client.TestRestTemplate
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsEscapeHelper
 import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsJsonPathHelper

@@ -22,10 +22,10 @@ import org.mockito.ArgumentCaptor
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.SpyBean
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.stubrunner.StubTrigger
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean
 
 import static org.mockito.BDDMockito.then
 
@@ -37,7 +37,7 @@ class AmqpStubRunnerSpec {
 	@Autowired
 	StubTrigger stubTrigger
 
-	@SpyBean
+	@MockitoSpyBean
 	MessageSubscriber messageSubscriber
 
 	ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person)
