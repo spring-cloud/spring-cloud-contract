@@ -757,6 +757,9 @@
 						<configuration>
 							<excludeArtifacts>
 								<artifact>spring-cloud-contract-stub-runner-boot</artifact>
+								<artifact>spring-cloud-contract-docker-parent</artifact>
+								<artifact>spring-cloud-contract-specs</artifact>
+								<artifact>spring-cloud-contract-tests</artifact>
 							</excludeArtifacts>
 						</configuration>
 					</plugin>
