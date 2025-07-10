@@ -512,6 +512,16 @@
 		</license>
 	</licenses>
 
+	<scm>
+		<connection>scm:git:https://github.com/spring-cloud/spring-cloud-contract.git
+		</connection>
+		<developerConnection>
+			scm:git:git@github.com:spring-cloud/spring-cloud-contract.git
+		</developerConnection>
+		<url>https://github.com/spring-cloud/spring-cloud-contract</url>
+		<tag>HEAD</tag>
+	</scm>
+
 	<developers>
 		<developer>
 			<id>mariuszs</id>
@@ -526,24 +536,24 @@
 		<developer>
 			<id>dsyer</id>
 			<name>David Syer</name>
-			<email>dsyer@vmware.com</email>
+			<email>david.syer at broadcom.com</email>
 		</developer>
 		<developer>
 			<id>OlgaMaciaszek</id>
 			<name>Olga Maciaszek-Sharma</name>
-			<email>omaciaszeksharma@vmware.com</email>
+			<email>olga.maciaszek-sharma at broadcom.com</email>
+		</developer>
+		<developer>
+			<id>sgibb</id>
+			<name>Spencer Gibb</name>
+			<email>spencer.gibb at broadcom.com</email>
+		</developer>
+		<developer>
+			<id>rbaxter</id>
+			<name>Ryan Baxter</name>
+			<email>ryan.baxter at broadcom.com</email>
 		</developer>
 	</developers>
-
-	<scm>
-		<connection>scm:git:https://github.com/spring-cloud/spring-cloud-contract.git
-		</connection>
-		<developerConnection>
-			scm:git:git@github.com:spring-cloud/spring-cloud-contract.git
-		</developerConnection>
-		<url>https://github.com/spring-cloud/spring-cloud-contract</url>
-		<tag>HEAD</tag>
-	</scm>
 
 	<issueManagement>
 		<system>GitHub</system>
@@ -622,10 +632,6 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>flatten-maven-plugin</artifactId>
-			</plugin>
 		</plugins>
 	</build>
 
@@ -634,6 +640,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</reporting>
