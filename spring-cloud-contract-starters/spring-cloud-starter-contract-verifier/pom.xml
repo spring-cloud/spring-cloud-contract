@@ -7,14 +7,12 @@
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-starters</artifactId>
 		<version>4.2.2-SNAPSHOT</version>
+		<relativePath>../../spring-cloud-contract-starters/pom.xml</relativePath>
 	</parent>
-
 	<artifactId>spring-cloud-starter-contract-verifier</artifactId>
 	<packaging>jar</packaging>
-
 	<name>Spring Cloud Contract Verifier Starter</name>
 	<description>Spring Cloud Contract Verifier Starter</description>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>

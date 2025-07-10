@@ -24,14 +24,12 @@
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-starters</artifactId>
 		<version>4.2.2-SNAPSHOT</version>
+		<relativePath>../../spring-cloud-contract-starters/pom.xml</relativePath>
 	</parent>
-
 	<artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
 	<packaging>jar</packaging>
-
 	<name>Spring Cloud Contract Stub Runner Starter</name>
 	<description>Spring Cloud Contract Stub Runner Starter</description>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>

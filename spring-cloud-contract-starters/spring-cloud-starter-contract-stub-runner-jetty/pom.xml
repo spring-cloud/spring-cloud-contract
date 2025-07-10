@@ -7,16 +7,14 @@
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-starters</artifactId>
 		<version>4.2.2-SNAPSHOT</version>
+		<relativePath>../../spring-cloud-contract-starters/pom.xml</relativePath>
 	</parent>
-
 	<artifactId>spring-cloud-starter-contract-stub-runner-jetty</artifactId>
 	<packaging>jar</packaging>
-
 	<name>Spring Cloud Contract Stub Runner Starter Jetty</name>
 	<description>Spring Cloud Contract Stub Runner Jetty runs wiremock stubs with "native"
 		jetty. Don't use this in a Spring Boot app with its own embedded container.
 	</description>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
