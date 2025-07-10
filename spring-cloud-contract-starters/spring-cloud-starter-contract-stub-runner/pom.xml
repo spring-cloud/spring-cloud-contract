@@ -24,7 +24,7 @@
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-contract-starters</artifactId>
 		<version>4.2.2-SNAPSHOT</version>
-		<relativePath>..</relativePath>
+		<relativePath>../../spring-cloud-contract-starters/pom.xml</relativePath>
 	</parent>
 	<artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
 	<packaging>jar</packaging>
