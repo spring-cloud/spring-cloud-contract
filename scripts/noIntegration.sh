@@ -6,5 +6,5 @@ FOLDER=`pwd`
 
 set -e
 
-./mvnw clean install ${@}
+./mvnw clean install -DskipTests ${@}
 ${FOLDER}/scripts/generateDocs.sh ${@}
