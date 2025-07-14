@@ -68,6 +68,7 @@
 		<xerces.version>2.12.2</xerces.version>
 		<jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
 		<exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
+		<flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
 
 		<contract.kotlin.version>1.8.22</contract.kotlin.version>
 		<commons-beanutils.version>1.9.4</commons-beanutils.version>
@@ -506,6 +507,23 @@
 		<url>https://spring.io/</url>
 	</organization>
 
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0</url>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>scm:git:https://github.com/spring-cloud/spring-cloud-contract.git
+		</connection>
+		<developerConnection>
+			scm:git:git@github.com:spring-cloud/spring-cloud-contract.git
+		</developerConnection>
+		<url>https://github.com/spring-cloud/spring-cloud-contract</url>
+		<tag>HEAD</tag>
+	</scm>
+
 	<developers>
 		<developer>
 			<id>mariuszs</id>
@@ -520,24 +538,24 @@
 		<developer>
 			<id>dsyer</id>
 			<name>David Syer</name>
-			<email>dsyer@vmware.com</email>
+			<email>david.syer at broadcom.com</email>
 		</developer>
 		<developer>
 			<id>OlgaMaciaszek</id>
 			<name>Olga Maciaszek-Sharma</name>
-			<email>omaciaszeksharma@vmware.com</email>
+			<email>olga.maciaszek-sharma at broadcom.com</email>
+		</developer>
+		<developer>
+			<id>sgibb</id>
+			<name>Spencer Gibb</name>
+			<email>spencer.gibb at broadcom.com</email>
+		</developer>
+		<developer>
+			<id>rbaxter</id>
+			<name>Ryan Baxter</name>
+			<email>ryan.baxter at broadcom.com</email>
 		</developer>
 	</developers>
-
-	<scm>
-		<connection>scm:git:https://github.com/spring-cloud/spring-cloud-contract.git
-		</connection>
-		<developerConnection>
-			scm:git:git@github.com:spring-cloud/spring-cloud-contract.git
-		</developerConnection>
-		<url>https://github.com/spring-cloud/spring-cloud-contract</url>
-		<tag>HEAD</tag>
-	</scm>
 
 	<issueManagement>
 		<system>GitHub</system>
@@ -555,7 +573,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>flatten-maven-plugin</artifactId>
-					<version>1.5.0</version>
+					<version>${flatten-maven-plugin.version}</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -615,6 +633,10 @@
 				<configuration>
 					<skip>true</skip>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
@@ -752,6 +774,40 @@
 						<configuration>
 							<excludeArtifacts>
 								<artifact>spring-cloud-contract-stub-runner-boot</artifact>
+								<artifact>spring-cloud-contract-dependencies</artifact>
+								<artifact>spring-cloud-contract-parent</artifact>
+								<artifact>spring-cloud-contract-spec-java</artifact>
+								<artifact>spring-cloud-contract-spec-groovy</artifact>
+								<artifact>spring-cloud-contract-spec</artifact>
+								<artifact>spring-cloud-contract-spec-kotlin</artifact>
+								<artifact>spring-cloud-contract-specs</artifact>
+								<artifact>spring-cloud-contract-shade</artifact>
+								<artifact>spring-cloud-starter-contract-verifier</artifact>
+								<artifact>spring-cloud-starter-contract-stub-runner</artifact>
+								<artifact>spring-cloud-starter-contract-stub-runner-jetty</artifact>
+								<artifact>spring-cloud-contract-starters</artifact>
+								<artifact>spring-cloud-contract-wiremock</artifact>
+								<artifact>spring-cloud-contract-tools</artifact>
+								<artifact>spring-cloud-contract-converters</artifact>
+								<artifact>spring-cloud-contract-maven-plugin</artifact>
+								<artifact>spring-cloud-contract-verifier</artifact>
+								<artifact>spring-cloud-contract-stub-runner</artifact>
+								<artifact>spring-cloud-contract-docs</artifact>
+								<artifact>spring-cloud-contract-tests</artifact>
+								<artifact>spring-cloud-contract-sample-amqp</artifact>
+								<artifact>spring-cloud-contract-sample-camel</artifact>
+								<artifact>spring-cloud-contract-sample-integration</artifact>
+								<artifact>spring-cloud-contract-sample-jms</artifact>
+								<artifact>spring-cloud-contract-stub-runner-amqp</artifact>
+								<artifact>spring-cloud-contract-stub-runner-boot-eureka</artifact>
+								<artifact>spring-cloud-contract-stub-runner-boot-zookeeper</artifact>
+								<artifact>spring-cloud-contract-stub-runner-context-path</artifact>
+								<artifact>spring-cloud-contract-stub-runner-integration</artifact>
+								<artifact>spring-cloud-contract-stub-runner-jms</artifact>
+								<artifact>spring-cloud-contract-stub-runner-kafka</artifact>
+								<artifact>spring-cloud-contract-stub-runner-moco</artifact>
+								<artifact>spring-cloud-contract-stub-runner-moco-contract-jar</artifact>
+								<artifact>spring-cloud-contract-stub-runner-stream</artifact>
 							</excludeArtifacts>
 						</configuration>
 					</plugin>
