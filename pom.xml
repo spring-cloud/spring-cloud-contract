@@ -774,40 +774,6 @@
 						<configuration>
 							<excludeArtifacts>
 								<artifact>spring-cloud-contract-stub-runner-boot</artifact>
-								<artifact>spring-cloud-contract-dependencies</artifact>
-								<artifact>spring-cloud-contract-parent</artifact>
-								<artifact>spring-cloud-contract-spec-java</artifact>
-								<artifact>spring-cloud-contract-spec-groovy</artifact>
-								<artifact>spring-cloud-contract-spec</artifact>
-								<artifact>spring-cloud-contract-spec-kotlin</artifact>
-								<artifact>spring-cloud-contract-specs</artifact>
-								<artifact>spring-cloud-contract-shade</artifact>
-								<artifact>spring-cloud-starter-contract-verifier</artifact>
-								<artifact>spring-cloud-starter-contract-stub-runner</artifact>
-								<artifact>spring-cloud-starter-contract-stub-runner-jetty</artifact>
-								<artifact>spring-cloud-contract-starters</artifact>
-								<artifact>spring-cloud-contract-wiremock</artifact>
-								<artifact>spring-cloud-contract-tools</artifact>
-								<artifact>spring-cloud-contract-converters</artifact>
-								<artifact>spring-cloud-contract-maven-plugin</artifact>
-								<artifact>spring-cloud-contract-verifier</artifact>
-								<artifact>spring-cloud-contract-stub-runner</artifact>
-								<artifact>spring-cloud-contract-docs</artifact>
-								<artifact>spring-cloud-contract-tests</artifact>
-								<artifact>spring-cloud-contract-sample-amqp</artifact>
-								<artifact>spring-cloud-contract-sample-camel</artifact>
-								<artifact>spring-cloud-contract-sample-integration</artifact>
-								<artifact>spring-cloud-contract-sample-jms</artifact>
-								<artifact>spring-cloud-contract-stub-runner-amqp</artifact>
-								<artifact>spring-cloud-contract-stub-runner-boot-eureka</artifact>
-								<artifact>spring-cloud-contract-stub-runner-boot-zookeeper</artifact>
-								<artifact>spring-cloud-contract-stub-runner-context-path</artifact>
-								<artifact>spring-cloud-contract-stub-runner-integration</artifact>
-								<artifact>spring-cloud-contract-stub-runner-jms</artifact>
-								<artifact>spring-cloud-contract-stub-runner-kafka</artifact>
-								<artifact>spring-cloud-contract-stub-runner-moco</artifact>
-								<artifact>spring-cloud-contract-stub-runner-moco-contract-jar</artifact>
-								<artifact>spring-cloud-contract-stub-runner-stream</artifact>
 							</excludeArtifacts>
 						</configuration>
 					</plugin>
