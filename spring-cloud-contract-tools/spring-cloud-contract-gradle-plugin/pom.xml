@@ -312,15 +312,6 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.sonatype.central</groupId>
-						<artifactId>central-publishing-maven-plugin</artifactId>
-						<configuration>
-							<excludeArtifacts>
-								<artifact>spring-cloud-contract-gradle-plugin</artifact>
-							</excludeArtifacts>
-						</configuration>
-					</plugin>
-					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
 						<!-- we need a different version so as not to inherit from parent -->
