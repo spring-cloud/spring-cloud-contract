@@ -16,6 +16,57 @@
 
 	<name>Spring Cloud Contract Tools</name>
 	<description>Spring Cloud Contract Tools</description>
+	<url>https://github.com/spring-cloud/spring-cloud-contract</url>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0</url>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>scm:git:https://github.com/spring-cloud/spring-cloud-contract.git
+		</connection>
+		<developerConnection>
+			scm:git:git@github.com:spring-cloud/spring-cloud-contract.git
+		</developerConnection>
+		<url>https://github.com/spring-cloud/spring-cloud-contract</url>
+		<tag>HEAD</tag>
+	</scm>
+
+	<developers>
+		<developer>
+			<id>mariuszs</id>
+			<name>Mariusz Smykula</name>
+			<email>mariuszs@gmail.com</email>
+		</developer>
+		<developer>
+			<id>marcingrzejszczak</id>
+			<name>Marcin Grzejszczak</name>
+			<email>mgrzejszczak@vmware.com</email>
+		</developer>
+		<developer>
+			<id>dsyer</id>
+			<name>David Syer</name>
+			<email>david.syer at broadcom.com</email>
+		</developer>
+		<developer>
+			<id>OlgaMaciaszek</id>
+			<name>Olga Maciaszek-Sharma</name>
+			<email>olga.maciaszek-sharma at broadcom.com</email>
+		</developer>
+		<developer>
+			<id>sgibb</id>
+			<name>Spencer Gibb</name>
+			<email>spencer.gibb at broadcom.com</email>
+		</developer>
+		<developer>
+			<id>rbaxter</id>
+			<name>Ryan Baxter</name>
+			<email>ryan.baxter at broadcom.com</email>
+		</developer>
+	</developers>
 
 	<modules>
 		<module>spring-cloud-contract-converters</module>
