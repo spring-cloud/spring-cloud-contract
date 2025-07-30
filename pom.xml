@@ -52,7 +52,7 @@
 		<gmavenplus-plugin.version>1.13.0</gmavenplus-plugin.version>
 		<maven-surefire-plugin.version>3.2.5
 		</maven-surefire-plugin.version>  <!-- @releaser:version-check-off -->
-		<awaitility.version>4.2.0</awaitility.version>
+		<awaitility.version>4.2.2</awaitility.version>
 		<artemis.version>2.31.2</artemis.version>
 		<testcontainers.version>1.19.8</testcontainers.version>
 		<hamcrest.version>2.2</hamcrest.version>
