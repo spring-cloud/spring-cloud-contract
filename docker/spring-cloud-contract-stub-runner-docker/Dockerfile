@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 
 ARG SDKMAN_JAVA_INSTALLATION=17.0.1-tem
-ARG THIN_REPO=https://repo1.maven.org/maven2/
+ARG THIN_REPO=https://repo.spring.io/snapshot
 
 LABEL Author="Marcin Grzejszczak <mgrzejszczak@pivotal.io>"
 LABEL Author="Bastian Doetsch <bdoetsch@vmware.com>"
