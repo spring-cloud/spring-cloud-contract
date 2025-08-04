@@ -22,18 +22,18 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-spec-kotlin</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-stream-binder-rabbit</artifactId>
-			<!--Because of the docker creation process explicit version is needed-->
-			<version>5.0.0-M1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-stream-binder-kafka</artifactId>
-			<!--Because of the docker creation process explicit version is needed-->
-			<version>5.0.0-M1</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.cloud</groupId>-->
+<!--			<artifactId>spring-cloud-stream-binder-rabbit</artifactId>-->
+<!--			&lt;!&ndash;Because of the docker creation process explicit version is needed&ndash;&gt;-->
+<!--			<version>5.0.0-M1</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.cloud</groupId>-->
+<!--			<artifactId>spring-cloud-stream-binder-kafka</artifactId>-->
+<!--			&lt;!&ndash;Because of the docker creation process explicit version is needed&ndash;&gt;-->
+<!--			<version>5.0.0-M1</version>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
