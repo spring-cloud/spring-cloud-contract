@@ -288,7 +288,7 @@
 		<profile>
 			<id>milestone</id>
 			<properties>
-				<thin.repo>https://repo.spring.io/milestone</thin.repo>
+				<thin.repo>https://repo.maven.apache.org/maven2</thin.repo>
 			</properties>
 		</profile>
 		<profile>
