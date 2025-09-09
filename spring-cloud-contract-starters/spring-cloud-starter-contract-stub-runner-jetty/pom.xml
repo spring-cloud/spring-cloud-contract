@@ -21,16 +21,14 @@
 			<artifactId>spring-cloud-contract-stub-runner</artifactId>
 		</dependency>
 		<dependency>
-			<artifactId>jetty-ee10-servlet</artifactId>
 			<groupId>org.eclipse.jetty.ee10</groupId>
+			<artifactId>jetty-ee10-servlet</artifactId>
+			<version>12.1.1</version>
 		</dependency>
 		<dependency>
-			<artifactId>jetty-ee10-servlet</artifactId>
 			<groupId>org.eclipse.jetty.ee10</groupId>
-		</dependency>
-		<dependency>
 			<artifactId>jetty-ee10-servlets</artifactId>
-			<groupId>org.eclipse.jetty.ee10</groupId>
+			<version>12.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>cglib</groupId>

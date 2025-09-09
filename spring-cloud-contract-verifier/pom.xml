@@ -252,13 +252,15 @@
 			<scope>test</scope>
 		</dependency>-->
 		<dependency>
-			<artifactId>jetty-ee10-servlet</artifactId>
 			<groupId>org.eclipse.jetty.ee10</groupId>
+			<artifactId>jetty-ee10-servlet</artifactId>
+			<version>12.1.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<artifactId>jetty-ee10-servlets</artifactId>
 			<groupId>org.eclipse.jetty.ee10</groupId>
+			<artifactId>jetty-ee10-servlets</artifactId>
+			<version>12.1.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
