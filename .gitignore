@@ -22,3 +22,4 @@ docs/package.json
 package-lock.json
 .gradle
 dependency-reduced-pom.xml
+.flattened-pom.xml
