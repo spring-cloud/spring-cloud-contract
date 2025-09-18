@@ -16,8 +16,7 @@
 
 package com.example;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -50,19 +49,13 @@ class Issue178ListenerConfiguration {
 
 	@Bean
 	MessageListener exampleListener(final RabbitTemplate rabbitTemplate) {
-		return new MessageListener() {
-			public void onMessage(Message message) {
-				System.out.println("received: " + message);
-				try {
-					String payload = new ObjectMapper()
-						.writeValueAsString(new MyPojo("992e46d8-ab05-4a26-a740-6ef7b0daeab3", "CREATED"));
-					Message outputMessage = MessageBuilder.withBody(payload.getBytes()).build();
-					rabbitTemplate.send(issue178OutputExchange().getName(), "routingkey", outputMessage);
-				}
-				catch (JsonProcessingException e) {
-					throw new RuntimeException(e);
-				}
-			}
+		return message -> {
+			System.out.println("received: " + message);
+			String payload = new ObjectMapper()
+				.writeValueAsString(new MyPojo("992e46d8-ab05-4a26-a740-6ef7b0daeab3", "CREATED"));
+			Message outputMessage = MessageBuilder.withBody(payload.getBytes()).build();
+			rabbitTemplate.send(issue178OutputExchange().getName(), "routingkey", outputMessage);
+
 		};
 	}
 
