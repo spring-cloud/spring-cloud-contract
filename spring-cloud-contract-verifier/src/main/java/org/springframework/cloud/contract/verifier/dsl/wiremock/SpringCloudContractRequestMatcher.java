@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import com.github.tomakehurst.wiremock.extension.Parameters;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.matching.MatchResult;
@@ -145,7 +145,7 @@ class GraphQlMatcher implements RequestMatcher {
 
 	private static final Log log = LogFactory.getLog(GraphQlMatcher.class);
 
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final JsonMapper objectMapper = new JsonMapper();
 
 	@Override
 	public MatchResult match(List<YamlContract> contracts, Request request, Parameters parameters) {

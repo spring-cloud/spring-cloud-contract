@@ -20,11 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.extension.PostServeActionDefinition;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.json.JsonMapper;
 
 import org.springframework.cloud.contract.spec.Contract;
 
@@ -119,10 +118,10 @@ class DefaultWireMockStubPostProcessorTests {
 	}
 
 	@Test
-	void should_merge_stub_mappings_when_stub_mapping_is_map() throws JsonProcessingException {
+	void should_merge_stub_mappings_when_stub_mapping_is_map() {
 		Contract contract = new Contract();
 		Map<String, Object> map = new HashMap<>();
-		map.put("stubMapping", new ObjectMapper().readValue(POST_SERVE_ACTION, HashMap.class));
+		map.put("stubMapping", new JsonMapper().readValue(POST_SERVE_ACTION, HashMap.class));
 		contract.getMetadata().put("wiremock", map);
 		StubMapping stubMapping = StubMapping.buildFrom(STUB_MAPPING);
 
@@ -152,13 +151,14 @@ class DefaultWireMockStubPostProcessorTests {
 		then(result.getRequest().getMethod().getName()).isEqualTo("GET");
 		then(result.getResponse().getStatus()).isEqualTo(200);
 		then(result.getResponse().getBody()).isEqualTo("pong");
-		then(result.getPostServeActions().stream().map(a -> a.getName()).collect(Collectors.toList()))
-			.contains("webhook");
+		then(result.getPostServeActions().stream().map(a -> a.getName())
+				.collect(Collectors.toList()))
+				.contains("webhook");
 		PostServeActionDefinition definition = result.getPostServeActions()
-			.stream()
-			.filter(a -> a.getName().equals("webhook"))
-			.findFirst()
-			.orElseThrow(() -> new AssertionError("No webhook action found"));
+				.stream()
+				.filter(a -> a.getName().equals("webhook"))
+				.findFirst()
+				.orElseThrow(() -> new AssertionError("No webhook action found"));
 		then(definition.getParameters().getString("method")).isEqualTo("POST");
 	}
 

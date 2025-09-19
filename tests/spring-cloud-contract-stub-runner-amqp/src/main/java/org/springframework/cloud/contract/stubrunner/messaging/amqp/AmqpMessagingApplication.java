@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.contract.stubrunner.messaging.amqp;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -29,7 +29,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.amqp.support.converter.ContentTypeDelegatingMessageConverter;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -47,8 +47,8 @@ public class AmqpMessagingApplication {
 	}
 
 	@Bean
-	public MessageConverter messageConverter(ObjectMapper objectMapper) {
-		final Jackson2JsonMessageConverter jsonMessageConverter = new Jackson2JsonMessageConverter(objectMapper);
+	public MessageConverter messageConverter(JsonMapper jsonMapper) {
+		final JacksonJsonMessageConverter jsonMessageConverter = new JacksonJsonMessageConverter(jsonMapper);
 		jsonMessageConverter.setCreateMessageIds(true);
 		final ContentTypeDelegatingMessageConverter messageConverter = new ContentTypeDelegatingMessageConverter(
 				jsonMessageConverter);
@@ -78,8 +78,8 @@ public class AmqpMessagingApplication {
 		@Bean
 		public Binding binding() {
 			return BindingBuilder.bind(new Queue("test.queue"))
-				.to(new DirectExchange("contract-test.exchange"))
-				.with("#");
+					.to(new DirectExchange("contract-test.exchange"))
+					.with("#");
 		}
 		// end::amqp_binding[]
 

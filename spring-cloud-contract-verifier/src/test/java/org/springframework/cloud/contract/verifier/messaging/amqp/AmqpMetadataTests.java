@@ -16,9 +16,8 @@
 
 package org.springframework.cloud.contract.verifier.messaging.amqp;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.junit.jupiter.api.Test;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
@@ -27,7 +26,7 @@ class AmqpMetadataTests {
 	YAMLMapper mapper = new YAMLMapper();
 
 	@Test
-	void should_parse_the_metadata_entry() throws JsonProcessingException {
+	void should_parse_the_metadata_entry() {
 		// @formatter:off
 		String yamlEntry = "amqp:\n"
 				+ "  input:\n"
@@ -45,14 +44,20 @@ class AmqpMetadataTests {
 		// @formatter:on
 
 		AmqpMetadata metadata = AmqpMetadata
-			.fromMetadata(this.mapper.readerForMapOf(Object.class).readValue(yamlEntry));
+				.fromMetadata(this.mapper.readerForMapOf(Object.class)
+						.readValue(yamlEntry));
 
-		then(metadata.getInput().getConnectToBroker().getAdditionalOptions()).isEqualTo("foo1");
-		then(metadata.getInput().getConnectToBroker().getDeclareQueueWithName()).isEqualTo("foo2");
+		then(metadata.getInput().getConnectToBroker()
+				.getAdditionalOptions()).isEqualTo("foo1");
+		then(metadata.getInput().getConnectToBroker()
+				.getDeclareQueueWithName()).isEqualTo("foo2");
 		then(metadata.getInput().getMessageProperties().getReplyTo()).isEqualTo("foo3");
-		then(metadata.getOutputMessage().getConnectToBroker().getAdditionalOptions()).isEqualTo("bar1");
-		then(metadata.getOutputMessage().getConnectToBroker().getDeclareQueueWithName()).isEqualTo("bar2");
-		then(metadata.getOutputMessage().getMessageProperties().getReplyTo()).isEqualTo("bar3");
+		then(metadata.getOutputMessage().getConnectToBroker()
+				.getAdditionalOptions()).isEqualTo("bar1");
+		then(metadata.getOutputMessage().getConnectToBroker()
+				.getDeclareQueueWithName()).isEqualTo("bar2");
+		then(metadata.getOutputMessage().getMessageProperties()
+				.getReplyTo()).isEqualTo("bar3");
 
 	}
 

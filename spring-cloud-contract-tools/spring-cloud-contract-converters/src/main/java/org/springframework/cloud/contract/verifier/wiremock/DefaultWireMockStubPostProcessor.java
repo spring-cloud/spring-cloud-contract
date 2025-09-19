@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.common.Metadata;
 import com.github.tomakehurst.wiremock.extension.Parameters;
 import com.github.tomakehurst.wiremock.extension.PostServeActionDefinition;
@@ -30,12 +28,13 @@ import com.github.tomakehurst.wiremock.http.DelayDistribution;
 import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+import tools.jackson.databind.json.JsonMapper;
 
 import org.springframework.cloud.contract.spec.Contract;
 
 class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final JsonMapper objectMapper = new JsonMapper();
 
 	@Override
 	public StubMapping postProcess(StubMapping stubMapping, Contract contract) {
@@ -67,9 +66,12 @@ class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 
 	public ResponseDefinition mergedResponse(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
 		return new ResponseDefinition(stubMapping.getResponse().getStatus(),
-				stubMapping.getResponse().getStatusMessage(), stubMapping.getResponse().getBody(),
-				stubMapping.getResponse().getJsonBody(), stubMapping.getResponse().getBase64Body(),
-				stubMapping.getResponse().getBodyFileName(), stubMapping.getResponse().getHeaders(),
+				stubMapping.getResponse().getStatusMessage(), stubMapping.getResponse()
+				.getBody(),
+				stubMapping.getResponse().getJsonBody(), stubMapping.getResponse()
+				.getBase64Body(),
+				stubMapping.getResponse().getBodyFileName(), stubMapping.getResponse()
+				.getHeaders(),
 				stubMapping.getResponse().getAdditionalProxyRequestHeaders(),
 				fixedDelayMilliseconds(stubMapping, stubMappingFromMetadata),
 				delayDistribution(stubMapping, stubMappingFromMetadata),
@@ -95,17 +97,20 @@ class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 
 	public List<String> transformers(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
 		return stubMappingFromMetadata.getResponse().getTransformers() != null
-				? stubMappingFromMetadata.getResponse().getTransformers() : stubMapping.getResponse().getTransformers();
+				? stubMappingFromMetadata.getResponse()
+				.getTransformers() : stubMapping.getResponse().getTransformers();
 	}
 
 	public Fault fault(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
 		return stubMappingFromMetadata.getResponse().getFault() != null
-				? stubMappingFromMetadata.getResponse().getFault() : stubMapping.getResponse().getFault();
+				? stubMappingFromMetadata.getResponse()
+				.getFault() : stubMapping.getResponse().getFault();
 	}
 
 	public String proxyBaseUrl(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
 		return stubMappingFromMetadata.getResponse().getProxyBaseUrl() != null
-				? stubMappingFromMetadata.getResponse().getProxyBaseUrl() : stubMapping.getResponse().getProxyBaseUrl();
+				? stubMappingFromMetadata.getResponse()
+				.getProxyBaseUrl() : stubMapping.getResponse().getProxyBaseUrl();
 	}
 
 	public String proxyUrlPrefixToRemove(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
@@ -140,25 +145,22 @@ class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 			return (StubMapping) wiremock;
 		}
 		else if (wiremock instanceof Map) {
-			try {
-				return StubMapping.buildFrom(this.objectMapper.writeValueAsString(wiremock));
-			}
-			catch (JsonProcessingException e) {
-				throw new IllegalStateException("Failed to build StubMapping for map [" + wiremock + "]", e);
-			}
+			return StubMapping.buildFrom(this.objectMapper.writeValueAsString(wiremock));
 		}
 		throw new UnsupportedOperationException("Unsupported type for wiremock metadata extension");
 	}
 
 	@Override
 	public boolean isApplicable(Contract contract) {
-		boolean contains = contract.getMetadata().containsKey(WireMockMetaData.METADATA_KEY);
+		boolean contains = contract.getMetadata()
+				.containsKey(WireMockMetaData.METADATA_KEY);
 		if (!contains) {
 			return false;
 		}
-		Object stubMapping = WireMockMetaData.fromMetadata(contract.getMetadata()).getStubMapping();
+		Object stubMapping = WireMockMetaData.fromMetadata(contract.getMetadata())
+				.getStubMapping();
 		return WireMockMetaData.APPLICABLE_CLASSES.stream()
-			.anyMatch(aClass -> aClass.isAssignableFrom(stubMapping.getClass()));
+				.anyMatch(aClass -> aClass.isAssignableFrom(stubMapping.getClass()));
 	}
 
 }

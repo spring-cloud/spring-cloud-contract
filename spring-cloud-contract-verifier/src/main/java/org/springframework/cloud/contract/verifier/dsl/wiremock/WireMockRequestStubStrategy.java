@@ -29,8 +29,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.extension.Parameters;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
@@ -174,15 +173,10 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 					.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(body);
 				if ((values.isEmpty() && request.getBodyMatchers() != null && !request.getBodyMatchers().hasMatchers())
 						|| onlySizeAssertionsArePresent(values)) {
-					try {
 						requestPattern.withRequestBody(WireMock.equalToJson(
-								new ObjectMapper().writeValueAsString(
+								new JsonMapper().writeValueAsString(
 										getMatchingStrategy(request.getBody().getClientValue()).getClientValue()),
 								false, false));
-					}
-					catch (JsonProcessingException e) {
-						throw new IllegalArgumentException("The MatchingStrategy could not be serialized", e);
-					}
 				}
 				else {
 					values.stream()

@@ -24,15 +24,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
+import com.github.victools.jsonschema.generator.OptionPreset;
+import com.github.victools.jsonschema.generator.SchemaGenerator;
+import com.github.victools.jsonschema.generator.SchemaGeneratorConfig;
+import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
+import com.github.victools.jsonschema.generator.SchemaVersion;
+import com.github.victools.jsonschema.module.jackson.JacksonModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.dataformat.yaml.YAMLMapper;
+import tools.jackson.dataformat.yaml.YAMLWriteFeature;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -71,11 +75,16 @@ public class Main {
 		log.info("Generated schema!");
 	}
 
-	private String generateJsonSchemaForClass(Class clazz) throws JsonProcessingException {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.enable(SerializationFeature.INDENT_OUTPUT);
-		JsonSchemaGenerator schemaGen = new JsonSchemaGenerator(mapper);
-		JsonSchema schema = schemaGen.generateSchema(clazz);
+	private String generateJsonSchemaForClass(Class clazz) {
+		JsonMapper mapper = JsonMapper.builder()
+				.enable(SerializationFeature.INDENT_OUTPUT)
+				.build();
+		SchemaGeneratorConfigBuilder configBuilder = new SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2020_12,
+				OptionPreset.PLAIN_JSON)
+				.with(new JacksonModule());
+		SchemaGeneratorConfig config = configBuilder.build();
+		SchemaGenerator generator = new SchemaGenerator(config);
+		JsonNode schema = generator.generateSchema(clazz);
 		return mapper.writeValueAsString(schema);
 	}
 
@@ -89,9 +98,10 @@ public class Main {
 	}
 
 	private StringBuilder adocWithMetadata(List<Class> metadata) throws Exception {
-		YAMLMapper mapper = new YAMLMapper();
-		mapper.enable(SerializationFeature.INDENT_OUTPUT);
-		mapper.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
+		YAMLMapper mapper = YAMLMapper.builder()
+				.enable(SerializationFeature.INDENT_OUTPUT)
+				.disable(YAMLWriteFeature.WRITE_DOC_START_MARKER)
+				.build();
 		StringBuilder sb = new StringBuilder();
 		for (Class metadatum : metadata) {
 			Constructor constructor = null;

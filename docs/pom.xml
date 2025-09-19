@@ -24,6 +24,7 @@
 		<!-- Aligned with Groovy in SC-Build -->
 		<groovy.version>4.0.6</groovy.version>
 		<generate-adoc-resource.phase>process-classes</generate-adoc-resource.phase>
+		<jsonschema.version>4.38.0</jsonschema.version>
 	</properties>
 
 	<build>
@@ -186,9 +187,18 @@
 					<artifactId>spring-amqp</artifactId>
 				</dependency>
 				<dependency>
-					<groupId>com.fasterxml.jackson.module</groupId>
-					<artifactId>jackson-module-jsonSchema</artifactId>
-					<version>${jackson-module-jsonSchema.version}</version>
+					<groupId>tools.jackson.dataformat</groupId>
+					<artifactId>jackson-dataformat-yaml</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>com.github.victools</groupId>
+					<artifactId>jsonschema-generator</artifactId>
+					<version>${jsonschema.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.github.victools</groupId>
+					<artifactId>jsonschema-module-jackson</artifactId>
+					<version>${jsonschema.version}</version>
 				</dependency>
 			</dependencies>
 		</profile>

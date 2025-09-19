@@ -16,8 +16,7 @@
 
 package org.springframework.cloud.contract.verifier.dsl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +25,7 @@ class ContractVerifierMetadataTests {
 	YAMLMapper mapper = new YAMLMapper();
 
 	@Test
-	void should_parse_the_metadata_entry() throws JsonProcessingException {
+	void should_parse_the_metadata_entry() {
 		// @formatter:off
 		String yamlEntry = "verifier:\n"
 				+ "  tool: graphql";
