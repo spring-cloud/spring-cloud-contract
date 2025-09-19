@@ -15,7 +15,7 @@
 	<name>Spring Cloud Contract Docs</name>
 	<description>Spring Cloud Contract Docs</description>
 	<properties>
-		<jackson-module-jsonSchema.version>2.14.3</jackson-module-jsonSchema.version>
+		<jackson-module-jsonSchema.version>2.20.0</jackson-module-jsonSchema.version>
 		<docs.main>spring-cloud-contract</docs.main>
 		<main.basedir>${basedir}/..</main.basedir>
 		<configprops.inclusionPattern>spring.cloud.*</configprops.inclusionPattern>
@@ -24,7 +24,6 @@
 		<!-- Aligned with Groovy in SC-Build -->
 		<groovy.version>4.0.6</groovy.version>
 		<generate-adoc-resource.phase>process-classes</generate-adoc-resource.phase>
-		<jsonschema.version>4.38.0</jsonschema.version>
 	</properties>
 
 	<build>
@@ -187,18 +186,14 @@
 					<artifactId>spring-amqp</artifactId>
 				</dependency>
 				<dependency>
-					<groupId>tools.jackson.dataformat</groupId>
+					<groupId>com.fasterxml.jackson.module</groupId>
+					<artifactId>jackson-module-jsonSchema</artifactId>
+					<version>${jackson-module-jsonSchema.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>com.fasterxml.jackson.dataformat</groupId>
 					<artifactId>jackson-dataformat-yaml</artifactId>
-				</dependency>
-				<dependency>
-					<groupId>com.github.victools</groupId>
-					<artifactId>jsonschema-generator</artifactId>
-					<version>${jsonschema.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>com.github.victools</groupId>
-					<artifactId>jsonschema-module-jackson</artifactId>
-					<version>${jsonschema.version}</version>
+					<version>${jackson-module-jsonSchema.version}</version>
 				</dependency>
 			</dependencies>
 		</profile>
