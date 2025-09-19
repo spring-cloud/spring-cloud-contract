@@ -29,15 +29,14 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.PropertyWriter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.exc.InvalidDefinitionException;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.ser.PropertyWriter;
+import tools.jackson.databind.ser.std.SimpleBeanPropertyFilter;
+import tools.jackson.databind.ser.std.SimpleFilterProvider;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
@@ -54,7 +53,7 @@ import org.springframework.util.ReflectionUtils;
  */
 public final class MetadataUtil {
 
-	private static final ObjectMapper MAPPER = new VerifierObjectMapper();
+	private static final JsonMapper MAPPER = buildJsonMapper();
 
 	private MetadataUtil() {
 		throw new IllegalStateException("Can't instantiate a utility class");
@@ -96,7 +95,7 @@ public final class MetadataUtil {
 		catch (Exception e) {
 			if (e.getClass().toString().contains("InaccessibleObjectException")
 					|| (e instanceof InvalidDefinitionException
-							&& e.getMessage().contains("InaccessibleObjectException"))) {
+					&& e.getMessage().contains("InaccessibleObjectException"))) {
 				// JDK 16 workaround - ObjectMapper seems not be JDK16 compatible
 				// with the setup present in Spring Cloud Contract. So we will not
 				// allow patching but we will just copy values from the patch to
@@ -107,11 +106,12 @@ public final class MetadataUtil {
 					Properties properties = yamlProcessor.getObject();
 					T props = (T) new Binder(
 							new MapConfigurationPropertySource(properties.entrySet()
-								.stream()
-								.collect(Collectors.toMap(entry -> entry.getKey().toString(),
-										entry -> entry.getValue().toString()))))
-						.bind("", objectToMerge.getClass())
-						.get();
+									.stream()
+									.collect(Collectors.toMap(entry -> entry.getKey()
+													.toString(),
+											entry -> entry.getValue().toString()))))
+							.bind("", objectToMerge.getClass())
+							.get();
 					BeanUtils.copyProperties(props, objectToMerge);
 					return objectToMerge;
 				}
@@ -208,19 +208,20 @@ public final class MetadataUtil {
 
 	}
 
-}
-
-class VerifierObjectMapper extends ObjectMapper {
-
-	VerifierObjectMapper() {
-		setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
-			.setDefaultPropertyInclusion(JsonInclude.Include.NON_DEFAULT)
-			.setDefaultPropertyInclusion(JsonInclude.Include.NON_EMPTY)
-			.setDefaultPropertyInclusion(JsonInclude.Include.NON_ABSENT);
-		configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		FilterProvider filters = new SimpleFilterProvider().addFilter("non default properties", new MyFilter());
-		addMixIn(Object.class, PropertyFilterMixIn.class);
-		setFilterProvider(filters);
+	private static JsonMapper buildJsonMapper() {
+		return JsonMapper.builder()
+				.withConfigOverride(Object.class, o -> o.setIncludeAsProperty(JsonInclude.Value
+						.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL)))
+				.withConfigOverride(Object.class, o -> o.setIncludeAsProperty(JsonInclude.Value
+						.construct(JsonInclude.Include.NON_DEFAULT, JsonInclude.Include.NON_DEFAULT)))
+				.withConfigOverride(Object.class, o -> o.setIncludeAsProperty(JsonInclude.Value
+						.construct(JsonInclude.Include.NON_EMPTY, JsonInclude.Include.NON_EMPTY)))
+				.withConfigOverride(Object.class, o -> o.setIncludeAsProperty(JsonInclude.Value
+						.construct(JsonInclude.Include.NON_ABSENT, JsonInclude.Include.NON_ABSENT)))
+				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+				.addMixIn(Object.class, PropertyFilterMixIn.class)
+				.filterProvider(new SimpleFilterProvider().addFilter("non default properties", new MyFilter()))
+				.build();
 	}
 
 }
@@ -234,17 +235,17 @@ class MyFilter extends SimpleBeanPropertyFilter implements Serializable {
 
 	private static final Map<Class, Object> CACHE = new ConcurrentHashMap<>();
 
+
 	@Override
-	public void serializeAsField(Object pojo, JsonGenerator jgen, SerializerProvider provider, PropertyWriter writer)
-			throws Exception {
+	public void serializeAsProperty(Object pojo, JsonGenerator jgen, SerializationContext provider, PropertyWriter writer) throws Exception {
 		if (pojo instanceof Map || pojo instanceof Collection) {
-			writer.serializeAsField(pojo, jgen, provider);
+			writer.serializeAsProperty(pojo, jgen, provider);
 			return;
 		}
 		Object defaultInstance = defaultInstance(pojo);
 		if (defaultInstance instanceof CantInstantiateThisClass
 				|| !valueSameAsDefault(pojo, defaultInstance, writer.getName())) {
-			writer.serializeAsField(pojo, jgen, provider);
+			writer.serializeAsProperty(pojo, jgen, provider);
 		}
 	}
 
@@ -274,7 +275,6 @@ class MyFilter extends SimpleBeanPropertyFilter implements Serializable {
 			throw new IllegalStateException(e);
 		}
 	}
-
 }
 
 class CantInstantiateThisClass {
