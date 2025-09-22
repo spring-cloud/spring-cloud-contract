@@ -625,89 +625,89 @@ class YamlContractConverterSpec extends Specification {
 		given:
 			String expectedYaml1 = '''\
 ---
-request:
-  method: "POST"
-  url: "/users/1"
-  urlPath: null
-  queryParameters: {}
-  headers: {}
-  cookies: {}
-  body: null
-  bodyFromFile: null
-  bodyFromFileAsBytes: null
-  matchers:
-    url: null
-    body: []
-    headers: []
-    queryParameters: []
-    cookies: []
-    multipart: null
-  multipart: null
-response:
-  status: 200
-  headers: {}
-  cookies: {}
-  body: null
-  bodyFromFile: null
-  bodyFromFileAsBytes: null
-  matchers:
-    body: []
-    headers: []
-    cookies: []
-  async: null
-  fixedDelayMilliseconds: null
-input: null
-outputMessage: null
 description: null
-label: null
-name: "post1"
-priority: null
 ignored: false
 inProgress: false
+input: null
+label: null
 metadata: {}
+name: "post1"
+outputMessage: null
+priority: null
+request:
+  body: null
+  bodyFromFile: null
+  bodyFromFileAsBytes: null
+  cookies: {}
+  headers: {}
+  matchers:
+    body: []
+    cookies: []
+    headers: []
+    multipart: null
+    queryParameters: []
+    url: null
+  method: "POST"
+  multipart: null
+  queryParameters: {}
+  url: "/users/1"
+  urlPath: null
+response:
+  async: null
+  body: null
+  bodyFromFile: null
+  bodyFromFileAsBytes: null
+  cookies: {}
+  fixedDelayMilliseconds: null
+  headers: {}
+  matchers:
+    body: []
+    cookies: []
+    headers: []
+  status: 200
 '''
 			String expectedYaml2 = '''\
 ---
-request:
-  method: "POST"
-  url: "/users/2"
-  urlPath: null
-  queryParameters: {}
-  headers: {}
-  cookies: {}
-  body: null
-  bodyFromFile: null
-  bodyFromFileAsBytes: null
-  matchers:
-    url: null
-    body: []
-    headers: []
-    queryParameters: []
-    cookies: []
-    multipart: null
-  multipart: null
-response:
-  status: 200
-  headers: {}
-  cookies: {}
-  body: null
-  bodyFromFile: null
-  bodyFromFileAsBytes: null
-  matchers:
-    body: []
-    headers: []
-    cookies: []
-  async: null
-  fixedDelayMilliseconds: null
-input: null
-outputMessage: null
 description: null
-label: null
-name: "post2"
-priority: null
 ignored: false
 inProgress: false
+input: null
+label: null
 metadata: {}
+name: "post2"
+outputMessage: null
+priority: null
+request:
+  body: null
+  bodyFromFile: null
+  bodyFromFileAsBytes: null
+  cookies: {}
+  headers: {}
+  matchers:
+    body: []
+    cookies: []
+    headers: []
+    multipart: null
+    queryParameters: []
+    url: null
+  method: "POST"
+  multipart: null
+  queryParameters: {}
+  url: "/users/2"
+  urlPath: null
+response:
+  async: null
+  body: null
+  bodyFromFile: null
+  bodyFromFileAsBytes: null
+  cookies: {}
+  fixedDelayMilliseconds: null
+  headers: {}
+  matchers:
+    body: []
+    cookies: []
+    headers: []
+  status: 200
 '''
 		when:
 			Map<String, byte[]> strings = converter.store(yamlContracts())

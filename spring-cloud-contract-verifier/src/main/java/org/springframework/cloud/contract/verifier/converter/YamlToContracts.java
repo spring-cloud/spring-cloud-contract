@@ -40,7 +40,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.MapUtils;
 import org.yaml.snakeyaml.Yaml;
-import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.exc.MismatchedInputException;
 import tools.jackson.dataformat.yaml.YAMLMapper;
 
 import org.springframework.cloud.contract.spec.Contract;
@@ -100,11 +101,10 @@ class YamlToContracts {
 		}
 	}
 
-	protected List<Contract> processYaml(int counter, Object document, YAMLMapper mapper, ClassLoader classLoader,
+	protected List<Contract> processYaml(int counter, Object document, ObjectMapper mapper, ClassLoader classLoader,
 			File contractFile) {
 		List<YamlContract> yamlContracts = convert(mapper, document);
-		Thread.currentThread()
-				.setContextClassLoader(updatedClassLoader(contractFile.getParentFile(), classLoader));
+		Thread.currentThread().setContextClassLoader(updatedClassLoader(contractFile.getParentFile(), classLoader));
 		List<Contract> contracts = new ArrayList<>();
 		for (YamlContract yamlContract : yamlContracts) {
 			Contract contract = Contract.make((dslContract) -> {
@@ -193,9 +193,9 @@ class YamlToContracts {
 		String yamlContractRequestUrl = yamlContract.request.url;
 		if (yamlContractRequestUrl != null) {
 			YamlContract.KeyValueMatcher yamlContractRequestMatchersUrl = Optional
-					.ofNullable(yamlContract.request.matchers)
-					.map(matchers -> matchers.url)
-					.orElse(null);
+				.ofNullable(yamlContract.request.matchers)
+				.map(matchers -> matchers.url)
+				.orElse(null);
 			dslContractRequest.url(urlValue(yamlContractRequestUrl, yamlContractRequestMatchersUrl),
 					url -> handleQueryParameters(yamlContract, url));
 		}
@@ -205,9 +205,9 @@ class YamlToContracts {
 		String yamlContractRequestUrlPath = yamlContract.request.urlPath;
 		if (yamlContractRequestUrlPath != null) {
 			YamlContract.KeyValueMatcher yamlContractRequestMatchersUrl = Optional
-					.ofNullable(yamlContract.request.matchers)
-					.map(matchers -> matchers.url)
-					.orElse(null);
+				.ofNullable(yamlContract.request.matchers)
+				.map(matchers -> matchers.url)
+				.orElse(null);
 			dslContractRequest.urlPath(urlValue(yamlContractRequestUrlPath, yamlContractRequestMatchersUrl),
 					urlPath -> handleQueryParameters(yamlContract, urlPath));
 		}
@@ -218,7 +218,7 @@ class YamlToContracts {
 			url.queryParameters((queryParameters -> yamlContract.request.queryParameters.forEach((key, value) -> {
 				if (value instanceof List) {
 					((List<?>) value)
-							.forEach(v -> queryParameters.parameter(key, queryParamValue(yamlContract, key, v)));
+						.forEach(v -> queryParameters.parameter(key, queryParamValue(yamlContract, key, v)));
 				}
 				else {
 					queryParameters.parameter(key, queryParamValue(yamlContract, key, value));
@@ -232,12 +232,12 @@ class YamlToContracts {
 		if (MapUtils.isNotEmpty(yamlContractRequestHeaders)) {
 			dslContractRequest.headers((headers) -> yamlContractRequestHeaders.forEach((key, value) -> {
 				List<YamlContract.KeyValueMatcher> matchers = yamlContractRequest.matchers.headers.stream()
-						.filter((header) -> header.key.equals(key))
-						.collect(Collectors.toList());
+					.filter((header) -> header.key.equals(key))
+					.collect(Collectors.toList());
 				matchers.forEach(matcher -> {
 					if (value instanceof List) {
 						((List<?>) value)
-								.forEach(v -> headers.header(key, clientValue(v, matcher, key).getClientValue()));
+							.forEach(v -> headers.header(key, clientValue(v, matcher, key).getClientValue()));
 					}
 					else {
 						headers.header(key, new DslProperty<>(clientValue(value, matcher, key).getClientValue(),
@@ -256,9 +256,9 @@ class YamlToContracts {
 		if (MapUtils.isNotEmpty(yamlContractRequestCookies)) {
 			dslContractRequest.cookies((cookies) -> yamlContractRequestCookies.forEach((key, value) -> {
 				YamlContract.KeyValueMatcher matcher = yamlContractRequest.matchers.cookies.stream()
-						.filter(cookie -> cookie.key.equals(key))
-						.findFirst()
-						.orElse(null);
+					.filter(cookie -> cookie.key.equals(key))
+					.findFirst()
+					.orElse(null);
 				cookies.cookie(key, clientValue(value, matcher, key));
 			}));
 		}
@@ -281,9 +281,9 @@ class YamlToContracts {
 			Map<String, Object> multipartMap = new HashMap<>();
 			yamlContractRequest.multipart.params.forEach((paramKey, paramValue) -> {
 				YamlContract.KeyValueMatcher matcher = yamlContractRequest.matchers.multipart.params.stream()
-						.filter((param) -> param.key.equals(paramKey))
-						.findFirst()
-						.orElse(null);
+					.filter((param) -> param.key.equals(paramKey))
+					.findFirst()
+					.orElse(null);
 				Object value = paramValue;
 				if (matcher != null) {
 					value = matcher.regex != null ? Pattern.compile(matcher.regex)
@@ -293,9 +293,9 @@ class YamlToContracts {
 			});
 			yamlContractRequest.multipart.named.forEach(namedParam -> {
 				YamlContract.MultipartNamedStubMatcher matcher = yamlContractRequest.matchers.multipart.named.stream()
-						.filter((stubMatcher) -> stubMatcher.paramName.equals(namedParam.paramName))
-						.findFirst()
-						.orElse(null);
+					.filter((stubMatcher) -> stubMatcher.paramName.equals(namedParam.paramName))
+					.findFirst()
+					.orElse(null);
 				Object fileNameValue = namedParam.fileName;
 				Object fileContentValue = namedParam.fileContent;
 				String fileContentAsBytes = namedParam.fileContentAsBytes;
@@ -322,9 +322,9 @@ class YamlToContracts {
 						new DslProperty<>(fileContentValue,
 								namedParam.fileContent != null ? namedParam.fileContent
 										: fileContentFromFileAsBytes != null
-										? dslContractRequest.fileAsBytes(namedParam.fileContentFromFileAsBytes)
-										: fileContentAsBytes != null ? fileContentAsBytes.getBytes()
-										: new ExecutionProperty(fileContentCommand)),
+												? dslContractRequest.fileAsBytes(namedParam.fileContentFromFileAsBytes)
+												: fileContentAsBytes != null ? fileContentAsBytes.getBytes()
+														: new ExecutionProperty(fileContentCommand)),
 						new DslProperty<>(contentTypeValue, contentTypeCommand != null
 								? new ExecutionProperty(contentTypeCommand) : namedParam.contentType)));
 			});
@@ -335,15 +335,14 @@ class YamlToContracts {
 
 	private void mapRequestBodyMatchers(YamlContract.Request yamlContractRequest, Request dslContractRequest) {
 		dslContractRequest.bodyMatchers((bodyMatchers) -> Optional.ofNullable(yamlContractRequest.matchers)
-				.map(stubMatchers -> stubMatchers.body)
-				.ifPresent(stubMatchers -> stubMatchers.forEach(stubMatcher -> {
-					ContentType contentType = evaluateClientSideContentType(
-							yamlHeadersToContractHeaders(
-									Optional.ofNullable(yamlContractRequest.headers)
-											.orElse(new HashMap<>())),
-							Optional.ofNullable(yamlContractRequest.body).orElse(null));
-					MatchingTypeValue value = null;
-					switch (stubMatcher.type) {
+			.map(stubMatchers -> stubMatchers.body)
+			.ifPresent(stubMatchers -> stubMatchers.forEach(stubMatcher -> {
+				ContentType contentType = evaluateClientSideContentType(
+						yamlHeadersToContractHeaders(
+								Optional.ofNullable(yamlContractRequest.headers).orElse(new HashMap<>())),
+						Optional.ofNullable(yamlContractRequest.body).orElse(null));
+				MatchingTypeValue value = null;
+				switch (stubMatcher.type) {
 					case by_date:
 						value = bodyMatchers.byDate();
 						break;
@@ -379,16 +378,16 @@ class YamlToContracts {
 					default:
 						throw new UnsupportedOperationException("The type [" + stubMatcher.type + "] is"
 								+ " unsupported.Hint:If you 're using <predefined> remember to pass <type:by_regex > ");
+				}
+				if (value != null) {
+					if (XML == contentType) {
+						bodyMatchers.xPath(stubMatcher.path, value);
 					}
-					if (value != null) {
-						if (XML == contentType) {
-							bodyMatchers.xPath(stubMatcher.path, value);
-						}
-						else {
-							bodyMatchers.jsonPath(stubMatcher.path, value);
-						}
+					else {
+						bodyMatchers.jsonPath(stubMatcher.path, value);
 					}
-				})));
+				}
+			})));
 	}
 
 	private void mapResponse(YamlContract yamlContract, Contract dslContract) {
@@ -413,32 +412,32 @@ class YamlToContracts {
 
 	private void mapResponseHeaders(YamlContract.Response yamlContractResponse, Response dslContractResponse) {
 		dslContractResponse.headers(headers -> Optional.ofNullable(yamlContractResponse.headers)
-				.ifPresent(yamlContractResponseHeaders -> yamlContractResponseHeaders.forEach((key, value) -> {
-					YamlContract.TestHeaderMatcher matcher = yamlContractResponse.matchers.headers.stream()
-							.filter(h -> h.key.equals(key))
-							.findFirst()
-							.orElse(null);
+			.ifPresent(yamlContractResponseHeaders -> yamlContractResponseHeaders.forEach((key, value) -> {
+				YamlContract.TestHeaderMatcher matcher = yamlContractResponse.matchers.headers.stream()
+					.filter(h -> h.key.equals(key))
+					.findFirst()
+					.orElse(null);
 
-					if (value instanceof List) {
-						((List<?>) value).forEach(v -> {
-							Object serverValue = serverValue(v, matcher, key);
-							headers.header(key, new DslProperty<>(v, serverValue));
-						});
-					}
-					else {
-						Object serverValue = serverValue(value, matcher, key);
-						headers.header(key, new DslProperty<>(value, serverValue));
-					}
-				})));
+				if (value instanceof List) {
+					((List<?>) value).forEach(v -> {
+						Object serverValue = serverValue(v, matcher, key);
+						headers.header(key, new DslProperty<>(v, serverValue));
+					});
+				}
+				else {
+					Object serverValue = serverValue(value, matcher, key);
+					headers.header(key, new DslProperty<>(value, serverValue));
+				}
+			})));
 	}
 
 	private void mapResponseCookies(YamlContract.Response yamlContractResponse, Response dslContractResponse) {
 		if (yamlContractResponse.cookies != null) {
 			dslContractResponse.cookies(cookies -> yamlContractResponse.cookies.forEach((key, value) -> {
 				YamlContract.TestCookieMatcher matcher = yamlContractResponse.matchers.cookies.stream()
-						.filter(testCookieMatcher -> testCookieMatcher.key.equals(key))
-						.findFirst()
-						.orElse(null);
+					.filter(testCookieMatcher -> testCookieMatcher.key.equals(key))
+					.findFirst()
+					.orElse(null);
 				DslProperty<?> cookieValue = serverCookieValue(value, matcher, key);
 				cookies.cookie(key, cookieValue);
 			}));
@@ -448,12 +447,12 @@ class YamlToContracts {
 	private void mapResponseBody(YamlContract.Response yamlContractResponse, Response dslContractResponse) {
 		if (yamlContractResponse.body != null) {
 			YamlContract.BodyTestMatcher bodyTestMatcher = Optional.ofNullable(yamlContractResponse.matchers)
-					.map(testMatchers -> testMatchers.body)
-					.flatMap(bodyTestMatchers -> bodyTestMatchers.stream()
-							.filter(m -> m.path == null && (m.type == YamlContract.TestMatcherType.by_regex
-									|| m.type == YamlContract.TestMatcherType.by_command))
-							.findFirst())
-					.orElse(null);
+				.map(testMatchers -> testMatchers.body)
+				.flatMap(bodyTestMatchers -> bodyTestMatchers.stream()
+					.filter(m -> m.path == null && (m.type == YamlContract.TestMatcherType.by_regex
+							|| m.type == YamlContract.TestMatcherType.by_command))
+					.findFirst())
+				.orElse(null);
 			if (bodyTestMatcher != null) {
 				dslContractResponse.body(new DslProperty<>(yamlContractResponse.body,
 						bodyTestMatcher.type == YamlContract.TestMatcherType.by_regex
@@ -488,62 +487,62 @@ class YamlToContracts {
 
 	private void mapResponseBodyMatchers(YamlContract.Response yamlContractResponse, Response dslContractResponse) {
 		dslContractResponse.bodyMatchers(bodyMatchers -> Optional.ofNullable(yamlContractResponse.matchers)
-				.map(yamlContractResponseTestMatchers -> yamlContractResponseTestMatchers.body)
-				.ifPresent(yamlContractBodyTestMatchers -> yamlContractBodyTestMatchers
-						.forEach(yamlContractBodyTestMatcher -> {
-							ContentType contentType = evaluateClientSideContentType(
-									yamlHeadersToContractHeaders(yamlContractResponse.headers), yamlContractResponse.body);
-							MatchingTypeValue value;
-							switch (yamlContractBodyTestMatcher.type) {
-							case by_date:
-								value = bodyMatchers.byDate();
-								break;
-							case by_time:
-								value = bodyMatchers.byTime();
-								break;
-							case by_timestamp:
-								value = bodyMatchers.byTimestamp();
-								break;
-							case by_regex:
-								String regex = yamlContractBodyTestMatcher.value;
-								if (yamlContractBodyTestMatcher.predefined != null) {
-									regex = predefinedToPattern(yamlContractBodyTestMatcher.predefined).pattern();
-								}
-								value = bodyMatchers.byRegex(regex);
-								break;
-							case by_equality:
-								value = bodyMatchers.byEquality();
-								break;
-							case by_type:
-								value = bodyMatchers.byType(v -> {
-									if (yamlContractBodyTestMatcher.minOccurrence != null) {
-										v.minOccurrence(yamlContractBodyTestMatcher.minOccurrence);
-									}
-									if (yamlContractBodyTestMatcher.maxOccurrence != null) {
-										v.maxOccurrence(yamlContractBodyTestMatcher.maxOccurrence);
-									}
-								});
-								break;
-							case by_command:
-								value = bodyMatchers.byCommand(yamlContractBodyTestMatcher.value);
-								break;
-							case by_null:
-								value = bodyMatchers.byNull();
-								break;
-							default:
-								throw new UnsupportedOperationException(
-										"The type [" + yamlContractBodyTestMatcher.type + "] is unsupported. "
-												+ "Hint: If you're using <predefined> remember to pass < type:by_regex > ");
+			.map(yamlContractResponseTestMatchers -> yamlContractResponseTestMatchers.body)
+			.ifPresent(yamlContractBodyTestMatchers -> yamlContractBodyTestMatchers
+				.forEach(yamlContractBodyTestMatcher -> {
+					ContentType contentType = evaluateClientSideContentType(
+							yamlHeadersToContractHeaders(yamlContractResponse.headers), yamlContractResponse.body);
+					MatchingTypeValue value;
+					switch (yamlContractBodyTestMatcher.type) {
+						case by_date:
+							value = bodyMatchers.byDate();
+							break;
+						case by_time:
+							value = bodyMatchers.byTime();
+							break;
+						case by_timestamp:
+							value = bodyMatchers.byTimestamp();
+							break;
+						case by_regex:
+							String regex = yamlContractBodyTestMatcher.value;
+							if (yamlContractBodyTestMatcher.predefined != null) {
+								regex = predefinedToPattern(yamlContractBodyTestMatcher.predefined).pattern();
 							}
-							if (yamlContractBodyTestMatcher.path != null) {
-								if (XML == contentType) {
-									bodyMatchers.xPath(yamlContractBodyTestMatcher.path, value);
+							value = bodyMatchers.byRegex(regex);
+							break;
+						case by_equality:
+							value = bodyMatchers.byEquality();
+							break;
+						case by_type:
+							value = bodyMatchers.byType(v -> {
+								if (yamlContractBodyTestMatcher.minOccurrence != null) {
+									v.minOccurrence(yamlContractBodyTestMatcher.minOccurrence);
 								}
-								else {
-									bodyMatchers.jsonPath(yamlContractBodyTestMatcher.path, value);
+								if (yamlContractBodyTestMatcher.maxOccurrence != null) {
+									v.maxOccurrence(yamlContractBodyTestMatcher.maxOccurrence);
 								}
-							}
-						})));
+							});
+							break;
+						case by_command:
+							value = bodyMatchers.byCommand(yamlContractBodyTestMatcher.value);
+							break;
+						case by_null:
+							value = bodyMatchers.byNull();
+							break;
+						default:
+							throw new UnsupportedOperationException(
+									"The type [" + yamlContractBodyTestMatcher.type + "] is unsupported. "
+											+ "Hint: If you're using <predefined> remember to pass < type:by_regex > ");
+					}
+					if (yamlContractBodyTestMatcher.path != null) {
+						if (XML == contentType) {
+							bodyMatchers.xPath(yamlContractBodyTestMatcher.path, value);
+						}
+						else {
+							bodyMatchers.jsonPath(yamlContractBodyTestMatcher.path, value);
+						}
+					}
+				})));
 	}
 
 	private void mapOutput(YamlContract yamlContract, Contract dslContract) {
@@ -564,81 +563,81 @@ class YamlToContracts {
 		if (yamlContractOutputMessage.matchers != null) {
 			dslContractOutputMessage.bodyMatchers(
 					dslContractOutputMessageBodyMatchers -> Optional.ofNullable(yamlContractOutputMessage.matchers.body)
-							.ifPresent(yamlContractBodyTestMatchers -> yamlContractBodyTestMatchers
-									.forEach(yamlContractBodyTestMatcher -> {
-										ContentType contentType = evaluateClientSideContentType(
-												yamlHeadersToContractHeaders(yamlContractOutputMessage.headers),
-												yamlContractOutputMessage.body);
-										MatchingTypeValue value;
-										switch (yamlContractBodyTestMatcher.type) {
-										case by_date:
-											value = dslContractOutputMessageBodyMatchers.byDate();
-											break;
-										case by_time:
-											value = dslContractOutputMessageBodyMatchers.byTime();
-											break;
-										case by_timestamp:
-											value = dslContractOutputMessageBodyMatchers.byTimestamp();
-											break;
-										case by_regex:
-											String regex = yamlContractBodyTestMatcher.value;
-											if (yamlContractBodyTestMatcher.predefined != null) {
-												regex = predefinedToPattern(yamlContractBodyTestMatcher.predefined)
-														.pattern();
+						.ifPresent(yamlContractBodyTestMatchers -> yamlContractBodyTestMatchers
+							.forEach(yamlContractBodyTestMatcher -> {
+								ContentType contentType = evaluateClientSideContentType(
+										yamlHeadersToContractHeaders(yamlContractOutputMessage.headers),
+										yamlContractOutputMessage.body);
+								MatchingTypeValue value;
+								switch (yamlContractBodyTestMatcher.type) {
+									case by_date:
+										value = dslContractOutputMessageBodyMatchers.byDate();
+										break;
+									case by_time:
+										value = dslContractOutputMessageBodyMatchers.byTime();
+										break;
+									case by_timestamp:
+										value = dslContractOutputMessageBodyMatchers.byTimestamp();
+										break;
+									case by_regex:
+										String regex = yamlContractBodyTestMatcher.value;
+										if (yamlContractBodyTestMatcher.predefined != null) {
+											regex = predefinedToPattern(yamlContractBodyTestMatcher.predefined)
+												.pattern();
+										}
+										value = dslContractOutputMessageBodyMatchers.byRegex(regex);
+										break;
+									case by_equality:
+										value = dslContractOutputMessageBodyMatchers.byEquality();
+										break;
+									case by_type:
+										value = dslContractOutputMessageBodyMatchers.byType(v -> {
+											if (yamlContractBodyTestMatcher.minOccurrence != null) {
+												v.minOccurrence(yamlContractBodyTestMatcher.minOccurrence);
 											}
-											value = dslContractOutputMessageBodyMatchers.byRegex(regex);
-											break;
-										case by_equality:
-											value = dslContractOutputMessageBodyMatchers.byEquality();
-											break;
-										case by_type:
-											value = dslContractOutputMessageBodyMatchers.byType(v -> {
-												if (yamlContractBodyTestMatcher.minOccurrence != null) {
-													v.minOccurrence(yamlContractBodyTestMatcher.minOccurrence);
-												}
-												if (yamlContractBodyTestMatcher.maxOccurrence != null) {
-													v.maxOccurrence(yamlContractBodyTestMatcher.maxOccurrence);
-												}
-											});
-											break;
-										case by_command:
-											value = dslContractOutputMessageBodyMatchers
-													.byCommand(yamlContractBodyTestMatcher.value);
-											break;
-										case by_null:
-											value = dslContractOutputMessageBodyMatchers.byNull();
-											break;
-										default:
-											throw new UnsupportedOperationException("The type " + "["
-													+ yamlContractBodyTestMatcher.type + "] is unsupported. Hint: If "
-													+ "you're using <predefined> remember to pass < type:by_regex > ");
-										}
-										if (XML == contentType) {
-											dslContractOutputMessageBodyMatchers.xPath(yamlContractBodyTestMatcher.path, value);
-										}
-										else {
-											dslContractOutputMessageBodyMatchers.jsonPath(yamlContractBodyTestMatcher.path,
-													value);
-										}
-									})));
+											if (yamlContractBodyTestMatcher.maxOccurrence != null) {
+												v.maxOccurrence(yamlContractBodyTestMatcher.maxOccurrence);
+											}
+										});
+										break;
+									case by_command:
+										value = dslContractOutputMessageBodyMatchers
+											.byCommand(yamlContractBodyTestMatcher.value);
+										break;
+									case by_null:
+										value = dslContractOutputMessageBodyMatchers.byNull();
+										break;
+									default:
+										throw new UnsupportedOperationException("The type " + "["
+												+ yamlContractBodyTestMatcher.type + "] is unsupported. Hint: If "
+												+ "you're using <predefined> remember to pass < type:by_regex > ");
+								}
+								if (XML == contentType) {
+									dslContractOutputMessageBodyMatchers.xPath(yamlContractBodyTestMatcher.path, value);
+								}
+								else {
+									dslContractOutputMessageBodyMatchers.jsonPath(yamlContractBodyTestMatcher.path,
+											value);
+								}
+							})));
 		}
 	}
 
 	private void mapOutputMessageHeaders(YamlContract.OutputMessage yamlContractOutputMessage,
 			OutputMessage dslContractOutputMessage) {
 		dslContractOutputMessage.headers(dslContractOutputMessageHeaders -> Optional
-				.ofNullable(yamlContractOutputMessage)
-				.map(yamlContractOutput -> yamlContractOutput.headers)
-				.ifPresent(yamlContractOutputMessageHeaders -> yamlContractOutputMessageHeaders.forEach((key, value) -> {
-					YamlContract.TestHeaderMatcher matcher = Optional.ofNullable(yamlContractOutputMessage.matchers)
-							.map(yamlContractOutputMatchers -> yamlContractOutputMatchers.headers)
-							.flatMap(yamlContractOutputMatchersHeaders -> yamlContractOutputMatchersHeaders.stream()
-									.filter(yamlContractOutputMatchersHeader -> yamlContractOutputMatchersHeader.key.equals(key))
-									.findFirst())
-							.orElse(null);
-					Object serverValue = serverValue(value, matcher, key);
-					dslContractOutputMessageHeaders.header(key, new DslProperty<>(value, serverValue));
-				})));
+			.ofNullable(yamlContractOutputMessage)
+			.map(yamlContractOutput -> yamlContractOutput.headers)
+			.ifPresent(yamlContractOutputMessageHeaders -> yamlContractOutputMessageHeaders.forEach((key, value) -> {
+				YamlContract.TestHeaderMatcher matcher = Optional.ofNullable(yamlContractOutputMessage.matchers)
+					.map(yamlContractOutputMatchers -> yamlContractOutputMatchers.headers)
+					.flatMap(yamlContractOutputMatchersHeaders -> yamlContractOutputMatchersHeaders.stream()
+						.filter(yamlContractOutputMatchersHeader -> yamlContractOutputMatchersHeader.key.equals(key))
+						.findFirst())
+					.orElse(null);
+				Object serverValue = serverValue(value, matcher, key);
+				dslContractOutputMessageHeaders.header(key, new DslProperty<>(value, serverValue));
+			})));
 	}
 
 	private void mapOutputBody(YamlContract.OutputMessage yamlContractOutputMessage,
@@ -651,7 +650,7 @@ class YamlToContracts {
 		}
 		if (yamlContractOutputMessage.bodyFromFileAsBytes != null) {
 			dslContractOutputMessage
-					.body(dslContractOutputMessage.fileAsBytes(yamlContractOutputMessage.bodyFromFileAsBytes));
+				.body(dslContractOutputMessage.fileAsBytes(yamlContractOutputMessage.bodyFromFileAsBytes));
 		}
 	}
 
@@ -694,8 +693,7 @@ class YamlToContracts {
 
 	private Headers yamlHeadersToContractHeaders(Map<String, Object> headers) {
 		Set<Header> convertedHeaders = headers != null
-				? headers.keySet().stream()
-				.map(header -> Header.build(header, headers.get(header))).collect(toSet())
+				? headers.keySet().stream().map(header -> Header.build(header, headers.get(header))).collect(toSet())
 				: new HashSet<>();
 		Headers contractHeaders = new Headers();
 		contractHeaders.headers(convertedHeaders);
@@ -713,11 +711,11 @@ class YamlToContracts {
 		return new DslProperty<>(url);
 	}
 
-	protected List<YamlContract> convert(YAMLMapper mapper, Object o) {
+	protected List<YamlContract> convert(ObjectMapper mapper, Object o) {
 		try {
 			return Arrays.asList(mapper.convertValue(o, YamlContract[].class));
 		}
-		catch (IllegalArgumentException e) {
+		catch (MismatchedInputException e) {
 			return Collections.singletonList(mapper.convertValue(o, YamlContract.class));
 		}
 	}
@@ -779,30 +777,30 @@ class YamlToContracts {
 	protected Object queryParamValue(YamlContract yamlContract, String key, Object value) {
 		Request request = new Request();
 		YamlContract.QueryParameterMatcher matcher = yamlContract.request.matchers.queryParameters.stream()
-				.filter(queryParameter -> queryParameter.key.equals(key))
-				.findFirst()
-				.orElse(null);
+			.filter(queryParameter -> queryParameter.key.equals(key))
+			.findFirst()
+			.orElse(null);
 		if (matcher == null) {
 			return value;
 		}
 		switch (matcher.type) {
-		case equal_to:
-			return new DslProperty<>(request.equalTo(matcher.value), value);
-		case containing:
-			return new DslProperty<>(request.containing(matcher.value), value);
-		case matching:
-			return new DslProperty<>(request.matching(matcher.value), value);
-		case not_matching:
-			return new DslProperty<>(request.notMatching(matcher.value), value);
-		case equal_to_json:
-			return new DslProperty<>(request.equalToJson(matcher.value), value);
-		case equal_to_xml:
-			return new DslProperty<>(request.equalToXml(matcher.value), value);
-		case absent:
-			return new DslProperty<Object>(request.absent(), null);
-		default:
-			throw new UnsupportedOperationException("The provided matching type [" + matcher
-					+ "] is unsupported. Use on of " + Arrays.toString(YamlContract.MatchingType.values()));
+			case equal_to:
+				return new DslProperty<>(request.equalTo(matcher.value), value);
+			case containing:
+				return new DslProperty<>(request.containing(matcher.value), value);
+			case matching:
+				return new DslProperty<>(request.matching(matcher.value), value);
+			case not_matching:
+				return new DslProperty<>(request.notMatching(matcher.value), value);
+			case equal_to_json:
+				return new DslProperty<>(request.equalToJson(matcher.value), value);
+			case equal_to_xml:
+				return new DslProperty<>(request.equalToXml(matcher.value), value);
+			case absent:
+				return new DslProperty<Object>(request.absent(), null);
+			default:
+				throw new UnsupportedOperationException("The provided matching type [" + matcher
+						+ "] is unsupported. Use on of " + Arrays.toString(YamlContract.MatchingType.values()));
 		}
 	}
 
@@ -823,45 +821,44 @@ class YamlToContracts {
 
 	protected Pattern predefinedToPattern(YamlContract.PredefinedRegex predefinedRegex) {
 		switch (predefinedRegex) {
-		case only_alpha_unicode:
-			return RegexPatterns.onlyAlphaUnicode().getPattern();
-		case number:
-			return RegexPatterns.number().getPattern();
-		case any_double:
-			return RegexPatterns.aDouble().getPattern();
-		case any_boolean:
-			return RegexPatterns.anyBoolean().getPattern();
-		case ip_address:
-			return RegexPatterns.ipAddress().getPattern();
-		case hostname:
-			return RegexPatterns.hostname().getPattern();
-		case email:
-			return RegexPatterns.email().getPattern();
-		case url:
-			return RegexPatterns.url().getPattern();
-		case uuid:
-			return RegexPatterns.uuid().getPattern();
-		case iso_date:
-			return RegexPatterns.isoDate().getPattern();
-		case iso_date_time:
-			return RegexPatterns.isoDateTime().getPattern();
-		case iso_time:
-			return RegexPatterns.isoTime().getPattern();
-		case iso_8601_with_offset:
-			return RegexPatterns.iso8601WithOffset().getPattern();
-		case non_empty:
-			return RegexPatterns.nonEmpty().getPattern();
-		case non_blank:
-			return RegexPatterns.nonBlank().getPattern();
-		default:
-			throw new UnsupportedOperationException("The predefined regex [" + predefinedRegex
-					+ "] is unsupported. Use one of " + Arrays.toString(YamlContract.PredefinedRegex.values()));
+			case only_alpha_unicode:
+				return RegexPatterns.onlyAlphaUnicode().getPattern();
+			case number:
+				return RegexPatterns.number().getPattern();
+			case any_double:
+				return RegexPatterns.aDouble().getPattern();
+			case any_boolean:
+				return RegexPatterns.anyBoolean().getPattern();
+			case ip_address:
+				return RegexPatterns.ipAddress().getPattern();
+			case hostname:
+				return RegexPatterns.hostname().getPattern();
+			case email:
+				return RegexPatterns.email().getPattern();
+			case url:
+				return RegexPatterns.url().getPattern();
+			case uuid:
+				return RegexPatterns.uuid().getPattern();
+			case iso_date:
+				return RegexPatterns.isoDate().getPattern();
+			case iso_date_time:
+				return RegexPatterns.isoDateTime().getPattern();
+			case iso_time:
+				return RegexPatterns.isoTime().getPattern();
+			case iso_8601_with_offset:
+				return RegexPatterns.iso8601WithOffset().getPattern();
+			case non_empty:
+				return RegexPatterns.nonEmpty().getPattern();
+			case non_blank:
+				return RegexPatterns.nonBlank().getPattern();
+			default:
+				throw new UnsupportedOperationException("The predefined regex [" + predefinedRegex
+						+ "] is unsupported. Use one of " + Arrays.toString(YamlContract.PredefinedRegex.values()));
 		}
 	}
 
 	protected String file(String relativePath) {
-		URL resource = Thread.currentThread().getContextClassLoader()
-				.getResource(relativePath);
+		URL resource = Thread.currentThread().getContextClassLoader().getResource(relativePath);
 		if (resource == null) {
 			throw new IllegalStateException("File [" + relativePath + "] is not present");
 		}
@@ -875,7 +872,7 @@ class YamlToContracts {
 
 	protected static ClassLoader updatedClassLoader(File rootFolder, ClassLoader classLoader) {
 		try {
-			ClassLoader urlCl = URLClassLoader.newInstance(new URL[] {rootFolder.toURI().toURL()}, classLoader);
+			ClassLoader urlCl = URLClassLoader.newInstance(new URL[] { rootFolder.toURI().toURL() }, classLoader);
 			Thread.currentThread().setContextClassLoader(urlCl);
 			return urlCl;
 		}

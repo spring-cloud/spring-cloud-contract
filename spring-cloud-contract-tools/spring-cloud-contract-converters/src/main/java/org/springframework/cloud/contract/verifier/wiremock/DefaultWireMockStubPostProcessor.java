@@ -28,6 +28,7 @@ import com.github.tomakehurst.wiremock.http.DelayDistribution;
 import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.json.JsonMapper;
 
 import org.springframework.cloud.contract.spec.Contract;
@@ -145,7 +146,12 @@ class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 			return (StubMapping) wiremock;
 		}
 		else if (wiremock instanceof Map) {
-			return StubMapping.buildFrom(this.objectMapper.writeValueAsString(wiremock));
+			try {
+				return StubMapping.buildFrom(this.objectMapper.writeValueAsString(wiremock));
+			}
+			catch (JacksonException e) {
+				throw new IllegalStateException("Failed to build StubMapping for map [" + wiremock + "]", e);
+			}
 		}
 		throw new UnsupportedOperationException("Unsupported type for wiremock metadata extension");
 	}

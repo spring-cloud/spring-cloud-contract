@@ -16,9 +16,9 @@
 
 package org.springframework.cloud.contract.verifier.dsl;
 
-import tools.jackson.dataformat.yaml.YAMLMapper;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.Test;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 
 class ContractVerifierMetadataTests {
 

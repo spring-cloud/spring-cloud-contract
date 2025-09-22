@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import groovy.json.JsonSlurper;
 import groovy.lang.Closure;
 import groovy.lang.GString;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.json.JsonMapper;
 
 import org.springframework.cloud.contract.spec.internal.DslProperty;
@@ -53,8 +54,14 @@ public class MapConverter {
 	/**
 	 * Generic {@link Function} used to deserialize a json file.
 	 */
-	public static final Function<String, Object> JSON_PARSING_FUNCTION =
-			(value) -> new JsonMapper().readValue(value, Object.class);
+	public static final Function<String, Object> JSON_PARSING_FUNCTION = (value) -> {
+		try {
+			return new JsonMapper().readValue(value, Object.class);
+		}
+		catch (JacksonException e) {
+			throw new IllegalArgumentException("The current json [" + value + "] could not be deserialized");
+		}
+	};
 
 	/**
 	 * Generic {@link Closure} used to deserialize a json file.
@@ -120,8 +127,8 @@ public class MapConverter {
 		}
 		else if (value instanceof Collection) {
 			return ((Collection) value).stream()
-					.map((v) -> transformValues(v, function, parsingFunction))
-					.collect(Collectors.toList());
+				.map((v) -> transformValues(v, function, parsingFunction))
+				.collect(Collectors.toList());
 		}
 		return transformValue(function, value, parsingFunction);
 	}
@@ -178,16 +185,15 @@ public class MapConverter {
 			}
 			else if (val instanceof GString) {
 				ContentType type = new MapConverter().templateProcessor.containsJsonPathTemplateEntry(
-						ContentUtils.extractValueForGString((GString) val, ContentUtils.GET_TEST_SIDE)
-								.toString())
-						? ContentType.TEXT : null;
+						ContentUtils.extractValueForGString((GString) val, ContentUtils.GET_TEST_SIDE).toString())
+								? ContentType.TEXT : null;
 				return ContentUtils.extractValue((GString) val, type, (v) -> {
 					if (v instanceof DslProperty) {
 						return clientSide
 								? getClientOrServerSideValues(((DslProperty<?>) v).getClientValue(), clientSide,
-								parsingFunction)
+										parsingFunction)
 								: getClientOrServerSideValues(((DslProperty<?>) v).getServerValue(), clientSide,
-								parsingFunction);
+										parsingFunction);
 					}
 					return v;
 				});

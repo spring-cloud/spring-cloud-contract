@@ -23,6 +23,7 @@ import java.util.Map;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import groovy.lang.GString;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.json.JsonMapper;
 
 import org.springframework.cloud.contract.spec.Contract;
@@ -198,13 +199,18 @@ abstract class BaseWireMockStubStrategy {
 	}
 
 	private static String toJson(Object value) {
-		if (value instanceof Map) {
-			Object convertedMap = MapConverter.transformValues(value,
-					(v) -> v instanceof GString ? ((GString) v).toString() : v);
-			String jsonOutput = new JsonMapper().writeValueAsString(convertedMap);
-			return jsonOutput.replaceAll("\\\\\\\\\\\\", "\\\\");
+		try {
+			if (value instanceof Map) {
+				Object convertedMap = MapConverter.transformValues(value,
+						(v) -> v instanceof GString ? ((GString) v).toString() : v);
+				String jsonOutput = new JsonMapper().writeValueAsString(convertedMap);
+				return jsonOutput.replaceAll("\\\\\\\\\\\\", "\\\\");
+			}
+			return new JsonMapper().writeValueAsString(value);
 		}
-		return new JsonMapper().writeValueAsString(value);
+		catch (JacksonException e) {
+			throw new IllegalArgumentException("The current object [" + value + "] could not be serialized");
+		}
 	}
 
 	/**

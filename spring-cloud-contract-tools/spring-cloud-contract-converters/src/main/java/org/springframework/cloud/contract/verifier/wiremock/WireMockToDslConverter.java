@@ -119,7 +119,7 @@ public class WireMockToDslConverter {
 		String requestMethod = "";
 		JsonNode requestMethodNode = wireMockStub.at(REQUEST_METHOD_POINTER);
 		if (requestMethodNode != null) {
-			requestMethod = "method '" + requestMethodNode.asText() + "'\n";
+			requestMethod = "method '" + requestMethodNode.asString() + "'\n";
 		}
 		return requestMethod;
 	}
@@ -128,7 +128,7 @@ public class WireMockToDslConverter {
 		String requestUrl = "";
 		JsonNode requestUrlNode = wireMockStub.at(REQUEST_URL_POINTER);
 		if (!requestUrlNode.isMissingNode()) {
-			requestUrl = "url '" + requestUrlNode.asText() + "'\n";
+			requestUrl = "url '" + requestUrlNode.asString() + "'\n";
 		}
 		return requestUrl;
 	}
@@ -137,7 +137,7 @@ public class WireMockToDslConverter {
 		String requestUrlPath = "";
 		JsonNode requestUrlPathNode = wireMockStub.at(REQUEST_URL_PATH_POINTER);
 		if (!requestUrlPathNode.isMissingNode()) {
-			requestUrlPath = "url '" + requestUrlPathNode.asText() + "'\n";
+			requestUrlPath = "url '" + requestUrlPathNode.asString() + "'\n";
 		}
 		return requestUrlPath;
 	}
@@ -146,7 +146,7 @@ public class WireMockToDslConverter {
 		String requestUrlPattern = "";
 		JsonNode requestUrlPatternNode = wireMockStub.at(REQUEST_URL_PATTERN_POINTER);
 		if (!requestUrlPatternNode.isMissingNode()) {
-			String escapedRequestUrlPatternValue = escapeJava(requestUrlPatternNode.asText());
+			String escapedRequestUrlPatternValue = escapeJava(requestUrlPatternNode.asString());
 			requestUrlPattern = "url $(consumer(regex('" + escapedRequestUrlPatternValue + "')), producer('"
 					+ new Xeger(escapedRequestUrlPatternValue).generate() + "'))\n";
 		}
@@ -157,7 +157,7 @@ public class WireMockToDslConverter {
 		String requestUrlPathPattern = "";
 		JsonNode requestUrlPathPatternNode = wireMockStub.at(REQUEST_URL_PATH_PATTERN_POINTER);
 		if (!requestUrlPathPatternNode.isMissingNode()) {
-			String escapedRequestUrlPathPatternValue = escapeJava(requestUrlPathPatternNode.asText());
+			String escapedRequestUrlPathPatternValue = escapeJava(requestUrlPathPatternNode.asString());
 			requestUrlPathPattern = "urlPath $(consumer(regex('" + escapedRequestUrlPathPatternValue + "')), producer('"
 					+ new Xeger(escapedRequestUrlPathPatternValue).generate() + "'))'\n";
 		}
@@ -261,12 +261,12 @@ public class WireMockToDslConverter {
 	}
 
 	private String buildPrettyPrintResponseBody(IntNode node) {
-		return node.asText();
+		return node.asString();
 	}
 
 	private String buildPrettyPrintResponseBody(StringNode node) {
 		try {
-			String stringNode = node.asText();
+			String stringNode = node.asString();
 			Object intermediateObjectForPrettyPrinting =
 					OBJECT_MAPPER.readerFor(Object.class).readValue(stringNode);
 

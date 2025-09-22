@@ -19,8 +19,8 @@ package org.springframework.cloud.contract.verifier.messaging.internal;
 import tools.jackson.databind.json.JsonMapper;
 
 /**
- * Wrapper over {@link JsonMapper} that won't try to parse String but will directly
- * return it.
+ * Wrapper over {@link JsonMapper} that won't try to parse String but will directly return
+ * it.
  *
  * @author Marcin Grzejszczak
  */

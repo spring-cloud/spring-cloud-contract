@@ -95,7 +95,7 @@ public final class MetadataUtil {
 		catch (Exception e) {
 			if (e.getClass().toString().contains("InaccessibleObjectException")
 					|| (e instanceof InvalidDefinitionException
-					&& e.getMessage().contains("InaccessibleObjectException"))) {
+							&& e.getMessage().contains("InaccessibleObjectException"))) {
 				// JDK 16 workaround - ObjectMapper seems not be JDK16 compatible
 				// with the setup present in Spring Cloud Contract. So we will not
 				// allow patching but we will just copy values from the patch to
@@ -106,12 +106,11 @@ public final class MetadataUtil {
 					Properties properties = yamlProcessor.getObject();
 					T props = (T) new Binder(
 							new MapConfigurationPropertySource(properties.entrySet()
-									.stream()
-									.collect(Collectors.toMap(entry -> entry.getKey()
-													.toString(),
-											entry -> entry.getValue().toString()))))
-							.bind("", objectToMerge.getClass())
-							.get();
+								.stream()
+								.collect(Collectors.toMap(entry -> entry.getKey().toString(),
+										entry -> entry.getValue().toString()))))
+						.bind("", objectToMerge.getClass())
+						.get();
 					BeanUtils.copyProperties(props, objectToMerge);
 					return objectToMerge;
 				}
@@ -125,6 +124,26 @@ public final class MetadataUtil {
 
 	public static MetadataMap map() {
 		return new MetadataMap();
+	}
+
+	private static JsonMapper buildJsonMapper() {
+		return JsonMapper.builder()
+			.withConfigOverride(Object.class,
+					o -> o.setIncludeAsProperty(
+							JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL)))
+			.withConfigOverride(Object.class,
+					o -> o.setIncludeAsProperty(JsonInclude.Value.construct(JsonInclude.Include.NON_DEFAULT,
+							JsonInclude.Include.NON_DEFAULT)))
+			.withConfigOverride(Object.class,
+					o -> o.setIncludeAsProperty(
+							JsonInclude.Value.construct(JsonInclude.Include.NON_EMPTY, JsonInclude.Include.NON_EMPTY)))
+			.withConfigOverride(Object.class,
+					o -> o.setIncludeAsProperty(JsonInclude.Value.construct(JsonInclude.Include.NON_ABSENT,
+							JsonInclude.Include.NON_ABSENT)))
+			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+			.addMixIn(Object.class, PropertyFilterMixIn.class)
+			.filterProvider(new SimpleFilterProvider().addFilter("non default properties", new MyFilter()))
+			.build();
 	}
 
 	public static class MetadataMap implements Map<String, Object> {
@@ -208,22 +227,6 @@ public final class MetadataUtil {
 
 	}
 
-	private static JsonMapper buildJsonMapper() {
-		return JsonMapper.builder()
-				.withConfigOverride(Object.class, o -> o.setIncludeAsProperty(JsonInclude.Value
-						.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL)))
-				.withConfigOverride(Object.class, o -> o.setIncludeAsProperty(JsonInclude.Value
-						.construct(JsonInclude.Include.NON_DEFAULT, JsonInclude.Include.NON_DEFAULT)))
-				.withConfigOverride(Object.class, o -> o.setIncludeAsProperty(JsonInclude.Value
-						.construct(JsonInclude.Include.NON_EMPTY, JsonInclude.Include.NON_EMPTY)))
-				.withConfigOverride(Object.class, o -> o.setIncludeAsProperty(JsonInclude.Value
-						.construct(JsonInclude.Include.NON_ABSENT, JsonInclude.Include.NON_ABSENT)))
-				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-				.addMixIn(Object.class, PropertyFilterMixIn.class)
-				.filterProvider(new SimpleFilterProvider().addFilter("non default properties", new MyFilter()))
-				.build();
-	}
-
 }
 
 @JsonFilter("non default properties")
@@ -235,9 +238,9 @@ class MyFilter extends SimpleBeanPropertyFilter implements Serializable {
 
 	private static final Map<Class, Object> CACHE = new ConcurrentHashMap<>();
 
-
 	@Override
-	public void serializeAsProperty(Object pojo, JsonGenerator jgen, SerializationContext provider, PropertyWriter writer) throws Exception {
+	public void serializeAsProperty(Object pojo, JsonGenerator jgen, SerializationContext provider,
+			PropertyWriter writer) throws Exception {
 		if (pojo instanceof Map || pojo instanceof Collection) {
 			writer.serializeAsProperty(pojo, jgen, provider);
 			return;
@@ -275,6 +278,7 @@ class MyFilter extends SimpleBeanPropertyFilter implements Serializable {
 			throw new IllegalStateException(e);
 		}
 	}
+
 }
 
 class CantInstantiateThisClass {

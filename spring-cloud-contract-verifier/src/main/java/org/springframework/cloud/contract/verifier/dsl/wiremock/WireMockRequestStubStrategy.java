@@ -29,7 +29,6 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import tools.jackson.databind.json.JsonMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.extension.Parameters;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
@@ -40,6 +39,8 @@ import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import groovy.lang.GString;
 import org.apache.commons.text.StringEscapeUtils;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.internal.Body;
@@ -173,10 +174,15 @@ class WireMockRequestStubStrategy extends BaseWireMockStubStrategy {
 					.transformToJsonPathWithStubsSideValuesAndNoArraySizeCheck(body);
 				if ((values.isEmpty() && request.getBodyMatchers() != null && !request.getBodyMatchers().hasMatchers())
 						|| onlySizeAssertionsArePresent(values)) {
+					try {
 						requestPattern.withRequestBody(WireMock.equalToJson(
 								new JsonMapper().writeValueAsString(
 										getMatchingStrategy(request.getBody().getClientValue()).getClientValue()),
 								false, false));
+					}
+					catch (JacksonException e) {
+						throw new IllegalArgumentException("The MatchingStrategy could not be serialized", e);
+					}
 				}
 				else {
 					values.stream()
