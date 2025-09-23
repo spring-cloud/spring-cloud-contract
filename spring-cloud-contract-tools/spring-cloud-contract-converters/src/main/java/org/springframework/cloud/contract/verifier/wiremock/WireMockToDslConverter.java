@@ -72,11 +72,11 @@ public class WireMockToDslConverter {
 	private static final JsonPointer RESPONSE_HEADERS_POINTER = JsonPointer.compile("/response/headers");
 
 	private static final JsonMapper OBJECT_MAPPER = JsonMapper.builder()
-			.configure(ALLOW_JAVA_COMMENTS, true)
-			.configure(ALLOW_YAML_COMMENTS, true)
-			.configure(ALLOW_UNQUOTED_PROPERTY_NAMES, true)
-			.configure(ALLOW_SINGLE_QUOTES, true)
-			.build();
+		.configure(ALLOW_JAVA_COMMENTS, true)
+		.configure(ALLOW_YAML_COMMENTS, true)
+		.configure(ALLOW_UNQUOTED_PROPERTY_NAMES, true)
+		.configure(ALLOW_SINGLE_QUOTES, true)
+		.build();
 
 	/**
 	 * Returns the string content of the contract.
@@ -174,12 +174,10 @@ public class WireMockToDslConverter {
 			fields.forEach(c -> {
 				requestHeadersBuilder.append("header('").append(c.getKey()).append("',");
 				ObjectNode headersNode = (ObjectNode) c.getValue().deepCopy();
-				Iterator<Map.Entry<String, JsonNode>> headersNodeIterator = headersNode.properties()
-						.iterator();
+				Iterator<Map.Entry<String, JsonNode>> headersNodeIterator = headersNode.properties().iterator();
 				if (headersNodeIterator.hasNext()) {
 					Map.Entry<String, JsonNode> headerValue = headersNodeIterator.next();
-					String header = buildHeader(headerValue.getKey(), headerValue.getValue()
-							.asString());
+					String header = buildHeader(headerValue.getKey(), headerValue.getValue().asString());
 					requestHeadersBuilder.append(header).append(")").append("\n");
 				}
 			});
@@ -190,13 +188,13 @@ public class WireMockToDslConverter {
 
 	private String buildHeader(String method, String value) {
 		switch (method) {
-		case "equalTo":
-			return "'" + value + "'";
-		case "contains":
-			String regex = "^.*" + value + ".*$";
-			return "c(regex('" + escapeJava(regex) + "'))";
-		default:
-			return "c(regex('" + escapeJava(value) + "'))";
+			case "equalTo":
+				return "'" + value + "'";
+			case "contains":
+				String regex = "^.*" + value + ".*$";
+				return "c(regex('" + escapeJava(regex) + "'))";
+			default:
+				return "c(regex('" + escapeJava(value) + "'))";
 		}
 	}
 
@@ -209,29 +207,26 @@ public class WireMockToDslConverter {
 			List<Map.Entry<String, JsonNode>> requestBodyObjectNodes = new ArrayList<>();
 
 			elements.stream()
-					.filter(f -> f instanceof ObjectNode)
-					.map(f -> (ObjectNode) f)
-					.map(ObjectNode::properties)
-					.forEachOrdered(requestBodyObjectNodes::addAll);
+				.filter(f -> f instanceof ObjectNode)
+				.map(f -> (ObjectNode) f)
+				.map(ObjectNode::properties)
+				.forEachOrdered(requestBodyObjectNodes::addAll);
 			requestBodyObjectNodes.stream()
-					.filter(b -> b.getKey().equals("equalTo"))
-					.findFirst()
-					.ifPresent(b -> requestBody.append("body ('")
-							.append(b.getValue().asString()).append("')"));
+				.filter(b -> b.getKey().equals("equalTo"))
+				.findFirst()
+				.ifPresent(b -> requestBody.append("body ('").append(b.getValue().asString()).append("')"));
 			requestBodyObjectNodes.stream()
-					.filter(b -> b.getKey().equals("equalToJson"))
-					.findFirst()
-					.ifPresent(b -> requestBody.append("body ('")
-							.append(b.getValue().asString()).append("')"));
+				.filter(b -> b.getKey().equals("equalToJson"))
+				.findFirst()
+				.ifPresent(b -> requestBody.append("body ('").append(b.getValue().asString()).append("')"));
 			requestBodyObjectNodes.stream()
-					.filter(b -> b.getKey().equals("matches"))
-					.findFirst()
-					.ifPresent(b -> requestBody.append("body $(consumer(regex('")
-							.append(escapeJava(b.getValue().asString()))
-							.append("')), producer('")
-							.append(new Xeger(escapeJava(b.getValue()
-									.asString())).generate())
-							.append("'))"));
+				.filter(b -> b.getKey().equals("matches"))
+				.findFirst()
+				.ifPresent(b -> requestBody.append("body $(consumer(regex('")
+					.append(escapeJava(b.getValue().asString()))
+					.append("')), producer('")
+					.append(new Xeger(escapeJava(b.getValue().asString())).generate())
+					.append("'))"));
 		}
 		return requestBody.toString();
 	}
@@ -266,14 +261,12 @@ public class WireMockToDslConverter {
 	private String buildPrettyPrintResponseBody(StringNode node) {
 		try {
 			String stringNode = node.asString();
-			Object intermediateObjectForPrettyPrinting = OBJECT_MAPPER.readerFor(Object.class)
-					.readValue(stringNode);
+			Object intermediateObjectForPrettyPrinting = OBJECT_MAPPER.readerFor(Object.class).readValue(stringNode);
 
 			DefaultIndenter customIndenter = new DefaultIndenter("    ", "\n");
 			return OBJECT_MAPPER.writer()
-					.with(new DefaultPrettyPrinter().withArrayIndenter(customIndenter)
-							.withObjectIndenter(customIndenter))
-					.writeValueAsString(intermediateObjectForPrettyPrinting);
+				.with(new DefaultPrettyPrinter().withArrayIndenter(customIndenter).withObjectIndenter(customIndenter))
+				.writeValueAsString(intermediateObjectForPrettyPrinting);
 		}
 		catch (Exception e) {
 			throw new RuntimeException("WireMock response body could not be pretty printed", e);
@@ -289,11 +282,11 @@ public class WireMockToDslConverter {
 			JsonNode responseHeadersObjectNode = requestHeadersNode.deepCopy();
 			Set<Map.Entry<String, JsonNode>> fields = responseHeadersObjectNode.properties();
 			fields.forEach(c -> responseHeadersBuilder.append("header('")
-					.append(c.getKey())
-					.append("',")
-					.append("'")
-					.append(c.getValue().asString())
-					.append("')\n"));
+				.append(c.getKey())
+				.append("',")
+				.append("'")
+				.append(c.getValue().asString())
+				.append("')\n"));
 			responseHeadersBuilder.append("}");
 		}
 		return responseHeadersBuilder.toString();
