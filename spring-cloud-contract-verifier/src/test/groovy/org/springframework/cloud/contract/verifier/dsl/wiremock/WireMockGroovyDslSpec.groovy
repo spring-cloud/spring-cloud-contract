@@ -2592,7 +2592,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				  },
 				  "response" : {
 					"status" : 201,
-					"body" : "{\\"id\\":\\"foo\\"}",
+					"body" : "{  \\n\\t\\t\\t\\t\\t\\t\\t\\"id\\": \\"foo\\"  \\n\\t\\t\\t\\t\\t\\t}\\"  \\n\\t\\t\\t\\t\\t",
 					"headers" : {
 					  "Content-Type" : "application/json;charset=UTF-8"
 					}

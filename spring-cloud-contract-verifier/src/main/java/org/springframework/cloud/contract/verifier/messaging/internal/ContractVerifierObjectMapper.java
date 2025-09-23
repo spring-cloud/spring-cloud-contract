@@ -16,28 +16,27 @@
 
 package org.springframework.cloud.contract.verifier.messaging.internal;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
- * Wrapper over {@link ObjectMapper} that won't try to parse String but will directly
- * return it.
+ * Wrapper over {@link JsonMapper} that won't try to parse String but will directly return
+ * it.
  *
  * @author Marcin Grzejszczak
  */
 public class ContractVerifierObjectMapper {
 
-	private final ObjectMapper objectMapper;
+	private final JsonMapper objectMapper;
 
-	public ContractVerifierObjectMapper(ObjectMapper objectMapper) {
+	public ContractVerifierObjectMapper(JsonMapper objectMapper) {
 		this.objectMapper = objectMapper;
 	}
 
 	public ContractVerifierObjectMapper() {
-		this.objectMapper = new ObjectMapper();
+		this.objectMapper = new JsonMapper();
 	}
 
-	public String writeValueAsString(Object payload) throws JsonProcessingException {
+	public String writeValueAsString(Object payload) {
 		if (payload instanceof String) {
 			return payload.toString();
 		}
@@ -47,7 +46,7 @@ public class ContractVerifierObjectMapper {
 		return this.objectMapper.writeValueAsString(payload);
 	}
 
-	public byte[] writeValueAsBytes(Object payload) throws JsonProcessingException {
+	public byte[] writeValueAsBytes(Object payload) {
 		if (payload instanceof String) {
 			return payload.toString().getBytes();
 		}

@@ -15,7 +15,7 @@
 	<name>Spring Cloud Contract Docs</name>
 	<description>Spring Cloud Contract Docs</description>
 	<properties>
-		<jackson-module-jsonSchema.version>2.14.3</jackson-module-jsonSchema.version>
+		<jackson-module-jsonSchema.version>2.20.0</jackson-module-jsonSchema.version>
 		<docs.main>spring-cloud-contract</docs.main>
 		<main.basedir>${basedir}/..</main.basedir>
 		<configprops.inclusionPattern>spring.cloud.*</configprops.inclusionPattern>
@@ -113,10 +113,14 @@
 									<goal>exec</goal>
 								</goals>
 								<configuration>
-									<workingDirectory>${maven.multiModuleProjectDirectory}/docker/spring-cloud-contract-docker</workingDirectory>
+									<workingDirectory>
+										${maven.multiModuleProjectDirectory}/docker/spring-cloud-contract-docker
+									</workingDirectory>
 									<executable>./build_adocs.sh</executable>
 									<arguments>
-										<argument>${maven.multiModuleProjectDirectory}/docs/modules/ROOT/partials/</argument>
+										<argument>
+											${maven.multiModuleProjectDirectory}/docs/modules/ROOT/partials/
+										</argument>
 									</arguments>
 								</configuration>
 							</execution>
@@ -127,9 +131,13 @@
 									<goal>java</goal>
 								</goals>
 								<configuration>
-									<mainClass>org.springframework.cloud.contract.docs.Main</mainClass>
+									<mainClass>
+										org.springframework.cloud.contract.docs.Main
+									</mainClass>
 									<arguments>
-										<argument>${maven.multiModuleProjectDirectory}/docs</argument>
+										<argument>
+											${maven.multiModuleProjectDirectory}/docs
+										</argument>
 									</arguments>
 								</configuration>
 							</execution>
@@ -185,9 +193,16 @@
 					<groupId>org.springframework.amqp</groupId>
 					<artifactId>spring-amqp</artifactId>
 				</dependency>
+				<!-- TODO: remove when replacements with Jackson 3 integration become available -->
 				<dependency>
 					<groupId>com.fasterxml.jackson.module</groupId>
 					<artifactId>jackson-module-jsonSchema</artifactId>
+					<version>${jackson-module-jsonSchema.version}</version>
+				</dependency>
+				<!-- TODO: switch to Jackson 3 when jsonSchema replacements with Jackson 3 integration become available -->
+				<dependency>
+					<groupId>com.fasterxml.jackson.dataformat</groupId>
+					<artifactId>jackson-dataformat-yaml</artifactId>
 					<version>${jackson-module-jsonSchema.version}</version>
 				</dependency>
 			</dependencies>

@@ -23,11 +23,11 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import groovy.json.JsonSlurper;
 import groovy.lang.Closure;
 import groovy.lang.GString;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 import org.springframework.cloud.contract.spec.internal.DslProperty;
 import org.springframework.cloud.contract.spec.internal.FromFileProperty;
@@ -56,9 +56,9 @@ public class MapConverter {
 	 */
 	public static final Function<String, Object> JSON_PARSING_FUNCTION = (value) -> {
 		try {
-			return new ObjectMapper().readValue(value, Object.class);
+			return new JsonMapper().readValue(value, Object.class);
 		}
-		catch (JsonProcessingException e) {
+		catch (JacksonException e) {
 			throw new IllegalArgumentException("The current json [" + value + "] could not be deserialized");
 		}
 	};

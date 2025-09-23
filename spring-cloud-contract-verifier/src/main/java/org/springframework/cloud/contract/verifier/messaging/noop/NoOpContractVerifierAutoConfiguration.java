@@ -19,8 +19,8 @@ package org.springframework.cloud.contract.verifier.messaging.noop;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jspecify.annotations.Nullable;
+import tools.jackson.databind.json.JsonMapper;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -89,8 +89,8 @@ public class NoOpContractVerifierAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ContractVerifierObjectMapper contractVerifierObjectMapper(ObjectProvider<ObjectMapper> objectMapper) {
-		ObjectMapper mapper = objectMapper.getIfAvailable();
+	public ContractVerifierObjectMapper contractVerifierObjectMapper(ObjectProvider<JsonMapper> jsonMapper) {
+		JsonMapper mapper = jsonMapper.getIfAvailable();
 		if (mapper != null) {
 			return new ContractVerifierObjectMapper(mapper);
 		}

@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.common.Metadata;
 import com.github.tomakehurst.wiremock.extension.Parameters;
 import com.github.tomakehurst.wiremock.extension.PostServeActionDefinition;
@@ -30,12 +28,14 @@ import com.github.tomakehurst.wiremock.http.DelayDistribution;
 import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 import org.springframework.cloud.contract.spec.Contract;
 
 class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final JsonMapper objectMapper = new JsonMapper();
 
 	@Override
 	public StubMapping postProcess(StubMapping stubMapping, Contract contract) {
@@ -143,7 +143,7 @@ class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 			try {
 				return StubMapping.buildFrom(this.objectMapper.writeValueAsString(wiremock));
 			}
-			catch (JsonProcessingException e) {
+			catch (JacksonException e) {
 				throw new IllegalStateException("Failed to build StubMapping for map [" + wiremock + "]", e);
 			}
 		}

@@ -16,17 +16,16 @@
 
 package org.springframework.cloud.contract.verifier.messaging.kafka;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.Test;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 
 class KafkaMetadataTests {
 
 	YAMLMapper mapper = new YAMLMapper();
 
 	@Test
-	void should_parse_the_metadata_entry() throws JsonProcessingException {
+	void should_parse_the_metadata_entry() {
 		// @formatter:off
 		String yamlEntry = "kafka:\n"
 				+ "  input:\n"

@@ -29,15 +29,14 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.PropertyWriter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.exc.InvalidDefinitionException;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.ser.PropertyWriter;
+import tools.jackson.databind.ser.std.SimpleBeanPropertyFilter;
+import tools.jackson.databind.ser.std.SimpleFilterProvider;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
@@ -54,7 +53,7 @@ import org.springframework.util.ReflectionUtils;
  */
 public final class MetadataUtil {
 
-	private static final ObjectMapper MAPPER = new VerifierObjectMapper();
+	private static final JsonMapper MAPPER = buildJsonMapper();
 
 	private MetadataUtil() {
 		throw new IllegalStateException("Can't instantiate a utility class");
@@ -125,6 +124,26 @@ public final class MetadataUtil {
 
 	public static MetadataMap map() {
 		return new MetadataMap();
+	}
+
+	private static JsonMapper buildJsonMapper() {
+		return JsonMapper.builder()
+			.withConfigOverride(Object.class,
+					o -> o.setIncludeAsProperty(
+							JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL)))
+			.withConfigOverride(Object.class,
+					o -> o.setIncludeAsProperty(JsonInclude.Value.construct(JsonInclude.Include.NON_DEFAULT,
+							JsonInclude.Include.NON_DEFAULT)))
+			.withConfigOverride(Object.class,
+					o -> o.setIncludeAsProperty(
+							JsonInclude.Value.construct(JsonInclude.Include.NON_EMPTY, JsonInclude.Include.NON_EMPTY)))
+			.withConfigOverride(Object.class,
+					o -> o.setIncludeAsProperty(JsonInclude.Value.construct(JsonInclude.Include.NON_ABSENT,
+							JsonInclude.Include.NON_ABSENT)))
+			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+			.addMixIn(Object.class, PropertyFilterMixIn.class)
+			.filterProvider(new SimpleFilterProvider().addFilter("non default properties", new MyFilter()))
+			.build();
 	}
 
 	public static class MetadataMap implements Map<String, Object> {
@@ -210,21 +229,6 @@ public final class MetadataUtil {
 
 }
 
-class VerifierObjectMapper extends ObjectMapper {
-
-	VerifierObjectMapper() {
-		setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
-			.setDefaultPropertyInclusion(JsonInclude.Include.NON_DEFAULT)
-			.setDefaultPropertyInclusion(JsonInclude.Include.NON_EMPTY)
-			.setDefaultPropertyInclusion(JsonInclude.Include.NON_ABSENT);
-		configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		FilterProvider filters = new SimpleFilterProvider().addFilter("non default properties", new MyFilter());
-		addMixIn(Object.class, PropertyFilterMixIn.class);
-		setFilterProvider(filters);
-	}
-
-}
-
 @JsonFilter("non default properties")
 class PropertyFilterMixIn {
 
@@ -235,16 +239,16 @@ class MyFilter extends SimpleBeanPropertyFilter implements Serializable {
 	private static final Map<Class, Object> CACHE = new ConcurrentHashMap<>();
 
 	@Override
-	public void serializeAsField(Object pojo, JsonGenerator jgen, SerializerProvider provider, PropertyWriter writer)
-			throws Exception {
+	public void serializeAsProperty(Object pojo, JsonGenerator jgen, SerializationContext provider,
+			PropertyWriter writer) throws Exception {
 		if (pojo instanceof Map || pojo instanceof Collection) {
-			writer.serializeAsField(pojo, jgen, provider);
+			writer.serializeAsProperty(pojo, jgen, provider);
 			return;
 		}
 		Object defaultInstance = defaultInstance(pojo);
 		if (defaultInstance instanceof CantInstantiateThisClass
 				|| !valueSameAsDefault(pojo, defaultInstance, writer.getName())) {
-			writer.serializeAsField(pojo, jgen, provider);
+			writer.serializeAsProperty(pojo, jgen, provider);
 		}
 	}
 

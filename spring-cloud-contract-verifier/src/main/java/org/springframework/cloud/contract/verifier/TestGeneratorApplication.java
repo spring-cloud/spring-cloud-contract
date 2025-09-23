@@ -16,8 +16,7 @@
 
 package org.springframework.cloud.contract.verifier;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 
@@ -26,14 +25,14 @@ public final class TestGeneratorApplication {
 	private TestGeneratorApplication() {
 	}
 
-	public static void main(String[] args) throws JsonProcessingException {
+	public static void main(String[] args) {
 		if (args.length != 1) {
 			throw new RuntimeException("Invalid number of arguments");
 		}
 
-		ObjectMapper objectMapper = new ObjectMapper();
+		JsonMapper jsonMapper = new JsonMapper();
 
-		ContractVerifierConfigProperties configProperties = objectMapper.readValue(args[0],
+		ContractVerifierConfigProperties configProperties = jsonMapper.readValue(args[0],
 				ContractVerifierConfigProperties.class);
 
 		TestGenerator generator = new TestGenerator(configProperties);

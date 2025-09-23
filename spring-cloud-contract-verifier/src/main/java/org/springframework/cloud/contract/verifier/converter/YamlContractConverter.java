@@ -17,16 +17,14 @@
 package org.springframework.cloud.contract.verifier.converter;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.ContractConverter;
@@ -91,12 +89,7 @@ public class YamlContractConverter implements ContractConverter<List<YamlContrac
 			return singletonList(this.mapper.readValue(bytes, YamlContract.class));
 		}
 		catch (Exception e) {
-			try {
-				return this.mapper.readerForListOf(YamlContract.class).readValue(bytes);
-			}
-			catch (IOException ioException) {
-				throw new RuntimeException(ioException);
-			}
+			return this.mapper.readerForListOf(YamlContract.class).readValue(bytes);
 		}
 	}
 
@@ -105,12 +98,8 @@ public class YamlContractConverter implements ContractConverter<List<YamlContrac
 	}
 
 	protected byte[] getBytes(YamlContract yamlContract) {
-		try {
-			return this.mapper.writeValueAsString(yamlContract).getBytes();
-		}
-		catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
+		return this.mapper.writeValueAsString(yamlContract).getBytes();
+
 	}
 
 }
