@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.MapUtils;
 import org.yaml.snakeyaml.Yaml;
+import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.exc.MismatchedInputException;
 import tools.jackson.dataformat.yaml.YAMLMapper;
@@ -75,7 +76,9 @@ class YamlToContracts {
 
 	Collection<Contract> convertFrom(File contractFile) {
 		ClassLoader classLoader = YamlContractConverter.class.getClassLoader();
-		YAMLMapper mapper = new YAMLMapper();
+		YAMLMapper mapper = YAMLMapper.builder()
+			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
+			.build();
 		try {
 			Iterable<Object> iterables = new Yaml().loadAll(Files.newInputStream(contractFile.toPath()));
 			Collection<Contract> contracts = new ArrayList<>();

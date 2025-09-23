@@ -67,12 +67,9 @@ class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 
 	public ResponseDefinition mergedResponse(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
 		return new ResponseDefinition(stubMapping.getResponse().getStatus(),
-				stubMapping.getResponse().getStatusMessage(), stubMapping.getResponse()
-				.getBody(),
-				stubMapping.getResponse().getJsonBody(), stubMapping.getResponse()
-				.getBase64Body(),
-				stubMapping.getResponse().getBodyFileName(), stubMapping.getResponse()
-				.getHeaders(),
+				stubMapping.getResponse().getStatusMessage(), stubMapping.getResponse().getBody(),
+				stubMapping.getResponse().getJsonBody(), stubMapping.getResponse().getBase64Body(),
+				stubMapping.getResponse().getBodyFileName(), stubMapping.getResponse().getHeaders(),
 				stubMapping.getResponse().getAdditionalProxyRequestHeaders(),
 				fixedDelayMilliseconds(stubMapping, stubMappingFromMetadata),
 				delayDistribution(stubMapping, stubMappingFromMetadata),
@@ -98,20 +95,17 @@ class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 
 	public List<String> transformers(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
 		return stubMappingFromMetadata.getResponse().getTransformers() != null
-				? stubMappingFromMetadata.getResponse()
-				.getTransformers() : stubMapping.getResponse().getTransformers();
+				? stubMappingFromMetadata.getResponse().getTransformers() : stubMapping.getResponse().getTransformers();
 	}
 
 	public Fault fault(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
 		return stubMappingFromMetadata.getResponse().getFault() != null
-				? stubMappingFromMetadata.getResponse()
-				.getFault() : stubMapping.getResponse().getFault();
+				? stubMappingFromMetadata.getResponse().getFault() : stubMapping.getResponse().getFault();
 	}
 
 	public String proxyBaseUrl(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
 		return stubMappingFromMetadata.getResponse().getProxyBaseUrl() != null
-				? stubMappingFromMetadata.getResponse()
-				.getProxyBaseUrl() : stubMapping.getResponse().getProxyBaseUrl();
+				? stubMappingFromMetadata.getResponse().getProxyBaseUrl() : stubMapping.getResponse().getProxyBaseUrl();
 	}
 
 	public String proxyUrlPrefixToRemove(StubMapping stubMapping, StubMapping stubMappingFromMetadata) {
@@ -158,15 +152,13 @@ class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 
 	@Override
 	public boolean isApplicable(Contract contract) {
-		boolean contains = contract.getMetadata()
-				.containsKey(WireMockMetaData.METADATA_KEY);
+		boolean contains = contract.getMetadata().containsKey(WireMockMetaData.METADATA_KEY);
 		if (!contains) {
 			return false;
 		}
-		Object stubMapping = WireMockMetaData.fromMetadata(contract.getMetadata())
-				.getStubMapping();
+		Object stubMapping = WireMockMetaData.fromMetadata(contract.getMetadata()).getStubMapping();
 		return WireMockMetaData.APPLICABLE_CLASSES.stream()
-				.anyMatch(aClass -> aClass.isAssignableFrom(stubMapping.getClass()));
+			.anyMatch(aClass -> aClass.isAssignableFrom(stubMapping.getClass()));
 	}
 
 }
