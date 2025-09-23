@@ -26,6 +26,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,12 +34,12 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.http.Body;
 import com.github.tomakehurst.wiremock.http.ContentTypeHeader;
 import com.github.tomakehurst.wiremock.http.Cookie;
+import com.github.tomakehurst.wiremock.http.FormParameter;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import com.github.tomakehurst.wiremock.http.QueryParameter;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
-import wiremock.com.google.common.base.Optional;
 import wiremock.org.apache.commons.io.IOUtils;
 
 import org.springframework.http.MediaType;
@@ -195,6 +196,20 @@ public class ContractResultHandler extends WireMockVerifyHelper<MvcResult, Contr
 			}
 
 			@Override
+			public FormParameter formParameter(String key) {
+				return new FormParameter(key, Collections.singletonList(result.getRequest().getParameter(key)));
+			}
+
+			@Override
+			public Map<String, FormParameter> formParameters() {
+				Map<String, FormParameter> map = new HashMap<>();
+				for (Map.Entry<String, String[]> entry : result.getRequest().getParameterMap().entrySet()) {
+					map.put(entry.getKey(), new FormParameter(entry.getKey(), List.of(entry.getValue())));
+				}
+				return map;
+			}
+
+			@Override
 			public byte[] getBody() {
 				return result.getRequest().getContentAsByteArray();
 			}
@@ -226,6 +241,11 @@ public class ContractResultHandler extends WireMockVerifyHelper<MvcResult, Contr
 						@Override
 						public String getName() {
 							return part.getName();
+						}
+
+						@Override
+						public String getFileName() {
+							return part.getSubmittedFileName();
 						}
 
 						@Override
@@ -271,7 +291,7 @@ public class ContractResultHandler extends WireMockVerifyHelper<MvcResult, Contr
 
 			@Override
 			public Optional<Request> getOriginalRequest() {
-				return Optional.absent();
+				return Optional.empty();
 			}
 
 			@Override

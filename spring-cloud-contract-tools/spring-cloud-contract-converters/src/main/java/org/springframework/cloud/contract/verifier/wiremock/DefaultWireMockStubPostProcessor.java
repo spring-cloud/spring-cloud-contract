@@ -70,7 +70,7 @@ class DefaultWireMockStubPostProcessor implements WireMockStubPostProcessor {
 				stubMapping.getResponse().getStatusMessage(), stubMapping.getResponse().getBody(),
 				stubMapping.getResponse().getJsonBody(), stubMapping.getResponse().getBase64Body(),
 				stubMapping.getResponse().getBodyFileName(), stubMapping.getResponse().getHeaders(),
-				stubMapping.getResponse().getAdditionalProxyRequestHeaders(),
+				stubMapping.getResponse().getAdditionalProxyRequestHeaders(), List.of(),
 				fixedDelayMilliseconds(stubMapping, stubMappingFromMetadata),
 				delayDistribution(stubMapping, stubMappingFromMetadata),
 				chunkedDribbleDelay(stubMapping, stubMappingFromMetadata),

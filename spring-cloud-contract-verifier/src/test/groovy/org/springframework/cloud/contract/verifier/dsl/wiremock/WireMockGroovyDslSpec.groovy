@@ -18,18 +18,19 @@ package org.springframework.cloud.contract.verifier.dsl.wiremock
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
-import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer
+import com.github.tomakehurst.wiremock.extension.TemplateHelperProviderExtension
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import groovy.json.JsonBuilder
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+import org.junit.jupiter.api.Disabled
+import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsEscapeHelper
+import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsJsonPathHelper
 import spock.lang.Issue
 import spock.lang.Specification
 
 import org.springframework.boot.web.server.test.client.TestRestTemplate
 import org.springframework.cloud.contract.spec.Contract
-import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsEscapeHelper
-import org.springframework.cloud.contract.verifier.builder.handlebars.HandlebarsJsonPathHelper
 import org.springframework.cloud.contract.verifier.converter.YamlContractConverter
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
 import org.springframework.cloud.contract.verifier.util.AssertionUtil
@@ -37,6 +38,7 @@ import org.springframework.cloud.contract.verifier.util.ContractVerifierDslConve
 import org.springframework.cloud.test.TestSocketUtils
 import org.springframework.http.RequestEntity
 import org.springframework.http.ResponseEntity
+import wiremock.com.github.jknack.handlebars.Helper
 
 class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifier {
 
@@ -2328,7 +2330,7 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 				   "paramIndex":"bar2",
 				   "authorization":"secret",
 				   "path":"/api/v1/xxxx",
-				   "rawUrl":"/api/v1/xxxx?foo&#x3D;bar&amp;foo&#x3D;bar2",
+				   "rawUrl":"/api/v1/xxxx?foo=bar&foo=bar2",
 				   "rawPath":"/api/v1/xxxx",
 				   "rawResponseBaz2":"Bla bla bar bla bla",
 				   "param":"bar",
@@ -3301,13 +3303,18 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 	}
 
 	WireMockConfiguration config() {
-		return new WireMockConfiguration().extensions(responseTemplateTransformer())
-	}
+		return new WireMockConfiguration().extensions(new TemplateHelperProviderExtension() {
+			@Override
+			String getName() {
+				return "custom-helpers";
+			}
 
-	private ResponseTemplateTransformer responseTemplateTransformer() {
-		return new ResponseTemplateTransformer(false,
-				[(HandlebarsJsonPathHelper.NAME): new HandlebarsJsonPathHelper(),
-				 (HandlebarsEscapeHelper.NAME)  : new HandlebarsEscapeHelper()])
+			@Override
+			Map<String, Helper<?>> provideTemplateHelpers() {
+				return [(HandlebarsJsonPathHelper.NAME): new HandlebarsJsonPathHelper(),
+				 (HandlebarsEscapeHelper.NAME)  : new HandlebarsEscapeHelper()]
+			}
+		})
 	}
 
 	ResponseEntity<String> call(int port) {

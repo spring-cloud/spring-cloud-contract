@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.wiremock.restdocs;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,6 +27,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -34,12 +36,12 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.http.Body;
 import com.github.tomakehurst.wiremock.http.ContentTypeHeader;
 import com.github.tomakehurst.wiremock.http.Cookie;
+import com.github.tomakehurst.wiremock.http.FormParameter;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.QueryParameter;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
 import org.apache.commons.codec.binary.Base64;
-import wiremock.com.google.common.base.Optional;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -50,9 +52,12 @@ import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * @author Dave Syer
@@ -116,7 +121,7 @@ class WireMockHttpRequestAdapter implements Request {
 
 	private static final boolean SERVLET_API_PRESENT = ClassUtils.isPresent("jakarta.servlet.http.Part", null);
 
-	private EntityExchangeResult<?> result;
+	private final EntityExchangeResult<?> result;
 
 	WireMockHttpRequestAdapter(EntityExchangeResult<?> result) {
 		this.result = result;
@@ -228,6 +233,55 @@ class WireMockHttpRequestAdapter implements Request {
 		return new QueryParameter(key, values);
 	}
 
+	// ===== Helpers for application/x-www-form-urlencoded parsing =====
+
+	private boolean isFormUrlEncoded() {
+		MediaType ct = this.result.getRequestHeaders().getContentType();
+		return ct != null && MediaType.APPLICATION_FORM_URLENCODED.isCompatibleWith(ct);
+	}
+
+	private Charset requestCharset() {
+		MediaType ct = this.result.getRequestHeaders().getContentType();
+		if (ct != null && ct.getCharset() != null) {
+			return ct.getCharset();
+		}
+		return StandardCharsets.UTF_8;
+	}
+
+	private MultiValueMap<String, String> parseFormData() {
+		if (!isFormUrlEncoded()) {
+			return new LinkedMultiValueMap<>();
+		}
+		String body = new String(this.result.getRequestBodyContent(), requestCharset());
+		return UriComponentsBuilder.newInstance()
+			.query(body) // treat as "?a=1&b=2&b=3"
+			.build()
+			.getQueryParams();
+	}
+
+	@Override
+	public FormParameter formParameter(String key) {
+		MultiValueMap<String, String> params = parseFormData();
+		List<String> values = params.get(key);
+		if (values == null || values.isEmpty()) {
+			return null;
+		}
+		return new FormParameter(key, values);
+	}
+
+	@Override
+	public Map<String, FormParameter> formParameters() {
+		MultiValueMap<String, String> params = parseFormData();
+		if (params.isEmpty()) {
+			return Map.of();
+		}
+		Map<String, FormParameter> out = new LinkedHashMap<>();
+		for (Map.Entry<String, List<String>> e : params.entrySet()) {
+			out.put(e.getKey(), new FormParameter(e.getKey(), e.getValue()));
+		}
+		return out;
+	}
+
 	@Override
 	public byte[] getBody() {
 		return this.result.getRequestBodyContent();
@@ -271,7 +325,7 @@ class WireMockHttpRequestAdapter implements Request {
 		try {
 			return new StandardMultipartHttpServletRequest(request).getParts()
 				.stream()
-				.map(part -> partFromServletPart(part))
+				.map(this::partFromServletPart)
 				.collect(Collectors.toList());
 		}
 		catch (Exception e) {
@@ -285,6 +339,11 @@ class WireMockHttpRequestAdapter implements Request {
 			@Override
 			public String getName() {
 				return part.getName();
+			}
+
+			@Override
+			public String getFileName() {
+				return part.getSubmittedFileName();
 			}
 
 			@Override
@@ -327,7 +386,7 @@ class WireMockHttpRequestAdapter implements Request {
 
 	@Override
 	public Optional<Request> getOriginalRequest() {
-		return Optional.absent();
+		return Optional.empty();
 	}
 
 	@Override
