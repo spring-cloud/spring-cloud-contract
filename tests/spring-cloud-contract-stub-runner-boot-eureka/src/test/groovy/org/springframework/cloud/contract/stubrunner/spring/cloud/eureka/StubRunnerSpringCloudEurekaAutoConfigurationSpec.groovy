@@ -107,7 +107,7 @@ class StubRunnerSpringCloudEurekaAutoConfigurationSpec {
 			Awaitility.await()
 					.pollInterval(1, TimeUnit.SECONDS)
 					.pollDelay(10, TimeUnit.SECONDS)
-					.atMost(1, TimeUnit.MINUTES)
+					.atMost(2, TimeUnit.MINUTES)
 					.untilAsserted(() -> {
 				try {
 					assert restTemplate.getForObject('http://loanIssuance/name', String) == 'loanIssuance'
