@@ -15,7 +15,7 @@
 	<name>spring-cloud-contract-dependencies</name>
 	<description>Spring Cloud Contract Dependencies</description>
 	<properties>
-		<wiremock.version>2.35.2</wiremock.version>
+		<wiremock.version>3.13.1</wiremock.version>
 		<jsonassert.version>0.8.0</jsonassert.version>
 	</properties>
 	<dependencyManagement>
@@ -96,8 +96,8 @@
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.github.tomakehurst</groupId>
-				<artifactId>wiremock-jre8-standalone</artifactId>
+				<groupId>org.wiremock</groupId>
+				<artifactId>wiremock-standalone</artifactId>
 				<version>${wiremock.version}</version>
 			</dependency>
 			<!-- Leaving this for backward compatibility -->

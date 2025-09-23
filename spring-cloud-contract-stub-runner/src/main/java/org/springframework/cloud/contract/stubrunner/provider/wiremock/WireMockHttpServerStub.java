@@ -95,7 +95,7 @@ public class WireMockHttpServerStub implements HttpServerStub {
 			}
 		}
 		else {
-			extensions.addAll(Arrays.asList(new DefaultResponseTransformer(false, helpers()),
+			extensions.addAll(Arrays.asList(new DefaultResponseTransformer(),
 					new SpringCloudContractRequestMatcher()));
 		}
 		return extensions.toArray(new Extension[extensions.size()]);
