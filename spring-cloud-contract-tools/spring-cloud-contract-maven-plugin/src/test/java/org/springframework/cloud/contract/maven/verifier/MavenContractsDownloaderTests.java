@@ -20,7 +20,7 @@ import java.io.File;
 import java.util.HashMap;
 
 import org.apache.maven.model.Dependency;
-import org.apache.maven.plugin.testing.SilentLog;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.Test;
@@ -74,8 +74,87 @@ class MavenContractsDownloaderTests {
 	}
 
 	private MavenContractsDownloader contractsDownloader(MavenProject mavenProject, Dependency one, File file) {
-		return new MavenContractsDownloader(mavenProject, one, "", "", StubRunnerProperties.StubsMode.LOCAL,
-				new SilentLog(), "", "", "", null, false, new HashMap<>(), false) {
+		return new MavenContractsDownloader(mavenProject, one, "", "", StubRunnerProperties.StubsMode.LOCAL, new Log() {
+			@Override
+			public boolean isDebugEnabled() {
+				return false;
+			}
+
+			@Override
+			public void debug(CharSequence charSequence) {
+
+			}
+
+			@Override
+			public void debug(CharSequence charSequence, Throwable throwable) {
+
+			}
+
+			@Override
+			public void debug(Throwable throwable) {
+
+			}
+
+			@Override
+			public boolean isInfoEnabled() {
+				return false;
+			}
+
+			@Override
+			public void info(CharSequence charSequence) {
+
+			}
+
+			@Override
+			public void info(CharSequence charSequence, Throwable throwable) {
+
+			}
+
+			@Override
+			public void info(Throwable throwable) {
+
+			}
+
+			@Override
+			public boolean isWarnEnabled() {
+				return false;
+			}
+
+			@Override
+			public void warn(CharSequence charSequence) {
+
+			}
+
+			@Override
+			public void warn(CharSequence charSequence, Throwable throwable) {
+
+			}
+
+			@Override
+			public void warn(Throwable throwable) {
+
+			}
+
+			@Override
+			public boolean isErrorEnabled() {
+				return false;
+			}
+
+			@Override
+			public void error(CharSequence charSequence) {
+
+			}
+
+			@Override
+			public void error(CharSequence charSequence, Throwable throwable) {
+
+			}
+
+			@Override
+			public void error(Throwable throwable) {
+
+			}
+		}, "", "", "", null, false, new HashMap<>(), false) {
 			@Override
 			ContractDownloader contractDownloader() {
 				return new ContractDownloader(null, null, null, null, null, null) {
