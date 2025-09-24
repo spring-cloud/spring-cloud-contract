@@ -7,4 +7,4 @@ set -e
 [[ -z "${CORES}" ]] && CORES=4
 echo -e "\n\nRUNNING FAST BUILD (NO INTEGRATION TESTS) WITH [${CORES}] CORES\n\n"
 
-./mvnw clean install -Pdocs,fast -T ${CORES} -Dinvoker.parallelThreads=${CORES}
+./mvnw clean install -Pfast -T ${CORES} -Dinvoker.parallelThreads=${CORES}

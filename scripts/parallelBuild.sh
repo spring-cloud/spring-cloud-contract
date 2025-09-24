@@ -7,4 +7,4 @@ set -e
 [[ -z "${CORES}" ]] && CORES=4
 echo -e "\n\nRUNNING PARALLEL BUILD WITH [${CORES}] CORES\n\n"
 
-./mvnw clean install -Pdocs,integration -T ${CORES} -Dinvoker.parallelThreads=${CORES}
+./mvnw clean install -Pintegration -T ${CORES} -Dinvoker.parallelThreads=${CORES}
