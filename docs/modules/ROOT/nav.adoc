@@ -41,7 +41,6 @@
 *** xref:project-features-stubrunner/stub-runner-generate-stubs-at-runtime.adoc[]
 *** xref:project-features-stubrunner/stub-runner-fail-on-no-stubs.adoc[]
 *** xref:project-features-stubrunner/stub-runner-common.adoc[]
-** xref:project-features-wiremock.adoc[]
 * Build Tools
 ** xref:docker-project.adoc[]
 ** xref:gradle-project.adoc[]

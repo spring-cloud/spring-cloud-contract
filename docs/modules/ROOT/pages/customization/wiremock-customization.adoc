@@ -31,20 +31,6 @@ include::{verifier_root_path}/src/test/groovy/org/springframework/cloud/contract
 IMPORTANT: If you want the transformation to be applied only for a mapping that explicitly
 requires it, override the `applyGlobally()` method and set it to `false` .
 
-[[customization-wiremock-configuration]]
-== Customization of WireMock Configuration
-
-You can register a bean of type `org.springframework.cloud.contract.wiremock.WireMockConfigurationCustomizer`
-to customize the WireMock configuration (for example, to add custom transformers).
-The following example shows how to do so:
-
-[source,java,indent=0]
-----
-include::{wiremock_tests}/src/test/java/org/springframework/cloud/contract/wiremock/AutoConfigureWireMockConfigurationCustomizerTests.java[tags=customizer_1]
-// perform your customization here
-include::{wiremock_tests}/src/test/java/org/springframework/cloud/contract/wiremock/AutoConfigureWireMockConfigurationCustomizerTests.java[tags=customizer_2]
-----
-
 [[customization-wiremock-from-metadata]]
 == Customization of WireMock via Metadata
 
