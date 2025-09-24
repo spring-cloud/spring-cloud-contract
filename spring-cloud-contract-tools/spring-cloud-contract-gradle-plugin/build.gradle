@@ -1,4 +1,3 @@
-
 buildscript {
 	repositories {
 		mavenCentral()
@@ -17,7 +16,7 @@ ext {
 	repoPass = System.getenv('REPO_PASSWORD') ?: project.findProperty('REPO_PASSWORD') ?: ''
 
 	testSystemProperties = [
-			"WORK_OFFLINE"                   : gradle.startParameter.isOffline() ? 'TRUE' : 'FALSE'
+			"WORK_OFFLINE": gradle.startParameter.isOffline() ? 'TRUE' : 'FALSE'
 	]
 	JavaVersion javaVer = JavaVersion.current()
 	println "Current Java version equal to [${javaVer}]"
@@ -67,7 +66,6 @@ dependencies {
 	implementation "tools.jackson.core:jackson-databind:${jacksonDatabindVersion}"
 
 	implementation "org.springframework:spring-core:${springVersion}"
-	implementation("org.springframework.cloud:spring-cloud-contract-shade:${project.version}")
 	api("org.springframework.cloud:spring-cloud-contract-stub-runner:${project.version}") {
 		exclude(group: '*')
 	}
@@ -90,7 +88,7 @@ task libtest() {
 }
 
 test {
-	useJUnitPlatform ()
+	useJUnitPlatform()
 	testLogging {
 		exceptionFormat = 'full'
 	}

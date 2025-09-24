@@ -81,7 +81,6 @@
 		<!-- TODO: temporarily disable -->
 		<!--<module>docker</module>-->
 		<module>docs</module>
-		<module>spring-cloud-contract-shade</module>
 		<module>spring-cloud-contract-wiremock</module>
 		<module>spring-cloud-contract-verifier</module>
 		<module>specs</module>
