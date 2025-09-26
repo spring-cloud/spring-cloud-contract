@@ -38,8 +38,8 @@
 		<spock-spring.version>2.3-groovy-4.0
 		</spock-spring.version> <!-- @releaser:version-check-off -->
 		<hoverfly-junit.version>0.2.2</hoverfly-junit.version>
+		<handlebars.version>4.5.0</handlebars.version>
 		<commons-text.version>1.14.0</commons-text.version>
-		<handlebars.version>4.3.1</handlebars.version>
 		<jgit.version>7.3.0.202506031305-r</jgit.version>
 		<json-unit-assertj.version>4.1.1</json-unit-assertj.version>
 		<rest-assured.version>5.2.1</rest-assured.version>
