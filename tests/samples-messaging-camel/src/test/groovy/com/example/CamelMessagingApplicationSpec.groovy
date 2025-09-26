@@ -40,7 +40,7 @@ import org.springframework.test.context.DynamicPropertySource
  */
 // Context configuration would end up in base class
 @AutoConfigureMessageVerifier
-@SpringBootTest(classes = CamelMessagingApplication, properties = 'camel.component.rabbitmq.declare=true')
+@SpringBootTest(classes = CamelMessagingApplication, properties = 'camel.component.spring-rabbitmq.auto-declare-producer=true')
 @Testcontainers
 class CamelMessagingApplicationSpec {
 
@@ -82,7 +82,7 @@ class CamelMessagingApplicationSpec {
 		when:
 			bookReturnedTriggered()
 		then:
-			def response = contractVerifierMessaging.receive('rabbitmq:output?queue=output')
+			def response = contractVerifierMessaging.receive('spring-rabbitmq:output?queues=output')
 			assert response.headers.get('BOOK-NAME') == 'foo'
 		and:
 			DocumentContext parsedJson = JsonPath.

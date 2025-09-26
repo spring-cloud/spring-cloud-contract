@@ -25,7 +25,7 @@
 	<properties>
 		<spring-boot.version>4.0.0-M2</spring-boot.version>
 		<!-- Align it also in Docker image under [docker/spring-cloud-contract-docker/project/gradle.properties] -->
-		<camel.version>3.22.4</camel.version>
+		<camel.version>4.14.0</camel.version>
 		<jsch-agent.version>0.0.9</jsch-agent.version>
 		<spring-cloud-build.version>5.0.0-SNAPSHOT</spring-cloud-build.version>
 		<spring-cloud-zookeeper.version>5.0.0-SNAPSHOT</spring-cloud-zookeeper.version>
@@ -38,8 +38,8 @@
 		<spock-spring.version>2.3-groovy-4.0
 		</spock-spring.version> <!-- @releaser:version-check-off -->
 		<hoverfly-junit.version>0.2.2</hoverfly-junit.version>
-		<commons-text.version>1.13.1</commons-text.version>
 		<handlebars.version>4.5.0</handlebars.version>
+		<commons-text.version>1.14.0</commons-text.version>
 		<jgit.version>7.3.0.202506031305-r</jgit.version>
 		<json-unit-assertj.version>4.1.1</json-unit-assertj.version>
 		<rest-assured.version>5.2.1</rest-assured.version>
@@ -81,7 +81,6 @@
 		<!-- TODO: temporarily disable -->
 		<!--<module>docker</module>-->
 		<module>docs</module>
-		<module>spring-cloud-contract-shade</module>
 		<module>spring-cloud-contract-wiremock</module>
 		<module>spring-cloud-contract-verifier</module>
 		<module>specs</module>
@@ -125,7 +124,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel.springboot</groupId>
-				<artifactId>camel-rabbitmq-starter</artifactId>
+				<artifactId>camel-spring-rabbitmq-starter</artifactId>
 				<version>${camel.version}</version>
 			</dependency>
 			<dependency>
