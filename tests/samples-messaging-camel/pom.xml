@@ -15,8 +15,12 @@
 	<description>Spring Cloud Contract Sample Camel</description>
 	<dependencies>
 		<dependency>
+			<groupId>org.springframework.retry</groupId>
+			<artifactId>spring-retry</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.camel.springboot</groupId>
-			<artifactId>camel-rabbitmq-starter</artifactId>
+			<artifactId>camel-spring-rabbitmq-starter</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel.springboot</groupId>
