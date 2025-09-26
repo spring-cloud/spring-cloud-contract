@@ -19,10 +19,10 @@ package com.example;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.rabbitmq.RabbitMQComponent;
+import org.apache.camel.component.springrabbit.SpringRabbitMQComponent;
 import org.apache.camel.model.dataformat.JsonLibrary;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -33,14 +33,14 @@ import org.springframework.context.annotation.Configuration;
 public class BookRouteConfiguration {
 
 	@Bean
-	RoutesBuilder myRouter(final BookService bookService, CamelContext context,
-			@Value("${spring.rabbitmq.port}") int port) {
+	RoutesBuilder myRouter(final BookService bookService, CamelContext context, ConnectionFactory connectionFactory) {
 		return new RouteBuilder() {
 
 			@Override
 			public void configure() throws Exception {
-				RabbitMQComponent component = context.getComponent("rabbitmq", RabbitMQComponent.class);
-				component.setAddresses("localhost:" + port);
+				SpringRabbitMQComponent component = context.getComponent("spring-rabbitmq",
+						SpringRabbitMQComponent.class);
+				component.setConnectionFactory(connectionFactory);
 
 				// scenario 1 - from bean to output
 				from("direct:start").unmarshal()
@@ -48,7 +48,7 @@ public class BookRouteConfiguration {
 					.bean(bookService)
 					.marshal()
 					.json(JsonLibrary.Jackson, BookReturned.class)
-					.to("rabbitmq:output?queue=output");
+					.to("spring-rabbitmq:output?queues=output");
 			}
 
 		};

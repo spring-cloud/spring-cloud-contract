@@ -1,4 +1,3 @@
-
 buildscript {
 	repositories {
 		mavenCentral()
@@ -17,7 +16,7 @@ ext {
 	repoPass = System.getenv('REPO_PASSWORD') ?: project.findProperty('REPO_PASSWORD') ?: ''
 
 	testSystemProperties = [
-			"WORK_OFFLINE"                   : gradle.startParameter.isOffline() ? 'TRUE' : 'FALSE'
+			"WORK_OFFLINE": gradle.startParameter.isOffline() ? 'TRUE' : 'FALSE'
 	]
 	JavaVersion javaVer = JavaVersion.current()
 	println "Current Java version equal to [${javaVer}]"
@@ -57,22 +56,13 @@ dependencies {
 	// provide version alignment with project
 	implementation(platform("org.springframework.cloud:spring-cloud-contract-tools:${project.version}"))
 
-	// Need to set the versions manually cause otherwise Gradle will not publish a proper pom
-	implementation "org.apache.maven.resolver:maven-resolver-api:${mavenResolverVersion}"
-	implementation "org.eclipse.jgit:org.eclipse.jgit:${jgitVersion}"
-	implementation "org.eclipse.jgit:org.eclipse.jgit.ssh.jsch:${jgitVersion}"
-	implementation "com.jcraft:jsch.agentproxy.jsch:${jschVersion}"
-	implementation "com.jcraft:jsch.agentproxy.sshagent:${jschVersion}"
-	implementation "com.jcraft:jsch.agentproxy.usocket-jna:${jschVersion}"
-	implementation "tools.jackson.core:jackson-databind:${jacksonDatabindVersion}"
-
-	implementation "org.springframework:spring-core:${springVersion}"
-	implementation("org.springframework.cloud:spring-cloud-contract-shade:${project.version}")
 	api("org.springframework.cloud:spring-cloud-contract-stub-runner:${project.version}") {
-		exclude(group: '*')
+		exclude(group: 'org.apache.groovy')
+		exclude(group: 'org.jetbrains.kotlin')
 	}
 	api("org.springframework.cloud:spring-cloud-contract-verifier:${project.version}") {
-		exclude(group: '*')
+		exclude(group: 'org.apache.groovy')
+		exclude(group: 'org.jetbrains.kotlin')
 	}
 
 	testImplementation "org.springframework.boot:spring-boot-starter-test"
@@ -90,7 +80,7 @@ task libtest() {
 }
 
 test {
-	useJUnitPlatform ()
+	useJUnitPlatform()
 	testLogging {
 		exceptionFormat = 'full'
 	}

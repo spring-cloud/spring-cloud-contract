@@ -16,8 +16,9 @@
 
 package com.example.loan;
 
+import java.util.Map;
+
 import org.junit.Test;
-import shaded.com.google.common.collect.ImmutableMap;
 
 import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.factory.BeanCreationException;
@@ -37,7 +38,7 @@ public class FailFastLoanApplicationServiceTests {
 		// When
 		final Throwable throwable = catchThrowable(
 				() -> new SpringApplicationBuilder(Application.class, StubRunnerConfiguration.class)
-					.properties(ImmutableMap.of("stubrunner.stubsMode", "REMOTE", "stubrunner.repositoryRoot",
+					.properties(Map.of("stubrunner.stubsMode", "REMOTE", "stubrunner.repositoryRoot",
 							"classpath:m2repo/repository/", "stubrunner.ids",
 							new String[] { "org.springframework.cloud.contract.verifier.stubs:should-not-be-found" }))
 					.run());
@@ -54,7 +55,7 @@ public class FailFastLoanApplicationServiceTests {
 		// When
 		final Throwable throwable = catchThrowable(
 				() -> new SpringApplicationBuilder(Application.class, StubRunnerConfiguration.class)
-					.properties(ImmutableMap.of("stubrunner.stubsMode", "CLASSPATH", "stubrunner.ids",
+					.properties(Map.of("stubrunner.stubsMode", "CLASSPATH", "stubrunner.ids",
 							new String[] { "org.springframework.cloud.contract.verifier.stubs:should-not-be-found" }))
 					.run());
 

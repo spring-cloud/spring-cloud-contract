@@ -19,11 +19,11 @@ package org.springframework.cloud.contract.stubrunner;
 import java.io.File;
 import java.util.HashMap;
 
+import org.apache.maven.settings.crypto.DefaultSettingsDecrypter;
+import org.apache.maven.settings.crypto.SettingsDecrypter;
 import org.sonatype.plexus.components.cipher.DefaultPlexusCipher;
 import org.sonatype.plexus.components.cipher.PlexusCipher;
 import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
-import shaded.org.apache.maven.settings.crypto.DefaultSettingsDecrypter;
-import shaded.org.apache.maven.settings.crypto.SettingsDecrypter;
 
 import org.springframework.util.StringUtils;
 
@@ -37,6 +37,10 @@ public class MavenSettings {
 
 	public MavenSettings() {
 		this(userSettings());
+	}
+
+	public MavenSettings(String homeDir) {
+		this.homeDir = homeDir;
 	}
 
 	private static String fromSystemPropOrEnv(String prop) {
@@ -53,10 +57,6 @@ public class MavenSettings {
 			return System.getProperty("user.home");
 		}
 		return user;
-	}
-
-	public MavenSettings(String homeDir) {
-		this.homeDir = homeDir;
 	}
 
 	public SettingsDecrypter createSettingsDecrypter() {
