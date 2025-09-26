@@ -42,7 +42,7 @@
 		<handlebars.version>4.3.1</handlebars.version>
 		<jgit.version>7.3.0.202506031305-r</jgit.version>
 		<json-unit-assertj.version>4.1.1</json-unit-assertj.version>
-		<rest-assured.version>5.2.1</rest-assured.version>
+		<rest-assured.version>5.5.6</rest-assured.version>
 		<slf4j.version>[2.0.0,)</slf4j.version>
 		<thin-jar.version>1.0.30.RELEASE</thin-jar.version>
 
