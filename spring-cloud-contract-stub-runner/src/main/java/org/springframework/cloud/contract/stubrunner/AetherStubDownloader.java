@@ -25,6 +25,10 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.maven.settings.Server;
+import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.crypto.DefaultSettingsDecryptionRequest;
+import org.apache.maven.settings.crypto.SettingsDecryptionRequest;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
@@ -38,16 +42,11 @@ import org.eclipse.aether.resolution.VersionRangeRequest;
 import org.eclipse.aether.resolution.VersionRangeResolutionException;
 import org.eclipse.aether.resolution.VersionRangeResult;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
-import shaded.org.apache.maven.settings.Server;
-import shaded.org.apache.maven.settings.Settings;
-import shaded.org.apache.maven.settings.crypto.DefaultSettingsDecryptionRequest;
-import shaded.org.apache.maven.settings.crypto.SettingsDecryptionRequest;
 
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptions.StubRunnerProxyOptions;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.util.StringUtils;
 
-import static org.springframework.cloud.contract.stubrunner.AetherFactories.newRepositorySystem;
 import static org.springframework.cloud.contract.stubrunner.AetherFactories.newSession;
 import static org.springframework.cloud.contract.stubrunner.AetherFactories.settings;
 import static org.springframework.cloud.contract.stubrunner.util.ZipCategory.unzipTo;
@@ -106,7 +105,7 @@ public class AetherStubDownloader implements StubDownloader {
 				throw new UnsupportedOperationException(
 						"You can't use Aether downloader when you use classpath to find stubs");
 		}
-		this.repositorySystem = newRepositorySystem();
+		this.repositorySystem = AetherFactories.repositorySystemOr(null);
 		this.workOffline = stubRunnerOptions.stubsMode == StubRunnerProperties.StubsMode.LOCAL;
 		this.session = newSession(this.repositorySystem, this.workOffline);
 		registerShutdownHook();

@@ -19,9 +19,9 @@ package org.springframework.cloud.contract.maven.verifier.stubrunner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Settings;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
-import shaded.org.apache.maven.settings.Settings;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.stubrunner.AetherStubDownloader;
