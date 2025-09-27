@@ -49,7 +49,7 @@
 		<junit-jupiter.version>5.13.4</junit-jupiter.version>
 		<gmavenplus-plugin.version>4.2.1</gmavenplus-plugin.version>
 		<maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>  <!-- @releaser:version-check-off -->
-		<awaitility.version>4.2.2</awaitility.version>
+		<awaitility.version>4.3.0</awaitility.version>
 		<artemis.version>2.42.0</artemis.version>
 		<testcontainers.version>1.21.3</testcontainers.version>
 		<hamcrest.version>2.2</hamcrest.version>
