@@ -19,7 +19,6 @@ package org.springframework.cloud.contract.stubrunner.spring.cloud
 import java.util.function.Function
 
 import org.assertj.core.api.BDDAssertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -38,18 +37,18 @@ import org.springframework.core.env.Environment
 import org.springframework.http.ResponseEntity
 import org.springframework.messaging.Message
 import org.springframework.test.context.ActiveProfiles
+
 /**
  * @author Marcin Grzejszczak
  */
 // tag::test[]
 @SpringBootTest(classes = Config, properties = "stubrunner.jms.enabled=false")
 @AutoConfigureStubRunner(ids = "org.springframework.cloud.contract.verifier.stubs:producerWithMultipleConsumers",
-        repositoryRoot = "classpath:m2repo/repository/",
-        consumerName = "foo-consumer",
-        stubsMode = StubRunnerProperties.StubsMode.REMOTE,
-        stubsPerConsumer = true)
+		repositoryRoot = "classpath:m2repo/repository/",
+		consumerName = "foo-consumer",
+		stubsMode = StubRunnerProperties.StubsMode.REMOTE,
+		stubsPerConsumer = true)
 @ActiveProfiles("streamconsumer")
-@Disabled("TODO: Sth wrong with stream?")
 class StubRunnerStubsPerConsumerWithConsumerNameSpec {
 // end::test[]
 
@@ -67,7 +66,8 @@ class StubRunnerStubsPerConsumerWithConsumerNameSpec {
 		given:
 			URL stubUrl = stubFinder.findStubUrl('producerWithMultipleConsumers')
 		when:
-			ResponseEntity entity = template.getForEntity("${stubUrl}/foo-consumer", String)
+			ResponseEntity entity =
+					template.getForEntity("${stubUrl}/foo-consumer", String)
 		then:
 			assert entity.statusCode.value() == 200
 		when:
@@ -91,8 +91,10 @@ class StubRunnerStubsPerConsumerWithConsumerNameSpec {
 	@Test
 	void 'should not trigger a message by the not matching consumer'() {
 		when:
-		BDDAssertions.thenThrownBy(() -> stubFinder.trigger('return_book_for_bar')).isInstanceOf(IllegalArgumentException)
-		.hasMessageContaining("No label with name [return_book_for_bar] was found")
+			BDDAssertions
+					.thenThrownBy(() -> stubFinder.trigger('return_book_for_bar'))
+					.isInstanceOf(IllegalArgumentException)
+					.hasMessageContaining("No label with name [return_book_for_bar] was found")
 	}
 
 	@Configuration
@@ -101,7 +103,7 @@ class StubRunnerStubsPerConsumerWithConsumerNameSpec {
 	static class Config {
 		@Bean
 		Function output() {
-			return  { Object o ->
+			return { Object o ->
 				println(o)
 				return o
 			}
