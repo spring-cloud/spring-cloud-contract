@@ -59,7 +59,7 @@ public class ContractProjectUpdaterTest extends AbstractGitTest {
 		this.origin = clonedProject(this.tmp.newFolder(), this.originalProject);
 		this.project = this.gitRepo.cloneProject(this.originalProject.toURI());
 		this.gitRepo.checkout(this.project, "master");
-		setOriginOnProjectToTmp(this.origin, this.project, true);
+		setOriginOnProjectToTmp(this.origin, this.project);
 		StubRunnerOptions options = new StubRunnerOptionsBuilder()
 			.withStubRepositoryRoot("file://" + this.project.getAbsolutePath() + "/")
 			.withStubsMode(StubRunnerProperties.StubsMode.REMOTE)

@@ -136,15 +136,6 @@ class StubRepository {
 		return mappingDescriptors;
 	}
 
-	private ContractConverter contractConverter(File file) {
-		for (ContractConverter converter : this.contractConverters) {
-			if (converter.isAccepted(file)) {
-				return converter;
-			}
-		}
-		return null;
-	}
-
 	private boolean httpServerStubAccepts(File file) {
 		for (HttpServerStub httpServerStub : this.httpServerStubs) {
 			if (httpServerStub.isAccepted(file)) {
