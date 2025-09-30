@@ -781,7 +781,7 @@ then:
 				}
 			}
 			response {
-				delay = fixedMilliseconds(1000L)
+				delay = fixedMilliseconds(1000)
 				status = OK
 				body = body(
 						listOf(

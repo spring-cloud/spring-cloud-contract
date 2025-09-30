@@ -61,7 +61,7 @@ public abstract class AbstractGitTest {
 		return newFile;
 	}
 
-	void setOriginOnProjectToTmp(File origin, File project, boolean push)
+	void setOriginOnProjectToTmp(File origin, File project)
 			throws GitAPIException, IOException, URISyntaxException {
 		try (Git git = openGitProject(project)) {
 			RemoteRemoveCommand remove = git.remoteRemove();
