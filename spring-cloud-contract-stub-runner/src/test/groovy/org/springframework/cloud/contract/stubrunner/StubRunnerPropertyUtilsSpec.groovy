@@ -35,7 +35,7 @@ class StubRunnerPropertyUtilsSpec extends Specification {
 
 				@Override
 				String envVar(String prop) {
-					assert prop == expectedEnv || prop == "STUBRUNNER_PROPERTIES_" + expectedEnv
+					assert prop == expectedEnv || prop == "SPRING_CLOUD_CONTRACT_STUBRUNNER_PROPERTIES_" + expectedEnv
 					return envVar
 				}
 			}
@@ -61,13 +61,13 @@ class StubRunnerPropertyUtilsSpec extends Specification {
 			PropertyFetcher fetcher = new PropertyFetcher() {
 				@Override
 				String systemProp(String prop) {
-					assert prop == checkedSysProp || prop == checkedSysProp - "stubrunner.properties."
+					assert prop == checkedSysProp || prop == checkedSysProp - "spring.cloud.contract.stubrunner.properties."
 					return sysProp
 				}
 
 				@Override
 				String envVar(String prop) {
-					assert prop == checkedEnvVar || prop == checkedEnvVar - "STUBRUNNER_PROPERTIES_"
+					assert prop == checkedEnvVar || prop == checkedEnvVar - "SPRING_CLOUD_CONTRACT_STUBRUNNER_PROPERTIES_"
 					return envVar
 				}
 			}
@@ -76,10 +76,10 @@ class StubRunnerPropertyUtilsSpec extends Specification {
 			expectedResult == StubRunnerPropertyUtils.getProperty(map, queriedProp)
 		where:
 			queriedProp   | map                    | systemProperty | envVariable | expectedResult | assertedSystemProp                  | assertedEnvVar
-			"foo.bar-baz" | ["foo.bar-baz": "faz"] | "ab"           | "bc"        | "faz"          | "stubrunner.properties.foo.bar-baz" | "STUBRUNNER_PROPERTIES_FOO_BAR_BAZ"
-			"foo.bar-baz" | [:]                    | "ab"           | "bc"        | "ab"           | "stubrunner.properties.foo.bar-baz" | "STUBRUNNER_PROPERTIES_FOO_BAR_BAZ"
-			"foo.bar-baz" | [:]                    | ""             | "bc"        | "bc"           | "stubrunner.properties.foo.bar-baz" | "STUBRUNNER_PROPERTIES_FOO_BAR_BAZ"
-			"foo.bar-baz" | null                   | ""             | "bc"        | "bc"           | "stubrunner.properties.foo.bar-baz" | "STUBRUNNER_PROPERTIES_FOO_BAR_BAZ"
+			"foo.bar-baz" | ["foo.bar-baz": "faz"] | "ab"           | "bc"        | "faz"          | "spring.cloud.contract.stubrunner.properties.foo.bar-baz" | "SPRING_CLOUD_CONTRACT_STUBRUNNER_PROPERTIES_FOO_BAR_BAZ"
+			"foo.bar-baz" | [:]                    | "ab"           | "bc"        | "ab"           | "spring.cloud.contract.stubrunner.properties.foo.bar-baz" | "SPRING_CLOUD_CONTRACT_STUBRUNNER_PROPERTIES_FOO_BAR_BAZ"
+			"foo.bar-baz" | [:]                    | ""             | "bc"        | "bc"           | "spring.cloud.contract.stubrunner.properties.foo.bar-baz" | "SPRING_CLOUD_CONTRACT_STUBRUNNER_PROPERTIES_FOO_BAR_BAZ"
+			"foo.bar-baz" | null                   | ""             | "bc"        | "bc"           | "spring.cloud.contract.stubrunner.properties.foo.bar-baz" | "SPRING_CLOUD_CONTRACT_STUBRUNNER_PROPERTIES_FOO_BAR_BAZ"
 	}
 
 	@RestoreSystemProperties

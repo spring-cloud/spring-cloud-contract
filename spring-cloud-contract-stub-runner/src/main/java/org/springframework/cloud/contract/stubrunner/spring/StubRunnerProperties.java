@@ -31,7 +31,7 @@ import org.springframework.util.StringUtils;
 /**
  * @author Dave Syer
  */
-@ConfigurationProperties("stubrunner")
+@ConfigurationProperties("spring.cloud.contract.stubrunner")
 public class StubRunnerProperties {
 
 	/**

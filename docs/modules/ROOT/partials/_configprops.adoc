@@ -26,7 +26,7 @@
 |stubrunner.max-port | `+++15000+++` | Max value of a port for the automatically started WireMock server.
 |stubrunner.min-port | `+++10000+++` | Min value of a port for the automatically started WireMock server.
 |stubrunner.password |  | Repository password.
-|stubrunner.properties |  | Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}.
+|spring.cloud.contract.stubrunner.properties |  | Map of properties that can be passed to custom {@link org.springframework.cloud.contract.stubrunner.StubDownloaderBuilder}.
 |stubrunner.proxy-host |  | Repository proxy host.
 |stubrunner.proxy-port |  | Repository proxy port.
 |stubrunner.server-id |  | 

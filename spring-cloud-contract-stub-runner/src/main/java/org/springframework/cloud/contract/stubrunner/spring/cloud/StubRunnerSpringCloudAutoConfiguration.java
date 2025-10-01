@@ -41,7 +41,7 @@ import org.springframework.core.env.Environment;
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(StubMapperProperties.class)
 @ConditionalOnClass(DiscoveryClient.class)
-@ConditionalOnProperty(value = "stubrunner.cloud.enabled", matchIfMissing = true)
+@ConditionalOnProperty(value = "spring.cloud.contract.stubrunner.cloud.enabled", matchIfMissing = true)
 public class StubRunnerSpringCloudAutoConfiguration {
 
 	@Bean
@@ -51,7 +51,8 @@ public class StubRunnerSpringCloudAutoConfiguration {
 
 	@Bean
 	@ConditionalOnStubbedDiscoveryEnabled
-	@ConditionalOnProperty(value = "stubrunner.cloud.delegate.enabled", havingValue = "false", matchIfMissing = true)
+	@ConditionalOnProperty(value = "spring.cloud.contract.stubrunner.cloud.delegate.enabled", havingValue = "false",
+			matchIfMissing = true)
 	@Order(Ordered.HIGHEST_PRECEDENCE)
 	public DiscoveryClient noOpStubRunnerDiscoveryClient(StubFinder stubFinder,
 			StubMapperProperties stubMapperProperties) {
@@ -60,7 +61,8 @@ public class StubRunnerSpringCloudAutoConfiguration {
 
 	@Bean
 	@ConditionalOnStubbedDiscoveryEnabled
-	@ConditionalOnProperty(value = "stubrunner.cloud.delegate.enabled", havingValue = "false", matchIfMissing = true)
+	@ConditionalOnProperty(value = "spring.cloud.contract.stubrunner.cloud.delegate.enabled", havingValue = "false",
+			matchIfMissing = true)
 	@Order(Ordered.HIGHEST_PRECEDENCE)
 	public ReactiveDiscoveryClient noOpStubRunnerReactiveDiscoveryClient(StubFinder stubFinder,
 			StubMapperProperties stubMapperProperties) {
@@ -123,7 +125,7 @@ class StubRunnerDiscoveryClientWrapper implements BeanPostProcessor {
 	boolean isStubbedDiscoveryEnabled() {
 		if (this.stubbedDiscoveryEnabled == null) {
 			this.stubbedDiscoveryEnabled = Boolean.valueOf(this.beanFactory.getBean(Environment.class)
-				.getProperty("stubrunner.cloud.stubbed.discovery.enabled", "true"));
+				.getProperty("spring.cloud.contract.stubrunner.cloud.stubbed.discovery.enabled", "true"));
 		}
 		return this.stubbedDiscoveryEnabled;
 	}
@@ -131,7 +133,7 @@ class StubRunnerDiscoveryClientWrapper implements BeanPostProcessor {
 	boolean isCloudDelegateEnabled() {
 		if (this.cloudDelegateEnabled == null) {
 			this.cloudDelegateEnabled = Boolean.valueOf(this.beanFactory.getBean(Environment.class)
-				.getProperty("stubrunner.cloud.delegate.enabled", "false"));
+				.getProperty("spring.cloud.contract.stubrunner.cloud.delegate.enabled", "false"));
 		}
 		return this.cloudDelegateEnabled;
 	}

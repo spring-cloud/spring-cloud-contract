@@ -17,26 +17,26 @@ properties. The following table shows their names with their default values:
 [frame="topbot",options="header"]
 |===============
 | Property name | Default value | Description
-|`stubrunner.minPort`|`10000`| Minimum value of a port for a started WireMock with stubs.
-|`stubrunner.maxPort`|`15000`| Maximum value of a port for a started WireMock with stubs.
-|`stubrunner.repositoryRoot`|| Maven repository URL. If blank, then call the local Maven repo.
-|`stubrunner.classifier`|`stubs`| Default classifier for the stub artifacts.
-|`stubrunner.stubsMode`|`CLASSPATH`| The way you want to fetch and register the stubs.
-|`stubrunner.ids`|| Array of Ivy notation stubs to download.
-|`stubrunner.username`|| Optional username to access the tool that stores the JARs with
+|`spring.cloud.contract.stubrunner.minPort`|`10000`| Minimum value of a port for a started WireMock with stubs.
+|`spring.cloud.contract.stubrunner.maxPort`|`15000`| Maximum value of a port for a started WireMock with stubs.
+|`spring.cloud.contract.stubrunner.repositoryRoot`|| Maven repository URL. If blank, then call the local Maven repo.
+|`spring.cloud.contract.stubrunner.classifier`|`stubs`| Default classifier for the stub artifacts.
+|`spring.cloud.contract.stubrunner.stubsMode`|`CLASSPATH`| The way you want to fetch and register the stubs.
+|`spring.cloud.contract.stubrunner.ids`|| Array of Ivy notation stubs to download.
+|`spring.cloud.contract.stubrunner.username`|| Optional username to access the tool that stores the JARs with
 stubs.
-|`stubrunner.password`|| Optional password to access the tool that stores the JARs with
+|`spring.cloud.contract.stubrunner.password`|| Optional password to access the tool that stores the JARs with
 stubs.
-|`stubrunner.stubsPerConsumer`|`false`| Set to `true` if you want to use different stubs for
+|`spring.cloud.contract.stubrunner.stubsPerConsumer`|`false`| Set to `true` if you want to use different stubs for
 each consumer instead of registering all stubs for every consumer.
-|`stubrunner.consumerName`|| If you want to use a stub for each consumer and want to
+|`spring.cloud.contract.stubrunner.consumerName`|| If you want to use a stub for each consumer and want to
 override the consumer name, change this value.
 |===============
 
 [[features-stub-runner-stub-runner-stub-ids]]
 == Stub Runner Stubs IDs
 
-You can set the stubs to download in the `stubrunner.ids` system property. They
+You can set the stubs to download in the `spring.cloud.contract.stubrunner.ids` system property. They
 use the following pattern:
 
 ====

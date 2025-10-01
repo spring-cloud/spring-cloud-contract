@@ -48,7 +48,7 @@ You cannot produce two different responses for the same request. That is why you
 contracts and then profit from the `stubsPerConsumer` feature.
 
 On the producer side, the consumers can have a folder that contains contracts related only to them.
-By setting the `stubrunner.stubs-per-consumer` flag to `true`, we no longer register all stubs but only those that
+By setting the `spring.cloud.contract.stubrunner.stubs-per-consumer` flag to `true`, we no longer register all stubs but only those that
 correspond to the consumer application's name. In other words, we scan the path of every stub and,
 if it contains a subfolder with name of the consumer in the path, only then is it registered.
 
@@ -66,7 +66,7 @@ On the `foo` producer side the contracts would look like this
         └── shouldCallFoo.groovy
 ----
 
-The `bar-consumer` consumer can either set the `spring.application.name` or the `stubrunner.consumer-name` to `bar-consumer`
+The `bar-consumer` consumer can either set the `spring.application.name` or the `spring.cloud.contract.stubrunner.consumer-name` to `bar-consumer`
 Alternatively, you can set the test as follows:
 
 ====

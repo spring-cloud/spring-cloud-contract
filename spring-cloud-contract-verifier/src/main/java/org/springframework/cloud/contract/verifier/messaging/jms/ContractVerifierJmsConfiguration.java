@@ -51,7 +51,8 @@ import org.springframework.jms.core.JmsTemplate;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(JmsTemplate.class)
-@ConditionalOnProperty(name = "stubrunner.jms.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = "spring.cloud.contract.stubrunner.jms.enabled", havingValue = "true",
+		matchIfMissing = true)
 @AutoConfigureBefore({ ContractVerifierIntegrationConfiguration.class, NoOpContractVerifierAutoConfiguration.class })
 public class ContractVerifierJmsConfiguration {
 

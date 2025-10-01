@@ -43,7 +43,7 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnClass(org.apache.curator.x.discovery.ServiceInstance.class)
 @ConditionalOnStubbedDiscoveryDisabled
 @ConditionalOnZookeeperDiscoveryEnabled
-@ConditionalOnProperty(value = "stubrunner.cloud.zookeeper.enabled", matchIfMissing = true)
+@ConditionalOnProperty(value = "spring.cloud.contract.stubrunner.cloud.zookeeper.enabled", matchIfMissing = true)
 public class StubRunnerSpringCloudZookeeperAutoConfiguration {
 
 	@Bean(initMethod = "registerStubs")

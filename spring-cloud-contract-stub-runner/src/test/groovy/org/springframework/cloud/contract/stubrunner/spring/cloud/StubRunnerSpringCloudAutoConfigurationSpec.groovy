@@ -63,8 +63,8 @@ class StubRunnerSpringCloudAutoConfigurationSpec {
 
 	@BeforeAll
 	static void setupSpec() {
-		System.clearProperty("stubrunner.repository.root")
-		System.clearProperty("stubrunner.classifier")
+		System.clearProperty("spring.cloud.contract.stubrunner.repository.root")
+		System.clearProperty("spring.cloud.contract.stubrunner.classifier")
 	}
 
 	@AfterAll

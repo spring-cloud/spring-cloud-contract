@@ -43,11 +43,11 @@ import static org.mockito.Mockito.mock
 @SpringBootTest(classes = Config, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = ["eureka.client.enabled=false",
 				"spring.cloud.zookeeper.enabled=false",
-				"stubrunner.cloud.stubbed.discovery.enabled=false",
-				"stubrunner.cloud.eureka.enabled=false",
+				"spring.cloud.contract.stubrunner.cloud.stubbed.discovery.enabled=false",
+				"spring.cloud.contract.stubrunner.cloud.eureka.enabled=false",
 				"spring.cloud.zookeeper.discovery.enabled=false",
-				"stubrunner.cloud.consul.enabled=true",
-				"stubrunner.cloud.zookeeper.enabled=false",
+				"spring.cloud.contract.stubrunner.cloud.consul.enabled=true",
+				"spring.cloud.contract.stubrunner.cloud.zookeeper.enabled=false",
 				"debug=true"])
 // tag::autoconfigure[]
 @AutoConfigureStubRunner(ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
@@ -63,8 +63,8 @@ class StubRunnerSpringCloudConsulAutoConfigurationSpec {
 
 	@BeforeAll
 	static void setupSpec() {
-		System.clearProperty("stubrunner.stubs.repository.root")
-		System.clearProperty("stubrunner.stubs.classifier")
+		System.clearProperty("spring.cloud.contract.stubrunner.stubs.repository.root")
+		System.clearProperty("spring.cloud.contract.stubrunner.stubs.classifier")
 	}
 
 	@AfterAll

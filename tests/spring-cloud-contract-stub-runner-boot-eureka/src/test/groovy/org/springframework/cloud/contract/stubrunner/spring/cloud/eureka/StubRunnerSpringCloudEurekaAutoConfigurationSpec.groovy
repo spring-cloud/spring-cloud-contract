@@ -55,8 +55,8 @@ import org.springframework.web.client.RestTemplate
  */
 //TODO: Speed up this test somehow (move it out of Spring Cloud Contract core to samples)
 @SpringBootTest(classes = Config, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = ["stubrunner.cloud.eureka.enabled=true",
-                "stubrunner.cloud.stubbed.discovery.enabled=false",
+        properties = ["spring.cloud.contract.stubrunner.cloud.eureka.enabled=true",
+                "spring.cloud.contract.stubrunner.cloud.stubbed.discovery.enabled=false",
                 "eureka.client.enabled=true",
 				"eureka.client.restclient.enabled=false",
 				"eureka.client.webclient.enabled=false",
@@ -81,11 +81,11 @@ class StubRunnerSpringCloudEurekaAutoConfigurationSpec {
 
 	@BeforeAll
 	static void setupSpec() {
-		System.clearProperty("stubrunner.stubs.repository.root")
-		System.clearProperty("stubrunner.stubs.classifier")
+		System.clearProperty("spring.cloud.contract.stubrunner.stubs.repository.root")
+		System.clearProperty("spring.cloud.contract.stubrunner.stubs.classifier")
 		eurekaServer = SpringApplication.run(EurekaServer,
-				"--stubrunner.cloud.eureka.enabled=true",
-				"--stubrunner.cloud.stubbed.discovery.enabled=false",
+				"--spring.cloud.contract.stubrunner.cloud.eureka.enabled=true",
+				"--spring.cloud.contract.stubrunner.cloud.stubbed.discovery.enabled=false",
 				"--eureka.client.enabled=true",
 				"--server.port=8761",
 				"--spring.profiles.active=eureka")
@@ -93,8 +93,8 @@ class StubRunnerSpringCloudEurekaAutoConfigurationSpec {
 
 	@AfterAll
 	static void cleanupSpec() {
-		System.clearProperty("stubrunner.stubs.repository.root")
-		System.clearProperty("stubrunner.stubs.classifier")
+		System.clearProperty("spring.cloud.contract.stubrunner.stubs.repository.root")
+		System.clearProperty("spring.cloud.contract.stubrunner.stubs.classifier")
 	}
 
 	@Test

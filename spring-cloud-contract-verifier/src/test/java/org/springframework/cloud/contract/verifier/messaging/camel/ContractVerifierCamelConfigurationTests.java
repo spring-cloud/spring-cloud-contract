@@ -41,7 +41,7 @@ public class ContractVerifierCamelConfigurationTests {
 
 	@Test
 	public void shouldNotCreateBeansWhenDisabled() {
-		this.contextRunner.withPropertyValues("stubrunner.camel.enabled=false").run((context) -> {
+		this.contextRunner.withPropertyValues("spring.cloud.contract.stubrunner.camel.enabled=false").run((context) -> {
 			assertThat(context.getBeansOfType(CamelStubMessages.class)).hasSize(0);
 			assertThat(context.getBeansOfType(ContractVerifierCamelHelper.class)).hasSize(0);
 		});
@@ -49,7 +49,7 @@ public class ContractVerifierCamelConfigurationTests {
 
 	@Test
 	public void shouldCreateBeansWhenExplicitlyEnabled() {
-		this.contextRunner.withPropertyValues("stubrunner.camel.enabled=true").run((context) -> {
+		this.contextRunner.withPropertyValues("spring.cloud.contract.stubrunner.camel.enabled=true").run((context) -> {
 			assertThat(context.getBeansOfType(CamelStubMessages.class)).hasSize(1);
 			assertThat(context.getBeansOfType(ContractVerifierCamelHelper.class)).hasSize(1);
 		});

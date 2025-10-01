@@ -64,7 +64,7 @@ import org.springframework.util.StringUtils;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass({ LoadBalancerClient.class, LoadBalancerClientFactory.class })
-@ConditionalOnProperty(value = "stubrunner.cloud.loadbalancer.enabled", matchIfMissing = true)
+@ConditionalOnProperty(value = "spring.cloud.contract.stubrunner.cloud.loadbalancer.enabled", matchIfMissing = true)
 @ConditionalOnBean(StubMapperProperties.class)
 @AutoConfigureBefore(LoadBalancerAutoConfiguration.class)
 @AutoConfigureAfter({ LoadBalancerClientConfiguration.class, StubRunnerSpringCloudAutoConfiguration.class })

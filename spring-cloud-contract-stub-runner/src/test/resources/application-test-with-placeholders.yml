@@ -1,6 +1,6 @@
 provider.stub.artifact.id: fraudDetectionServer
 
-stubrunner:
+spring.cloud.contract.stubrunner:
   repositoryRoot: classpath:m2repo/repository/
   ids:
     - ${some.property1}
@@ -20,4 +20,4 @@ spring:
   main:
     allow-bean-definition-overriding: true
 
-stub.port: ${stubrunner.runningstubs.${provider.stub.artifact.id}.port}
+stub.port: ${spring.cloud.contract.stubrunner.runningstubs.${provider.stub.artifact.id}.port}

@@ -38,8 +38,9 @@ public class FailFastLoanApplicationServiceTests {
 		// When
 		final Throwable throwable = catchThrowable(
 				() -> new SpringApplicationBuilder(Application.class, StubRunnerConfiguration.class)
-					.properties(Map.of("stubrunner.stubsMode", "REMOTE", "stubrunner.repositoryRoot",
-							"classpath:m2repo/repository/", "stubrunner.ids",
+					.properties(Map.of("spring.cloud.contract.stubrunner.stubsMode", "REMOTE",
+							"spring.cloud.contract.stubrunner.repositoryRoot", "classpath:m2repo/repository/",
+							"spring.cloud.contract.stubrunner.ids",
 							new String[] { "org.springframework.cloud.contract.verifier.stubs:should-not-be-found" }))
 					.run());
 
@@ -55,7 +56,8 @@ public class FailFastLoanApplicationServiceTests {
 		// When
 		final Throwable throwable = catchThrowable(
 				() -> new SpringApplicationBuilder(Application.class, StubRunnerConfiguration.class)
-					.properties(Map.of("stubrunner.stubsMode", "CLASSPATH", "stubrunner.ids",
+					.properties(Map.of("spring.cloud.contract.stubrunner.stubsMode", "CLASSPATH",
+							"spring.cloud.contract.stubrunner.ids",
 							new String[] { "org.springframework.cloud.contract.verifier.stubs:should-not-be-found" }))
 					.run());
 

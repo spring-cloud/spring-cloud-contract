@@ -48,7 +48,7 @@ stubsMode = StubRunnerProperties.StubsMode.REMOTE,
 ----
 ====
 
-Contracts and stubs may be stored in a location, where each producer has its own, dedicated folder for contracts and stub mappings. Under that folder, each consumer can have its own setup. To make Stub Runner find the dedicated folder from the provided IDs, you can pass the `stubs.find-producer=true` property or the `stubrunner.stubs.find-producer=true` system property.
+Contracts and stubs may be stored in a location, where each producer has its own, dedicated folder for contracts and stub mappings. Under that folder, each consumer can have its own setup. To make Stub Runner find the dedicated folder from the provided IDs, you can pass the `stubs.find-producer=true` property or the `spring.cloud.contract.stubrunner.stubs.find-producer=true` system property.
 The following listing shows an arrangement of contracts and stubs:
 
 ====

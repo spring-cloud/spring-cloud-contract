@@ -38,7 +38,7 @@ import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureM
 @Documented
 @ImportAutoConfiguration
 @AutoConfigureMessageVerifier
-@PropertyMapping(value = "stubrunner", skip = SkipPropertyMapping.ON_DEFAULT_VALUE)
+@PropertyMapping(value = "spring.cloud.contract.stubrunner", skip = SkipPropertyMapping.ON_DEFAULT_VALUE)
 public @interface AutoConfigureStubRunner {
 
 	/**

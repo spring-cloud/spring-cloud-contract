@@ -42,7 +42,7 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureAfter({ StubRunnerConfiguration.class, ConsulServiceRegistryAutoConfiguration.class })
 @ConditionalOnClass(ConsulClient.class)
 @ConditionalOnStubbedDiscoveryDisabled
-@ConditionalOnProperty(value = "stubrunner.cloud.consul.enabled", matchIfMissing = true)
+@ConditionalOnProperty(value = "spring.cloud.contract.stubrunner.cloud.consul.enabled", matchIfMissing = true)
 public class StubRunnerSpringCloudConsulAutoConfiguration {
 
 	@Bean(initMethod = "registerStubs")
