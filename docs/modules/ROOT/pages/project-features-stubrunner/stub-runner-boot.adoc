@@ -44,7 +44,7 @@ by running the following commands:
 [source,bash,indent=0]
 ----
 $ wget -O stub-runner.jar 'https://search.maven.org/remotecontent?filepath=org/springframework/cloud/spring-cloud-contract-stub-runner-boot/2.0.1.RELEASE/spring-cloud-contract-stub-runner-boot-2.0.1.RELEASE.jar'
-$ java -jar stub-runner.jar --stubrunner.ids=... --stubrunner.repositoryRoot=...
+$ java -jar stub-runner.jar --spring.cloud.contract.stubrunner.ids=... --spring.cloud.contract.stubrunner.repositoryRoot=...
 ----
 ====
 
@@ -54,7 +54,7 @@ $ java -jar stub-runner.jar --stubrunner.ids=... --stubrunner.repositoryRoot=...
 Starting from the `1.4.0.RELEASE` version of the https://cloud.spring.io/spring-cloud-cli[Spring Cloud CLI]
 project, you can start Stub Runner Boot by running `spring cloud stubrunner`.
 
-To pass the configuration, you can create a `stubrunner.yml` file in the current working directory,
+To pass the configuration, you can create a `spring.cloud.contract.stubrunner.yml` file in the current working directory,
 in a subdirectory called `config`, or in `~/.spring-cloud`. The file could resemble the following
 example for running stubs installed locally:
 
@@ -63,7 +63,7 @@ example for running stubs installed locally:
 ====
 [source,yml,indent=0]
 ----
-stubrunner:
+spring.cloud.contract.stubrunner:
   stubsMode: LOCAL
   ids:
     - com.example:beer-api-producer:+:9876

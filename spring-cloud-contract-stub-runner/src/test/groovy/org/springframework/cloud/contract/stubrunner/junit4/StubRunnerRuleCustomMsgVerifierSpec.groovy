@@ -37,8 +37,8 @@ class StubRunnerRuleCustomMsgVerifierSpec extends Specification {
 	@BeforeClass
 	@AfterClass
 	void setupProps() {
-		System.clearProperty("stubrunner.repository.root")
-		System.clearProperty("stubrunner.classifier")
+		System.clearProperty("spring.cloud.contract.stubrunner.repository.root")
+		System.clearProperty("spring.cloud.contract.stubrunner.classifier")
 	}
 
 	@ClassRule

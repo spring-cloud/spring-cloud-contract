@@ -40,7 +40,7 @@ import org.springframework.web.client.RestTemplate
  * @author Marcin Grzejszczak
  */
 @SpringBootTest(classes = Config, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = ["stubrunner.cloud.stubbed.discovery.enabled=false",
+		properties = ["spring.cloud.contract.stubrunner.cloud.stubbed.discovery.enabled=false",
 				"debug=true"])
 @AutoConfigureStubRunner(ids = ["org.springframework.cloud.contract.verifier.stubs:loanIssuance",
  "org.springframework.cloud.contract.verifier.stubs:fraudDetectionServer",
@@ -57,8 +57,8 @@ class StubRunnerSpringCloudZookeeperAutoConfigurationSpec {
 
 	@BeforeAll
 	static void setupSpec() {
-		System.clearProperty("stubrunner.stubs.repository.root")
-		System.clearProperty("stubrunner.stubs.classifier")
+		System.clearProperty("spring.cloud.contract.stubrunner.stubs.repository.root")
+		System.clearProperty("spring.cloud.contract.stubrunner.stubs.classifier")
 	}
 
 	@AfterAll

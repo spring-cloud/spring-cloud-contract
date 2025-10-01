@@ -391,8 +391,8 @@ You can run the docker image and pass any of the xref:project-features-stubrunne
 as environment variables. The convention is that all the
 letters should be upper case.
 The dot (`.`) should be replaced with underscore (`_`) characters. For example,
-the `stubrunner.repositoryRoot` property should be represented
-as a `STUBRUNNER_REPOSITORY_ROOT` environment variable.
+the `spring.cloud.contract.stubrunner.repositoryRoot` property should be represented
+as a `SPRING_COUD_CONTRACT_STUBRUNNER_REPOSITORY_ROOT` environment variable.
 
 In addition to those variables you can set the following ones:
 
@@ -422,15 +422,15 @@ $ SC_CONTRACT_DOCKER_VERSION="..."
 # The IP at which the app is running and Docker container can reach it
 $ APP_IP="192.168.0.100"
 # Spring Cloud Contract Stub Runner properties
-$ STUBRUNNER_PORT="8083"
+$ SPRING_CLOUD_CONTRACT_STUBRUNNER_PORT="8083"
 # Stub coordinates 'groupId:artifactId:version:classifier:port'
-$ STUBRUNNER_IDS="com.example:bookstore:0.0.1.RELEASE:stubs:9876"
-$ STUBRUNNER_REPOSITORY_ROOT="http://${APP_IP}:8081/artifactory/libs-release-local"
+$ SPRING_CLOUD_CONTRACT_STUBRUNNER_IDS="com.example:bookstore:0.0.1.RELEASE:stubs:9876"
+$ SPRING_CLOUD_CONTRACT_STUBRUNNER_REPOSITORY_ROOT="http://${APP_IP}:8081/artifactory/libs-release-local"
 # Run the docker with Stub Runner Boot
 $ docker run  --rm \
-    -e "STUBRUNNER_IDS=${STUBRUNNER_IDS}" \
-    -e "STUBRUNNER_REPOSITORY_ROOT=${STUBRUNNER_REPOSITORY_ROOT}" \
-    -e "STUBRUNNER_STUBS_MODE=REMOTE" \
+    -e "SPRING_CLOUD_CONTRACT_STUBRUNNER_IDS=${STUBRUNNER_IDS}" \
+    -e "SPRING_CLOUD_CONTRACT_STUBRUNNER_REPOSITORY_ROOT=${STUBRUNNER_REPOSITORY_ROOT}" \
+    -e "SPRING_CLOUD_CONTRACT_STUBRUNNER_STUBS_MODE=REMOTE" \
     -p "${STUBRUNNER_PORT}:${STUBRUNNER_PORT}" \
     -p "9876:9876" \
     springcloud/spring-cloud-contract-stub-runner:"${SC_CONTRACT_DOCKER_VERSION}"
@@ -572,10 +572,10 @@ Example of usage
 ```bash
 $ docker run \
     -e "CAMEL_COMPONENT_RABBITMQ_ADDRESSES=172.18.0.1:5672" \ <1>
-    -e "STUBRUNNER_IDS=group:application:0.0.1-SNAPSHOT" \ <2>
-    -e "STUBRUNNER_REPOSITORY_ROOT=git://https://github.com/marcingrzejszczak/cdct_python_contracts.git" \ <3>
+    -e "SPRING_CLOUD_CONTRACT_STUBRUNNER_IDS=group:application:0.0.1-SNAPSHOT" \ <2>
+    -e "SPRING_CLOUD_CONTRACT_STUBRUNNER_REPOSITORY_ROOT=git://https://github.com/marcingrzejszczak/cdct_python_contracts.git" \ <3>
     -e ADDITIONAL_OPTS="--thin.properties.dependencies.rabbitmq=org.apache.camel.springboot:camel-rabbitmq-starter:3.4.0" \ <4>
-    -e "STUBRUNNER_STUBS_MODE=REMOTE" \ <5>
+    -e "SPRING_CLOUD_CONTRACT_STUBRUNNER_STUBS_MODE=REMOTE" \ <5>
     -v "${HOME}/.m2/:/home/scc/.m2:rw" \ <6>
     -p 8750:8750 \ <7>
     springcloud/spring-cloud-contract-stub-runner:3.0.4-SNAPSHOT <8>

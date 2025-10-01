@@ -1,4 +1,4 @@
-stubrunner:
+spring.cloud.contract.stubrunner:
   repository-root: stubs:classpath:/stubs/
   ids: my:stubs
   stubs-mode: remote

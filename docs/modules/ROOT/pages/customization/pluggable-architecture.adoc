@@ -183,45 +183,45 @@ properties:
 |
 * `git.branch` (plugin prop)
 
-* `stubrunner.properties.git.branch` (system prop)
+* `spring.cloud.contract.stubrunner.properties.git.branch` (system prop)
 
-* `STUBRUNNER_PROPERTIES_GIT_BRANCH` (env prop)
+* `SPRING_CLOUD_CONTRACT_STUBRUNNER_PROPERTIES_GIT_BRANCH` (env prop)
 |master
 |Which branch to checkout
 
 |
 * `git.username` (plugin prop)
 
-* `stubrunner.properties.git.username` (system prop)
+* `spring.cloud.contract.stubrunner.properties.git.username` (system prop)
 
-* `STUBRUNNER_PROPERTIES_GIT_USERNAME` (env prop)
+* `SPRING_CLOUD_CONTRACT_STUBRUNNER_PROPERTIES_GIT_USERNAME` (env prop)
 |
 |Git clone username
 
 |
 * `git.password` (plugin prop)
 
-* `stubrunner.properties.git.password` (system prop)
+* `spring.cloud.contract.stubrunner.properties.git.password` (system prop)
 
-* `STUBRUNNER_PROPERTIES_GIT_PASSWORD` (env prop)
+* `SPRING_CLOUD_CONTRACT_STUBRUNNER_PROPERTIES_GIT_PASSWORD` (env prop)
 |
 |Git clone password
 
 |
 * `git.no-of-attempts` (plugin prop)
 
-* `stubrunner.properties.git.no-of-attempts` (system prop)
+* `spring.cloud.contract.stubrunner.properties.git.no-of-attempts` (system prop)
 
-* `STUBRUNNER_PROPERTIES_GIT_NO_OF_ATTEMPTS` (env prop)
+* `SPRING_CLOUD_CONTRACT_STUBRUNNER_PROPERTIES_GIT_NO_OF_ATTEMPTS` (env prop)
 |10
 |Number of attempts to push the commits to `origin`
 
 |
 * `git.wait-between-attempts` (Plugin prop)
 
-* `stubrunner.properties.git.wait-between-attempts`  (system prop)
+* `spring.cloud.contract.stubrunner.properties.git.wait-between-attempts`  (system prop)
 
-* `STUBRUNNER_PROPERTIES_GIT_WAIT_BETWEEN_ATTEMPTS`  (env prop)
+* `SPRING_CLOUD_CONTRACT_STUBRUNNER_PROPERTIES_GIT_WAIT_BETWEEN_ATTEMPTS`  (env prop)
 |1000
 |Number of milliseconds to wait between attempts to push the commits to `origin`
 |===

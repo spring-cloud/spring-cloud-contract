@@ -42,7 +42,7 @@ import org.springframework.test.context.ActiveProfiles
  * @author Marcin Grzejszczak
  */
 // tag::test[]
-@SpringBootTest(classes = Config, properties = "stubrunner.jms.enabled=false")
+@SpringBootTest(classes = Config, properties = "spring.cloud.contract.stubrunner.jms.enabled=false")
 @AutoConfigureStubRunner(ids = "org.springframework.cloud.contract.verifier.stubs:producerWithMultipleConsumers",
         repositoryRoot = "classpath:m2repo/repository/",
         consumerName = "foo-consumer",

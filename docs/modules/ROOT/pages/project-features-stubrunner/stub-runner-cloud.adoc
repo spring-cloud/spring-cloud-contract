@@ -49,11 +49,11 @@ in a static block such as the following example (for Eureka):
 [[features-stub-runner-additional-config]]
 == Additional Configuration
 
-You can match the `artifactId` of the stub with the name of your application by using the `stubrunner.idsToServiceIds:` map.
+You can match the `artifactId` of the stub with the name of your application by using the `spring.cloud.contract.stubrunner.idsToServiceIds:` map.
 
 TIP: By default, all service discovery is stubbed. This means that, regardless of whether you have
 an existing `DiscoveryClient`, its results are ignored. However, if you want to reuse it, you can set
- `stubrunner.cloud.delegate.enabled` to `true`, and then your existing `DiscoveryClient` results are
+ `spring.cloud.contract.stubrunner.cloud.delegate.enabled` to `true`, and then your existing `DiscoveryClient` results are
  merged with the stubbed ones.
 
 The default Maven configuration used by Stub Runner can be tweaked either

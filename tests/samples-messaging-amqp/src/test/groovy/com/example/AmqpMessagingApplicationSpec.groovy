@@ -32,7 +32,7 @@ import org.springframework.cloud.contract.verifier.messaging.internal.ContractVe
 
 // Context configuration would end up in base class
 @AutoConfigureMessageVerifier
-@SpringBootTest(classes = AmqpMessagingApplication, properties = "stubrunner.amqp.enabled=true")
+@SpringBootTest(classes = AmqpMessagingApplication, properties = "spring.cloud.contract.stubrunner.amqp.enabled=true")
 @Disabled("TODO: Migrate to middleware based approach")
 class AmqpMessagingApplicationSpec {
 

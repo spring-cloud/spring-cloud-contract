@@ -43,18 +43,20 @@ public class StubRunnerServerConfigurationTests {
 
 	@Test
 	public void shouldNotCreateBeansWhenDisabled() {
-		this.contextRunner.withPropertyValues("stubrunner.messaging.enabled=false").run((context) -> {
-			assertThat(context.getBeansOfType(ContractVerifierMessaging.class)).hasSize(0);
-			assertThat(context.getBeansOfType(TriggerController.class)).hasSize(0);
-		});
+		this.contextRunner.withPropertyValues("spring.cloud.contract.stubrunner.messaging.enabled=false")
+			.run((context) -> {
+				assertThat(context.getBeansOfType(ContractVerifierMessaging.class)).hasSize(0);
+				assertThat(context.getBeansOfType(TriggerController.class)).hasSize(0);
+			});
 	}
 
 	@Test
 	public void shouldCreateBeansWhenExplicitlyEnabled() {
-		this.contextRunner.withPropertyValues("stubrunner.messaging.enabled=true").run((context) -> {
-			assertThat(context.getBeansOfType(ContractVerifierMessaging.class)).hasSize(1);
-			assertThat(context.getBeansOfType(TriggerController.class)).hasSize(1);
-		});
+		this.contextRunner.withPropertyValues("spring.cloud.contract.stubrunner.messaging.enabled=true")
+			.run((context) -> {
+				assertThat(context.getBeansOfType(ContractVerifierMessaging.class)).hasSize(1);
+				assertThat(context.getBeansOfType(TriggerController.class)).hasSize(1);
+			});
 	}
 
 }

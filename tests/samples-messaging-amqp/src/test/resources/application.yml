@@ -1,1 +1,1 @@
-stubrunner.amqp.enabled: true
+spring.cloud.contract.stubrunner.amqp.enabled: true

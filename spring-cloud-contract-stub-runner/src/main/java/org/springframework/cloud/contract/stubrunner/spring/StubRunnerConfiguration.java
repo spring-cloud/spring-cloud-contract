@@ -59,7 +59,7 @@ import org.springframework.util.StringUtils;
 @Import(StubRunnerPortBeanPostProcessor.class)
 public class StubRunnerConfiguration {
 
-	static final String STUBRUNNER_PREFIX = "stubrunner.runningstubs";
+	static final String STUBRUNNER_PREFIX = "spring.cloud.contract.stubrunner.runningstubs";
 
 	private StubDownloaderBuilderProvider provider = new StubDownloaderBuilderProvider();
 

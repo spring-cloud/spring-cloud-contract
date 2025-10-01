@@ -145,10 +145,10 @@ Stub Runner Spring registers environment variables in the following manner
 for every registered WireMock server. The following example shows Stub Runner IDs for
 `com.example:thing1` and `com.example:thing2`:
 
-- `stubrunner.runningstubs.thing1.port`
-- `stubrunner.runningstubs.com.example.thing1.port`
-- `stubrunner.runningstubs.thing2.port`
-- `stubrunner.runningstubs.com.example.thing2.port`
+- `spring.cloud.contract.stubrunner.runningstubs.thing1.port`
+- `spring.cloud.contract.stubrunner.runningstubs.com.example.thing1.port`
+- `spring.cloud.contract.stubrunner.runningstubs.thing2.port`
+- `spring.cloud.contract.stubrunner.runningstubs.com.example.thing2.port`
 
 You can reference these values in your code.
 

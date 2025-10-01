@@ -55,7 +55,7 @@ import org.springframework.core.env.Environment;
 @ConditionalOnClass(CloudEurekaClient.class)
 @ConditionalOnStubbedDiscoveryDisabled
 @ConditionalOnEurekaEnabled
-@ConditionalOnProperty(value = "stubrunner.cloud.eureka.enabled", matchIfMissing = true)
+@ConditionalOnProperty(value = "spring.cloud.contract.stubrunner.cloud.eureka.enabled", matchIfMissing = true)
 public class StubRunnerSpringCloudEurekaAutoConfiguration {
 
 	@Profile("!cloud")

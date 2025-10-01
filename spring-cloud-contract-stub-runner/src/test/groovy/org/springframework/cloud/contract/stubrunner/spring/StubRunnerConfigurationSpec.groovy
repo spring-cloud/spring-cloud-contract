@@ -46,8 +46,8 @@ import org.springframework.test.context.ActiveProfiles
 // Not necessary if Spring Cloud is used. TODO: make it work without this.
 // tag::test[]
 @SpringBootTest(classes = Config, properties = [" stubrunner.cloud.enabled=false",
-		'foo=${stubrunner.runningstubs.fraudDetectionServer.port}',
-		'fooWithGroup=${stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port}'])
+		'foo=${spring.cloud.contract.stubrunner.runningstubs.fraudDetectionServer.port}',
+		'fooWithGroup=${spring.cloud.contract.stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port}'])
 // tag::annotation[]
 @AutoConfigureStubRunner(mappingsOutputFolder = "target/outputmappings/",
 		httpServerStubConfigurer = HttpsForFraudDetection)
@@ -68,8 +68,8 @@ class StubRunnerConfigurationSpec {
 
 	@BeforeAll
 	static void setupSpec() {
-		System.clearProperty("stubrunner.repository.root")
-		System.clearProperty("stubrunner.classifier")
+		System.clearProperty("spring.cloud.contract.stubrunner.repository.root")
+		System.clearProperty("spring.cloud.contract.stubrunner.classifier")
 		WireMockHttpServerStubAccessor.clear()
 	}
 
@@ -116,14 +116,14 @@ class StubRunnerConfigurationSpec {
 	@Test
 	void 'should register started servers as environment variables'() {
 		expect:
-		assert environment.getProperty("stubrunner.runningstubs.loanIssuance.port") != null
-		assert stubFinder.findAllRunningStubs().getPort("loanIssuance") == (environment.getProperty("stubrunner.runningstubs.loanIssuance.port") as Integer)
+		assert environment.getProperty("spring.cloud.contract.stubrunner.runningstubs.loanIssuance.port") != null
+		assert stubFinder.findAllRunningStubs().getPort("loanIssuance") == (environment.getProperty("spring.cloud.contract.stubrunner.runningstubs.loanIssuance.port") as Integer)
 		and:
-		assert environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") != null
-		assert stubFinder.findAllRunningStubs().getPort("fraudDetectionServer") == (environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") as Integer)
+		assert environment.getProperty("spring.cloud.contract.stubrunner.runningstubs.fraudDetectionServer.port") != null
+		assert stubFinder.findAllRunningStubs().getPort("fraudDetectionServer") == (environment.getProperty("spring.cloud.contract.stubrunner.runningstubs.fraudDetectionServer.port") as Integer)
 		and:
-		assert environment.getProperty("stubrunner.runningstubs.fraudDetectionServer.port") != null
-		assert stubFinder.findAllRunningStubs().getPort("fraudDetectionServer") == (environment.getProperty("stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port") as Integer)
+		assert environment.getProperty("spring.cloud.contract.stubrunner.runningstubs.fraudDetectionServer.port") != null
+		assert stubFinder.findAllRunningStubs().getPort("fraudDetectionServer") == (environment.getProperty("spring.cloud.contract.stubrunner.runningstubs.org.springframework.cloud.contract.verifier.stubs.fraudDetectionServer.port") as Integer)
 	}
 
 	@Test

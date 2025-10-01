@@ -46,7 +46,7 @@ class StubRunnerStubsPerConsumerNotMatchingConsumerSpec {
 	private ApplicationContextRunner contextRunner = new ApplicationContextRunner()
 			.withConfiguration(AutoConfigurations.of(Config))
 			.withPropertyValues("spring.application.name=bar-not-matching-consumer",
-					"stubrunner.jms.enabled=false", "spring.profiles.active=streamconsumer", "spring.cloud.discovery.enabled=false", "spring.cloud.service-registry.auto-registration.enabled=false", "stubrunner.ids=org.springframework.cloud.contract.verifier.stubs:producerWithMultipleConsumers", "stubrunner.repositoryRoot=classpath:m2repo/repository/", "stubrunner.stubsMode=REMOTE", "stubrunner.stubsPerConsumer=true");
+					"spring.cloud.contract.stubrunner.jms.enabled=false", "spring.profiles.active=streamconsumer", "spring.cloud.discovery.enabled=false", "spring.cloud.service-registry.auto-registration.enabled=false", "spring.cloud.contract.stubrunner.ids=org.springframework.cloud.contract.verifier.stubs:producerWithMultipleConsumers", "spring.cloud.contract.stubrunner.repositoryRoot=classpath:m2repo/repository/", "spring.cloud.contract.stubrunner.stubsMode=REMOTE", "spring.cloud.contract.stubrunner.stubsPerConsumer=true");
 
 	@Test
 	void 'should fail to start when JAR is found but there are no stubs or contracts'() {
