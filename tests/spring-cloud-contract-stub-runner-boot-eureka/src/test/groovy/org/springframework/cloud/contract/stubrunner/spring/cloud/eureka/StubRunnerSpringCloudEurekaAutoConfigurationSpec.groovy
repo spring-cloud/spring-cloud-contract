@@ -17,8 +17,8 @@
 package org.springframework.cloud.contract.stubrunner.spring.cloud.eureka
 
 import org.springframework.cloud.netflix.eureka.http.EurekaClientHttpRequestFactorySupplier
-import org.springframework.cloud.netflix.eureka.http.RestTemplateDiscoveryClientOptionalArgs
-import org.springframework.cloud.netflix.eureka.http.RestTemplateTransportClientFactories
+import org.springframework.cloud.netflix.eureka.http.RestClientDiscoveryClientOptionalArgs
+import org.springframework.cloud.netflix.eureka.http.RestClientTransportClientFactories
 import org.springframework.http.HttpMethod
 
 import java.util.concurrent.TimeUnit
@@ -142,14 +142,14 @@ class StubRunnerSpringCloudEurekaAutoConfigurationSpec {
 
 		// because eureka server has JerseyClient, need these beans for eureka client in same jvm to work
 		@Bean
-		RestTemplateDiscoveryClientOptionalArgs restTemplateDiscoveryClientOptionalArgs(EurekaClientHttpRequestFactorySupplier eurekaClientHttpRequestFactorySupplier) {
-			return new RestTemplateDiscoveryClientOptionalArgs(eurekaClientHttpRequestFactorySupplier);
+		RestClientDiscoveryClientOptionalArgs restClientDiscoveryClientOptionalArgs(EurekaClientHttpRequestFactorySupplier eurekaClientHttpRequestFactorySupplier) {
+			return new RestClientDiscoveryClientOptionalArgs(eurekaClientHttpRequestFactorySupplier);
 		}
 
 		@Bean
-		RestTemplateTransportClientFactories restTemplateTransportClientFactories(
-				RestTemplateDiscoveryClientOptionalArgs optionalArgs) {
-			return new RestTemplateTransportClientFactories(optionalArgs);
+		RestClientTransportClientFactories restClientTransportClientFactories(
+				RestClientDiscoveryClientOptionalArgs optionalArgs) {
+			return new RestClientTransportClientFactories(optionalArgs);
 		}
 	}
 
