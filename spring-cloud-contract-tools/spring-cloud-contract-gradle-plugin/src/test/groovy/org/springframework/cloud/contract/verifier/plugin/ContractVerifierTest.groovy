@@ -21,7 +21,7 @@ import org.gradle.api.file.Directory
 import org.gradle.api.internal.project.DefaultProject
 import org.gradle.api.plugins.GroovyPlugin
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
@@ -61,7 +61,7 @@ class ContractVerifierTest {
 		given:
 			ContractVerifierExtension extension = project.extensions.getByType(ContractVerifierExtension)
 			Directory projectDir = project.layout.projectDirectory
-			SourceSet contractTest = project.convention.getPlugin(JavaPluginConvention).getSourceSets().getByName("contractTest")
+			SourceSet contractTest = project.extensions.findByType(JavaPluginExtension).getSourceSets().getByName("contractTest")
 
 		expect:
 			assert contractTest != null
@@ -77,7 +77,7 @@ class ContractVerifierTest {
 			project.plugins.apply(GroovyPlugin)
 			ContractVerifierExtension extension = project.extensions.getByType(ContractVerifierExtension)
 			Directory projectDir = project.layout.projectDirectory
-			SourceSet contractTest = project.convention.getPlugin(JavaPluginConvention).getSourceSets().getByName("contractTest")
+			SourceSet contractTest = project.extensions.getByType(JavaPluginExtension).getSourceSets().getByName("contractTest")
 
 		expect:
 			assert contractTest != null
