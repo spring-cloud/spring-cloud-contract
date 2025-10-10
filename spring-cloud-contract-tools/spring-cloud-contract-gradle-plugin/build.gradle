@@ -25,20 +25,23 @@ ext {
 
 project.version = findProperty('verifierVersion')
 apply plugin: 'groovy'
+apply plugin: 'java'
 apply plugin: "java-gradle-plugin"
 apply from: "$rootDir/gradle/release.gradle"
 //apply plugin: "jacoco"
 
 group = 'org.springframework.cloud'
 
-sourceCompatibility = 17
-targetCompatibility = 17
-
 repositories {
 	mavenLocal()
 	mavenCentral()
 	maven { url "https://repo.spring.io/snapshot" }
 	maven { url "https://repo.spring.io/milestone" }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 //Dependencies in all subprojects - https://solidsoft.wordpress.com/2014/11/13/gradle-tricks-display-dependencies-for-all-subprojects-in-multi-project-build/
