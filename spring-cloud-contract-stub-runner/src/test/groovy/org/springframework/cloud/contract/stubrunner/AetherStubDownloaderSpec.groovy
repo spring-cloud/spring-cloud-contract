@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.stubrunner
 import io.specto.hoverfly.junit.HoverflyRule
 import org.eclipse.aether.RepositorySystemSession
 import org.eclipse.aether.repository.Authentication
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
