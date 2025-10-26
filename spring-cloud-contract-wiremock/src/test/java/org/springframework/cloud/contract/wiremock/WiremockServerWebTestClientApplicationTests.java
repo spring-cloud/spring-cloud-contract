@@ -79,7 +79,6 @@ public class WiremockServerWebTestClientApplicationTests {
 	}
 
 	@Test
-	@Ignore
 	public void stubsRenderLinksWithPlaceholder() throws Exception {
 		this.client.get()
 			.uri("/link")

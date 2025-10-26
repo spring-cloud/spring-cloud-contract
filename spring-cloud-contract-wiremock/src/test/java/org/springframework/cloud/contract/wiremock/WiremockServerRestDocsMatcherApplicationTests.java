@@ -19,7 +19,6 @@ package org.springframework.cloud.contract.wiremock;
 import java.io.File;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -60,7 +59,6 @@ public class WiremockServerRestDocsMatcherApplicationTests {
 	private MockMvc mockMvc;
 
 	@Test
-	@Ignore
 	public void matchesRequest() throws Exception {
 		FileSystemUtils.deleteRecursively(new File("target/snippets/stubs/posted.json"));
 		this.mockMvc
