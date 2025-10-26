@@ -64,7 +64,7 @@ class SingleTestGeneratorSpec extends Specification {
 																'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;', 'import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;',
 																'@Test', '@Disabled', 'import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification;',
 																'import io.restassured.response.ResponseOptions;', 'import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat',
-																'import org.junit.jupiter.api.TestMethodOrder', 'import org.junit.jupiter.api.MethodOrderer', '@TestMethodOrder(MethodOrderer.Alphanumeric.class)']
+																'import org.junit.jupiter.api.TestMethodOrder', 'import org.junit.jupiter.api.MethodOrderer', '@TestMethodOrder(MethodOrderer.MethodName.class)']
 
 	private static
 	final List<String> explicitJUnit5RestAssured3ClassStrings = ['import com.jayway.jsonpath.DocumentContext;', 'import com.jayway.jsonpath.JsonPath;',
@@ -72,7 +72,7 @@ class SingleTestGeneratorSpec extends Specification {
 																 'import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;', 'import static io.restassured.RestAssured.*;',
 																 '@Test', '@Disabled', 'import io.restassured.specification.RequestSpecification;',
 																 'import io.restassured.response.Response;', 'import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat',
-																 'org.junit.jupiter.api.TestMethodOrder', 'org.junit.jupiter.api.MethodOrderer', '@TestMethodOrder(MethodOrderer.Alphanumeric.class)']
+																 'org.junit.jupiter.api.TestMethodOrder', 'org.junit.jupiter.api.MethodOrderer', '@TestMethodOrder(MethodOrderer.MethodName.class)']
 
 	private static
 	final List<String> mockMvcTestNGRestAssured3ClassStrings = ['import com.jayway.jsonpath.DocumentContext;', 'import com.jayway.jsonpath.JsonPath;',
