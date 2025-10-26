@@ -21,7 +21,6 @@ import java.nio.file.Files;
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import org.assertj.core.api.BDDAssertions;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import wiremock.org.eclipse.jetty.http.HttpStatus;
