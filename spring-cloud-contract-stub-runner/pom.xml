@@ -168,12 +168,6 @@
 			<artifactId>spring-boot-autoconfigure-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<!-- Git Stub Downloader -->
-		<dependency>
-			<groupId>io.specto</groupId>
-			<artifactId>hoverfly-junit</artifactId>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-client</artifactId>
