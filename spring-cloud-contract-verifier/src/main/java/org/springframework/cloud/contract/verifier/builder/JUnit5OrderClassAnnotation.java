@@ -26,7 +26,7 @@ class JUnit5OrderClassAnnotation implements ClassAnnotation {
 
 	private final GeneratedClassMetaData generatedClassMetaData;
 
-	private static final String[] ANNOTATIONS = { "@TestMethodOrder(MethodOrderer.Alphanumeric.class)" };
+	private static final String[] ANNOTATIONS = { "@TestMethodOrder(MethodOrderer.MethodName.class)" };
 
 	JUnit5OrderClassAnnotation(BlockBuilder blockBuilder, GeneratedClassMetaData generatedClassMetaData) {
 		this.blockBuilder = blockBuilder;

@@ -31,7 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.BeansException;
-import org.springframework.boot.actuate.health.StatusAggregator;
+import org.springframework.boot.health.actuate.endpoint.StatusAggregator;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistry;
 import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.contract.stubrunner.StubConfiguration;

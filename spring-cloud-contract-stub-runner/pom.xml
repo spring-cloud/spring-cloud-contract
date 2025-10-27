@@ -168,12 +168,6 @@
 			<artifactId>spring-boot-autoconfigure-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<!-- Git Stub Downloader -->
-		<dependency>
-			<groupId>io.specto</groupId>
-			<artifactId>hoverfly-junit</artifactId>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-client</artifactId>
@@ -250,7 +244,28 @@
 			<artifactId>spock-junit4</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-webmvc-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-resttestclient</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.junit</groupId>
+				<artifactId>junit-bom</artifactId>
+				<version>${junit-jupiter.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<build>
 		<plugins>
 			<plugin>

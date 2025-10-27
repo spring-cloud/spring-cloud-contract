@@ -23,7 +23,7 @@
 	<inceptionYear>2016</inceptionYear>
 
 	<properties>
-		<spring-boot.version>4.0.0-M3</spring-boot.version>
+		<spring-boot.version>4.0.0-RC1</spring-boot.version>
 		<!-- Align it also in Docker image under [docker/spring-cloud-contract-docker/project/gradle.properties] -->
 		<camel.version>4.14.0</camel.version>
 		<jsch-agent.version>0.0.9</jsch-agent.version>
@@ -37,7 +37,6 @@
 		<cglib.version>3.3.0</cglib.version>
 		<spock-spring.version>2.3-groovy-4.0
 		</spock-spring.version> <!-- @releaser:version-check-off -->
-		<hoverfly-junit.version>0.2.2</hoverfly-junit.version>
 		<handlebars.version>4.5.0</handlebars.version>
 		<commons-text.version>1.14.0</commons-text.version>
 		<jgit.version>7.3.0.202506031305-r</jgit.version>
@@ -45,8 +44,8 @@
 		<rest-assured.version>5.5.6</rest-assured.version>
 		<slf4j.version>[2.0.0,)</slf4j.version>
 		<thin-jar.version>1.0.31.RELEASE</thin-jar.version>
-		<junit-vintage.version>5.13.4</junit-vintage.version>
-		<junit-jupiter.version>5.13.4</junit-jupiter.version>
+		<junit-vintage.version>6.0.0</junit-vintage.version>
+		<junit-jupiter.version>6.0.0</junit-jupiter.version>
 		<gmavenplus-plugin.version>4.2.1</gmavenplus-plugin.version>
 		<maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>  <!-- @releaser:version-check-off -->
 		<awaitility.version>4.3.0</awaitility.version>
@@ -215,11 +214,6 @@
 				<groupId>org.spockframework</groupId>
 				<artifactId>spock-junit4</artifactId>
 				<version>${spock-spring.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.specto</groupId>
-				<artifactId>hoverfly-junit</artifactId>
-				<version>${hoverfly-junit.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>

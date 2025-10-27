@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.contract.stubrunner
 
-import io.specto.hoverfly.junit.HoverflyRule
 import org.eclipse.aether.RepositorySystemSession
 import org.eclipse.aether.repository.Authentication
 import org.junit.Rule
@@ -28,9 +27,6 @@ import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.util.ResourceUtils
 
 class AetherStubDownloaderSpec extends Specification {
-
-	@Rule
-	HoverflyRule hoverflyRule = HoverflyRule.inSimulationMode("simulation.json")
 
 	@Rule
 	TemporaryFolder folder = new TemporaryFolder()

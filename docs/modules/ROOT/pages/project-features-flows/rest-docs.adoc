@@ -4,8 +4,8 @@
 include::partial$_attributes.adoc[]
 
 You can use https://projects.spring.io/spring-restdocs[Spring REST Docs] to generate
-documentation (for example, in Asciidoc format) for an HTTP API with Spring MockMvc,
-WebTestClient, or RestAssured. At the same time that you generate documentation for your API, you can also
+documentation (for example, in Asciidoc format) for an HTTP API with Spring MockMvc or
+WebTestClient. At the same time that you generate documentation for your API, you can also
 generate WireMock stubs by using Spring Cloud Contract WireMock. To do so, write your
 normal REST Docs test cases and use `@AutoConfigureRestDocs` to have stubs be
 automatically generated in the REST Docs output directory. The following UML diagram shows
@@ -183,6 +183,8 @@ xref:../project-features-stubrunner/stub-runner-publishing-stubs-as-jars.adoc[Pu
 number of different ways, including by using
 `@AutoConfigureWireMock(stubs="classpath:resource.json")`, as described earlier in this
 document.
+
+NOTE:  In Spring Cloud Contract 5.0.x support for Rest Assured in Spring Rest Docs was removed due to https://github.com/spring-projects/spring-restdocs/issues/1000[Rest Assured being incompatible with Groovy 5].
 
 [[features-rest-docs-contracts]]
 == Generating Contracts with REST Docs

@@ -23,11 +23,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.properties.PropertyMapping;
-import org.springframework.boot.test.autoconfigure.properties.SkipPropertyMapping;
+import org.springframework.boot.test.context.PropertyMapping;
 import org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer;
 import org.springframework.cloud.contract.stubrunner.HttpServerStubConfigurer.NoOpHttpServerStubConfigurer;
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier;
+
+import static org.springframework.boot.test.context.PropertyMapping.Skip.ON_DEFAULT_VALUE;
 
 /**
  * @author Dave Syer
@@ -38,7 +39,7 @@ import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureM
 @Documented
 @ImportAutoConfiguration
 @AutoConfigureMessageVerifier
-@PropertyMapping(value = "spring.cloud.contract.stubrunner", skip = SkipPropertyMapping.ON_DEFAULT_VALUE)
+@PropertyMapping(value = "spring.cloud.contract.stubrunner", skip = ON_DEFAULT_VALUE)
 public @interface AutoConfigureStubRunner {
 
 	/**

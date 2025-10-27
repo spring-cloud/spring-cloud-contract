@@ -28,7 +28,7 @@ import org.skyscreamer.jsonassert.JSONAssert
 import spock.lang.Issue
 import spock.lang.Specification
 
-import org.springframework.boot.web.server.test.client.TestRestTemplate
+import org.springframework.boot.resttestclient.TestRestTemplate
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.dsl.wiremock.WireMockStubMapping
 import org.springframework.cloud.contract.verifier.file.ContractMetadata
