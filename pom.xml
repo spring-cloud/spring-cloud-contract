@@ -68,7 +68,6 @@
 		<exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
 		<flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
 
-		<contract.kotlin.version>1.8.22</contract.kotlin.version>
 		<commons-beanutils.version>1.9.4</commons-beanutils.version>
 		<sisu-inject-plexus.version>2.6.0</sisu-inject-plexus.version>
 
@@ -435,28 +434,10 @@
 				<artifactId>xercesImpl</artifactId>
 				<version>${xerces.version}</version>
 			</dependency>
-			<!-- Kotlin versions aligned with Gradle -->
-			<dependency>
-				<groupId>org.jetbrains.kotlin</groupId>
-				<artifactId>kotlin-bom</artifactId>
-				<version>${contract.kotlin.version}</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
 			<dependency>
 				<groupId>org.jetbrains.kotlin</groupId>
 				<artifactId>kotlin-scripting-compiler-embeddable</artifactId>
-				<version>${contract.kotlin.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jetbrains.kotlin</groupId>
-				<artifactId>kotlin-daemon-embeddable</artifactId>
-				<version>${contract.kotlin.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jetbrains.kotlin</groupId>
-				<artifactId>kotlin-compiler-embeddable</artifactId>
-				<version>${contract.kotlin.version}</version>
+				<version>${kotlin.version}</version>
 			</dependency>
 
 			<!-- Ensure that we don't have 2 sets of slf4j on the classpath -->
