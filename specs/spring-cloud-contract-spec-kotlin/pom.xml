@@ -49,7 +49,7 @@
 		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>
 			<artifactId>kotlin-scripting-jsr223</artifactId>
-			<version>${contract.kotlin.version}</version>
+			<version>${kotlin.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -67,44 +67,15 @@
 		<testSourceDirectory>src/test/kotlin</testSourceDirectory>
 		<plugins>
 			<plugin>
-				<!-- Based on instructions here - https://kotlinlang.org/docs/reference/using-maven.html -->
-				<artifactId>kotlin-maven-plugin</artifactId>
-				<version>${contract.kotlin.version}</version>
 				<groupId>org.jetbrains.kotlin</groupId>
+				<artifactId>kotlin-maven-plugin</artifactId>
+				<!-- Version and base configuration inherited from spring-cloud-build parent -->
 				<configuration>
-					<jvmTarget>17</jvmTarget>
+					<args combine.children="append">
+						<arg>-Xjvm-default=all</arg>
+						<arg>-Xbackend-threads=0</arg>
+					</args>
 				</configuration>
-				<executions>
-					<execution>
-						<id>compile</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-						<configuration>
-							<args>
-								<arg>-Xjvm-default=all</arg>
-								<arg>-Xbackend-threads=0</arg>
-							</args>
-							<javaParameters>true</javaParameters>
-							<sourceDirs>
-								<sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
-							</sourceDirs>
-						</configuration>
-					</execution>
-					<execution>
-						<id>test-compile</id>
-						<phase>test-compile</phase>
-						<goals>
-							<goal>test-compile</goal>
-						</goals>
-						<configuration>
-							<sourceDirs>
-								<sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
-							</sourceDirs>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.jetbrains.dokka</groupId>
