@@ -51,7 +51,7 @@
 		<awaitility.version>4.3.0</awaitility.version>
 		<artemis.version>2.42.0</artemis.version>
 		<testcontainers.version>1.21.3</testcontainers.version>
-		<hamcrest.version>2.2</hamcrest.version>
+		<hamcrest.version>3.0</hamcrest.version>
 
 		<!-- We need to have compatibility with Gradle -->
 		<groovy.version>4.0.28</groovy.version>
