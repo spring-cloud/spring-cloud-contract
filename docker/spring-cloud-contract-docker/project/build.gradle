@@ -62,7 +62,9 @@ apply plugin: "org.springframework.boot"
 apply plugin: 'spring-cloud-contract'
 apply plugin: 'maven-publish'
 
-bootJar.enabled = false
+tasks.named("bootJar") {
+    enabled = false
+}
 
 class EnvVar {
 	final Object defaultValue
