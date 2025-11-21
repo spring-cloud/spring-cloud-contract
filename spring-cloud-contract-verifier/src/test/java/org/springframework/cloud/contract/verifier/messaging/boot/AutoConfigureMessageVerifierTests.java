@@ -50,7 +50,7 @@ public class AutoConfigureMessageVerifierTests {
 	}
 
 	@AutoConfigureMessageVerifier
-	private static class Configuration {
+	private static final class Configuration {
 
 	}
 

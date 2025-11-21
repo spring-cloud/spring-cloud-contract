@@ -331,7 +331,7 @@ public class OutputMessage extends Common implements RegexCreatingProperty<Serve
 				+ ", \n\tassertThat=" + assertThat + ", \n\tbodyMatchers=" + bodyMatchers + "} \n\t" + super.toString();
 	}
 
-	private class ServerPatternValueDslProperty extends PatternValueDslProperty<ServerDslProperty> {
+	private static final class ServerPatternValueDslProperty extends PatternValueDslProperty<ServerDslProperty> {
 
 		@Override
 		protected ServerDslProperty createProperty(Pattern pattern, Object generatedValue) {

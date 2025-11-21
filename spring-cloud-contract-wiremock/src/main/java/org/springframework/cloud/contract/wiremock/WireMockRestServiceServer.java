@@ -405,7 +405,7 @@ public final class WireMockRestServiceServer {
 		return value == null ? MediaType.TEXT_PLAIN : MediaType.valueOf(value);
 	}
 
-	private static class StubMappingComparator implements Comparator<StubMapping> {
+	private static final class StubMappingComparator implements Comparator<StubMapping> {
 
 		@Override
 		public int compare(StubMapping one, StubMapping two) {

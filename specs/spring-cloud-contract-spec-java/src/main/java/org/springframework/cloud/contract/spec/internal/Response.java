@@ -778,7 +778,7 @@ public class Response extends Common implements RegexCreatingProperty<ServerDslP
 
 	}
 
-	private class ServerPatternValueDslProperty extends PatternValueDslProperty<ServerDslProperty> {
+	private static final class ServerPatternValueDslProperty extends PatternValueDslProperty<ServerDslProperty> {
 
 		@Override
 		protected ServerDslProperty createProperty(Pattern pattern, Object generatedValue) {

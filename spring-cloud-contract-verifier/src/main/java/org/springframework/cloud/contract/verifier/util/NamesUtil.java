@@ -186,7 +186,7 @@ public final class NamesUtil {
 		return result.replaceAll("[^a-zA-Z_$0-9]", "_");
 	}
 
-	private static class InvalidFolderRenamer extends SimpleFileVisitor<Path> {
+	private static final class InvalidFolderRenamer extends SimpleFileVisitor<Path> {
 
 		private final Deque<FileAndNewName> filesToRename = new ArrayDeque<FileAndNewName>();
 

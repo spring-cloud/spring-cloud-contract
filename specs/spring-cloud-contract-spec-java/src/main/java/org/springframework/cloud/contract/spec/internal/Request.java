@@ -786,7 +786,7 @@ public class Request extends Common implements RegexCreatingProperty<ClientDslPr
 
 	}
 
-	private class ClientPatternValueDslProperty extends PatternValueDslProperty<ClientDslProperty> {
+	private static final class ClientPatternValueDslProperty extends PatternValueDslProperty<ClientDslProperty> {
 
 		@Override
 		protected ClientDslProperty createProperty(Pattern pattern, Object generatedValue) {

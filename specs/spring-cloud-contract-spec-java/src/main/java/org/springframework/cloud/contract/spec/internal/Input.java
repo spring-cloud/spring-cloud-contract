@@ -225,7 +225,7 @@ public class Input extends Common implements RegexCreatingProperty<ClientDslProp
 				+ super.toString();
 	}
 
-	private class ClientPatternValueDslProperty extends PatternValueDslProperty<ClientDslProperty> {
+	private static final class ClientPatternValueDslProperty extends PatternValueDslProperty<ClientDslProperty> {
 
 		@Override
 		protected ClientDslProperty createProperty(Pattern pattern, Object generatedValue) {
