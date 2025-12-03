@@ -297,7 +297,7 @@ public class ConvertMojo extends AbstractMojo {
 	}
 
 	private boolean isInsideProject() {
-		return this.mavenSession.getRequest().isProjectPresent();
+		return this.session.getRequest().isProjectPresent();
 	}
 
 }
