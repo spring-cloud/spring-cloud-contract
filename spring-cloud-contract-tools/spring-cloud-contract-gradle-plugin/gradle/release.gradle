@@ -18,11 +18,8 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 	from javadoc.destinationDir
 }
 
-artifacts {
-	archives sourcesJar
-	archives groovydocJar
-	archives javadocJar
-}
+// Add jars as dependencies to the assemble task instead of using the archives configuration
+assemble.dependsOn sourcesJar, groovydocJar, javadocJar
 
 ext {
 	resolveRepoName = { Project project ->
