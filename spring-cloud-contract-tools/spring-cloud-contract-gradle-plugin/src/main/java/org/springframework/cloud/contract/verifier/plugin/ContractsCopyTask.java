@@ -61,7 +61,6 @@ import org.springframework.cloud.contract.stubrunner.StubRunnerOptions;
 import org.springframework.cloud.contract.stubrunner.StubRunnerOptionsBuilder;
 import org.springframework.cloud.contract.stubrunner.StubRunnerPropertyUtils;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
-import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
 // TODO: Convert to incremental task: https://docs.gradle.org/current/userguide/custom_tasks.html#incremental_tasks
@@ -262,7 +261,7 @@ class ContractsCopyTask extends DefaultTask {
 		return new DownloadedData(contractsSubDirIfPresent(downloadedContracts), inclusionProperties);
 	}
 
-	private void throwExceptionWhenFailOnNoContracts(@Nullable File file, String contractsRepository) {
+	private void throwExceptionWhenFailOnNoContracts(File file, String contractsRepository) {
 		if (StringUtils.hasText(contractsRepository)) {
 			if (getLogger().isDebugEnabled()) {
 				getLogger().debug(
@@ -521,7 +520,6 @@ class ContractsCopyTask extends DefaultTask {
 		return options.build();
 	}
 
-	@Nullable
 	private String discoverGitCommitId(Map<String, String> props) {
 		String repositoryUrl = contractRepository.getRepositoryUrl().getOrNull();
 		if (repositoryUrl != null && ScmStubDownloaderBuilder.isProtocolAccepted(repositoryUrl)) {

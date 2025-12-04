@@ -228,7 +228,6 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 		contractTestRuntimeOnly.extendsFrom(testRuntimeOnly);
 
 		configurations.create(CONTRACT_TEST_GENERATOR_RUNTIME_CLASSPATH_CONFIGURATION_NAME, conf -> {
-			conf.setVisible(false);
 			conf.setCanBeResolved(true);
 			conf.setCanBeConsumed(false);
 			conf.attributes(attributes -> {
@@ -366,7 +365,8 @@ public class SpringCloudContractVerifierGradlePlugin implements Plugin<Project> 
 			stubsJar.dependsOn(copyContracts);
 			stubsJar.dependsOn(generateClientStubs);
 		});
-		project.artifacts(artifactHandler -> artifactHandler.add("archives", verifierStubsJar));
+		// Add verifierStubsJar as a dependency to the assemble task instead of using the archives configuration
+		project.getTasks().named("assemble").configure(task -> task.dependsOn(verifierStubsJar));
 	}
 
 	private TaskProvider<ContractsCopyTask> registerCopyContractsTask(ContractVerifierExtension extension) {
