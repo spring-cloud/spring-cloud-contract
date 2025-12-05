@@ -66,11 +66,6 @@ if (isReleaseToCentral) {
 				description = 'Spring Cloud Contract Gradle Plugin'
 				tags.set(['spring', 'spring-framework', 'spring-cloud', 'spring-cloud-contract'])
 			}
-			springCloudContractPluginAlias {
-				displayName = 'Spring Cloud Contract Gradle Plugin (Alias)'
-				description = 'Spring Cloud Contract Gradle Plugin'
-				tags.set(['spring', 'spring-framework', 'spring-cloud', 'spring-cloud-contract'])
-			}
 		}
 	}
 
