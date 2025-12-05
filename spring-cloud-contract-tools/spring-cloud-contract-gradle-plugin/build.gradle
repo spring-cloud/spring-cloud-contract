@@ -24,13 +24,13 @@ ext {
 }
 
 project.version = findProperty('verifierVersion')
+group = 'org.springframework.cloud'
+
 apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: "java-gradle-plugin"
 apply from: "$rootDir/gradle/release.gradle"
 //apply plugin: "jacoco"
-
-group = 'org.springframework.cloud'
 
 gradlePlugin {
 	plugins {
