@@ -32,6 +32,19 @@ apply from: "$rootDir/gradle/release.gradle"
 
 group = 'org.springframework.cloud'
 
+gradlePlugin {
+	plugins {
+		springCloudContractPlugin {
+			id = 'org.springframework.cloud.contract'
+			implementationClass = 'org.springframework.cloud.contract.verifier.plugin.SpringCloudContractVerifierGradlePlugin'
+		}
+		springCloudContractPluginAlias {
+			id = 'spring-cloud-contract'
+			implementationClass = 'org.springframework.cloud.contract.verifier.plugin.SpringCloudContractVerifierGradlePlugin'
+		}
+	}
+}
+
 repositories {
 	mavenLocal()
 	mavenCentral()
