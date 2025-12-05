@@ -42,7 +42,7 @@ repositories {
 tasks.withType(JavaCompile).configureEach {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
-    options.compilerArgs << '-Xlint:deprecation'
+    options.compilerArgs.add('-Xlint:deprecation')
 }
 
 //Dependencies in all subprojects - https://solidsoft.wordpress.com/2014/11/13/gradle-tricks-display-dependencies-for-all-subprojects-in-multi-project-build/
