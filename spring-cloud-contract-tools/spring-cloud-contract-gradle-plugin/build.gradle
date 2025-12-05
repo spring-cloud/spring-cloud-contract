@@ -38,10 +38,6 @@ gradlePlugin {
 			id = 'org.springframework.cloud.contract'
 			implementationClass = 'org.springframework.cloud.contract.verifier.plugin.SpringCloudContractVerifierGradlePlugin'
 		}
-		springCloudContractPluginAlias {
-			id = 'spring-cloud-contract'
-			implementationClass = 'org.springframework.cloud.contract.verifier.plugin.SpringCloudContractVerifierGradlePlugin'
-		}
 	}
 }
 
