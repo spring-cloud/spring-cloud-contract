@@ -72,7 +72,7 @@ if (isReleaseToCentral) {
 	publishing {
 		publications {
 			pluginMaven(MavenPublication) {
-				groupId = project.group
+				groupId = project.group.toString()
 				artifactId = project.name
 			}
 		}
