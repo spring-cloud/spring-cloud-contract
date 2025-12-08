@@ -70,6 +70,9 @@ public class AetherStubDownloader implements StubDownloader {
 	// Preloading class for the shutdown hook not to throw ClassNotFound
 	private static final Class CLAZZ = TemporaryFileStorage.class;
 
+	// In order to allow to pass the injected values from Maven
+	private static RepositorySystem repositorySystemFromMaven;
+
 	private final List<RemoteRepository> remoteRepos;
 
 	private final RepositorySystem repositorySystem;
@@ -105,7 +108,7 @@ public class AetherStubDownloader implements StubDownloader {
 				throw new UnsupportedOperationException(
 						"You can't use Aether downloader when you use classpath to find stubs");
 		}
-		this.repositorySystem = AetherFactories.repositorySystemOr(null);
+		this.repositorySystem = AetherFactories.repositorySystemOr(repositorySystemFromMaven);
 		this.workOffline = stubRunnerOptions.stubsMode == StubRunnerProperties.StubsMode.LOCAL;
 		this.session = newSession(this.repositorySystem, this.workOffline);
 		registerShutdownHook();
@@ -276,6 +279,15 @@ public class AetherStubDownloader implements StubDownloader {
 		Runtime.getRuntime()
 			.addShutdownHook(
 					new Thread(() -> TemporaryFileStorage.cleanup(AetherStubDownloader.this.deleteStubsAfterTest)));
+	}
+
+	/**
+	 * Use this if you're in Maven and have the {@link RepositorySystem} injected to you
+	 * through the {@code Component} annotation.
+	 * @param fromMaven system injected to you by Maven
+	 */
+	public static void setRepositorySystemFromMaven(RepositorySystem fromMaven) {
+		repositorySystemFromMaven = fromMaven;
 	}
 
 }
