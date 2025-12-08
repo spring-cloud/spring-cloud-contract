@@ -31,8 +31,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
+import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 
+import org.springframework.cloud.contract.stubrunner.AetherStubDownloader;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
 import org.springframework.cloud.contract.verifier.converter.RecursiveFilesConverter;
@@ -55,6 +57,9 @@ public class ConvertMojo extends AbstractMojo {
 	static final String MAPPINGS_PATH = "/mappings";
 	static final String CONTRACTS_PATH = "/contracts";
 	static final String ORIGINAL_PATH = "/original";
+
+	@Component
+	private RepositorySystem repositorySystem;
 
 	@Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
 	private RepositorySystemSession repoSession;
@@ -209,6 +214,8 @@ public class ConvertMojo extends AbstractMojo {
 		// download contracts, unzip them and pass as output directory
 		ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
 		config.setExcludeBuildFolders(this.excludeBuildFolders);
+		// download contracts, unzip them and pass as output directory
+		AetherStubDownloader.setRepositorySystemFromMaven(repositorySystem);
 		File contractsDirectory = locationOfContracts(config);
 		contractsDirectory = contractSubfolderIfPresent(contractsDirectory);
 

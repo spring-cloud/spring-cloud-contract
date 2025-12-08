@@ -28,14 +28,17 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 
 import org.springframework.cloud.contract.spec.ContractVerifierException;
+import org.springframework.cloud.contract.stubrunner.AetherStubDownloader;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.cloud.contract.verifier.TestGenerator;
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties;
@@ -53,6 +56,11 @@ import org.springframework.util.StringUtils;
 		requiresDependencyResolution = ResolutionScope.TEST)
 public class GenerateTestsMojo extends AbstractMojo {
 
+	@Component
+	private RepositorySystem repositorySystem;
+
+	// Required for the case where there is no configuration (check the basic project for
+	// tests)
 	@Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
 	private RepositorySystemSession repoSession;
 
@@ -263,6 +271,7 @@ public class GenerateTestsMojo extends AbstractMojo {
 		final ContractVerifierConfigProperties config = new ContractVerifierConfigProperties();
 		config.setFailOnInProgress(this.failOnInProgress);
 		// download contracts, unzip them and pass as output directory
+		AetherStubDownloader.setRepositorySystemFromMaven(repositorySystem);
 		File contractsDirectory = new MavenContractsDownloader(this.project, this.contractDependency,
 				this.contractsPath, this.contractsRepositoryUrl, this.contractsMode, getLog(),
 				this.contractsRepositoryUsername, this.contractsRepositoryPassword, this.contractsRepositoryProxyHost,

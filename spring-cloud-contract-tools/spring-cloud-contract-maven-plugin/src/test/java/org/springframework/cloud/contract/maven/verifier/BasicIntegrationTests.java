@@ -12,18 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ org.springframework.cloud.contract.spec.Contract.make {
-	label 'some_label'
-	input {
-		triggeredBy("hashCode()")
+ */
+
+package org.springframework.cloud.contract.maven.verifier;
+
+import org.apache.maven.api.plugin.testing.Basedir;
+import org.apache.maven.api.plugin.testing.InjectMojo;
+import org.junit.jupiter.api.Test;
+
+class BasicIntegrationTests extends AbstractProjectIntegrationTests {
+
+	@Test
+	@InjectMojo(goal = "convert", pom = "pom.xml")
+	@Basedir("src/test/projects/basic")
+	void shouldConvertContracts(ConvertMojo mojo) throws Exception {
+		runConvertMojo(mojo);
 	}
-	outputMessage {
-		sentTo('jms:output')
-		body([
-				bookName: 'foo'
-		])
-		headers {
-			header('BOOK-NAME', 'foo')
-		}
-	}
+
 }

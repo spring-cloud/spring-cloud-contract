@@ -31,6 +31,11 @@
 				<configuration>
 					<contractsMode>REMOTE</contractsMode>
 					<contractsRepositoryUrl>https://foo.bar</contractsRepositoryUrl>
+					<contractDependency>
+						<groupId>com.example</groupId>
+						<artifactId>contracts</artifactId>
+						<version>+</version>
+					</contractDependency>
 				</configuration>
 			</plugin>
 		</plugins>

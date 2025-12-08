@@ -12,22 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ org.springframework.cloud.contract.spec.Contract.make {
-	ignored()
-	request {
-		method 'POST'
-		url('/users') {
+ */
 
-		}
-		headers {
-			header 'Content-Type': 'application/json'
-		}
+package org.springframework.cloud.contract.maven.verifier;
+
+import org.apache.maven.api.plugin.testing.Basedir;
+import org.apache.maven.api.plugin.testing.InjectMojo;
+import org.junit.jupiter.api.Test;
+
+class BasicGeneratedBaseclassIntegrationTests extends AbstractProjectIntegrationTests {
+
+	@Test
+	@InjectMojo(goal = "convert", pom = "pom.xml")
+	@Basedir("src/test/projects/basic-generated-baseclass")
+	void shouldGenerateBaseClassFromConvention(ConvertMojo mojo) throws Exception {
+		runConvertMojo(mojo);
 	}
-	response {
-		status OK()
-		headers {
-			header 'Location': '/users/john'
-		}
-		body '''{ "list" : [ "login", "john", "name", "John The Contract" ] }'''
-	}
+
 }
