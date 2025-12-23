@@ -140,7 +140,7 @@ final class AetherFactories {
 		registerIfPresent(locator, "org.eclipse.aether.transport.file.FileTransporterFactory",
 				TransporterFactory.class);
 
-		registerIfPresent(locator, "org.eclipse.aether.transport.http.HttpTransporterFanewRepositorySystemctory",
+		registerIfPresent(locator, "org.eclipse.aether.transport.http.HttpTransporterFactory",
 				TransporterFactory.class);
 
 		RepositorySystem system = locator.getService(RepositorySystem.class);
