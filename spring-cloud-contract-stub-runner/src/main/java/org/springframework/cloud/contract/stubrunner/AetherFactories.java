@@ -59,6 +59,21 @@ import org.springframework.util.StringUtils;
  */
 final class AetherFactories {
 
+	/**
+	 * Fully qualified name of {@code BasicRepositoryConnectorFactory}.
+	 */
+	public static final String BASIC_REPOSITORY_CONNECTOR_FACTORY_FQN = "org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory";
+
+	/**
+	 * Fully qualified name of {@code FileTransporterFactory}.
+	 */
+	public static final String FILE_TRANSPORTER_FACTORY_FQN = "org.eclipse.aether.transport.file.FileTransporterFactory";
+
+	/**
+	 * Fully qualified name of {@code HttpTransporterFactory}.
+	 */
+	public static final String HTTP_TRANSPORTER_FACTORY_FQN = "org.eclipse.aether.transport.http.HttpTransporterFactory";
+
 	private static final Log log = LogFactory.getLog(AetherFactories.class);
 
 	private static final String MAVEN_LOCAL_REPOSITORY_LOCATION = "maven.repo.local";
@@ -134,14 +149,11 @@ final class AetherFactories {
 
 		// Try to register connector + transporters reflectively, but do not hard-link
 		// them.
-		registerIfPresent(locator, "org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory",
-				RepositoryConnectorFactory.class);
+		registerIfPresent(locator, BASIC_REPOSITORY_CONNECTOR_FACTORY_FQN, RepositoryConnectorFactory.class);
 
-		registerIfPresent(locator, "org.eclipse.aether.transport.file.FileTransporterFactory",
-				TransporterFactory.class);
+		registerIfPresent(locator, FILE_TRANSPORTER_FACTORY_FQN, TransporterFactory.class);
 
-		registerIfPresent(locator, "org.eclipse.aether.transport.http.HttpTransporterFactory",
-				TransporterFactory.class);
+		registerIfPresent(locator, HTTP_TRANSPORTER_FACTORY_FQN, TransporterFactory.class);
 
 		RepositorySystem system = locator.getService(RepositorySystem.class);
 
