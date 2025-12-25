@@ -59,20 +59,11 @@ import org.springframework.util.StringUtils;
  */
 final class AetherFactories {
 
-	/**
-	 * Fully qualified name of {@code BasicRepositoryConnectorFactory}.
-	 */
-	public static final String BASIC_REPOSITORY_CONNECTOR_FACTORY_FQN = "org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory";
+	static final String BASIC_REPOSITORY_CONNECTOR_FACTORY_FQN = "org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory";
 
-	/**
-	 * Fully qualified name of {@code FileTransporterFactory}.
-	 */
-	public static final String FILE_TRANSPORTER_FACTORY_FQN = "org.eclipse.aether.transport.file.FileTransporterFactory";
+	static final String FILE_TRANSPORTER_FACTORY_FQN = "org.eclipse.aether.transport.file.FileTransporterFactory";
 
-	/**
-	 * Fully qualified name of {@code HttpTransporterFactory}.
-	 */
-	public static final String HTTP_TRANSPORTER_FACTORY_FQN = "org.eclipse.aether.transport.http.HttpTransporterFactory";
+	static final String HTTP_TRANSPORTER_FACTORY_FQN = "org.eclipse.aether.transport.http.HttpTransporterFactory";
 
 	private static final Log log = LogFactory.getLog(AetherFactories.class);
 
