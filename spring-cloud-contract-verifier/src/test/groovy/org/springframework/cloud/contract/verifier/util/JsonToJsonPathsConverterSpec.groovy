@@ -885,7 +885,68 @@ class JsonToJsonPathsConverterSpec extends Specification {
 			pathAndValues.size() == 2
 	}
 
-	private BodyMatcher matcher(final MatchingType matchingType, final String jsonPath, final Object value) {
+	@RestoreSystemProperties
+	def "should generate ordered assertions for primitive array when assert size is enabled"() {
+		given:
+			System.setProperty('spring.cloud.contract.verifier.assert.size', 'true')
+			Map json = [
+					items: ["first", "second", "third"]
+			]
+		when:
+			JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(json)
+		then:
+			pathAndValues.find {
+				it.method() == """.array("['items']").hasSize(3)""" &&
+						it.jsonPath() == """\$.['items'][*]"""
+			}
+			pathAndValues.find {
+				it.method() == """.array("['items']").elementWithIndex(0).isEqualTo("first")""" &&
+						it.jsonPath() == """\$.['items'][0]"""
+			}
+			pathAndValues.find {
+				it.method() == """.array("['items']").elementWithIndex(1).isEqualTo("second")""" &&
+						it.jsonPath() == """\$.['items'][1]"""
+			}
+			pathAndValues.find {
+				it.method() == """.array("['items']").elementWithIndex(2).isEqualTo("third")""" &&
+						it.jsonPath() == """\$.['items'][2]"""
+			}
+		and:
+			pathAndValues.size() == 4
+	}
+
+	@RestoreSystemProperties
+	def "should generate ordered assertions for array of objects when assert size is enabled"() {
+		given:
+			System.setProperty('spring.cloud.contract.verifier.assert.size', 'true')
+			Map json = [
+					users: [
+							[name: "Alice", age: 30],
+							[name: "Bob", age: 25]
+					]
+			]
+		when:
+			JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(json)
+		then:
+			pathAndValues.find {
+				it.method() == """.array("['users']").elementWithIndex(0).field("['name']").isEqualTo("Alice")""" &&
+						it.jsonPath() == """\$.['users'][0][?(@.['name'] == 'Alice')]"""
+			}
+			pathAndValues.find {
+				it.method() == """.array("['users']").elementWithIndex(0).field("['age']").isEqualTo(30)""" &&
+						it.jsonPath() == """\$.['users'][0][?(@.['age'] == 30)]"""
+			}
+			pathAndValues.find {
+				it.method() == """.array("['users']").elementWithIndex(1).field("['name']").isEqualTo("Bob")""" &&
+						it.jsonPath() == """\$.['users'][1][?(@.['name'] == 'Bob')]"""
+			}
+			pathAndValues.find {
+				it.method() == """.array("['users']").elementWithIndex(1).field("['age']").isEqualTo(25)""" &&
+						it.jsonPath() == """\$.['users'][1][?(@.['age'] == 25)]"""
+			}
+	}
+
+	private static BodyMatcher matcher(final MatchingType matchingType, final String jsonPath, final Object value) {
 		return new BodyMatcher() {
 			@Override
 			MatchingType matchingType() {
@@ -914,7 +975,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 		}
 	}
 
-	private void assertThatJsonPathsInMapAreValid(String json, JsonPaths pathAndValues) {
+	private static void assertThatJsonPathsInMapAreValid(String json, JsonPaths pathAndValues) {
 		DocumentContext parsedJson = JsonPath.using(Configuration.builder().options(Option.ALWAYS_RETURN_LIST).build()).parse(json)
 		pathAndValues.each {
 			assert !parsedJson.read(it.jsonPath(), JSONArray).empty
