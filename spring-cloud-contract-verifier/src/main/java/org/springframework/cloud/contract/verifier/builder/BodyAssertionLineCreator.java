@@ -53,7 +53,7 @@ class BodyAssertionLineCreator {
 
 	/**
 	 * Builds the code that for the given {@code property} will compare it to the given
-	 * Object {@code value}
+	 * Object {@code value}.
 	 */
 	private String getResponseBodyPropertyComparisonString(SingleContractMetadata singleContractMetadata,
 			String property, Object value) {
@@ -75,7 +75,7 @@ class BodyAssertionLineCreator {
 
 	/**
 	 * Builds the code that for the given {@code property} will compare it to the given
-	 * byte[] {@code value}
+	 * byte[] {@code value}.
 	 */
 	private String getResponseBodyPropertyComparisonString(SingleContractMetadata singleContractMetadata,
 			String property, FromFileProperty value) {
@@ -88,7 +88,7 @@ class BodyAssertionLineCreator {
 
 	/**
 	 * Builds the code that for the given {@code property} will compare it to the given
-	 * String {@code value}
+	 * String {@code value}.
 	 */
 	private String getResponseBodyPropertyComparisonString(String property, String value) {
 		return this.comparisonBuilder.assertThatUnescaped("responseBody" + property, value);
@@ -96,7 +96,7 @@ class BodyAssertionLineCreator {
 
 	/**
 	 * Builds the code that for the given {@code property} will match it to the given
-	 * regular expression {@code value}
+	 * regular expression {@code value}.
 	 */
 	private String getResponseBodyPropertyComparisonString(String property, Pattern value) {
 		return this.comparisonBuilder.assertThat("responseBody" + property, value);
@@ -104,7 +104,7 @@ class BodyAssertionLineCreator {
 
 	/**
 	 * Builds the code that for the given {@code property} will match it to the given
-	 * {@link ExecutionProperty} value
+	 * {@link ExecutionProperty} value.
 	 */
 	private String getResponseBodyPropertyComparisonString(String property, ExecutionProperty value) {
 		return value.insertValue("responseBody" + property);

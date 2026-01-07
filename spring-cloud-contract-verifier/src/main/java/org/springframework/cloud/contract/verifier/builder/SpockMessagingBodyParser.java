@@ -20,6 +20,13 @@ import org.springframework.cloud.contract.verifier.template.HandlebarsTemplatePr
 
 interface SpockMessagingBodyParser extends MessagingBodyParser, GroovyBodyParser {
 
+	/**
+	 * Shared Spock messaging body parser instance.
+	 */
 	BodyParser INSTANCE = (SpockMessagingBodyParser) HandlebarsTemplateProcessor::new;
+
+	default String parserType() {
+		return "spock-messaging";
+	}
 
 }

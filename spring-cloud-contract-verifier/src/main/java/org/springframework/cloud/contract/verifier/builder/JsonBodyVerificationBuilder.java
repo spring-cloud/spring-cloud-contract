@@ -334,7 +334,7 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 	}
 
 	/**
-	 * Appends to {@link BlockBuilder} parsing of the JSON Path document
+	 * Appends to {@link BlockBuilder} parsing of the JSON Path document.
 	 */
 	private void appendJsonPath(BlockBuilder blockBuilder, String json) {
 		blockBuilder.addLine("DocumentContext parsedJson = JsonPath.parse(" + json + ")");
