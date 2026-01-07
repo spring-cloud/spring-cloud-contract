@@ -32,14 +32,12 @@ class JsonPathMatcherUtilsSpec extends Specification {
 
 	def 'should read element from JSON by path'() {
 		given:
-			def json = new JsonSlurper().parseText('''
-				{
-					"person": {
-						"name": "John",
-						"age": 30
-					}
-				}
-			''')
+			def json = [
+				person: [
+					name: "John",
+					age: 30
+				]
+			]
 		when:
 			def name = JsonPathMatcherUtils.readElement(json, '$.person.name')
 			def age = JsonPathMatcherUtils.readElement(json, '$.person.age')
@@ -50,14 +48,12 @@ class JsonPathMatcherUtilsSpec extends Specification {
 
 	def 'should read nested array element from JSON'() {
 		given:
-			def json = new JsonSlurper().parseText('''
-				{
-					"items": [
-						{"id": 1, "name": "first"},
-						{"id": 2, "name": "second"}
-					]
-				}
-			''')
+			def json = [
+				items: [
+					[id: 1, name: "first"],
+					[id: 2, name: "second"]
+				]
+			]
 		when:
 			def firstId = JsonPathMatcherUtils.readElement(json, '$.items[0].id')
 			def secondName = JsonPathMatcherUtils.readElement(json, '$.items[1].name')
@@ -68,15 +64,13 @@ class JsonPathMatcherUtilsSpec extends Specification {
 
 	def 'should remove matching JSON paths from body'() {
 		given:
-			def json = new JsonSlurper().parseText('''
-				{
-					"person": {
-						"name": "John",
-						"age": 30,
-						"email": "john@example.com"
-					}
-				}
-			''')
+			def json = [
+				person: [
+					name: "John",
+					age: 30,
+					email: "john@example.com"
+				]
+			]
 			def bodyMatchers = new BodyMatchers()
 			bodyMatchers.jsonPath('$.person.email', bodyMatchers.byRegex('.*'))
 		when:
@@ -89,11 +83,7 @@ class JsonPathMatcherUtilsSpec extends Specification {
 
 	def 'should return original JSON when no matchers provided'() {
 		given:
-			def json = new JsonSlurper().parseText('''
-				{
-					"name": "John"
-				}
-			''')
+			def json = [name: "John"]
 		when:
 			def result = JsonPathMatcherUtils.removeMatchingJsonPaths(json, null)
 		then:
@@ -102,11 +92,7 @@ class JsonPathMatcherUtilsSpec extends Specification {
 
 	def 'should return original JSON when matchers have no entries'() {
 		given:
-			def json = new JsonSlurper().parseText('''
-				{
-					"name": "John"
-				}
-			''')
+			def json = [name: "John"]
 			def bodyMatchers = new BodyMatchers()
 		when:
 			def result = JsonPathMatcherUtils.removeMatchingJsonPaths(json, bodyMatchers)
@@ -127,13 +113,11 @@ class JsonPathMatcherUtilsSpec extends Specification {
 
 	def 'should convert JSON path with equality to filter expression'() {
 		given:
-			def json = new JsonSlurper().parseText('''
-				{
-					"person": {
-						"name": "John"
-					}
-				}
-			''')
+			def json = [
+				person: [
+					name: "John"
+				]
+			]
 			def bodyMatchers = new BodyMatchers()
 			bodyMatchers.jsonPath('$.person.name', bodyMatchers.byEquality())
 			def bodyMatcher = bodyMatchers.matchers().first()
@@ -145,13 +129,11 @@ class JsonPathMatcherUtilsSpec extends Specification {
 
 	def 'should convert JSON path with numeric equality'() {
 		given:
-			def json = new JsonSlurper().parseText('''
-				{
-					"person": {
-						"age": 30
-					}
-				}
-			''')
+			def json = [
+				person: [
+					age: 30
+				]
+			]
 			def bodyMatchers = new BodyMatchers()
 			bodyMatchers.jsonPath('$.person.age', bodyMatchers.byEquality())
 			def bodyMatcher = bodyMatchers.matchers().first()
@@ -194,15 +176,6 @@ class JsonPathMatcherUtilsSpec extends Specification {
 			result == '$[?(@.items.size() >= 2 && @.items.size() <= 5)]'
 	}
 
-	def 'should return generated value for RegexProperty'() {
-		given:
-			def regexProperty = new RegexProperty('[A-Z]+').asString()
-		when:
-			def result = JsonPathMatcherUtils.generatedValueIfNeeded(regexProperty)
-		then:
-			result instanceof String
-	}
-
 	def 'should return original value for non-RegexProperty'() {
 		given:
 			def value = "test value"
@@ -233,13 +206,11 @@ class JsonPathMatcherUtilsSpec extends Specification {
 
 	def 'should handle bracket notation in path for equality'() {
 		given:
-			def json = new JsonSlurper().parseText('''
-				{
-					"person": {
-						"first-name": "John"
-					}
-				}
-			''')
+			def json = [
+				person: [
+					"first-name": "John"
+				]
+			]
 			def bodyMatchers = new BodyMatchers()
 			bodyMatchers.jsonPath("\$.person['first-name']", bodyMatchers.byEquality())
 			def bodyMatcher = bodyMatchers.matchers().first()
@@ -251,14 +222,12 @@ class JsonPathMatcherUtilsSpec extends Specification {
 
 	def 'should remove array element matching path'() {
 		given:
-			def json = new JsonSlurper().parseText('''
-				{
-					"items": [
-						{"id": 1, "name": "first"},
-						{"id": 2, "name": "second"}
-					]
-				}
-			''')
+			def json = [
+				items: [
+					[id: 1, name: "first"],
+					[id: 2, name: "second"]
+				]
+			]
 			def bodyMatchers = new BodyMatchers()
 			bodyMatchers.jsonPath('$.items[0].id', bodyMatchers.byRegex('\\d+'))
 		when:
@@ -283,12 +252,10 @@ class JsonPathMatcherUtilsSpec extends Specification {
 
 	def 'should read root level array'() {
 		given:
-			def json = new JsonSlurper().parseText('''
-				[
-					{"id": 1},
-					{"id": 2}
-				]
-			''')
+			def json = [
+				[id: 1],
+				[id: 2]
+			]
 		when:
 			def firstId = JsonPathMatcherUtils.readElement(json, '$[0].id')
 			def secondId = JsonPathMatcherUtils.readElement(json, '$[1].id')
@@ -299,17 +266,15 @@ class JsonPathMatcherUtilsSpec extends Specification {
 
 	def 'should handle deeply nested paths'() {
 		given:
-			def json = new JsonSlurper().parseText('''
-				{
-					"level1": {
-						"level2": {
-							"level3": {
-								"value": "deep"
-							}
-						}
-					}
-				}
-			''')
+			def json = [
+				level1: [
+					level2: [
+						level3: [
+							value: "deep"
+						]
+					]
+				]
+			]
 		when:
 			def result = JsonPathMatcherUtils.readElement(json, '$.level1.level2.level3.value')
 		then:

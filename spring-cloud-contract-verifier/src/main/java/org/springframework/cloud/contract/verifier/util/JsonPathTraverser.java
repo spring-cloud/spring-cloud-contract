@@ -65,7 +65,7 @@ class JsonPathTraverser {
 			return processString(key, s, collector);
 		}
 		if (value instanceof Map) {
-			return processMap(key, (Map<String, Object>) value, collector);
+			return processMap(key, (Map<Object, Object>) value, collector);
 		}
 		if (value instanceof List) {
 			return processList(key, (List<?>) value, collector);
@@ -92,7 +92,7 @@ class JsonPathTraverser {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Object processMap(MethodBufferingJsonVerifiable key, Map<String, Object> map,
+	private Object processMap(MethodBufferingJsonVerifiable key, Map<Object, Object> map,
 			Consumer<MethodBufferingJsonVerifiable> collector) {
 		if (map.isEmpty()) {
 			return emitValue(collector, key.isEmpty(), map);
@@ -164,11 +164,11 @@ class JsonPathTraverser {
 
 	// ========== Map Entry Processing ==========
 
-	private Map<String, Object> convertMapEntries(Class<?> parentType, MethodBufferingJsonVerifiable parentKey,
-			Map<String, Object> map, Consumer<MethodBufferingJsonVerifiable> collector) {
+	private Map<Object, Object> convertMapEntries(Class<?> parentType, MethodBufferingJsonVerifiable parentKey,
+			Map<Object, Object> map, Consumer<MethodBufferingJsonVerifiable> collector) {
 
-		Map<String, Object> result = new LinkedHashMap<>();
-		for (Map.Entry<String, Object> entry : map.entrySet()) {
+		Map<Object, Object> result = new LinkedHashMap<>();
+		for (Map.Entry<Object, Object> entry : map.entrySet()) {
 			Object entryKey = entry.getKey();
 			Object value = ContentUtils.returnParsedObject(entry.getValue());
 			MethodBufferingJsonVerifiable verifiable = createKeyVerifiable(parentKey, entryKey, value);
@@ -182,10 +182,10 @@ class JsonPathTraverser {
 		if (value instanceof List) {
 			return createListFieldVerifiable((List<?>) value, entryKey, parentKey);
 		}
-		if (value instanceof Map) {
-			return parentKey.field(new ShouldTraverse(entryKey));
-		}
-		return valueToAsserter(parentKey.field(entryKey), value);
+		// Use ShouldTraverse to ensure field() is used instead of contains()
+		// This is needed because after elementWithIndex, isIteratingOverArray() is true
+		// which would otherwise cause contains() to be used
+		return parentKey.field(new ShouldTraverse(entryKey));
 	}
 
 	private MethodBufferingJsonVerifiable createListFieldVerifiable(List<?> list, Object entryKey,
@@ -218,6 +218,11 @@ class JsonPathTraverser {
 			Object element) {
 		if (verifiable.isAssertingAValueInArray()) {
 			Object parsed = ContentUtils.returnParsedObject(element);
+			// Don't call contains on Map or List elements - let processValue recurse into
+			// them
+			if (parsed instanceof Map || parsed instanceof List) {
+				return verifiable;
+			}
 			if (parsed instanceof Pattern) {
 				return verifiable.matches(((Pattern) parsed).pattern());
 			}
@@ -247,6 +252,13 @@ class JsonPathTraverser {
 		if (converted instanceof ExecutionProperty) {
 			return key;
 		}
+		// Use specific overloads for Number and Boolean to preserve types
+		if (converted instanceof Number) {
+			return key.isEqualTo((Number) converted);
+		}
+		if (converted instanceof Boolean) {
+			return key.isEqualTo((Boolean) converted);
+		}
 		return key.isEqualTo(converted);
 	}
 
@@ -269,13 +281,18 @@ class JsonPathTraverser {
 
 	private Object emitValue(Consumer<MethodBufferingJsonVerifiable> collector, MethodBufferingJsonVerifiable key,
 			Object value) {
-		if (value instanceof ExecutionProperty || !(key instanceof FinishedDelegatingJsonVerifiable)) {
-			if (key.isAssertingAValueInArray() && !(value instanceof List || value instanceof Map)) {
-				collector.accept(valueToAsserter(key, value));
-			}
-			else {
-				collector.accept(key);
-			}
+		boolean isCollection = value instanceof List || value instanceof Map;
+
+		if (key.isAssertingAValueInArray() && !isCollection) {
+			collector.accept(valueToAsserter(key, value));
+		}
+		else if (isCollection || key instanceof FinishedDelegatingJsonVerifiable) {
+			// For collections or already-finished keys, emit as-is
+			collector.accept(key);
+		}
+		else {
+			// For primitive values with non-finished keys, add equality assertion
+			collector.accept(valueToAsserter(key, value));
 		}
 		return value;
 	}
@@ -326,8 +343,8 @@ class JsonPathTraverser {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Map<String, Object> castToMap(Object obj) {
-		return (Map<String, Object>) obj;
+	private Map<Object, Object> castToMap(Object obj) {
+		return (Map<Object, Object>) obj;
 	}
 
 }
