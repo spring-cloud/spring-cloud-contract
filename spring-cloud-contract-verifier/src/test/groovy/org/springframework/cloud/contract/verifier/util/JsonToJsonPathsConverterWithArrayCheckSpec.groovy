@@ -51,23 +51,23 @@ class JsonToJsonPathsConverterWithArrayCheckSpec extends Specification {
 		then: "should have size check"
 			pathAndValues.find {
 				it.method() == """.array("['items']").hasSize(3)""" &&
-						it.jsonPath() == """\$.['items'][*]"""
+						it.jsonPath() == """\$.['items']"""
 			}
-		and: "should have assertion for first element"
-			pathAndValues.find {
-				it.method() == """.array("['items']").elementWithIndex(0).isEqualTo("first")""" &&
-						it.jsonPath() == """\$.['items'][0]"""
-			}
-		and: "should have assertion for second element"
-			pathAndValues.find {
-				it.method() == """.array("['items']").elementWithIndex(1).isEqualTo("second")""" &&
-						it.jsonPath() == """\$.['items'][1]"""
-			}
-		and: "should have assertion for third element"
-			pathAndValues.find {
-				it.method() == """.array("['items']").elementWithIndex(2).isEqualTo("third")""" &&
-						it.jsonPath() == """\$.['items'][2]"""
-			}
+	and: "should have assertion for first element"
+		pathAndValues.find {
+			it.method() == """.array("['items']").elementWithIndex(0).isEqualTo("first")""" &&
+					it.jsonPath() == """\$.['items'][0]"""
+		}
+	and: "should have assertion for second element"
+		pathAndValues.find {
+			it.method() == """.array("['items']").elementWithIndex(1).isEqualTo("second")""" &&
+					it.jsonPath() == """\$.['items'][1]"""
+		}
+	and: "should have assertion for third element"
+		pathAndValues.find {
+			it.method() == """.array("['items']").elementWithIndex(2).isEqualTo("third")""" &&
+					it.jsonPath() == """\$.['items'][2]"""
+		}
 		and: "should have exactly 4 assertions (1 size + 3 elements)"
 			pathAndValues.size() == 4
 	}
@@ -82,28 +82,28 @@ class JsonToJsonPathsConverterWithArrayCheckSpec extends Specification {
 		then: "should have size check"
 			pathAndValues.find {
 				it.method() == """.array("['numbers']").hasSize(4)""" &&
-						it.jsonPath() == """\$.['numbers'][*]"""
+						it.jsonPath() == """\$.['numbers']"""
 			}
-		and: "should have assertion for element at index 0"
-			pathAndValues.find {
-				it.method() == """.array("['numbers']").elementWithIndex(0).isEqualTo(10)""" &&
-						it.jsonPath() == """\$.['numbers'][0]"""
-			}
-		and: "should have assertion for element at index 1"
-			pathAndValues.find {
-				it.method() == """.array("['numbers']").elementWithIndex(1).isEqualTo(20)""" &&
-						it.jsonPath() == """\$.['numbers'][1]"""
-			}
-		and: "should have assertion for element at index 2"
-			pathAndValues.find {
-				it.method() == """.array("['numbers']").elementWithIndex(2).isEqualTo(30)""" &&
-						it.jsonPath() == """\$.['numbers'][2]"""
-			}
-		and: "should have assertion for element at index 3"
-			pathAndValues.find {
-				it.method() == """.array("['numbers']").elementWithIndex(3).isEqualTo(40)""" &&
-						it.jsonPath() == """\$.['numbers'][3]"""
-			}
+	and: "should have assertion for element at index 0"
+		pathAndValues.find {
+			it.method() == """.array("['numbers']").elementWithIndex(0).isEqualTo(10)""" &&
+					it.jsonPath() == """\$.['numbers'][0]"""
+		}
+	and: "should have assertion for element at index 1"
+		pathAndValues.find {
+			it.method() == """.array("['numbers']").elementWithIndex(1).isEqualTo(20)""" &&
+					it.jsonPath() == """\$.['numbers'][1]"""
+		}
+	and: "should have assertion for element at index 2"
+		pathAndValues.find {
+			it.method() == """.array("['numbers']").elementWithIndex(2).isEqualTo(30)""" &&
+					it.jsonPath() == """\$.['numbers'][2]"""
+		}
+	and: "should have assertion for element at index 3"
+		pathAndValues.find {
+			it.method() == """.array("['numbers']").elementWithIndex(3).isEqualTo(40)""" &&
+					it.jsonPath() == """\$.['numbers'][3]"""
+		}
 		and: "should have exactly 5 assertions (1 size + 4 elements)"
 			pathAndValues.size() == 5
 	}
@@ -118,23 +118,23 @@ class JsonToJsonPathsConverterWithArrayCheckSpec extends Specification {
 		then: "should have size check"
 			pathAndValues.find {
 				it.method() == """.array("['flags']").hasSize(3)""" &&
-						it.jsonPath() == """\$.['flags'][*]"""
+						it.jsonPath() == """\$.['flags']"""
 			}
-		and: "should have assertion for element at index 0 (true)"
-			pathAndValues.find {
-				it.method() == """.array("['flags']").elementWithIndex(0).isEqualTo(true)""" &&
-						it.jsonPath() == """\$.['flags'][0]"""
-			}
-		and: "should have assertion for element at index 1 (false)"
-			pathAndValues.find {
-				it.method() == """.array("['flags']").elementWithIndex(1).isEqualTo(false)""" &&
-						it.jsonPath() == """\$.['flags'][1]"""
-			}
-		and: "should have assertion for element at index 2 (true)"
-			pathAndValues.find {
-				it.method() == """.array("['flags']").elementWithIndex(2).isEqualTo(true)""" &&
-						it.jsonPath() == """\$.['flags'][2]"""
-			}
+	and: "should have assertion for element at index 0 (true)"
+		pathAndValues.find {
+			it.method() == """.array("['flags']").elementWithIndex(0).isEqualTo(true)""" &&
+					it.jsonPath() == """\$.['flags'][0]"""
+		}
+	and: "should have assertion for element at index 1 (false)"
+		pathAndValues.find {
+			it.method() == """.array("['flags']").elementWithIndex(1).isEqualTo(false)""" &&
+					it.jsonPath() == """\$.['flags'][1]"""
+		}
+	and: "should have assertion for element at index 2 (true)"
+		pathAndValues.find {
+			it.method() == """.array("['flags']").elementWithIndex(2).isEqualTo(true)""" &&
+					it.jsonPath() == """\$.['flags'][2]"""
+		}
 		and: "should have exactly 4 assertions (1 size + 3 elements)"
 			pathAndValues.size() == 4
 	}
@@ -149,23 +149,23 @@ class JsonToJsonPathsConverterWithArrayCheckSpec extends Specification {
 		then: "should have size check"
 			pathAndValues.find {
 				it.method() == """.array("['mixed']").hasSize(3)""" &&
-						it.jsonPath() == """\$.['mixed'][*]"""
+						it.jsonPath() == """\$.['mixed']"""
 			}
-		and: "should have assertion for string at index 0"
-			pathAndValues.find {
-				it.method() == """.array("['mixed']").elementWithIndex(0).isEqualTo("text")""" &&
-						it.jsonPath() == """\$.['mixed'][0]"""
-			}
-		and: "should have assertion for number at index 1"
-			pathAndValues.find {
-				it.method() == """.array("['mixed']").elementWithIndex(1).isEqualTo(123)""" &&
-						it.jsonPath() == """\$.['mixed'][1]"""
-			}
-		and: "should have assertion for boolean at index 2"
-			pathAndValues.find {
-				it.method() == """.array("['mixed']").elementWithIndex(2).isEqualTo(true)""" &&
-						it.jsonPath() == """\$.['mixed'][2]"""
-			}
+	and: "should have assertion for string at index 0"
+		pathAndValues.find {
+			it.method() == """.array("['mixed']").elementWithIndex(0).isEqualTo("text")""" &&
+					it.jsonPath() == """\$.['mixed'][0]"""
+		}
+	and: "should have assertion for number at index 1"
+		pathAndValues.find {
+			it.method() == """.array("['mixed']").elementWithIndex(1).isEqualTo(123)""" &&
+					it.jsonPath() == """\$.['mixed'][1]"""
+		}
+	and: "should have assertion for boolean at index 2"
+		pathAndValues.find {
+			it.method() == """.array("['mixed']").elementWithIndex(2).isEqualTo(true)""" &&
+					it.jsonPath() == """\$.['mixed'][2]"""
+		}
 		and: "should have exactly 4 assertions (1 size + 3 elements)"
 			pathAndValues.size() == 4
 	}
@@ -348,26 +348,26 @@ class JsonToJsonPathsConverterWithArrayCheckSpec extends Specification {
 			String json = """["first", "second", "third"]"""
 		when:
 			JsonPaths pathAndValues = converter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
-		then: "should have size check for root array"
+	then: "should have size check for root array"
 			pathAndValues.find {
 				it.method() == """.hasSize(3)""" &&
 						it.jsonPath() == """\$"""
 			}
-		and: "should have assertion for element at index 0"
-			pathAndValues.find {
-				it.method() == """.array().elementWithIndex(0).isEqualTo("first")""" &&
-						it.jsonPath() == """\$[0]"""
-			}
-		and: "should have assertion for element at index 1"
-			pathAndValues.find {
-				it.method() == """.array().elementWithIndex(1).isEqualTo("second")""" &&
-						it.jsonPath() == """\$[1]"""
-			}
-		and: "should have assertion for element at index 2"
-			pathAndValues.find {
-				it.method() == """.array().elementWithIndex(2).isEqualTo("third")""" &&
-						it.jsonPath() == """\$[2]"""
-			}
+	and: "should have assertion for element at index 0"
+		pathAndValues.find {
+			it.method() == """.array().elementWithIndex(0).isEqualTo("first")""" &&
+					it.jsonPath() == """\$[*][0]"""
+		}
+	and: "should have assertion for element at index 1"
+		pathAndValues.find {
+			it.method() == """.array().elementWithIndex(1).isEqualTo("second")""" &&
+					it.jsonPath() == """\$[*][1]"""
+		}
+	and: "should have assertion for element at index 2"
+		pathAndValues.find {
+			it.method() == """.array().elementWithIndex(2).isEqualTo("third")""" &&
+					it.jsonPath() == """\$[*][2]"""
+		}
 		and: "should have exactly 4 assertions (1 size + 3 elements)"
 			pathAndValues.size() == 4
 	}
@@ -378,25 +378,20 @@ class JsonToJsonPathsConverterWithArrayCheckSpec extends Specification {
 	{"property1": "a"},
 	{"property2": "b"}
 ]"""
-		when:
+	when:
 			JsonPaths pathAndValues = converter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
-		then: "should have size check for root array"
-			pathAndValues.find {
-				it.method() == """.hasSize(2)""" &&
-						it.jsonPath() == """\$"""
-			}
-		and: "should have assertion for [0].property1"
-			pathAndValues.find {
-				it.method() == """.array().elementWithIndex(0).field("['property1']").isEqualTo("a")""" &&
-						it.jsonPath() == """\$[0][?(@.['property1'] == 'a')]"""
-			}
-		and: "should have assertion for [1].property2"
-			pathAndValues.find {
-				it.method() == """.array().elementWithIndex(1).field("['property2']").isEqualTo("b")""" &&
-						it.jsonPath() == """\$[1][?(@.['property2'] == 'b')]"""
-			}
-		and: "should have exactly 3 assertions (1 size + 2 objects with 1 field each)"
-			pathAndValues.size() == 3
+	then: "should have assertion for [0].property1"
+		pathAndValues.find {
+			it.method() == """.array().elementWithIndex(0).field("['property1']").isEqualTo("a")""" &&
+					it.jsonPath() == """\$[*][0][?(@.['property1'] == 'a')]"""
+		}
+	and: "should have assertion for [1].property2"
+		pathAndValues.find {
+			it.method() == """.array().elementWithIndex(1).field("['property2']").isEqualTo("b")""" &&
+					it.jsonPath() == """\$[*][1][?(@.['property2'] == 'b')]"""
+		}
+	and: "should have exactly 2 assertions (2 objects with 1 field each)"
+			pathAndValues.size() == 2
 	}
 
 	// ========== Complex Real-World Scenarios ==========
@@ -557,16 +552,16 @@ class JsonToJsonPathsConverterWithArrayCheckSpec extends Specification {
 			]
 		when:
 			JsonPaths pathAndValues = converter().transformToJsonPathWithTestsSideValues(json)
-		then: "should have size check"
+	then: "should have size check"
 			pathAndValues.find {
 				it.method() == """.array("['items']").hasSize(1)""" &&
-						it.jsonPath() == """\$.['items'][*]"""
+						it.jsonPath() == """\$.['items']"""
 			}
-		and: "should have assertion for the single element at index 0"
-			pathAndValues.find {
-				it.method() == """.array("['items']").elementWithIndex(0).isEqualTo("only")""" &&
-						it.jsonPath() == """\$.['items'][0]"""
-			}
+	and: "should have assertion for the single element at index 0"
+		pathAndValues.find {
+			it.method() == """.array("['items']").elementWithIndex(0).isEqualTo("only")""" &&
+					it.jsonPath() == """\$.['items'][0]"""
+		}
 		and: "should have exactly 2 assertions (1 size + 1 element)"
 			pathAndValues.size() == 2
 	}
@@ -591,26 +586,26 @@ class JsonToJsonPathsConverterWithArrayCheckSpec extends Specification {
 			]
 		when:
 			JsonPaths pathAndValues = converter().transformToJsonPathWithTestsSideValues(json)
-		then: "should have size check"
+	then: "should have size check"
 			pathAndValues.find {
 				it.method() == """.array("['prices']").hasSize(3)""" &&
-						it.jsonPath() == """\$.['prices'][*]"""
+						it.jsonPath() == """\$.['prices']"""
 			}
-		and: "should have assertion for prices[0]"
-			pathAndValues.find {
-				it.method() == """.array("['prices']").elementWithIndex(0).isEqualTo(19.99)""" &&
-						it.jsonPath() == """\$.['prices'][0]"""
-			}
-		and: "should have assertion for prices[1]"
-			pathAndValues.find {
-				it.method() == """.array("['prices']").elementWithIndex(1).isEqualTo(29.99)""" &&
-						it.jsonPath() == """\$.['prices'][1]"""
-			}
-		and: "should have assertion for prices[2]"
-			pathAndValues.find {
-				it.method() == """.array("['prices']").elementWithIndex(2).isEqualTo(9.99)""" &&
-						it.jsonPath() == """\$.['prices'][2]"""
-			}
+	and: "should have assertion for prices[0]"
+		pathAndValues.find {
+			it.method() == """.array("['prices']").elementWithIndex(0).isEqualTo(19.99)""" &&
+					it.jsonPath() == """\$.['prices'][0]"""
+		}
+	and: "should have assertion for prices[1]"
+		pathAndValues.find {
+			it.method() == """.array("['prices']").elementWithIndex(1).isEqualTo(29.99)""" &&
+					it.jsonPath() == """\$.['prices'][1]"""
+		}
+	and: "should have assertion for prices[2]"
+		pathAndValues.find {
+			it.method() == """.array("['prices']").elementWithIndex(2).isEqualTo(9.99)""" &&
+					it.jsonPath() == """\$.['prices'][2]"""
+		}
 		and: "should have exactly 4 assertions (1 size + 3 elements)"
 			pathAndValues.size() == 4
 	}
@@ -625,16 +620,24 @@ class JsonToJsonPathsConverterWithArrayCheckSpec extends Specification {
 		when:
 			JsonPaths orderedPaths = converter().transformToJsonPathWithTestsSideValues(json)
 			JsonPaths unorderedPaths = new JsonToJsonPathsConverter(false).transformToJsonPathWithTestsSideValues(json)
-		then: "ordered should use elementWithIndex"
+	then: "ordered should use elementWithIndex"
 			orderedPaths.any { it.method().contains("elementWithIndex") }
-		and: "unordered should not use elementWithIndex"
+	and: "unordered should not use elementWithIndex"
 			!unorderedPaths.any { it.method().contains("elementWithIndex") }
-		and: "ordered should have exact index paths [0], [1], [2]"
-			orderedPaths.any { it.jsonPath().contains("[0]") }
-			orderedPaths.any { it.jsonPath().contains("[1]") }
-			orderedPaths.any { it.jsonPath().contains("[2]") }
-		and: "unordered should use wildcard [*]"
-			unorderedPaths.every { it.jsonPath().contains("[*]") || !it.jsonPath().contains("[") }
+	and: "ordered should have exact index paths [0], [1], [2]"
+			orderedPaths.find { it.method() == """.array("['items']").elementWithIndex(0).isEqualTo("a")""" &&
+					it.jsonPath() == """\$.['items'][0]""" }
+			orderedPaths.find { it.method() == """.array("['items']").elementWithIndex(1).isEqualTo("b")""" &&
+					it.jsonPath() == """\$.['items'][1]""" }
+			orderedPaths.find { it.method() == """.array("['items']").elementWithIndex(2).isEqualTo("c")""" &&
+					it.jsonPath() == """\$.['items'][2]""" }
+	and: "unordered should use arrayField with filtered json paths"
+			unorderedPaths.find { it.method() == """.array("['items']").arrayField().isEqualTo("a").value()""" &&
+					it.jsonPath() == """\$.['items'][?(@ == 'a')]""" }
+			unorderedPaths.find { it.method() == """.array("['items']").arrayField().isEqualTo("b").value()""" &&
+					it.jsonPath() == """\$.['items'][?(@ == 'b')]""" }
+			unorderedPaths.find { it.method() == """.array("['items']").arrayField().isEqualTo("c").value()""" &&
+					it.jsonPath() == """\$.['items'][?(@ == 'c')]""" }
 	}
 
 	// ========== JSON Path Validity ==========

@@ -54,11 +54,11 @@ class JsonPathTraverser {
 	 */
 	void traverse(Object json, MethodBufferingJsonVerifiable rootKey,
 			Consumer<MethodBufferingJsonVerifiable> collector) {
-		processValue(Map.class, rootKey, json, collector);
+		processValue(rootKey, json, collector);
 	}
 
 	@SuppressWarnings("unchecked")
-	private Object processValue(Class<?> parentType, MethodBufferingJsonVerifiable key, Object value,
+	private Object processValue(MethodBufferingJsonVerifiable key, Object value,
 			Consumer<MethodBufferingJsonVerifiable> collector) {
 		value = ContentUtils.returnParsedObject(value);
 		if (value instanceof String s && !s.isEmpty()) {
@@ -71,7 +71,7 @@ class JsonPathTraverser {
 			return processList(key, (List<?>) value, collector);
 		}
 		if (key.isIteratingOverArray()) {
-			processValue(Object.class, key.arrayField().contains(ContentUtils.returnParsedObject(value)),
+			processValue(key.arrayField().contains(ContentUtils.returnParsedObject(value)),
 					ContentUtils.returnParsedObject(value), collector);
 		}
 		return emitValue(collector, key, value);
@@ -98,9 +98,9 @@ class JsonPathTraverser {
 			return emitValue(collector, key.isEmpty(), map);
 		}
 		if (isSimpleEntryMap(map)) {
-			return convertMapEntries(List.class, key, map, collector);
+			return convertMapEntries(key, map, collector);
 		}
-		return convertMapEntries(Map.class, key, map, collector);
+		return convertMapEntries(key, map, collector);
 	}
 
 	private Object processList(MethodBufferingJsonVerifiable key, List<?> list,
@@ -124,17 +124,18 @@ class JsonPathTraverser {
 			Consumer<MethodBufferingJsonVerifiable> collector) {
 
 		if (this.useOrderedArrayVerification) {
+			MethodBufferingJsonVerifiable indexedBase = isRootElement(key) ? key.array() : key;
 			for (int i = 0; i < list.size(); i++) {
 				Object element = ContentUtils.returnParsedObject(list.get(i));
-				MethodBufferingJsonVerifiable indexedKey = key.elementWithIndex(i);
-				processValue(Object.class, valueToAsserter(indexedKey, element), element, collector);
+				MethodBufferingJsonVerifiable indexedKey = indexedBase.elementWithIndex(i);
+				processValue(valueToAsserter(indexedKey, element), element, collector);
 			}
 		}
 		else {
 			MethodBufferingJsonVerifiable arrayKey = key.arrayField();
 			for (Object item : list) {
 				Object element = ContentUtils.returnParsedObject(item);
-				processValue(Object.class, valueToAsserter(arrayKey, element), element, collector);
+				processValue(valueToAsserter(arrayKey, element), element, collector);
 			}
 		}
 		return list;
@@ -146,17 +147,18 @@ class JsonPathTraverser {
 		addSizeCheckIfEnabled(key, list, collector);
 
 		if (this.useOrderedArrayVerification) {
+			MethodBufferingJsonVerifiable indexedBase = isRootElement(key) ? key.array() : key;
 			for (int i = 0; i < list.size(); i++) {
 				Object element = ContentUtils.returnParsedObject(list.get(i));
-				MethodBufferingJsonVerifiable indexedKey = key.elementWithIndex(i);
-				processValue(List.class, createListElementAsserter(indexedKey, element), element, collector);
+				MethodBufferingJsonVerifiable indexedKey = indexedBase.elementWithIndex(i);
+				processValue(createListElementAsserter(indexedKey, element), element, collector);
 			}
 		}
 		else {
 			MethodBufferingJsonVerifiable arrayKey = createArrayAsserter(key, list);
 			for (Object element : list) {
 				Object parsed = ContentUtils.returnParsedObject(element);
-				processValue(List.class, createListElementAsserter(arrayKey, parsed), parsed, collector);
+				processValue(createListElementAsserter(arrayKey, parsed), parsed, collector);
 			}
 		}
 		return list;
@@ -164,15 +166,15 @@ class JsonPathTraverser {
 
 	// ========== Map Entry Processing ==========
 
-	private Map<Object, Object> convertMapEntries(Class<?> parentType, MethodBufferingJsonVerifiable parentKey,
-			Map<Object, Object> map, Consumer<MethodBufferingJsonVerifiable> collector) {
+	private Map<Object, Object> convertMapEntries(MethodBufferingJsonVerifiable parentKey, Map<Object, Object> map,
+			Consumer<MethodBufferingJsonVerifiable> collector) {
 
 		Map<Object, Object> result = new LinkedHashMap<>();
 		for (Map.Entry<Object, Object> entry : map.entrySet()) {
 			Object entryKey = entry.getKey();
 			Object value = ContentUtils.returnParsedObject(entry.getValue());
 			MethodBufferingJsonVerifiable verifiable = createKeyVerifiable(parentKey, entryKey, value);
-			result.put(entry.getKey(), processValue(parentType, verifiable, value, collector));
+			result.put(entry.getKey(), processValue(verifiable, value, collector));
 		}
 		return result;
 	}
@@ -182,10 +184,17 @@ class JsonPathTraverser {
 		if (value instanceof List) {
 			return createListFieldVerifiable((List<?>) value, entryKey, parentKey);
 		}
-		// Use ShouldTraverse to ensure field() is used instead of contains()
-		// This is needed because after elementWithIndex, isIteratingOverArray() is true
-		// which would otherwise cause contains() to be used
-		return parentKey.field(new ShouldTraverse(entryKey));
+		if (value instanceof Map) {
+			return parentKey.field(new ShouldTraverse(entryKey));
+		}
+		if (this.useOrderedArrayVerification && parentKey.isIteratingOverArray()) {
+			// Use ShouldTraverse to ensure field() is used instead of contains()
+			// This is needed because after elementWithIndex, isIteratingOverArray() is
+			// true
+			// which would otherwise cause contains() to be used
+			return parentKey.field(new ShouldTraverse(entryKey));
+		}
+		return valueToAsserter(parentKey.field(entryKey), value);
 	}
 
 	private MethodBufferingJsonVerifiable createListFieldVerifiable(List<?> list, Object entryKey,
@@ -193,7 +202,10 @@ class JsonPathTraverser {
 		if (list.isEmpty()) {
 			return parentKey.array(entryKey).isEmpty();
 		}
-		return listContainsOnlyPrimitives(list) ? parentKey.arrayField(entryKey) : parentKey.array(entryKey);
+		if (listContainsOnlyPrimitives(list)) {
+			return this.useOrderedArrayVerification ? parentKey.array(entryKey) : parentKey.arrayField(entryKey);
+		}
+		return parentKey.array(entryKey);
 	}
 
 	// ========== Asserter Creation ==========
@@ -229,6 +241,9 @@ class JsonPathTraverser {
 			return verifiable.contains(parsed);
 		}
 		if (element instanceof List && listContainsOnlyPrimitives((List<?>) element)) {
+			if (this.useOrderedArrayVerification) {
+				return verifiable;
+			}
 			return verifiable.array();
 		}
 		return verifiable;

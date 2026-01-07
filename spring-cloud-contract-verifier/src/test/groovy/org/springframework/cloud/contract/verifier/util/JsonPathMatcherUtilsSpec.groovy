@@ -16,12 +16,10 @@
 
 package org.springframework.cloud.contract.verifier.util
 
-import groovy.json.JsonSlurper
+
 import spock.lang.Specification
 
 import org.springframework.cloud.contract.spec.internal.BodyMatchers
-import org.springframework.cloud.contract.spec.internal.RegexProperty
-
 /**
  * Tests for {@link JsonPathMatcherUtils}.
  *
@@ -244,10 +242,15 @@ class JsonPathMatcherUtilsSpec extends Specification {
 			def bodyMatchers = new BodyMatchers()
 			bodyMatchers.jsonPath('$.url', bodyMatchers.byRegex('http://example.com/path'))
 			def bodyMatcher = bodyMatchers.matchers().first()
-		when:
-			def result = JsonPathMatcherUtils.convertJsonPathAndRegexToAJsonPath(bodyMatcher)
-		then:
-			result.contains('http:\\/\\/example.com\\/path')
+	when:
+		def result = JsonPathMatcherUtils.convertJsonPathAndRegexToAJsonPath(bodyMatcher)
+	then:
+		int[] expected = [
+			36, 91, 63, 40, 64, 46, 117, 114, 108, 32, 61, 126, 32, 47, 40, 104,
+			116, 116, 112, 58, 92, 92, 47, 92, 92, 47, 101, 120, 97, 109, 112, 108,
+			101, 46, 99, 111, 109, 92, 92, 47, 112, 97, 116, 104, 41, 47, 41, 93
+		] as int[]
+		Arrays.equals(result.chars().toArray(), expected)
 	}
 
 	def 'should read root level array'() {

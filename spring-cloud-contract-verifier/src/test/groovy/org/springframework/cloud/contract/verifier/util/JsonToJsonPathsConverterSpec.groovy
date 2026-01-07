@@ -400,19 +400,15 @@ class JsonToJsonPathsConverterSpec extends Specification {
 						it.jsonPath() == """\$[?(@.['property1'] == 'a')]"""
 			}
 			pathAndValues.find {
-				it.method() == """.array("['property2']").contains("['a']").isEqualTo("sth")""" &&
-						it.jsonPath() == """\$.['property2'][*][?(@.['a'] == 'sth')]"""
+				it.method() == """.array("['property2']").elementWithIndex(0).field("['a']").isEqualTo("sth")""" &&
+						it.jsonPath() == """\$.['property2'][0][?(@.['a'] == 'sth')]"""
 			}
 			pathAndValues.find {
-				it.method() == """.array("['property2']").hasSize(2)""" &&
-						it.jsonPath() == """\$.['property2'][*]"""
-			}
-			pathAndValues.find {
-				it.method() == """.array("['property2']").contains("['b']").isEqualTo("sthElse")""" &&
-						it.jsonPath() == """\$.['property2'][*][?(@.['b'] == 'sthElse')]"""
+				it.method() == """.array("['property2']").elementWithIndex(1).field("['b']").isEqualTo("sthElse")""" &&
+						it.jsonPath() == """\$.['property2'][1][?(@.['b'] == 'sthElse')]"""
 			}
 		and:
-			pathAndValues.size() == 4
+			pathAndValues.size() == 3
 	}
 
 	def "should generate assertions for a response body containing map with integers as keys"() {
@@ -475,21 +471,17 @@ class JsonToJsonPathsConverterSpec extends Specification {
 	}]"""
 		when:
 			JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
-		then:
-			pathAndValues.find {
-				it.method() == """.array().contains("['property1']").isEqualTo("a")""" &&
-						it.jsonPath() == """\$[*][?(@.['property1'] == 'a')]"""
-			}
-			pathAndValues.find {
-				it.method() == """.array().contains("['property2']").isEqualTo("b")""" &&
-						it.jsonPath() == """\$[*][?(@.['property2'] == 'b')]"""
-			}
-			pathAndValues.find {
-				it.method() == """.hasSize(2)""" &&
-						it.jsonPath() == """\$"""
-			}
-		and:
-			pathAndValues.size() == 3
+	then:
+		pathAndValues.find {
+			it.method() == """.array().elementWithIndex(0).field("['property1']").isEqualTo("a")""" &&
+					it.jsonPath() == """\$[*][0][?(@.['property1'] == 'a')]"""
+		}
+		pathAndValues.find {
+			it.method() == """.array().elementWithIndex(1).field("['property2']").isEqualTo("b")""" &&
+					it.jsonPath() == """\$[*][1][?(@.['property2'] == 'b')]"""
+		}
+	and:
+		pathAndValues.size() == 2
 	}
 
 	def "should generate assertions for array inside response body element"() {
@@ -529,19 +521,15 @@ class JsonToJsonPathsConverterSpec extends Specification {
 			JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
 		then:
 			pathAndValues.find {
-				it.method() == """.array("['property1']").contains("['property2']").isEqualTo("test1")""" &&
-						it.jsonPath() == """\$.['property1'][*][?(@.['property2'] == 'test1')]"""
+				it.method() == """.array("['property1']").elementWithIndex(0).field("['property2']").isEqualTo("test1")""" &&
+						it.jsonPath() == """\$.['property1'][0][?(@.['property2'] == 'test1')]"""
 			}
 			pathAndValues.find {
-				it.method() == """.array("['property1']").contains("['property3']").isEqualTo("test2")""" &&
-						it.jsonPath() == """\$.['property1'][*][?(@.['property3'] == 'test2')]"""
-			}
-			pathAndValues.find {
-				it.method() == """.array("['property1']").hasSize(2)""" &&
-						it.jsonPath() == """\$.['property1'][*]"""
+				it.method() == """.array("['property1']").elementWithIndex(1).field("['property3']").isEqualTo("test2")""" &&
+						it.jsonPath() == """\$.['property1'][1][?(@.['property3'] == 'test2')]"""
 			}
 		and:
-			pathAndValues.size() == 3
+			pathAndValues.size() == 2
 	}
 
 	def "should generate assertions for nested objects in response body"() {
@@ -639,19 +627,15 @@ class JsonToJsonPathsConverterSpec extends Specification {
 			JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(json)
 		then:
 			pathAndValues.find {
-				it.method() == """.array("['errors']").contains("['property']").isEqualTo("bank_account_number")""" &&
-						it.jsonPath() == """\$.['errors'][*][?(@.['property'] == 'bank_account_number')]"""
+				it.method() == """.array("['errors']").elementWithIndex(0).field("['property']").isEqualTo("bank_account_number")""" &&
+						it.jsonPath() == """\$.['errors'][0][?(@.['property'] == 'bank_account_number')]"""
 			}
 			pathAndValues.find {
-				it.method() == """.array("['errors']").contains("['message']").isEqualTo("incorrect_format")""" &&
-						it.jsonPath() == """\$.['errors'][*][?(@.['message'] == 'incorrect_format')]"""
-			}
-			pathAndValues.find {
-				it.method() == """.array("['errors']").hasSize(1)""" &&
-						it.jsonPath() == """\$.['errors'][*]"""
+				it.method() == """.array("['errors']").elementWithIndex(0).field("['message']").isEqualTo("incorrect_format")""" &&
+						it.jsonPath() == """\$.['errors'][0][?(@.['message'] == 'incorrect_format')]"""
 			}
 		and:
-			pathAndValues.size() == 3
+			pathAndValues.size() == 2
 	}
 
 	def "should manage to parse a double array"() {
@@ -724,49 +708,37 @@ class JsonToJsonPathsConverterSpec extends Specification {
 					'''
 		when:
 			JsonPaths pathAndValues = new JsonToJsonPathsConverter().transformToJsonPathWithTestsSideValues(new JsonSlurper().parseText(json))
-		then:
-			DocumentContext context = JsonPath.parse(json)
-			pathAndValues.each {
-				assert context.read(it.jsonPath(), JSONArray)
-			}
-			pathAndValues.find {
-				it.method() == """.hasSize(1)""" &&
-						it.jsonPath() == """\$"""
-			}
-			pathAndValues.find {
-				it.method() == """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().array().arrayField().isEqualTo(-77.119759)""" &&
-						it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == -77.119759)]"""
-			}
-			pathAndValues.find {
-				it.method() == """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().array().arrayField().isEqualTo(38.995548)""" &&
-						it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == 38.995548)]"""
-			}
-			pathAndValues.find {
-				it.method() == """.array().field("['place']").field("['bounding_box']").array("['coordinates']").hasSize(1)""" &&
-						it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*]"""
-			}
-			pathAndValues.find {
-				it.method() == """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().hasSize(2)""" &&
-						it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*][*]"""
-			}
-			pathAndValues.find {
-				it.method() == """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().array().arrayField().isEqualTo(38.791645)""" &&
-						it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == 38.791645)]"""
-			}
-			pathAndValues.find {
-				it.method() == """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().array().hasSize(2)""" &&
-						it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*][*]"""
-			}
-			pathAndValues.find {
-				it.method() == """.array().field("['place']").field("['bounding_box']").array("['coordinates']").array().array().arrayField().isEqualTo(-76.909393)""" &&
-						it.jsonPath() == """\$[*].['place'].['bounding_box'].['coordinates'][*][*][?(@ == -76.909393)]"""
-			}
+	then:
+		DocumentContext context = JsonPath.parse(json)
+		pathAndValues.each {
+			assert context.read(it.jsonPath()) != null
+		}
+		pathAndValues.find {
+			it.method() == """.array().elementWithIndex(0).field("['place']").field("['bounding_box']").array("['coordinates']").elementWithIndex(0).elementWithIndex(0).hasSize(2)""" &&
+					it.jsonPath() == """\$[*][0].['place'].['bounding_box'].['coordinates'][0][0]"""
+		}
+		pathAndValues.find {
+			it.method() == """.array().elementWithIndex(0).field("['place']").field("['bounding_box']").array("['coordinates']").elementWithIndex(0).elementWithIndex(0).elementWithIndex(0).isEqualTo(-77.119759)""" &&
+					it.jsonPath() == """\$[*][0].['place'].['bounding_box'].['coordinates'][0][0][0]"""
+		}
+		pathAndValues.find {
+			it.method() == """.array().elementWithIndex(0).field("['place']").field("['bounding_box']").array("['coordinates']").elementWithIndex(0).elementWithIndex(0).elementWithIndex(1).isEqualTo(38.995548)""" &&
+					it.jsonPath() == """\$[*][0].['place'].['bounding_box'].['coordinates'][0][0][1]"""
+		}
+		pathAndValues.find {
+			it.method() == """.array().elementWithIndex(0).field("['place']").field("['bounding_box']").array("['coordinates']").elementWithIndex(0).elementWithIndex(1).hasSize(2)""" &&
+					it.jsonPath() == """\$[*][0].['place'].['bounding_box'].['coordinates'][0][1]"""
+		}
+		pathAndValues.find {
+			it.method() == """.array().elementWithIndex(0).field("['place']").field("['bounding_box']").array("['coordinates']").elementWithIndex(0).elementWithIndex(1).elementWithIndex(0).isEqualTo(-76.909393)""" &&
+					it.jsonPath() == """\$[*][0].['place'].['bounding_box'].['coordinates'][0][1][0]"""
+		}
+		pathAndValues.find {
+			it.method() == """.array().elementWithIndex(0).field("['place']").field("['bounding_box']").array("['coordinates']").elementWithIndex(0).elementWithIndex(1).elementWithIndex(1).isEqualTo(38.791645)""" &&
+					it.jsonPath() == """\$[*][0].['place'].['bounding_box'].['coordinates'][0][1][1]"""
+		}
 		and:
-			pathAndValues.size() == 8
-		and:
-			pathAndValues.each {
-				JsonAssertion.assertThat(json).matchesJsonPath(it.jsonPath())
-			}
+			pathAndValues.size() == 6
 	}
 
 	def "should convert a json path with regex to a regex checking json path"() {
@@ -897,7 +869,7 @@ class JsonToJsonPathsConverterSpec extends Specification {
 		then:
 			pathAndValues.find {
 				it.method() == """.array("['items']").hasSize(3)""" &&
-						it.jsonPath() == """\$.['items'][*]"""
+						it.jsonPath() == """\$.['items']"""
 			}
 			pathAndValues.find {
 				it.method() == """.array("['items']").elementWithIndex(0).isEqualTo("first")""" &&

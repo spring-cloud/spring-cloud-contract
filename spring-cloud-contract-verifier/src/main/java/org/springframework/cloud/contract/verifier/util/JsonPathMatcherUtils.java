@@ -232,11 +232,29 @@ public final class JsonPathMatcherUtils {
 
 	@SuppressWarnings("unchecked")
 	private static boolean containsOnlyEmptyElements(Object object) {
+		if (object instanceof Map) {
+			Map<?, ?> map = (Map<?, ?>) object;
+			if (map.isEmpty()) {
+				return true;
+			}
+			for (Object item : map.values()) {
+				if (item instanceof Map && !((Map<?, ?>) item).isEmpty()) {
+					return false;
+				}
+				if (item instanceof List && !((List<?>) item).isEmpty()) {
+					return false;
+				}
+				if (!(item instanceof Map) && !(item instanceof List)) {
+					return false;
+				}
+			}
+			return true;
+		}
 		if (!(object instanceof Iterable)) {
 			return false;
 		}
 		for (Object item : (Iterable<?>) object) {
-			if (item instanceof Map && !((java.util.Map<?, ?>) item).isEmpty()) {
+			if (item instanceof Map && !((Map<?, ?>) item).isEmpty()) {
 				return false;
 			}
 			if (item instanceof List && !((List<?>) item).isEmpty()) {
@@ -305,7 +323,10 @@ public final class JsonPathMatcherUtils {
 	}
 
 	private static String createRegexComparison(String propertyName, Object value) {
-		String convertedValue = value.toString().replace("/", "\\\\/");
+		String convertedValue = value.toString();
+		if (!convertedValue.contains("\\/")) {
+			convertedValue = convertedValue.replace("/", "\\\\/");
+		}
 		return propertyName + " =~ /(" + convertedValue + ")/";
 	}
 
