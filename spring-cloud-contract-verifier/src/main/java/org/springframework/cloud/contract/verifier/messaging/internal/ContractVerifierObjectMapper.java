@@ -16,27 +16,24 @@
 
 package org.springframework.cloud.contract.verifier.messaging.internal;
 
-import org.springframework.util.ClassUtils;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Wrapper over {@link JsonMapper} that won't try to parse String but will directly return
  * it.
+ *
  * @author Marcin Grzejszczak
  */
 public class ContractVerifierObjectMapper {
 
 	private final JsonMapper objectMapper;
 
-	public ContractVerifierObjectMapper() {
-		this(new JsonMapper());
+	public ContractVerifierObjectMapper(JsonMapper objectMapper) {
+		this.objectMapper = objectMapper;
 	}
 
-	public ContractVerifierObjectMapper(JsonMapper mapper) {
-		this.objectMapper = usesAvro() ? ignoreAvroFields(mapper) : mapper;
+	public ContractVerifierObjectMapper() {
+		this.objectMapper = new JsonMapper();
 	}
 
 	public String writeValueAsString(Object payload) {
@@ -57,25 +54,6 @@ public class ContractVerifierObjectMapper {
 			return (byte[]) payload;
 		}
 		return this.objectMapper.writeValueAsBytes(payload);
-	}
-
-	private static boolean usesAvro() {
-		return ClassUtils.isPresent("org.apache.avro.specific.SpecificRecordBase", null);
-	}
-
-	private static JsonMapper ignoreAvroFields(JsonMapper mapper) {
-		try {
-			return mapper.rebuild().addMixIn(
-					ClassUtils.forName("org.apache.avro.specific.SpecificRecordBase",
-							null), IgnoreAvroMixin.class).build();
-		}
-		catch (ClassNotFoundException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@JsonIgnoreProperties({ "schema", "specificData", "classSchema", "conversion" })
-	interface IgnoreAvroMixin {
 	}
 
 }

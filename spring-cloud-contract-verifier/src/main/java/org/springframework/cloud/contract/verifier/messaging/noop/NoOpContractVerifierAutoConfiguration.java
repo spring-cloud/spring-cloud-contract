@@ -19,12 +19,15 @@ package org.springframework.cloud.contract.verifier.messaging.noop;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.jspecify.annotations.Nullable;
 import tools.jackson.databind.json.JsonMapper;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierReceiver;
 import org.springframework.cloud.contract.verifier.messaging.MessageVerifierSender;
@@ -89,12 +92,27 @@ public class NoOpContractVerifierAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ContractVerifierObjectMapper contractVerifierObjectMapper(ObjectProvider<JsonMapper> jsonMapper) {
-		JsonMapper mapper = jsonMapper.getIfAvailable();
-		if (mapper != null) {
-			return new ContractVerifierObjectMapper(mapper);
-		}
-		return new ContractVerifierObjectMapper();
+	@ConditionalOnMissingClass("org.apache.avro.specific.SpecificRecordBase")
+	public ContractVerifierObjectMapper contractVerifierObjectMapper(
+			ObjectProvider<JsonMapper> jsonMapper) {
+		JsonMapper mapper = jsonMapper.getIfAvailable(JsonMapper::new);
+		return new ContractVerifierObjectMapper(mapper);
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	@ConditionalOnClass(name = "org.apache.avro.specific.SpecificRecordBase")
+	public ContractVerifierObjectMapper avroContractVerifierObjectMapper(
+			ObjectProvider<JsonMapper> jsonMapper) throws ClassNotFoundException {
+		JsonMapper mapper = jsonMapper.getIfAvailable(JsonMapper::new).rebuild()
+				.addMixIn(Class.forName("org.apache.avro.specific.SpecificRecordBase"),
+						IgnoreAvroMixin.class).build();
+		return new ContractVerifierObjectMapper(mapper);
+	}
+
+	@JsonIgnoreProperties({ "schema", "specificData", "classSchema", "conversion" })
+	interface IgnoreAvroMixin {
+
 	}
 
 }

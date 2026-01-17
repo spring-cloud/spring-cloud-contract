@@ -32,15 +32,6 @@ class ContractVerifierObjectMapperSpec extends Specification {
 			result == '''{"foo":"bar"}'''
 	}
 
-	def "should convert an Avro-generated object into a json representation"() {
-		given:
-			FooAvro input = FooAvro.newBuilder().setFooAvro("barAvro").build()
-		when:
-			String result = mapper.writeValueAsString(input)
-		then:
-			result == '''{"fooAvro":"barAvro"}'''
-	}
-
 	def "should convert bytes into a json representation"() {
 		given:
 			String input = '''{"foo":"bar"}'''

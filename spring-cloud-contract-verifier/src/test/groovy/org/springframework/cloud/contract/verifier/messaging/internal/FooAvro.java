@@ -339,13 +339,3 @@ public class FooAvro extends org.apache.avro.specific.SpecificRecordBase
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
