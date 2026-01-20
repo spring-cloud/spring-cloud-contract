@@ -3400,4 +3400,43 @@ DocumentContext parsedJson = JsonPath.parse(json);
 			}
 			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }
 	}
+
+	@Issue('#1790')
+	def 'should not double-escape header values containing quotes for [#methodBuilderName]'() {
+		given:
+			Contract contractDsl = Contract.make {
+				request {
+					method GET()
+					url '/download'
+				}
+				response {
+					status OK()
+					headers {
+						header('Content-Disposition', 'attachment; filename="test.pdf"')
+					}
+					body("file content")
+				}
+			}
+			methodBuilder()
+		when:
+			String test = singleTestGenerator(contractDsl)
+		then:
+			// The header value should contain properly escaped quotes for Java string literal,
+			// not double-escaped quotes. Spock uses == with triple quotes, JUnit uses isEqualTo.
+			headerAssertion.call(test)
+			// Should never contain double-escaped quotes (4 backslashes before each quote)
+			!test.contains('filename=\\\\\\"test.pdf\\\\\\"')
+		and:
+			SyntaxChecker.tryToCompile(methodBuilderName, test)
+		where:
+			methodBuilderName | methodBuilder                                                                               | headerAssertion
+			// Spock MockMvc uses triple quotes so no escaping needed inside
+			"spock"           | { configProperties.testFramework = TestFramework.SPOCK }                                    | { String body -> body.contains("'''attachment; filename=\"test.pdf\"'''") }
+			"testng"          | { configProperties.testFramework = TestFramework.TESTNG }                                   | { String body -> body.contains('isEqualTo("attachment; filename=\\"test.pdf\\"")') }
+			"mockmvc"         | { configProperties.testMode = TestMode.MOCKMVC }                                            | { String body -> body.contains('isEqualTo("attachment; filename=\\"test.pdf\\"")') }
+			// JaxRs Spock uses double quotes so quotes need escaping
+			"jaxrs-spock"     | { configProperties.testFramework = TestFramework.SPOCK; configProperties.testMode = TestMode.JAXRSCLIENT } | { String body -> body.contains('filename=\\"test.pdf\\"') }
+			"jaxrs"           | { configProperties.testFramework = TestFramework.JUNIT; configProperties.testMode = TestMode.JAXRSCLIENT } | { String body -> body.contains('isEqualTo("attachment; filename=\\"test.pdf\\"")') }
+			"webclient"       | { configProperties.testMode = TestMode.WEBTESTCLIENT }                                      | { String body -> body.contains('isEqualTo("attachment; filename=\\"test.pdf\\"")') }
+	}
 }

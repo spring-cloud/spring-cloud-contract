@@ -65,4 +65,11 @@ interface GroovyComparisonBuilder extends ComparisonBuilder {
 		return " != null";
 	}
 
+	@Override
+	default String convertUnicodeEscapesIfRequired(String json) {
+		// For Groovy, delegate to the body parser which doesn't escape quotes
+		// since Groovy triple-quoted strings don't need escaped quotes
+		return bodyParser().convertUnicodeEscapesIfRequired(json);
+	}
+
 }

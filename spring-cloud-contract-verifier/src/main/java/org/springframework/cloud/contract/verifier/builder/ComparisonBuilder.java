@@ -66,7 +66,9 @@ interface ComparisonBuilder {
 	}
 
 	default String isEqualTo(String escapedHeaderValue) {
-		return isEqualToUnquoted(bodyParser().quotedShortText(escapedHeaderValue));
+		// Use quotedEscapedShortText since the value is already escaped by
+		// convertUnicodeEscapesIfRequired
+		return isEqualToUnquoted(bodyParser().quotedEscapedShortText(escapedHeaderValue));
 	}
 
 	default String isEqualToUnquoted(String unquoted) {
