@@ -136,7 +136,8 @@ interface BodyParser extends BodyThen {
 	}
 
 	default String escape(String text) {
-		return StringEscapeUtils.escapeJava(text);
+		String escaped = StringEscapeUtils.escapeJava(text);
+		return escaped.replace("\r", "\\r").replace("\n", "\\n");
 	}
 
 	default String escapeForSimpleTextAssertion(String text) {
