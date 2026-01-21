@@ -232,7 +232,7 @@ class YamlToContracts {
 
 	private void mapRequestHeaders(YamlContract.Request yamlContractRequest, Request dslContractRequest) {
 		Map<String, Object> yamlContractRequestHeaders = yamlContractRequest.headers;
-		if (MapUtils.isNotEmpty(yamlContractRequestHeaders)) {
+		if (yamlContractRequestHeaders != null && !yamlContractRequestHeaders.isEmpty()) {
 			dslContractRequest.headers((headers) -> yamlContractRequestHeaders.forEach((key, value) -> {
 				List<YamlContract.KeyValueMatcher> matchers = yamlContractRequest.matchers.headers.stream()
 					.filter((header) -> header.key.equals(key))
@@ -256,7 +256,7 @@ class YamlToContracts {
 
 	private void mapRequestCookies(YamlContract.Request yamlContractRequest, Request dslContractRequest) {
 		Map<String, Object> yamlContractRequestCookies = yamlContractRequest.cookies;
-		if (MapUtils.isNotEmpty(yamlContractRequestCookies)) {
+		if (yamlContractRequestCookies != null && !yamlContractRequestCookies.isEmpty()) {
 			dslContractRequest.cookies((cookies) -> yamlContractRequestCookies.forEach((key, value) -> {
 				YamlContract.KeyValueMatcher matcher = yamlContractRequest.matchers.cookies.stream()
 					.filter(cookie -> cookie.key.equals(key))

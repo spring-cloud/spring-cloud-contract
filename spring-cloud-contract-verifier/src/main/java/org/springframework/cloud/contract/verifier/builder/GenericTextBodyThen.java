@@ -46,7 +46,8 @@ class GenericTextBodyThen implements Then {
 	public MethodVisitor<Then> apply(SingleContractMetadata metadata) {
 		Object convertedResponseBody = this.bodyParser.convertResponseBody(metadata);
 		if (convertedResponseBody instanceof String) {
-			convertedResponseBody = this.bodyParser.escapeForSimpleTextAssertion(convertedResponseBody.toString());
+			String escaped = this.bodyParser.escapeForSimpleTextAssertion(convertedResponseBody.toString());
+			convertedResponseBody = new EscapedString(escaped);
 		}
 		simpleTextResponseBodyCheck(metadata, convertedResponseBody);
 		return this;
