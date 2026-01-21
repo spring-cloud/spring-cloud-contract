@@ -154,6 +154,9 @@
 			<groupId>com.github.jknack</groupId>
 			<artifactId>handlebars</artifactId>
 		</dependency>
+		<!-- Leaving for backward-compatibility. We no longer rely on this library
+		and neither should you. For more information check
+		https://github.com/spring-cloud/spring-cloud-contract/issues/2129  -->
 		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
