@@ -99,20 +99,25 @@ public class NoOpContractVerifierAutoConfiguration {
 		return new ContractVerifierObjectMapper(mapper);
 	}
 
-	@Bean
-	@ConditionalOnMissingBean
+	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnClass(name = "org.apache.avro.specific.SpecificRecordBase")
-	public ContractVerifierObjectMapper avroContractVerifierObjectMapper(
-			ObjectProvider<JsonMapper> jsonMapper) throws ClassNotFoundException {
-		JsonMapper mapper = jsonMapper.getIfAvailable(JsonMapper::new).rebuild()
-				.addMixIn(Class.forName("org.apache.avro.specific.SpecificRecordBase"),
-						IgnoreAvroMixin.class).build();
-		return new ContractVerifierObjectMapper(mapper);
-	}
+	public static class AvroContractVerifierObjectMapperConfiguration {
 
-	@JsonIgnoreProperties({ "schema", "specificData", "classSchema", "conversion" })
-	interface IgnoreAvroMixin {
+		@Bean
+		@ConditionalOnMissingBean
+		public ContractVerifierObjectMapper avroContractVerifierObjectMapper(
+				ObjectProvider<JsonMapper> jsonMapper) throws ClassNotFoundException {
+			JsonMapper mapper = jsonMapper.getIfAvailable(JsonMapper::new).rebuild()
+					.addMixIn(
+							Class.forName("org.apache.avro.specific.SpecificRecordBase"),
+							IgnoreAvroMixin.class).build();
+			return new ContractVerifierObjectMapper(mapper);
+		}
 
+		@JsonIgnoreProperties({ "schema", "specificData", "classSchema", "conversion" })
+		interface IgnoreAvroMixin {
+
+		}
 	}
 
 }
