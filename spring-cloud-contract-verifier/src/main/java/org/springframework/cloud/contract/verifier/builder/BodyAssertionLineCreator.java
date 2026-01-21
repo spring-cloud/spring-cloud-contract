@@ -70,6 +70,9 @@ class BodyAssertionLineCreator {
 			return getResponseBodyPropertyComparisonString(singleContractMetadata, property,
 					((DslProperty) value).getServerValue());
 		}
+		else if (value instanceof EscapedString) {
+			return getResponseBodyPropertyComparisonString(property, (EscapedString) value);
+		}
 		return getResponseBodyPropertyComparisonString(property, value.toString());
 	}
 
@@ -92,6 +95,12 @@ class BodyAssertionLineCreator {
 	 */
 	private String getResponseBodyPropertyComparisonString(String property, String value) {
 		return this.comparisonBuilder.assertThatUnescaped("responseBody" + property, value);
+	}
+
+	private String getResponseBodyPropertyComparisonString(String property, EscapedString value) {
+		String quoted = this.comparisonBuilder.bodyParser().quotedEscapedShortText(value.value());
+		return this.comparisonBuilder.assertThat("responseBody" + property)
+				+ this.comparisonBuilder.isEqualToUnquoted(quoted);
 	}
 
 	/**

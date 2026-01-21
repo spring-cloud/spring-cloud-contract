@@ -17,6 +17,8 @@
 package org.springframework.cloud.contract.verifier.builder;
 
 import java.math.BigDecimal;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,8 +28,7 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import groovy.json.JsonOutput;
-import org.apache.commons.beanutils.PropertyUtilsBean;
-
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.ContractTemplate;
 import org.springframework.cloud.contract.spec.internal.BodyMatcher;
@@ -298,7 +299,7 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 							+ contractTemplate.escapedClosingTemplate();
 				}
 				try {
-					Object result = new PropertyUtilsBean().getProperty(templateModel, justEntry);
+					Object result = resolveTemplateModelEntry(templateModel, justEntry);
 					// Path from the Test model is an object and we'd like to return its
 					// String representation
 					if (FROM_REQUEST_PATH.equals(justEntry)) {
@@ -312,6 +313,105 @@ class JsonBodyVerificationBuilder implements BodyMethodGeneration, ClassVerifier
 			}
 			return entry;
 		};
+	}
+
+	private Object resolveTemplateModelEntry(TestSideRequestTemplateModel templateModel, String propertyPath) {
+		Object current = templateModel;
+		for (String token : tokenizePropertyPath(propertyPath)) {
+			current = resolveNextToken(current, token);
+		}
+		return current;
+	}
+
+	private Object resolveNextToken(Object current, String token) {
+		if (current == null) {
+			throw new IllegalStateException("Unable to resolve property for null value");
+		}
+		if (current instanceof Map) {
+			Map<?, ?> map = (Map<?, ?>) current;
+			String key = unquote(token);
+			if (!map.containsKey(key)) {
+				throw new IllegalStateException("Missing map key [" + key + "]");
+			}
+			return map.get(key);
+		}
+		if (current instanceof List) {
+			int index = parseIndex(token);
+			List<?> list = (List<?>) current;
+			if (index < 0 || index >= list.size()) {
+				throw new IllegalStateException("Index [" + index + "] out of bounds");
+			}
+			return list.get(index);
+		}
+		if (current.getClass().isArray()) {
+			int index = parseIndex(token);
+			int length = Array.getLength(current);
+			if (index < 0 || index >= length) {
+				throw new IllegalStateException("Index [" + index + "] out of bounds");
+			}
+			return Array.get(current, index);
+		}
+		BeanWrapperImpl wrapper = new BeanWrapperImpl(current);
+		if (!wrapper.isReadableProperty(token)) {
+			throw new IllegalStateException("No readable property [" + token + "]");
+		}
+		return wrapper.getPropertyValue(token);
+	}
+
+	private int parseIndex(String token) {
+		try {
+			return Integer.parseInt(token);
+		}
+		catch (NumberFormatException ex) {
+			throw new IllegalStateException("Invalid index token [" + token + "]", ex);
+		}
+	}
+
+	private List<String> tokenizePropertyPath(String propertyPath) {
+		List<String> tokens = new ArrayList<>();
+		String[] segments = propertyPath.split("\\.");
+		for (String segment : segments) {
+			addTokens(segment, tokens);
+		}
+		return tokens;
+	}
+
+	private void addTokens(String segment, List<String> tokens) {
+		int index = 0;
+		while (index < segment.length()) {
+			int bracketStart = segment.indexOf('[', index);
+			if (bracketStart == -1) {
+				String token = segment.substring(index);
+				if (!token.isEmpty()) {
+					tokens.add(token);
+				}
+				return;
+			}
+			String before = segment.substring(index, bracketStart);
+			if (!before.isEmpty()) {
+				tokens.add(before);
+			}
+			int bracketEnd = segment.indexOf(']', bracketStart);
+			if (bracketEnd == -1) {
+				String remainder = segment.substring(bracketStart + 1);
+				if (!remainder.isEmpty()) {
+					tokens.add(remainder);
+				}
+				return;
+			}
+			String inside = segment.substring(bracketStart + 1, bracketEnd);
+			if (!inside.isEmpty()) {
+				tokens.add(inside);
+			}
+			index = bracketEnd + 1;
+		}
+	}
+
+	private String unquote(String value) {
+		if ((value.startsWith("'") && value.endsWith("'")) || (value.startsWith("\"") && value.endsWith("\""))) {
+			return value.substring(1, value.length() - 1);
+		}
+		return value;
 	}
 
 	private static String minus(CharSequence self, Object target) {
