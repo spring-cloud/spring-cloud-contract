@@ -141,7 +141,7 @@ interface BodyParser extends BodyThen {
 	}
 
 	default String escapeForSimpleTextAssertion(String text) {
-		return text;
+		return escape(text);
 	}
 
 	default String postProcessJsonPath(String jsonPath) {

@@ -39,7 +39,8 @@ interface GroovyBodyParser extends BodyParser {
 
 	@Override
 	default String escape(String text) {
-		return text.replaceAll("\\n", "\\\\n");
+		String escaped = text.replace("\r", "\\r").replace("\n", "\\n");
+		return escaped.replaceAll("\\n", "\\\\n");
 	}
 
 	@Override
