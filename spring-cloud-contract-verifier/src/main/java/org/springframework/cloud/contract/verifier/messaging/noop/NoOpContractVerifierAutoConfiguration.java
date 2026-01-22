@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.apache.avro.specific.SpecificRecordBase;
 import org.jspecify.annotations.Nullable;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -100,7 +101,7 @@ public class NoOpContractVerifierAutoConfiguration {
 	}
 
 	@Configuration(proxyBeanMethods = false)
-	@ConditionalOnClass(name = "org.apache.avro.specific.SpecificRecordBase")
+	@ConditionalOnClass(SpecificRecordBase.class)
 	public static class AvroContractVerifierObjectMapperConfiguration {
 
 		@Bean
@@ -108,9 +109,7 @@ public class NoOpContractVerifierAutoConfiguration {
 		public ContractVerifierObjectMapper avroContractVerifierObjectMapper(
 				ObjectProvider<JsonMapper> jsonMapper) throws ClassNotFoundException {
 			JsonMapper mapper = jsonMapper.getIfAvailable(JsonMapper::new).rebuild()
-					.addMixIn(
-							Class.forName("org.apache.avro.specific.SpecificRecordBase"),
-							IgnoreAvroMixin.class).build();
+					.addMixIn(SpecificRecordBase.class, IgnoreAvroMixin.class).build();
 			return new ContractVerifierObjectMapper(mapper);
 		}
 
