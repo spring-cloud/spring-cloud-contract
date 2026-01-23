@@ -312,8 +312,8 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			String test = singleTestGenerator(contractDsl)
 		then:
 			test.contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
-			test.contains("""assertThatJson(parsedJson).array("['property2']").contains("['a']").isEqualTo("sth")""")
-			test.contains("""assertThatJson(parsedJson).array("['property2']").contains("['b']").isEqualTo("sthElse")""")
+			test.contains("""assertThatJson(parsedJson).array("['property2']").elementWithIndex(0).field("['a']").isEqualTo("sth")""")
+			test.contains("""assertThatJson(parsedJson).array("['property2']").elementWithIndex(1).field("['b']").isEqualTo("sthElse")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -352,9 +352,8 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 			String test = singleTestGenerator(contractDsl)
 		then:
 			test.contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
-			test.contains("""assertThatJson(parsedJson).array("['property2']").contains("['a']").isEqualTo("sth")""")
-			test.contains("""assertThatJson(parsedJson).array("['property2']").hasSize(2)""")
-			test.contains("""assertThatJson(parsedJson).array("['property2']").contains("['b']").isEqualTo("sthElse")""")
+			test.contains("""assertThatJson(parsedJson).array("['property2']").elementWithIndex(0).field("['a']").isEqualTo("sth")""")
+			test.contains("""assertThatJson(parsedJson).array("['property2']").elementWithIndex(1).field("['b']").isEqualTo("sthElse")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -495,8 +494,8 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			test.contains("""assertThatJson(parsedJson).array().contains("['property2']").isEqualTo("b")""")
-			test.contains("""assertThatJson(parsedJson).array().contains("['property1']").isEqualTo("a")""")
+			test.contains("""assertThatJson(parsedJson).array().elementWithIndex(0).field("['property1']").isEqualTo("a")""")
+			test.contains("""assertThatJson(parsedJson).array().elementWithIndex(1).field("['property2']").isEqualTo("b")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -530,8 +529,8 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			test.contains("""assertThatJson(parsedJson).array("['property1']").contains("['property2']").isEqualTo("test1")""")
-			test.contains("""assertThatJson(parsedJson).array("['property1']").contains("['property3']").isEqualTo("test2")""")
+			test.contains("""assertThatJson(parsedJson).array("['property1']").elementWithIndex(0).field("['property2']").isEqualTo("test1")""")
+			test.contains("""assertThatJson(parsedJson).array("['property1']").elementWithIndex(1).field("['property3']").isEqualTo("test2")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -1053,8 +1052,8 @@ class SpringTestMethodBodyBuildersSpec extends Specification implements WireMock
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			test.contains("""assertThatJson(parsedJson).array("['errors']").contains("['property']").isEqualTo("bank_account_number")""")
-			test.contains("""assertThatJson(parsedJson).array("['errors']").contains("['message']").isEqualTo("incorrect_format")""")
+			test.contains("""assertThatJson(parsedJson).array("['errors']").elementWithIndex(0).field("['property']").isEqualTo("bank_account_number")""")
+			test.contains("""assertThatJson(parsedJson).array("['errors']").elementWithIndex(0).field("['message']").isEqualTo("incorrect_format")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -1738,7 +1737,7 @@ World.'''"""
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			test.contains('''assertThatJson(parsedJson).array("[\'authorities']").arrayField().matches("^[a-zA-Z0-9_\\\\- ]+\\$").value()''')
+			test.contains('''assertThatJson(parsedJson).array("[\'authorities']").elementWithIndex(0).matches("^[a-zA-Z0-9_\\\\- ]+\\$")''')
 		and:
 			SyntaxChecker.tryToCompileGroovy("spock", test)
 	}
@@ -1770,7 +1769,7 @@ World.'''"""
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			test.contains('''assertThatJson(parsedJson).array("[\'authorities']").arrayField().matches("^[a-zA-Z0-9_\\\\- ]+$").value()''')
+			test.contains('''assertThatJson(parsedJson).array("[\'authorities']").elementWithIndex(0).matches("^[a-zA-Z0-9_\\\\- ]+$")''')
 		and:
 			SyntaxChecker.tryToCompileJava("mockmvc", test)
 	}
@@ -1831,7 +1830,8 @@ World.'''"""
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			test.contains('assertThatJson(parsedJson).array().contains("[\'id\']").matches("[0-9]+")')
+			test.contains('assertThatJson(parsedJson).array().elementWithIndex(0).field("[\'id\']").matches("[0-9]+")')
+			test.contains('assertThatJson(parsedJson).array().elementWithIndex(1).field("[\'id\']").matches("[0-9]+")')
 		and:
 			SyntaxChecker.tryToCompileGroovy("mockmvc", test)
 	}
@@ -1856,11 +1856,11 @@ World.'''"""
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			test.contains('assertThatJson(parsedJson).arrayField().contains("Java8").value()')
-			test.contains('assertThatJson(parsedJson).arrayField().contains("Spring").value()')
-			test.contains('assertThatJson(parsedJson).arrayField().contains("Java").value()')
-			test.contains('assertThatJson(parsedJson).arrayField().contains("Stream").value()')
-			test.contains('assertThatJson(parsedJson).arrayField().contains("SpringBoot").value()')
+			test.contains('assertThatJson(parsedJson).array().elementWithIndex(0).isEqualTo("Java")')
+			test.contains('assertThatJson(parsedJson).array().elementWithIndex(1).isEqualTo("Java8")')
+			test.contains('assertThatJson(parsedJson).array().elementWithIndex(2).isEqualTo("Spring")')
+			test.contains('assertThatJson(parsedJson).array().elementWithIndex(3).isEqualTo("SpringBoot")')
+			test.contains('assertThatJson(parsedJson).array().elementWithIndex(4).isEqualTo("Stream")')
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
@@ -1894,11 +1894,11 @@ World.'''"""
 			String test = singleTestGenerator(contractDsl)
 		then:
 			test.contains('assertThatJson(parsedJson).hasSize(5)')
-			test.contains('assertThatJson(parsedJson).arrayField().contains("Java8").value()')
-			test.contains('assertThatJson(parsedJson).arrayField().contains("Spring").value()')
-			test.contains('assertThatJson(parsedJson).arrayField().contains("Java").value()')
-			test.contains('assertThatJson(parsedJson).arrayField().contains("Stream").value()')
-			test.contains('assertThatJson(parsedJson).arrayField().contains("SpringBoot").value()')
+			test.contains('assertThatJson(parsedJson).array().elementWithIndex(0).isEqualTo("Java")')
+			test.contains('assertThatJson(parsedJson).array().elementWithIndex(1).isEqualTo("Java8")')
+			test.contains('assertThatJson(parsedJson).array().elementWithIndex(2).isEqualTo("Spring")')
+			test.contains('assertThatJson(parsedJson).array().elementWithIndex(3).isEqualTo("SpringBoot")')
+			test.contains('assertThatJson(parsedJson).array().elementWithIndex(4).isEqualTo("Stream")')
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
@@ -1929,10 +1929,12 @@ World.'''"""
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			test.contains('assertThatJson(parsedJson).array().array().arrayField().isEqualTo("Programming").value()')
-			test.contains('assertThatJson(parsedJson).array().array().arrayField().isEqualTo("Java").value()')
-			test.contains('assertThatJson(parsedJson).array().array().arrayField().isEqualTo("Spring").value()')
-			test.contains('assertThatJson(parsedJson).array().array().arrayField().isEqualTo("Boot").value()')
+			test.contains('assertThatJson(parsedJson).array().elementWithIndex(0).elementWithIndex(0).isEqualTo("Programming")')
+			test.contains('assertThatJson(parsedJson).array().elementWithIndex(0).elementWithIndex(1).isEqualTo("Java")')
+			test.contains('assertThatJson(parsedJson).array().elementWithIndex(1).elementWithIndex(0).isEqualTo("Programming")')
+			test.contains('assertThatJson(parsedJson).array().elementWithIndex(1).elementWithIndex(1).isEqualTo("Java")')
+			test.contains('assertThatJson(parsedJson).array().elementWithIndex(1).elementWithIndex(2).isEqualTo("Spring")')
+			test.contains('assertThatJson(parsedJson).array().elementWithIndex(1).elementWithIndex(3).isEqualTo("Boot")')
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
@@ -1966,8 +1968,8 @@ World.'''"""
 			String test = singleTestGenerator(contractDsl)
 		then:
 			test.contains("""assertThatJson(parsedJson).array("['key']").hasSize(2)""")
-			test.contains("""assertThatJson(parsedJson).array("['key']").arrayField().isEqualTo("value1").value()""")
-			test.contains("""assertThatJson(parsedJson).array("['key']").arrayField().isEqualTo("value2").value()""")
+			test.contains("""assertThatJson(parsedJson).array("['key']").elementWithIndex(0).isEqualTo("value1")""")
+			test.contains("""assertThatJson(parsedJson).array("['key']").elementWithIndex(1).isEqualTo("value2")""")
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:
@@ -2064,8 +2066,8 @@ World.'''"""
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			test.contains('assertThatJson(parsedJson).array("[\'partners\']").array("[\'payment_methods\']").arrayField().isEqualTo("BANK").value()')
-			test.contains('assertThatJson(parsedJson).array("[\'partners\']").array("[\'payment_methods\']").arrayField().isEqualTo("CASH").value()')
+			test.contains('assertThatJson(parsedJson).array("[\'partners\']").elementWithIndex(0).array("[\'payment_methods\']").elementWithIndex(0).isEqualTo("BANK")')
+			test.contains('assertThatJson(parsedJson).array("[\'partners\']").elementWithIndex(0).array("[\'payment_methods\']").elementWithIndex(1).isEqualTo("CASH")')
 		and:
 			SyntaxChecker.tryToCompile(methodBuilderName, test)
 		where:

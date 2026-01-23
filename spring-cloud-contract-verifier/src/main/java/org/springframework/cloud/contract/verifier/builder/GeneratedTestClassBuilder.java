@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * @author Marcin Grzejszczak
  * @since 2.2.0
  */
-class GeneratedTestClassBuilder {
+final class GeneratedTestClassBuilder {
 
 	private List<ClassMetaData> metaData = new LinkedList<>();
 
