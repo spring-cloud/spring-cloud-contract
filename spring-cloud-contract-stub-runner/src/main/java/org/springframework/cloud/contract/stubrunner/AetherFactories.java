@@ -59,6 +59,12 @@ import org.springframework.util.StringUtils;
  */
 final class AetherFactories {
 
+	static final String BASIC_REPOSITORY_CONNECTOR_FACTORY_FQN = "org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory";
+
+	static final String FILE_TRANSPORTER_FACTORY_FQN = "org.eclipse.aether.transport.file.FileTransporterFactory";
+
+	static final String HTTP_TRANSPORTER_FACTORY_FQN = "org.eclipse.aether.transport.http.HttpTransporterFactory";
+
 	private static final Log log = LogFactory.getLog(AetherFactories.class);
 
 	private static final String MAVEN_LOCAL_REPOSITORY_LOCATION = "maven.repo.local";
@@ -134,14 +140,11 @@ final class AetherFactories {
 
 		// Try to register connector + transporters reflectively, but do not hard-link
 		// them.
-		registerIfPresent(locator, "org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory",
-				RepositoryConnectorFactory.class);
+		registerIfPresent(locator, BASIC_REPOSITORY_CONNECTOR_FACTORY_FQN, RepositoryConnectorFactory.class);
 
-		registerIfPresent(locator, "org.eclipse.aether.transport.file.FileTransporterFactory",
-				TransporterFactory.class);
+		registerIfPresent(locator, FILE_TRANSPORTER_FACTORY_FQN, TransporterFactory.class);
 
-		registerIfPresent(locator, "org.eclipse.aether.transport.http.HttpTransporterFanewRepositorySystemctory",
-				TransporterFactory.class);
+		registerIfPresent(locator, HTTP_TRANSPORTER_FACTORY_FQN, TransporterFactory.class);
 
 		RepositorySystem system = locator.getService(RepositorySystem.class);
 
