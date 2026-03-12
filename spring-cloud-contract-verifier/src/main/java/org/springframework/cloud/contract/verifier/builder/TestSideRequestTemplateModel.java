@@ -48,35 +48,35 @@ import org.springframework.cloud.contract.verifier.util.MapConverter;
  * @author Marcin Grzejszczak
  * @since 1.1.0
  */
-public class TestSideRequestTemplateModel {
+public final class TestSideRequestTemplateModel {
 
 	/**
-	 * Request URL
+	 * Request URL.
 	 */
 	private final String url;
 
 	/**
-	 * Map containing query parameters
+	 * Map containing query parameters.
 	 */
 	private final Map<String, List<Object>> query;
 
 	/**
-	 * List of path entries
+	 * List of path entries.
 	 */
 	private final Path path;
 
 	/**
-	 * Map containing request headers
+	 * Map containing request headers.
 	 */
 	private final Map<String, List<String>> headers;
 
 	/**
-	 * Request body as it would be sent to the controller
+	 * Request body as it would be sent to the controller.
 	 */
 	private final String body;
 
 	/**
-	 * Escaped request body that can be put into test
+	 * Escaped request body that can be put into test.
 	 */
 	private final String escapedBody;
 

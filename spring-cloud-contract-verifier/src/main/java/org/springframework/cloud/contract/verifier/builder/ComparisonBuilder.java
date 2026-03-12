@@ -24,8 +24,14 @@ import static org.apache.commons.text.StringEscapeUtils.escapeJava;
 
 interface ComparisonBuilder {
 
+	/**
+	 * Java HTTP comparison builder instance.
+	 */
 	ComparisonBuilder JAVA_HTTP_INSTANCE = () -> RestAssuredBodyParser.INSTANCE;
 
+	/**
+	 * Java messaging comparison builder instance.
+	 */
 	ComparisonBuilder JAVA_MESSAGING_INSTANCE = () -> JavaMessagingBodyParser.INSTANCE;
 
 	default String createComparison(Object headerValue) {

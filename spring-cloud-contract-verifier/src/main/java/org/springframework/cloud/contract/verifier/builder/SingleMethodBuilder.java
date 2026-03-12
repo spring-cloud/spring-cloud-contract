@@ -34,7 +34,7 @@ import org.springframework.cloud.contract.verifier.file.SingleContractMetadata;
  * @author Marcin Grzejszczak
  * @since 2.2.0
  */
-class SingleMethodBuilder {
+final class SingleMethodBuilder {
 
 	private static final Log log = LogFactory.getLog(SingleMethodBuilder.class);
 
@@ -154,7 +154,7 @@ class SingleMethodBuilder {
 	}
 
 	/**
-	 * Mutates the {@link BlockBuilder} to generate a methodBuilder
+	 * Mutates the {@link BlockBuilder} to generate a methodBuilder.
 	 * @return block builder with contents of a single methodBuilder
 	 */
 	BlockBuilder build() {
