@@ -37,7 +37,7 @@ final class ContentHelper {
 
 	/**
 	 * Depending on the object type extracts the test side values and combines them into a
-	 * String representation
+	 * String representation.
 	 */
 	private static String getTestSideValue(Object object) {
 		if (object instanceof ExecutionProperty) {
@@ -48,6 +48,9 @@ final class ContentHelper {
 
 	private static String quotedAndEscaped(String string) {
 		return '"' + StringEscapeUtils.escapeJava(string) + '"';
+	}
+
+	private ContentHelper() {
 	}
 
 }

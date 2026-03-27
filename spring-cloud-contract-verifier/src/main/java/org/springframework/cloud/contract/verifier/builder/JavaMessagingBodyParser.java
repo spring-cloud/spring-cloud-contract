@@ -18,6 +18,9 @@ package org.springframework.cloud.contract.verifier.builder;
 
 interface JavaMessagingBodyParser extends MessagingBodyParser {
 
+	/**
+	 * Shared Java messaging body parser instance.
+	 */
 	BodyParser INSTANCE = new JavaMessagingBodyParser() {
 	};
 
