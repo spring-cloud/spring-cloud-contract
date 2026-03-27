@@ -15,7 +15,7 @@
 	<name>Spring Cloud Contract Docs</name>
 	<description>Spring Cloud Contract Docs</description>
 	<properties>
-		<jackson-module-jsonSchema.version>2.20.1</jackson-module-jsonSchema.version>
+		<jackson-module-jsonSchema.version>2.20.2</jackson-module-jsonSchema.version>
 		<docs.main>spring-cloud-contract</docs.main>
 		<main.basedir>${basedir}/..</main.basedir>
 		<configprops.inclusionPattern>spring.cloud.*</configprops.inclusionPattern>
