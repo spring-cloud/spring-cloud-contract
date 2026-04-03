@@ -24,7 +24,7 @@ import org.springframework.cloud.contract.spec.internal.QueryParameter;
 interface QueryParamsResolver {
 
 	/**
-	 * Converts the query parameter value into String
+	 * Converts the query parameter value into String.
 	 */
 	default String resolveParamValue(Object value) {
 		if (value instanceof QueryParameter) {

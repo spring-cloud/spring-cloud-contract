@@ -22,10 +22,19 @@ import org.apache.commons.text.StringEscapeUtils;
 
 interface GroovyComparisonBuilder extends ComparisonBuilder {
 
+	/**
+	 * Spock HTTP comparison builder instance.
+	 */
 	ComparisonBuilder SPOCK_HTTP_INSTANCE = (GroovyComparisonBuilder) () -> SpockRestAssuredBodyParser.INSTANCE;
 
+	/**
+	 * JAX-RS HTTP comparison builder instance.
+	 */
 	ComparisonBuilder JAXRS_HTTP_INSTANCE = (GroovyComparisonBuilder) () -> JaxRsBodyParser.INSTANCE;
 
+	/**
+	 * Spock messaging comparison builder instance.
+	 */
 	ComparisonBuilder SPOCK_MESSAGING_INSTANCE = (GroovyComparisonBuilder) () -> SpockMessagingBodyParser.INSTANCE;
 
 	@Override
