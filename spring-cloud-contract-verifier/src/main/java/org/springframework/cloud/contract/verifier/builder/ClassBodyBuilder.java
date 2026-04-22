@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * @author Marcin Grzejszczak
  * @since 2.2.0
  */
-class ClassBodyBuilder {
+final class ClassBodyBuilder {
 
 	private List<Field> fields = new LinkedList<>();
 

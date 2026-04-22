@@ -37,7 +37,7 @@ public class BlockBuilder {
 	private String labelPrefix = "";
 
 	/**
-	 * @param spacer - char used for spacing
+	 * @param spacer char used for spacing.
 	 */
 	public BlockBuilder(String spacer) {
 		this.spacer = spacer;
@@ -45,7 +45,7 @@ public class BlockBuilder {
 	}
 
 	/**
-	 * Setup line ending
+	 * Setup line ending.
 	 */
 	public BlockBuilder setupLineEnding(String lineEnding) {
 		this.lineEnding = lineEnding;
@@ -53,7 +53,7 @@ public class BlockBuilder {
 	}
 
 	/**
-	 * Setup label prefix
+	 * Setup label prefix.
 	 */
 	public BlockBuilder setupLabelPrefix(String labelPrefix) {
 		this.labelPrefix = labelPrefix;
@@ -65,14 +65,14 @@ public class BlockBuilder {
 	}
 
 	/**
-	 * Adds indents to start a new block
+	 * Adds indents to start a new block.
 	 */
 	public BlockBuilder appendWithLabelPrefix(String label) {
 		return append(this.labelPrefix).append(label);
 	}
 
 	/**
-	 * Adds indents to start a new block
+	 * Adds indents to start a new block.
 	 */
 	public BlockBuilder startBlock() {
 		indents++;
@@ -80,7 +80,7 @@ public class BlockBuilder {
 	}
 
 	/**
-	 * Ends block by removing indents
+	 * Ends block by removing indents.
 	 */
 	public BlockBuilder endBlock() {
 		indents--;
@@ -88,7 +88,7 @@ public class BlockBuilder {
 	}
 
 	/**
-	 * Creates a block and adds indents
+	 * Creates a block and adds indents.
 	 */
 	public BlockBuilder indent() {
 		startBlock().startBlock();
@@ -96,7 +96,7 @@ public class BlockBuilder {
 	}
 
 	/**
-	 * Removes indents and closes the block
+	 * Removes indents and closes the block.
 	 */
 	public BlockBuilder unindent() {
 		endBlock().endBlock();
@@ -183,7 +183,7 @@ public class BlockBuilder {
 	}
 
 	/**
-	 * Adds the given text at the end of the line
+	 * Adds the given text at the end of the line.
 	 * @return updated BlockBuilder
 	 */
 	public BlockBuilder addAtTheEnd(String toAdd) {
@@ -229,8 +229,8 @@ public class BlockBuilder {
 	}
 
 	/**
-	 * Updates the current text with the provided one
-	 * @param contents - text to replace the current content with
+	 * Updates the current text with the provided one.
+	 * @param contents text to replace the current content with
 	 * @return updated Block Builder
 	 */
 	public BlockBuilder updateContents(String contents) {
