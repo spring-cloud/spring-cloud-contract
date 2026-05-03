@@ -1,0 +1,8 @@
+{
+  "type": "record",
+  "name": "Book",
+  "fields": [
+    {"name": "isbn", "type": "string"},
+    {"name": "title", "type": "string"}
+  ]
+}

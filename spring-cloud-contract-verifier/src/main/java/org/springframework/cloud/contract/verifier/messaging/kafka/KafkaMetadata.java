@@ -18,6 +18,7 @@ package org.springframework.cloud.contract.verifier.messaging.kafka;
 
 import java.util.Map;
 
+import org.springframework.cloud.contract.verifier.messaging.avro.AvroMetadata;
 import org.springframework.cloud.contract.verifier.util.MetadataUtil;
 import org.springframework.cloud.contract.verifier.util.SpringCloudContractMetadata;
 
@@ -44,6 +45,12 @@ public class KafkaMetadata implements SpringCloudContractMetadata {
 	 */
 	private MessageKafkaMetadata outputMessage = new MessageKafkaMetadata();
 
+	/**
+	 * Avro serialization metadata. Configures the schema used to serialize/deserialize
+	 * messages on this Kafka topic.
+	 */
+	private AvroMetadata avro = new AvroMetadata();
+
 	public MessageKafkaMetadata getInput() {
 		return this.input;
 	}
@@ -58,6 +65,14 @@ public class KafkaMetadata implements SpringCloudContractMetadata {
 
 	public void setOutputMessage(MessageKafkaMetadata outputMessage) {
 		this.outputMessage = outputMessage;
+	}
+
+	public AvroMetadata getAvro() {
+		return this.avro;
+	}
+
+	public void setAvro(AvroMetadata avro) {
+		this.avro = avro;
 	}
 
 	public static KafkaMetadata fromMetadata(Map<String, Object> metadata) {
