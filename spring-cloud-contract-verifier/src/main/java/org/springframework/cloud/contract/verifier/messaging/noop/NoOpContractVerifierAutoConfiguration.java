@@ -89,8 +89,7 @@ public class NoOpContractVerifierAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ContractVerifierObjectMapper contractVerifierObjectMapper(
-			ObjectProvider<JsonMapper> jsonMapper) {
+	public ContractVerifierObjectMapper contractVerifierObjectMapper(ObjectProvider<JsonMapper> jsonMapper) {
 		JsonMapper mapper = jsonMapper.getIfAvailable(JsonMapper::new);
 		return new ContractVerifierObjectMapper(mapper);
 	}

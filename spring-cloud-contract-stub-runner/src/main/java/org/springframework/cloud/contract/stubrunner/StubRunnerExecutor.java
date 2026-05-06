@@ -251,7 +251,7 @@ class StubRunnerExecutor implements StubFinder {
 		setMessageType(contract, ContractVerifierMessageMetadata.MessageType.OUTPUT);
 
 		Object payload = null;
-		if (body != null && body.getClientValue() instanceof FromFileProperty) {
+		if (isFromFileProperty(body)) {
 			FromFileProperty fromFile = (FromFileProperty) body.getClientValue();
 			if (fromFile.isByte()) {
 				payload = fromFile.asBytes();
@@ -260,6 +260,10 @@ class StubRunnerExecutor implements StubFinder {
 				payload = fromFile.asString();
 			}
 		}
+		else if (isAvroContract(contract)) {
+			log.info("Avro contract detected — passing raw body as Map, skipping JSON serialization");
+			payload = BodyExtractor.extractClientValueFromBody(body == null ? null : body.getClientValue());
+		}
 		else {
 			payload = JsonOutput
 				.toJson(BodyExtractor.extractClientValueFromBody(body == null ? null : body.getClientValue()));
@@ -267,6 +271,25 @@ class StubRunnerExecutor implements StubFinder {
 
 		this.messageVerifierSender.send(payload, headers == null ? null : headers.asStubSideMap(),
 				outputMessage.getSentTo().getClientValue(), contract);
+	}
+
+	private boolean isFromFileProperty(DslProperty<?> body) {
+		return body != null && body.getClientValue() instanceof FromFileProperty;
+	}
+
+	private boolean isAvroContract(YamlContract contract) {
+		if (contract == null || contract.metadata == null) {
+			return false;
+		}
+		Object kafkaMeta = contract.metadata.get("kafka");
+		if (!(kafkaMeta instanceof Map)) {
+			return false;
+		}
+		Object avroMeta = ((Map<String, Object>) kafkaMeta).get("avro");
+		if (!(avroMeta instanceof Map)) {
+			return false;
+		}
+		return ((Map<String, Object>) avroMeta).get("schema") != null;
 	}
 
 	private void setMessageType(YamlContract contract, ContractVerifierMessageMetadata.MessageType output) {

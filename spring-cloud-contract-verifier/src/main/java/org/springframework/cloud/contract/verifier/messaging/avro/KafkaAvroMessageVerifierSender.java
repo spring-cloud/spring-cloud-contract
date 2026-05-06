@@ -63,8 +63,7 @@ public class KafkaAvroMessageVerifierSender implements MessageVerifierSender<Obj
 	}
 
 	@Override
-	public <T> void send(T payload, Map<String, Object> headers, String destination,
-			@Nullable YamlContract contract) {
+	public <T> void send(T payload, Map<String, Object> headers, String destination, @Nullable YamlContract contract) {
 		if (contract == null || contract.metadata == null) {
 			throw new IllegalArgumentException(
 					"Contract or its metadata is null — cannot perform Avro serialization for destination ["
@@ -116,9 +115,10 @@ public class KafkaAvroMessageVerifierSender implements MessageVerifierSender<Obj
 		}
 		Map<String, Object> payloadMap = (Map<String, Object>) payload;
 		GenericRecordBuilder builder = new GenericRecordBuilder(schema);
-		schema.getFields().stream()
-				.filter(field -> payloadMap.containsKey(field.name()))
-				.forEach(field -> builder.set(field, payloadMap.get(field.name())));
+		schema.getFields()
+			.stream()
+			.filter(field -> payloadMap.containsKey(field.name()))
+			.forEach(field -> builder.set(field, payloadMap.get(field.name())));
 		return builder.build();
 	}
 

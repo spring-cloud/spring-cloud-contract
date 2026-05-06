@@ -19,9 +19,13 @@ package org.springframework.cloud.contract.verifier.messaging.avro;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
+import tools.jackson.databind.json.JsonMapper;
+
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,11 +36,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import io.confluent.kafka.serializers.KafkaAvroSerializer;
-import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Auto-configuration for Avro support in Spring Cloud Contract. Activates when
@@ -51,21 +50,17 @@ public class KafkaAvroContractVerifierConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	ContractVerifierObjectMapper avroContractVerifierObjectMapper(
-			ObjectProvider<JsonMapper> jsonMapper) {
-		JsonMapper mapper = jsonMapper.getIfAvailable(JsonMapper::new).rebuild()
-				.addMixIn(SpecificRecordBase.class, IgnoreAvroMixin.class).build();
+	ContractVerifierObjectMapper avroContractVerifierObjectMapper(ObjectProvider<JsonMapper> jsonMapper) {
+		JsonMapper mapper = jsonMapper.getIfAvailable(JsonMapper::new)
+			.rebuild()
+			.addMixIn(SpecificRecordBase.class, IgnoreAvroMixin.class)
+			.build();
 		return new ContractVerifierObjectMapper(mapper);
-	}
-
-	@JsonIgnoreProperties({ "schema", "specificData", "classSchema", "conversion" })
-	interface IgnoreAvroMixin {
 	}
 
 	@Bean
 	@ConditionalOnMissingBean(name = "avroKafkaTemplate")
-	KafkaTemplate<String, Object> avroKafkaTemplate(
-			@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers,
+	KafkaTemplate<String, Object> avroKafkaTemplate(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers,
 			@Value("${spring.cloud.contract.avro.schema-registry-url}") String schemaRegistryUrl) {
 		Map<String, Object> props = new HashMap<>();
 		props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -80,6 +75,11 @@ public class KafkaAvroContractVerifierConfiguration {
 	KafkaAvroMessageVerifierSender kafkaAvroMessageVerifierSender(
 			@Qualifier("avroKafkaTemplate") KafkaTemplate<String, Object> avroKafkaTemplate) {
 		return new KafkaAvroMessageVerifierSender(avroKafkaTemplate);
+	}
+
+	@JsonIgnoreProperties({ "schema", "specificData", "classSchema", "conversion" })
+	interface IgnoreAvroMixin {
+
 	}
 
 }

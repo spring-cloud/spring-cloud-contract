@@ -20,8 +20,7 @@ package org.springframework.cloud.contract.verifier.messaging.avro;
  * Avro serialization metadata for a Kafka contract message.
  *
  * <p>
- * Example contract YAML:
- * <pre>
+ * Example contract YAML: <pre>
  * metadata:
  *   kafka:
  *     avro:

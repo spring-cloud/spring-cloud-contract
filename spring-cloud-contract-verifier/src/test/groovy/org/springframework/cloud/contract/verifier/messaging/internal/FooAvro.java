@@ -14,6 +14,7 @@ import org.apache.avro.specific.SpecificData;
 @org.apache.avro.specific.AvroGenerated
 public class FooAvro extends org.apache.avro.specific.SpecificRecordBase
 		implements org.apache.avro.specific.SpecificRecord {
+
 	private static final long serialVersionUID = -2221379489582530192L;
 
 	public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse(
@@ -25,11 +26,9 @@ public class FooAvro extends org.apache.avro.specific.SpecificRecordBase
 
 	private static final SpecificData MODEL$ = new SpecificData();
 
-	private static final BinaryMessageEncoder<FooAvro> ENCODER = new BinaryMessageEncoder<>(
-			MODEL$, SCHEMA$);
+	private static final BinaryMessageEncoder<FooAvro> ENCODER = new BinaryMessageEncoder<>(MODEL$, SCHEMA$);
 
-	private static final BinaryMessageDecoder<FooAvro> DECODER = new BinaryMessageDecoder<>(
-			MODEL$, SCHEMA$);
+	private static final BinaryMessageDecoder<FooAvro> DECODER = new BinaryMessageDecoder<>(MODEL$, SCHEMA$);
 
 	/**
 	 * Return the BinaryMessageEncoder instance used by this class.
@@ -52,7 +51,7 @@ public class FooAvro extends org.apache.avro.specific.SpecificRecordBase
 	 * {@link SchemaStore}.
 	 * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
 	 * @return a BinaryMessageDecoder instance for this class backed by the given
-	 * 		SchemaStore
+	 * SchemaStore
 	 */
 	public static BinaryMessageDecoder<FooAvro> createDecoder(SchemaStore resolver) {
 		return new BinaryMessageDecoder<>(MODEL$, SCHEMA$, resolver);
@@ -72,10 +71,9 @@ public class FooAvro extends org.apache.avro.specific.SpecificRecordBase
 	 * @param b a byte buffer holding serialized data for an instance of this class
 	 * @return a FooAvro instance decoded from the given buffer
 	 * @throws java.io.IOException if the given bytes could not be deserialized into an
-	 *                             instance of this class
+	 * instance of this class
 	 */
-	public static FooAvro fromByteBuffer(java.nio.ByteBuffer b)
-			throws java.io.IOException {
+	public static FooAvro fromByteBuffer(java.nio.ByteBuffer b) throws java.io.IOException {
 		return DECODER.decode(b);
 	}
 
@@ -83,8 +81,8 @@ public class FooAvro extends org.apache.avro.specific.SpecificRecordBase
 	private java.lang.String fooAvro;
 
 	/**
-	 * Default constructor.  Note that this does not initialize fields to their default
-	 * values from the schema.  If that is desired then one should use
+	 * Default constructor. Note that this does not initialize fields to their default
+	 * values from the schema. If that is desired then one should use
 	 * <code>newBuilder()</code>.
 	 */
 	public FooAvro() {
@@ -108,27 +106,27 @@ public class FooAvro extends org.apache.avro.specific.SpecificRecordBase
 		return SCHEMA$;
 	}
 
-	// Used by DatumWriter.  Applications should not call.
+	// Used by DatumWriter. Applications should not call.
 	@Override
 	public java.lang.Object get(int field$) {
 		switch (field$) {
-		case 0:
-			return fooAvro;
-		default:
-			throw new IndexOutOfBoundsException("Invalid index: " + field$);
+			case 0:
+				return fooAvro;
+			default:
+				throw new IndexOutOfBoundsException("Invalid index: " + field$);
 		}
 	}
 
-	// Used by DatumReader.  Applications should not call.
+	// Used by DatumReader. Applications should not call.
 	@Override
 	@SuppressWarnings(value = "unchecked")
 	public void put(int field$, java.lang.Object value$) {
 		switch (field$) {
-		case 0:
-			fooAvro = value$ != null ? value$.toString() : null;
-			break;
-		default:
-			throw new IndexOutOfBoundsException("Invalid index: " + field$);
+			case 0:
+				fooAvro = value$ != null ? value$.toString() : null;
+				break;
+			default:
+				throw new IndexOutOfBoundsException("Invalid index: " + field$);
 		}
 	}
 
@@ -167,8 +165,7 @@ public class FooAvro extends org.apache.avro.specific.SpecificRecordBase
 			return new org.springframework.cloud.contract.verifier.messaging.internal.FooAvro.Builder();
 		}
 		else {
-			return new org.springframework.cloud.contract.verifier.messaging.internal.FooAvro.Builder(
-					other);
+			return new org.springframework.cloud.contract.verifier.messaging.internal.FooAvro.Builder(other);
 		}
 	}
 
@@ -183,8 +180,7 @@ public class FooAvro extends org.apache.avro.specific.SpecificRecordBase
 			return new org.springframework.cloud.contract.verifier.messaging.internal.FooAvro.Builder();
 		}
 		else {
-			return new org.springframework.cloud.contract.verifier.messaging.internal.FooAvro.Builder(
-					other);
+			return new org.springframework.cloud.contract.verifier.messaging.internal.FooAvro.Builder(other);
 		}
 	}
 
@@ -192,8 +188,7 @@ public class FooAvro extends org.apache.avro.specific.SpecificRecordBase
 	 * RecordBuilder for FooAvro instances.
 	 */
 	@org.apache.avro.specific.AvroGenerated
-	public static class Builder
-			extends org.apache.avro.specific.SpecificRecordBuilderBase<FooAvro>
+	public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<FooAvro>
 			implements org.apache.avro.data.RecordBuilder<FooAvro> {
 
 		/** foo field */
@@ -208,8 +203,7 @@ public class FooAvro extends org.apache.avro.specific.SpecificRecordBase
 		 * Creates a Builder by copying an existing Builder.
 		 * @param other The existing Builder to copy.
 		 */
-		private Builder(
-				org.springframework.cloud.contract.verifier.messaging.internal.FooAvro.Builder other) {
+		private Builder(org.springframework.cloud.contract.verifier.messaging.internal.FooAvro.Builder other) {
 			super(other);
 			if (isValidValue(fields()[0], other.fooAvro)) {
 				this.fooAvro = data().deepCopy(fields()[0].schema(), other.fooAvro);
@@ -221,8 +215,7 @@ public class FooAvro extends org.apache.avro.specific.SpecificRecordBase
 		 * Creates a Builder by copying an existing FooAvro instance
 		 * @param other The existing instance to copy.
 		 */
-		private Builder(
-				org.springframework.cloud.contract.verifier.messaging.internal.FooAvro other) {
+		private Builder(org.springframework.cloud.contract.verifier.messaging.internal.FooAvro other) {
 			super(SCHEMA$, MODEL$);
 			if (isValidValue(fields()[0], other.fooAvro)) {
 				this.fooAvro = data().deepCopy(fields()[0].schema(), other.fooAvro);
@@ -274,9 +267,7 @@ public class FooAvro extends org.apache.avro.specific.SpecificRecordBase
 		public FooAvro build() {
 			try {
 				FooAvro record = new FooAvro();
-				record.fooAvro = fieldSetFlags()[0] ?
-						this.fooAvro :
-						(java.lang.String) defaultValue(fields()[0]);
+				record.fooAvro = fieldSetFlags()[0] ? this.fooAvro : (java.lang.String) defaultValue(fields()[0]);
 				return record;
 			}
 			catch (org.apache.avro.AvroMissingFieldException e) {
@@ -286,11 +277,12 @@ public class FooAvro extends org.apache.avro.specific.SpecificRecordBase
 				throw new org.apache.avro.AvroRuntimeException(e);
 			}
 		}
+
 	}
 
 	@SuppressWarnings("unchecked")
-	private static final org.apache.avro.io.DatumWriter<FooAvro> WRITER$ = (org.apache.avro.io.DatumWriter<FooAvro>) MODEL$.createDatumWriter(
-			SCHEMA$);
+	private static final org.apache.avro.io.DatumWriter<FooAvro> WRITER$ = (org.apache.avro.io.DatumWriter<FooAvro>) MODEL$
+		.createDatumWriter(SCHEMA$);
 
 	@Override
 	public void writeExternal(java.io.ObjectOutput out) throws java.io.IOException {
@@ -298,8 +290,8 @@ public class FooAvro extends org.apache.avro.specific.SpecificRecordBase
 	}
 
 	@SuppressWarnings("unchecked")
-	private static final org.apache.avro.io.DatumReader<FooAvro> READER$ = (org.apache.avro.io.DatumReader<FooAvro>) MODEL$.createDatumReader(
-			SCHEMA$);
+	private static final org.apache.avro.io.DatumReader<FooAvro> READER$ = (org.apache.avro.io.DatumReader<FooAvro>) MODEL$
+		.createDatumReader(SCHEMA$);
 
 	@Override
 	public void readExternal(java.io.ObjectInput in) throws java.io.IOException {
@@ -318,8 +310,7 @@ public class FooAvro extends org.apache.avro.specific.SpecificRecordBase
 	}
 
 	@Override
-	public void customDecode(org.apache.avro.io.ResolvingDecoder in)
-			throws java.io.IOException {
+	public void customDecode(org.apache.avro.io.ResolvingDecoder in) throws java.io.IOException {
 		org.apache.avro.Schema.Field[] fieldOrder = in.readFieldOrderIfDiff();
 		if (fieldOrder == null) {
 			this.fooAvro = in.readString();
@@ -328,14 +319,15 @@ public class FooAvro extends org.apache.avro.specific.SpecificRecordBase
 		else {
 			for (int i = 0; i < 1; i++) {
 				switch (fieldOrder[i].pos()) {
-				case 0:
-					this.fooAvro = in.readString();
-					break;
+					case 0:
+						this.fooAvro = in.readString();
+						break;
 
-				default:
-					throw new java.io.IOException("Corrupt ResolvingDecoder.");
+					default:
+						throw new java.io.IOException("Corrupt ResolvingDecoder.");
 				}
 			}
 		}
 	}
+
 }
