@@ -17,6 +17,7 @@
 package org.springframework.cloud.contract.verifier.messaging.avro
 
 
+import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.cloud.contract.verifier.converter.YamlContract
 import org.springframework.kafka.core.KafkaTemplate
 import spock.lang.Specification
@@ -33,7 +34,7 @@ class KafkaAvroMessageVerifierSenderSpec extends Specification {
 
 	def "should parse yml contract with inline schema and send avro message to kafka"() {
 		given:
-			def contractYaml = """
+		def contractYaml = """
 label: book_returned
 input:
   triggeredBy: publishBookReturned()
@@ -55,22 +56,23 @@ metadata:
           ]
         }
 """
-			YamlContract contract = yamlMapper.readerFor(YamlContract).readValue(contractYaml)
-			Map<String, Object> payload = [isbn: DUMMY_ISBN, title: DUMMY_TITLE]
+		YamlContract contract = yamlMapper.readerFor(YamlContract).readValue(contractYaml)
+		Map<String, Object> payload = [isbn: DUMMY_ISBN, title: DUMMY_TITLE]
 
 		when:
-			sender.send(payload, [:], "book.returned", contract)
+		sender.send(payload, [:], "book.returned", contract)
 
 		then:
-			1 * kafkaTemplate.send("book.returned", {
-				it["isbn"] == DUMMY_ISBN &&
-				it["title"] == DUMMY_TITLE
-			})
+		1 * kafkaTemplate.send({
+			it.topic() == "book.returned" &&
+					it.value()["isbn"] == DUMMY_ISBN &&
+					it.value()["title"] == DUMMY_TITLE
+		})
 	}
 
 	def "should parse yml contract with classpath schema and send avro message to kafka"() {
 		given:
-			def contractYaml = """
+		def contractYaml = """
 label: book_returned
 input:
   triggeredBy: publishBookReturned()
@@ -84,16 +86,74 @@ metadata:
     avro:
       schema: classpath:avro/Book.avsc
 """
-			YamlContract contract = yamlMapper.readerFor(YamlContract).readValue(contractYaml)
-			Map<String, Object> payload = [isbn: DUMMY_ISBN, title: DUMMY_TITLE]
+		YamlContract contract = yamlMapper.readerFor(YamlContract).readValue(contractYaml)
+		Map<String, Object> payload = [isbn: DUMMY_ISBN, title: DUMMY_TITLE]
 
 		when:
-			sender.send(payload, [:], "book.returned", contract)
+		sender.send(payload, [:], "book.returned", contract)
 
 		then:
-			1 * kafkaTemplate.send("book.returned", {
-				it["isbn"] == DUMMY_ISBN &&
-				it["title"] == DUMMY_TITLE
-			})
+		1 * kafkaTemplate.send({ ProducerRecord record ->
+			record.topic() == "book.returned" &&
+					record.value()["isbn"] == DUMMY_ISBN &&
+					record.value()["title"] == DUMMY_TITLE
+		})
+	}
+
+	def "should propagate headers to the kafka ProducerRecord"() {
+		given:
+		def contractYaml = """
+label: book_returned
+input:
+  triggeredBy: publishBookReturned()
+outputMessage:
+  sentTo: book.returned
+  body:
+    isbn: "$DUMMY_ISBN"
+    title: "$DUMMY_TITLE"
+metadata:
+  kafka:
+    avro:
+      schema: classpath:avro/Book.avsc
+"""
+		YamlContract contract = yamlMapper.readerFor(YamlContract).readValue(contractYaml)
+		Map<String, Object> payload = [isbn: DUMMY_ISBN, title: DUMMY_TITLE]
+		Map<String, Object> headers = ["X-Correlation-Id": "abc-123", "Content-Type": "avro/binary"]
+		when:
+		sender.send(payload, headers, "book.returned", contract)
+		then:
+		1 * kafkaTemplate.send({
+			it.topic() == "book.returned" &&
+					header(it, "X-Correlation-Id") == "abc-123" &&
+					header(it, "Content-Type") == "avro/binary"
+		})
+	}
+
+	def "should fail when StubRunnerExecutor passes a JSON string payload instead of a map (bug #2404)"() {
+		given:
+		def contractYaml = """
+label: book_returned
+input:
+  triggeredBy: publishBookReturned()
+outputMessage:
+  sentTo: book.returned
+  body:
+    isbn: "$DUMMY_ISBN"
+    title: "$DUMMY_TITLE"
+metadata:
+  kafka:
+    avro:
+      schema: classpath:avro/Book.avsc
+"""
+		YamlContract contract = yamlMapper.readerFor(YamlContract).readValue(contractYaml)
+		String jsonPayload = """{"isbn":"$DUMMY_ISBN","title":"$DUMMY_TITLE"}"""
+		when:
+		sender.send(jsonPayload, [:], "book.returned", contract)
+		then:
+		thrown(IllegalArgumentException)
+	}
+
+	String header(ProducerRecord record, String key) {
+		new String(record.headers().lastHeader(key).value())
 	}
 }

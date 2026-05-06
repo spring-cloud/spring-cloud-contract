@@ -18,13 +18,13 @@ package org.springframework.cloud.contract.verifier.messaging.avro;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.generic.GenericRecordBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.jspecify.annotations.Nullable;
 
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
@@ -37,8 +37,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 /**
  * A {@link MessageVerifierSender} that Avro-serializes the contract payload before
  * sending it to a Kafka topic. The schema is read from {@link AvroMetadata} stored under
- * the {@code "avro"} key in the contract metadata. When no schema is configured the send
- * is a no-op.
+ * the {@code "avro"} key in the contract metadata. Missing or invalid configuration
+ * throws an exception rather than silently skipping the send.
  *
  * <p>
  * The {@link KafkaTemplate} provided at construction time must be configured with
@@ -51,8 +51,6 @@ import org.springframework.kafka.core.KafkaTemplate;
  */
 public class KafkaAvroMessageVerifierSender implements MessageVerifierSender<Object> {
 
-	private static final Log log = LogFactory.getLog(KafkaAvroMessageVerifierSender.class);
-
 	private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	public KafkaAvroMessageVerifierSender(KafkaTemplate<String, Object> kafkaTemplate) {
@@ -61,25 +59,32 @@ public class KafkaAvroMessageVerifierSender implements MessageVerifierSender<Obj
 
 	@Override
 	public void send(Object message, String destination, @Nullable YamlContract contract) {
-		log.warn("send(message, destination, contract) called without headers — skipping Avro serialization");
+		send(message, Map.of(), destination, contract);
 	}
 
 	@Override
 	public <T> void send(T payload, Map<String, Object> headers, String destination,
 			@Nullable YamlContract contract) {
 		if (contract == null || contract.metadata == null) {
-			return;
+			throw new IllegalArgumentException(
+					"Contract or its metadata is null — cannot perform Avro serialization for destination ["
+							+ destination + "]");
 		}
 		AvroMetadata avroMetadata = KafkaMetadata.fromMetadata(contract.metadata).getAvro();
 		if (avroMetadata.getSchema() == null) {
-			log.warn("No Avro schema configured in contract metadata — skipping Avro serialization for destination ["
-					+ destination + "]");
-			return;
+			throw new IllegalArgumentException(
+					"No Avro schema configured in contract metadata — cannot perform Avro serialization for destination ["
+							+ destination + "]");
 		}
 		try {
 			Schema schema = parseSchema(avroMetadata.getSchema());
 			GenericRecord record = buildRecord(schema, payload);
-			this.kafkaTemplate.send(destination, record);
+			ProducerRecord<String, Object> producerRecord = new ProducerRecord<>(destination, record);
+			if (headers != null) {
+				headers.forEach((key, value) -> producerRecord.headers()
+					.add(key, value.toString().getBytes(StandardCharsets.UTF_8)));
+			}
+			this.kafkaTemplate.send(producerRecord);
 		}
 		catch (IOException ex) {
 			throw new IllegalStateException("Failed to load Avro schema [" + avroMetadata.getSchema() + "]", ex);
