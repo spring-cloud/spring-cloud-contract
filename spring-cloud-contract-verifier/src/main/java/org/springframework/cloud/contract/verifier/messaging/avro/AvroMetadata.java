@@ -34,20 +34,31 @@ package org.springframework.cloud.contract.verifier.messaging.avro;
  * @author Emanuel Trandafir
  * @since 4.2.0
  */
-public class AvroMetadata {
+public final class AvroMetadata {
 
-	/**
-	 * Classpath or filesystem path to the Avro schema file ({@code .avsc}), e.g.
-	 * {@code classpath:avro/Book.avsc}. May also be an inline JSON schema string.
-	 */
-	private String schema;
+    /**
+     * Classpath or filesystem path to the Avro schema file
+     * ({@code .avsc}), e.g. {@code classpath:avro/Book.avsc}.
+     * May also be an inline JSON schema string.
+     */
+    private String schema;
 
-	public String getSchema() {
-		return this.schema;
-	}
+    /**
+     * Returns the Avro schema path or inline schema JSON.
+     *
+     * @return the schema
+     */
+    public String getSchema() {
+        return this.schema;
+    }
 
-	public void setSchema(String schema) {
-		this.schema = schema;
-	}
+    /**
+     * Sets the Avro schema path or inline schema JSON.
+     *
+     * @param value the schema
+     */
+    public void setSchema(final String value) {
+        this.schema = value;
+    }
 
 }

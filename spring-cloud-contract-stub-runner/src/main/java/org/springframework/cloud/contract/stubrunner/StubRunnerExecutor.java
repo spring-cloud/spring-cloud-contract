@@ -269,15 +269,17 @@ class StubRunnerExecutor implements StubFinder {
 				.toJson(BodyExtractor.extractClientValueFromBody(body == null ? null : body.getClientValue()));
 		}
 
-		this.messageVerifierSender.send(payload, headers == null ? null : headers.asStubSideMap(),
+		this.messageVerifierSender.send(payload,
+				headers == null ? null : headers.asStubSideMap(),
 				outputMessage.getSentTo().getClientValue(), contract);
 	}
 
-	private boolean isFromFileProperty(DslProperty<?> body) {
-		return body != null && body.getClientValue() instanceof FromFileProperty;
+	private boolean isFromFileProperty(final DslProperty<?> body) {
+		return body != null
+				&& body.getClientValue() instanceof FromFileProperty;
 	}
 
-	private boolean isAvroContract(YamlContract contract) {
+	private boolean isAvroContract(final YamlContract contract) {
 		if (contract == null || contract.metadata == null) {
 			return false;
 		}

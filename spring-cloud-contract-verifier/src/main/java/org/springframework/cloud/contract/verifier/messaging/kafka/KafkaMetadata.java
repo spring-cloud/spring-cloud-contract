@@ -28,106 +28,164 @@ import org.springframework.cloud.contract.verifier.util.SpringCloudContractMetad
  * @author Marcin Grzejszczak
  * @since 3.0.0
  */
-public class KafkaMetadata implements SpringCloudContractMetadata {
+public final class KafkaMetadata implements SpringCloudContractMetadata {
 
-	/**
-	 * Key under which this metadata entry can be found in contract's metadata.
-	 */
-	public static final String METADATA_KEY = "kafka";
+    /**
+     * Key under which this metadata entry can be found in contract's metadata.
+     */
+    public static final String METADATA_KEY = "kafka";
 
-	/**
-	 * Metadata for the input message.
-	 */
-	private MessageKafkaMetadata input = new MessageKafkaMetadata();
+    /**
+     * Metadata for the input message.
+     */
+    private MessageKafkaMetadata input = new MessageKafkaMetadata();
 
-	/**
-	 * Metadata for the output message.
-	 */
-	private MessageKafkaMetadata outputMessage = new MessageKafkaMetadata();
+    /**
+     * Metadata for the output message.
+     */
+    private MessageKafkaMetadata outputMessage = new MessageKafkaMetadata();
 
-	/**
-	 * Avro serialization metadata. Configures the schema used to serialize/deserialize
-	 * messages on this Kafka topic.
-	 */
-	private AvroMetadata avro = new AvroMetadata();
+    /**
+     * Avro serialization metadata. Configures the schema used to
+     * serialize/deserialize messages on this Kafka topic.
+     */
+    private AvroMetadata avro = new AvroMetadata();
 
-	public MessageKafkaMetadata getInput() {
-		return this.input;
-	}
+    /**
+     * Returns the input message metadata.
+     *
+     * @return the input metadata
+     */
+    public MessageKafkaMetadata getInput() {
+        return this.input;
+    }
 
-	public void setInput(MessageKafkaMetadata input) {
-		this.input = input;
-	}
+    /**
+     * Sets the input message metadata.
+     *
+     * @param value the input metadata
+     */
+    public void setInput(final MessageKafkaMetadata value) {
+        this.input = value;
+    }
 
-	public MessageKafkaMetadata getOutputMessage() {
-		return this.outputMessage;
-	}
+    /**
+     * Returns the output message metadata.
+     *
+     * @return the output message metadata
+     */
+    public MessageKafkaMetadata getOutputMessage() {
+        return this.outputMessage;
+    }
 
-	public void setOutputMessage(MessageKafkaMetadata outputMessage) {
-		this.outputMessage = outputMessage;
-	}
+    /**
+     * Sets the output message metadata.
+     *
+     * @param value the output message metadata
+     */
+    public void setOutputMessage(final MessageKafkaMetadata value) {
+        this.outputMessage = value;
+    }
 
-	public AvroMetadata getAvro() {
-		return this.avro;
-	}
+    /**
+     * Returns the Avro serialization metadata.
+     *
+     * @return the Avro metadata
+     */
+    public AvroMetadata getAvro() {
+        return this.avro;
+    }
 
-	public void setAvro(AvroMetadata avro) {
-		this.avro = avro;
-	}
+    /**
+     * Sets the Avro serialization metadata.
+     *
+     * @param value the Avro metadata
+     */
+    public void setAvro(final AvroMetadata value) {
+        this.avro = value;
+    }
 
-	public static KafkaMetadata fromMetadata(Map<String, Object> metadata) {
-		return MetadataUtil.fromMetadata(metadata, KafkaMetadata.METADATA_KEY, new KafkaMetadata());
-	}
+    /**
+     * Creates a {@link KafkaMetadata} instance from the given metadata map.
+     *
+     * @param metadata the contract metadata map
+     * @return the parsed KafkaMetadata
+     */
+    public static KafkaMetadata fromMetadata(
+            final Map<String, Object> metadata) {
+        return MetadataUtil.fromMetadata(metadata,
+                KafkaMetadata.METADATA_KEY, new KafkaMetadata());
+    }
 
-	@Override
-	public String key() {
-		return METADATA_KEY;
-	}
+    @Override
+    public String key() {
+        return METADATA_KEY;
+    }
 
-	@Override
-	public String description() {
-		return "Metadata for Kafka based communication";
-	}
+    @Override
+    public String description() {
+        return "Metadata for Kafka based communication";
+    }
 
-	/**
-	 * Kafka message metadata.
-	 */
-	public static class MessageKafkaMetadata {
+    /**
+     * Kafka message metadata.
+     */
+    public static final class MessageKafkaMetadata {
 
-		/**
-		 * Properties related to connecting to a real broker.
-		 */
-		private ConnectToBroker connectToBroker = new ConnectToBroker();
+        /**
+         * Properties related to connecting to a real broker.
+         */
+        private ConnectToBroker connectToBroker = new ConnectToBroker();
 
-		public ConnectToBroker getConnectToBroker() {
-			return this.connectToBroker;
-		}
+        /**
+         * Returns the broker connection properties.
+         *
+         * @return the connect-to-broker config
+         */
+        public ConnectToBroker getConnectToBroker() {
+            return this.connectToBroker;
+        }
 
-		public void setConnectToBroker(ConnectToBroker connectToBroker) {
-			this.connectToBroker = connectToBroker;
-		}
+        /**
+         * Sets the broker connection properties.
+         *
+         * @param value the connect-to-broker config
+         */
+        public void setConnectToBroker(final ConnectToBroker value) {
+            this.connectToBroker = value;
+        }
 
-	}
+    }
 
-	/**
-	 * Options related to connecting to the real broker.
-	 */
-	public static class ConnectToBroker {
+    /**
+     * Options related to connecting to the real broker.
+     */
+    public static final class ConnectToBroker {
 
-		/**
-		 * If set, will append any options to the existing ones that define connection to
-		 * the broker.
-		 */
-		private String additionalOptions;
+        /**
+         * If set, will append any options to the existing ones that
+         * define connection to the broker.
+         */
+        private String additionalOptions;
 
-		public String getAdditionalOptions() {
-			return this.additionalOptions;
-		}
+        /**
+         * Returns the additional broker connection options.
+         *
+         * @return the additional options
+         */
+        public String getAdditionalOptions() {
+            return this.additionalOptions;
+        }
 
-		public void setAdditionalOptions(String additionalOptions) {
-			this.additionalOptions = additionalOptions;
-		}
+        /**
+         * Sets the additional broker connection options.
+         *
+         * @param value the additional options
+         */
+        public void setAdditionalOptions(final String value) {
+            this.additionalOptions = value;
+        }
 
-	}
+    }
 
 }
