@@ -77,7 +77,7 @@ metadata:
 	private File saveTmpContract(String contractYaml) {
 		File contractDir = File.createTempDir()
 		new File(contractDir, "book_returned.yml").text = contractYaml
-		contractDir
+		return contractDir
 	}
 
 	private String header(it, String key) {

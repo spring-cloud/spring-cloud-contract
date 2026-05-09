@@ -43,7 +43,7 @@ import org.springframework.kafka.core.KafkaTemplate;
  * <p>
  * The {@link KafkaTemplate} provided at construction time must be configured with
  * {@code KafkaAvroSerializer} as its value serializer, pointing to the Schema Registry
- * URL declared via {@code spring.cloud.contract.avro.schema-registry-url}. When using
+ * URL declared via {@code spring.kafka.properties.schema.registry.url}. When using
  * Spring Boot auto-configuration this is handled automatically.
  *
  * @author Emanuel Trandafir

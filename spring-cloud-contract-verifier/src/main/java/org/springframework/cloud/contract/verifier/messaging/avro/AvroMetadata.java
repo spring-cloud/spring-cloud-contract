@@ -29,7 +29,7 @@ package org.springframework.cloud.contract.verifier.messaging.avro;
  *
  * <p>
  * The Schema Registry URL is configured globally via
- * {@code spring.cloud.contract.avro.schema-registry-url}.
+ * {@code spring.kafka.properties.schema.registry.url}.
  *
  * @author Emanuel Trandafir
  * @since 4.2.0

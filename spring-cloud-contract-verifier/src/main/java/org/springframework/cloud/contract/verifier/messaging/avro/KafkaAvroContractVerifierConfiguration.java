@@ -61,7 +61,7 @@ public class KafkaAvroContractVerifierConfiguration {
 	@Bean
 	@ConditionalOnMissingBean(name = "avroKafkaTemplate")
 	KafkaTemplate<String, Object> avroKafkaTemplate(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers,
-			@Value("${spring.cloud.contract.avro.schema-registry-url}") String schemaRegistryUrl) {
+			@Value("${spring.kafka.properties.schema.registry.url:}") String schemaRegistryUrl) {
 		Map<String, Object> props = new HashMap<>();
 		props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 		props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -77,6 +77,18 @@ public class KafkaAvroContractVerifierConfiguration {
 		return new KafkaAvroMessageVerifierSender(avroKafkaTemplate);
 	}
 
+	/**
+	 * Jackson mixin applied to {@link org.apache.avro.specific.SpecificRecordBase} to
+	 * suppress Avro-internal fields ({@code schema}, {@code specificData},
+	 * {@code classSchema}, {@code conversion}) during contract body verification.
+	 *
+	 * <p>
+	 * {@link ContractVerifierObjectMapper} serializes received Avro records to JSON so
+	 * SCC can compare them against the contract's expected body. {@code SpecificRecordBase}
+	 * exposes those fields as getters, but they are Avro runtime metadata — not part of
+	 * the message payload. Without this mixin, Jackson either fails on non-serializable
+	 * types or includes Avro internals in the output, causing false contract mismatches.
+	 */
 	@JsonIgnoreProperties({ "schema", "specificData", "classSchema", "conversion" })
 	interface IgnoreAvroMixin {
 
