@@ -47,7 +47,7 @@ public final class ZipCategory {
 	}
 
 	/**
-	 * Unzips this file. If the <tt>destination</tt> directory is not provided, it will
+	 * Unzips this file. If the {@code destination} directory is not provided, it will
 	 * fall back to this file's parent directory.
 	 * @param self file
 	 * @param destination (optional), the destination directory where this file's content
