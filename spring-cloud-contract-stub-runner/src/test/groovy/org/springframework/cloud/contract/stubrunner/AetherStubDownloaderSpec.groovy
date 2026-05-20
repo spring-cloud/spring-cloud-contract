@@ -20,12 +20,14 @@ import org.eclipse.aether.RepositorySystemSession
 import org.eclipse.aether.repository.Authentication
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import spock.lang.Ignore
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
 
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.util.ResourceUtils
 
+@Ignore("see https://github.com/spring-cloud/spring-cloud-contract/issues/2478")
 class AetherStubDownloaderSpec extends Specification {
 
 	@Rule
