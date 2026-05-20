@@ -22,6 +22,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.condition.DisabledIf
 
 import org.springframework.cloud.contract.spec.ContractDsl.Companion.contract
 import org.springframework.cloud.contract.spec.internal.Cookie
@@ -38,6 +39,11 @@ import org.springframework.cloud.contract.spec.internal.RegexProperty
  * @author Tim Ysewyn
  */
 class ContractTests {
+
+	companion object {
+		@JvmStatic
+		fun isKotlin23OrGreater() = KotlinVersion.CURRENT.isAtLeast(2, 3)
+	}
 
 	@Test
 	fun `should work for http`() {
@@ -697,6 +703,7 @@ then:
 
 	@Test
 	@Suppress("UNCHECKED_CAST")
+	@DisabledIf(value = "org.springframework.cloud.contract.spec.ContractTests#isKotlin23OrGreater")
 	fun `should support multipart`() {
 		val contract = KotlinContractConverter()
 				.convertFrom(File(javaClass.classLoader.getResource("contracts/multipart.kts")!!.toURI()))
@@ -742,6 +749,7 @@ then:
 	}
 
 	@Test
+	@DisabledIf(value = "org.springframework.cloud.contract.spec.ContractTests#isKotlin23OrGreater")
 	fun `should use filename as fallback for single unnamed contract`() {
 		val contract = KotlinContractConverter()
 				.convertFrom(File(javaClass.classLoader.getResource("contracts/unnamed_single.kts")!!.toURI()))
@@ -754,6 +762,7 @@ then:
 	}
 
 	@Test
+	@DisabledIf(value = "org.springframework.cloud.contract.spec.ContractTests#isKotlin23OrGreater")
 	fun `should use filename with index as fallback for multiple unnamed contracts`() {
 		val contracts = KotlinContractConverter()
 				.convertFrom(File(javaClass.classLoader.getResource("contracts/unnamed_multiple.kts")!!.toURI()))
