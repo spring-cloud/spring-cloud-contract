@@ -18,6 +18,9 @@ package org.springframework.cloud.contract.verifier.builder;
 
 interface RestAssuredBodyParser extends BodyParser {
 
+	/**
+	 * Shared Rest Assured body parser instance.
+	 */
 	BodyParser INSTANCE = new RestAssuredBodyParser() {
 	};
 

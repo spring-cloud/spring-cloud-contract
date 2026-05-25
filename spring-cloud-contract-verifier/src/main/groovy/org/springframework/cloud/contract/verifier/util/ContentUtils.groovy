@@ -347,6 +347,13 @@ class ContentUtils {
 		}, parsingClosure)
 	}
 
+	protected static Object convertDslPropsToTemporaryRegexPatterns(Object parsedJson,
+			Function parsingFunction) {
+		MapConverter.transformValues(parsedJson, { Object value ->
+			return transformJSONStringValue(value, GET_TEST_SIDE)
+		}, parsingFunction)
+	}
+
 	private static Object convertAllTemporaryRegexPlaceholdersBackToPatterns(parsedJson) {
 		MapConverter.transformValues(parsedJson, { Object value ->
 			if (value instanceof String) {
