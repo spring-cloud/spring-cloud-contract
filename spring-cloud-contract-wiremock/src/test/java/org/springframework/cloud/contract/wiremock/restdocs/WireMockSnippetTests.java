@@ -49,6 +49,13 @@ import org.springframework.restdocs.operation.OperationRequestPart;
 import org.springframework.restdocs.operation.OperationResponse;
 import org.springframework.restdocs.operation.RequestCookie;
 import org.springframework.restdocs.operation.ResponseCookie;
+import org.springframework.restdocs.snippet.RestDocumentationContextPlaceholderResolverFactory;
+import org.springframework.restdocs.snippet.StandardWriterResolver;
+import org.springframework.restdocs.snippet.WriterResolver;
+import org.springframework.restdocs.templates.StandardTemplateResourceResolver;
+import org.springframework.restdocs.templates.TemplateEngine;
+import org.springframework.restdocs.templates.TemplateFormats;
+import org.springframework.restdocs.templates.mustache.MustacheTemplateEngine;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,12 +65,15 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class WireMockSnippetTests {
 
+	/**
+	 * Temporary output folder for generated snippets.
+	 */
 	@Rule
 	public TemporaryFolder tmp = new TemporaryFolder();
 
-	Operation operation;
+	private Operation operation;
 
-	RestDocumentationContext context;
+	private RestDocumentationContext context;
 
 	private File outputFolder;
 
@@ -170,6 +180,38 @@ public class WireMockSnippetTests {
 		assertThat(stubMapping.getRequest().getUrlPath()).isEqualTo("/bar");
 		assertThat(stubMapping.getRequest().getQueryParameters())
 			.containsOnly(Assertions.entry("myParam", MultiValuePattern.of(equalTo(("myValue")))));
+	}
+
+	@Test
+	public void should_accept_request_cookies() throws IOException {
+		this.operation = operation(requestGetWithCookie(), response(), this.context);
+		WireMockSnippet snippet = new WireMockSnippet();
+
+		snippet.document(this.operation);
+
+		File stub = new File(this.outputFolder, "stubs/foo.json");
+		assertThat(stub).exists();
+		StubMapping stubMapping = WireMockStubMapping.buildFrom(new String(Files.readAllBytes(stub.toPath())));
+		assertThat(stubMapping.getRequest().getCookies()).containsOnly(Assertions.entry("test_user", equalTo("free")));
+	}
+
+	@Test
+	public void should_include_request_cookies_in_contract() throws IOException {
+		this.operation = operation(requestGetWithCookie(), response(), this.context);
+		this.operation.getAttributes()
+			.put(TemplateEngine.class.getName(),
+					new MustacheTemplateEngine(new StandardTemplateResourceResolver(TemplateFormats.asciidoctor())));
+		this.operation.getAttributes()
+			.put(WriterResolver.class.getName(), new StandardWriterResolver(
+					new RestDocumentationContextPlaceholderResolverFactory(), "UTF-8", TemplateFormats.asciidoctor()));
+		ContractDslSnippet snippet = new ContractDslSnippet();
+
+		snippet.document(this.operation);
+
+		File contract = new File(this.outputFolder, "contracts/foo.groovy");
+		assertThat(contract).exists();
+		String contractText = new String(Files.readAllBytes(contract.toPath()));
+		assertThat(contractText).contains("cookies {").contains("cookie('''test_user''', '''free''')");
 	}
 
 	private Operation operation(OperationRequest request, OperationResponse response,
@@ -482,6 +524,45 @@ public class WireMockSnippetTests {
 			@Override
 			public Collection<RequestCookie> getCookies() {
 				return Collections.emptySet();
+			}
+		};
+	}
+
+	private OperationRequest requestGetWithCookie() {
+		return new OperationRequest() {
+			@Override
+			public byte[] getContent() {
+				return new byte[0];
+			}
+
+			@Override
+			public String getContentAsString() {
+				return "";
+			}
+
+			@Override
+			public HttpHeaders getHeaders() {
+				return new HttpHeaders();
+			}
+
+			@Override
+			public HttpMethod getMethod() {
+				return HttpMethod.GET;
+			}
+
+			@Override
+			public Collection<OperationRequestPart> getParts() {
+				return null;
+			}
+
+			@Override
+			public URI getUri() {
+				return URI.create("https://foo/bar");
+			}
+
+			@Override
+			public Collection<RequestCookie> getCookies() {
+				return Collections.singleton(new RequestCookie("test_user", "free"));
 			}
 		};
 	}

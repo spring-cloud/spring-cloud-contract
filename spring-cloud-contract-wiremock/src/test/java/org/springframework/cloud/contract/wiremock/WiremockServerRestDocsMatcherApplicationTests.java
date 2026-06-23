@@ -17,8 +17,12 @@
 package org.springframework.cloud.contract.wiremock;
 
 import java.io.File;
+import java.nio.file.Files;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+import jakarta.servlet.http.Cookie;
+import org.assertj.core.api.Assertions;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -29,6 +33,7 @@ import org.springframework.boot.restdocs.test.autoconfigure.AutoConfigureRestDoc
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.cloud.contract.wiremock.WiremockServerRestDocsMatcherApplicationTests.TestConfiguration;
+import org.springframework.cloud.contract.wiremock.restdocs.SpringCloudContractRestDocs;
 import org.springframework.cloud.contract.wiremock.restdocs.WireMockRestDocs;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -52,6 +57,9 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 @AutoConfigureMockMvc
 public class WiremockServerRestDocsMatcherApplicationTests {
 
+	/**
+	 * Expected exception rule for WireMock mismatch assertions.
+	 */
 	@Rule
 	public ExpectedException expected = ExpectedException.none();
 
@@ -69,6 +77,25 @@ public class WiremockServerRestDocsMatcherApplicationTests {
 					.withRequestBody(WireMock.matching("greeting.*"))))
 			.andDo(document("posted"));
 		assertThat(new File("target/snippets/stubs/posted.json")).exists();
+	}
+
+	@Test
+	public void stubsRenderRequestCookies() throws Exception {
+		File stub = new File("target/snippets/stubs/cookie.json");
+		File contract = new File("target/snippets/contracts/cookie.groovy");
+		FileSystemUtils.deleteRecursively(stub);
+		FileSystemUtils.deleteRecursively(contract);
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/cookie").cookie(new Cookie("test_user", "free")))
+			.andExpect(MockMvcResultMatchers.content().string("Hello Cookie"))
+			.andDo(WireMockRestDocs.verify())
+			.andDo(document("cookie", SpringCloudContractRestDocs.dslContract()));
+
+		assertThat(stub).exists();
+		StubMapping stubMapping = WireMockStubMapping.buildFrom(Files.readString(stub.toPath()));
+		assertThat(stubMapping.getRequest().getCookies())
+			.containsOnly(Assertions.entry("test_user", WireMock.equalTo("free")));
+		assertThat(contract).exists();
+		assertThat(Files.readString(contract.toPath())).contains("cookie('''test_user''', '''free''')");
 	}
 
 	@Test
@@ -92,6 +119,12 @@ public class WiremockServerRestDocsMatcherApplicationTests {
 		@RequestMapping(value = "/resource", method = RequestMethod.POST)
 		public String resource(@RequestBody String body) {
 			return "Hello World";
+		}
+
+		@ResponseBody
+		@RequestMapping(value = "/cookie", method = RequestMethod.GET)
+		public String cookie() {
+			return "Hello Cookie";
 		}
 
 	}

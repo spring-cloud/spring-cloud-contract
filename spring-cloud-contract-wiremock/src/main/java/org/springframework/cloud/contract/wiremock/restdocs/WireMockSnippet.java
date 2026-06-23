@@ -38,6 +38,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContext;
 import org.springframework.restdocs.operation.Operation;
+import org.springframework.restdocs.operation.RequestCookie;
 import org.springframework.restdocs.snippet.RestDocumentationContextPlaceholderResolverFactory;
 import org.springframework.restdocs.snippet.Snippet;
 import org.springframework.restdocs.snippet.StandardWriterResolver;
@@ -150,7 +151,7 @@ public class WireMockSnippet implements Snippet {
 	}
 
 	private MappingBuilder request(Operation operation) {
-		return queryParams(requestHeaders(requestBuilder(operation), operation), operation);
+		return queryParams(requestCookies(requestHeaders(requestBuilder(operation), operation), operation), operation);
 	}
 
 	private MappingBuilder queryParams(MappingBuilder request, Operation operation) {
@@ -162,6 +163,13 @@ public class WireMockSnippet implements Snippet {
 			String[] splitQueryPair = queryPair.split("=");
 			String value = splitQueryPair.length > 1 ? splitQueryPair[1] : "";
 			request = request.withQueryParam(splitQueryPair[0], WireMock.equalTo(value));
+		}
+		return request;
+	}
+
+	private MappingBuilder requestCookies(MappingBuilder request, Operation operation) {
+		for (RequestCookie cookie : operation.getRequest().getCookies()) {
+			request = request.withCookie(cookie.getName(), equalTo(cookie.getValue()));
 		}
 		return request;
 	}

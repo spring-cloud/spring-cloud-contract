@@ -134,6 +134,8 @@ public class ContractDslSnippet extends TemplatedSnippet {
 		filterHeaders(headers);
 		model.put("request_headers_present", !headers.isEmpty());
 		model.put("request_headers", headers.entrySet());
+		model.put("request_cookies_present", !request.getCookies().isEmpty());
+		model.put("request_cookies", request.getCookies());
 		@SuppressWarnings("unchecked")
 		Set<String> jsonPaths = (Set<String>) operation.getAttributes().get("contract.jsonPaths");
 		model.put("request_json_paths_present", jsonPaths != null && !jsonPaths.isEmpty());
