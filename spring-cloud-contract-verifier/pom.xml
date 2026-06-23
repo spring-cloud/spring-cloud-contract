@@ -5,6 +5,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
 		<javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
+		<avro.version>1.12.1</avro.version>
+		<kafka-avro-serializer.version>7.9.0</kafka-avro-serializer.version>
 	</properties>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
@@ -51,6 +53,18 @@
 		<dependency>
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.avro</groupId>
+			<artifactId>avro</artifactId>
+			<version>${avro.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>io.confluent</groupId>
+			<artifactId>kafka-avro-serializer</artifactId>
+			<version>${kafka-avro-serializer.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -276,6 +290,11 @@
 		<dependency>
 			<groupId>org.spockframework</groupId>
 			<artifactId>spock-junit4</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.spockframework</groupId>
+			<artifactId>spock-spring</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
