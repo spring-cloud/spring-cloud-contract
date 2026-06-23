@@ -18,6 +18,9 @@ package org.springframework.cloud.contract.verifier.builder;
 
 interface CustomModeBodyParser extends BodyParser {
 
+	/**
+	 * Shared custom-mode body parser instance.
+	 */
 	BodyParser INSTANCE = new CustomModeBodyParser() {
 	};
 

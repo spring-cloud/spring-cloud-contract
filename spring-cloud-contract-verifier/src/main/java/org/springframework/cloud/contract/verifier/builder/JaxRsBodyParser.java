@@ -18,6 +18,9 @@ package org.springframework.cloud.contract.verifier.builder;
 
 interface JaxRsBodyParser extends BodyParser {
 
+	/**
+	 * Shared JAX-RS body parser instance.
+	 */
 	JaxRsBodyParser INSTANCE = new JaxRsBodyParser() {
 	};
 
