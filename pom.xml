@@ -627,6 +627,14 @@
 			</snapshots>
 		</repository>
 		<repository>
+			<id>confluent</id>
+			<name>Confluent</name>
+			<url>https://packages.confluent.io/maven/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
 			<id>netflix-candidates</id>
 			<name>Netflix Candidates</name>
 			<url>

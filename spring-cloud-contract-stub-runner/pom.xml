@@ -175,6 +175,12 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.avro</groupId>
+			<artifactId>avro</artifactId>
+			<version>1.12.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib</artifactId>
 			<scope>test</scope>

@@ -1,0 +1,22 @@
+label: book_returned
+input:
+  triggeredBy: publishBookReturned()
+outputMessage:
+  sentTo: book.returned
+  headers:
+    X-Correlation-Id: abc-123-def
+  body:
+    isbn: "978-1234567890"
+    title: "Contract Testing for Dummies"
+metadata:
+  kafka:
+    avro:
+      schema: >
+        {
+          "type": "record",
+          "name": "Book",
+          "fields": [
+            {"name": "isbn", "type": "string"},
+            {"name": "title", "type": "string"}
+          ]
+        }
