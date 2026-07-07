@@ -20,6 +20,13 @@ Contract.make {
             {{/request_headers}}
         }
         {{/request_headers_present}}
+        {{#request_cookies_present}}
+        cookies {
+            {{#request_cookies}}
+            cookie('''{{name}}''', '''{{value}}''')
+            {{/request_cookies}}
+        }
+        {{/request_cookies_present}}
         {{#request_json_paths_present}}
         bodyMatchers {
             {{#request_json_paths}}
