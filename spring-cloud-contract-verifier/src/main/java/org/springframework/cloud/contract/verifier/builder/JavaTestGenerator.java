@@ -22,7 +22,7 @@ import org.springframework.cloud.contract.verifier.config.ContractVerifierConfig
 import org.springframework.cloud.contract.verifier.file.ContractMetadata;
 
 /**
- * Builds a single test for the given {@link ContractVerifierConfigProperties properties}
+ * Builds a single test for the given {@link ContractVerifierConfigProperties properties}.
  *
  * @since 1.1.0
  */

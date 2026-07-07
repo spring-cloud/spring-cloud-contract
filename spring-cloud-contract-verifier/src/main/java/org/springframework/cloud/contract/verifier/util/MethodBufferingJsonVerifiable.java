@@ -73,6 +73,9 @@ public interface MethodBufferingJsonVerifiable extends JsonVerifiable, MethodBuf
 	@Override
 	MethodBufferingJsonVerifiable value();
 
+	@Override
+	MethodBufferingJsonVerifiable elementWithIndex(int index);
+
 	String keyBeforeChecking();
 
 	Object valueBeforeChecking();

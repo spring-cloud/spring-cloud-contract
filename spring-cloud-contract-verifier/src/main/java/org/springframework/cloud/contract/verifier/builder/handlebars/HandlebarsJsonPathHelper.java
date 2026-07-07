@@ -36,8 +36,14 @@ import org.springframework.cloud.contract.verifier.builder.TestSideRequestTempla
  */
 public class HandlebarsJsonPathHelper implements Helper<Object> {
 
+	/**
+	 * Helper name.
+	 */
 	public static final String NAME = "jsonpath";
 
+	/**
+	 * Request model key used in the template context.
+	 */
 	public static final String REQUEST_MODEL_NAME = "request";
 
 	@Override

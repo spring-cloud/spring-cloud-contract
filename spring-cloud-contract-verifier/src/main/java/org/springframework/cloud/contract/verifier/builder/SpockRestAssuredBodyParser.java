@@ -20,6 +20,9 @@ import org.springframework.cloud.contract.verifier.template.HandlebarsTemplatePr
 
 interface SpockRestAssuredBodyParser extends RestAssuredBodyParser, GroovyBodyParser {
 
+	/**
+	 * Shared Spock Rest Assured body parser instance.
+	 */
 	BodyParser INSTANCE = (SpockRestAssuredBodyParser) HandlebarsTemplateProcessor::new;
 
 	@Override

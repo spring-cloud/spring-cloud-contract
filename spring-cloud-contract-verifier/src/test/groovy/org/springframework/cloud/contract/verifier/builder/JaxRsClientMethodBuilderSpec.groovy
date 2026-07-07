@@ -245,8 +245,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			String test = singleTestGenerator(contractDsl)
 		then:
 			test.contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
-			test.contains("""assertThatJson(parsedJson).array("['property2']").contains("['a']").isEqualTo("sth")""")
-			test.contains("""assertThatJson(parsedJson).array("['property2']").contains("['b']").isEqualTo("sthElse")""")
+			test.contains("""assertThatJson(parsedJson).array("['property2']").elementWithIndex(0).field("['a']").isEqualTo("sth")""")
+			test.contains("""assertThatJson(parsedJson).array("['property2']").elementWithIndex(1).field("['b']").isEqualTo("sthElse")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, contractDsl), contractDsl).toWireMockClientStub())
 		and:
@@ -287,9 +287,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 			String test = singleTestGenerator(contractDsl)
 		then:
 			test.contains("""assertThatJson(parsedJson).field("['property1']").isEqualTo("a")""")
-			test.contains("""assertThatJson(parsedJson).array("['property2']").contains("['a']").isEqualTo("sth")""")
-			test.contains("""assertThatJson(parsedJson).array("['property2']").hasSize(2)""")
-			test.contains("""assertThatJson(parsedJson).array("['property2']").contains("['b']").isEqualTo("sthElse")""")
+			test.contains("""assertThatJson(parsedJson).array("['property2']").elementWithIndex(0).field("['a']").isEqualTo("sth")""")
+			test.contains("""assertThatJson(parsedJson).array("['property2']").elementWithIndex(1).field("['b']").isEqualTo("sthElse")""")
 		and:
 			stubMappingIsValidWireMockStub(new WireMockStubStrategy("Test", new ContractMetadata(null, false, 0, null, contractDsl), contractDsl).toWireMockClientStub())
 		and:
@@ -394,8 +393,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			test.contains("""assertThatJson(parsedJson).array().contains("['property1']").isEqualTo("a")""")
-			test.contains("""assertThatJson(parsedJson).array().contains("['property2']").isEqualTo("b")""")
+			test.contains("""assertThatJson(parsedJson).array().elementWithIndex(0).field("['property1']").isEqualTo("a")""")
+			test.contains("""assertThatJson(parsedJson).array().elementWithIndex(1).field("['property2']").isEqualTo("b")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		and:
@@ -431,8 +430,8 @@ class JaxRsClientMethodBuilderSpec extends Specification implements WireMockStub
 		when:
 			String test = singleTestGenerator(contractDsl)
 		then:
-			test.contains("""assertThatJson(parsedJson).array("['property1']").contains("['property2']").isEqualTo("test1")""")
-			test.contains("""assertThatJson(parsedJson).array("['property1']").contains("['property3']").isEqualTo("test2")""")
+			test.contains("""assertThatJson(parsedJson).array("['property1']").elementWithIndex(0).field("['property2']").isEqualTo("test1")""")
+			test.contains("""assertThatJson(parsedJson).array("['property1']").elementWithIndex(1).field("['property3']").isEqualTo("test2")""")
 		and:
 			stubMappingIsValidWireMockStub(contractDsl)
 		and:

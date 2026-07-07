@@ -29,9 +29,9 @@ interface BodyMethodVisitor {
 
 	/**
 	 * Adds a starting body method block. E.g. //given: together with all indents
-	 * @param blockBuilder
-	 * @param label
-	 * @return
+	 * @param blockBuilder block builder to modify
+	 * @param label block label to append
+	 * @return updated block builder
 	 */
 	default BlockBuilder startBodyBlock(BlockBuilder blockBuilder, String label) {
 		return blockBuilder.addIndentation().appendWithLabelPrefix(label).addEmptyLine().startBlock();
@@ -39,9 +39,9 @@ interface BodyMethodVisitor {
 
 	/**
 	 * Picks matching elements, visits them and applies indents.
-	 * @param blockBuilder
-	 * @param methodVisitors
-	 * @param singleContractMetadata
+	 * @param blockBuilder block builder to modify
+	 * @param methodVisitors visitors to apply
+	 * @param singleContractMetadata contract metadata
 	 */
 	default void indentedBodyBlock(BlockBuilder blockBuilder, List<? extends MethodVisitor> methodVisitors,
 			SingleContractMetadata singleContractMetadata) {
@@ -58,9 +58,9 @@ interface BodyMethodVisitor {
 
 	/**
 	 * Picks matching visitors.
-	 * @param methodVisitors
-	 * @param singleContractMetadata
-	 * @return
+	 * @param methodVisitors visitors to filter
+	 * @param singleContractMetadata contract metadata
+	 * @return filtered visitors
 	 */
 	default List<MethodVisitor> filterVisitors(List<? extends MethodVisitor> methodVisitors,
 			SingleContractMetadata singleContractMetadata) {
@@ -72,9 +72,9 @@ interface BodyMethodVisitor {
 	/**
 	 * Picks matching elements, visits them. Doesn't apply indents. Useful for the //
 	 * then: block where there is no method chaining.
-	 * @param blockBuilder
-	 * @param methodVisitors
-	 * @param singleContractMetadata
+	 * @param blockBuilder block builder to modify
+	 * @param methodVisitors visitors to apply
+	 * @param singleContractMetadata contract metadata
 	 */
 	default void bodyBlock(BlockBuilder blockBuilder, List<? extends MethodVisitor> methodVisitors,
 			SingleContractMetadata singleContractMetadata) {
@@ -89,9 +89,9 @@ interface BodyMethodVisitor {
 
 	/**
 	 * Executes logic for all the matching visitors.
-	 * @param blockBuilder
-	 * @param singleContractMetadata
-	 * @param visitors
+	 * @param blockBuilder block builder to modify
+	 * @param singleContractMetadata contract metadata
+	 * @param visitors visitors to apply
 	 */
 	default void applyVisitors(BlockBuilder blockBuilder, SingleContractMetadata singleContractMetadata,
 			List<MethodVisitor> visitors) {
@@ -108,9 +108,9 @@ interface BodyMethodVisitor {
 
 	/**
 	 * Executes logic for all the matching visitors.
-	 * @param blockBuilder
-	 * @param singleContractMetadata
-	 * @param visitors
+	 * @param blockBuilder block builder to modify
+	 * @param singleContractMetadata contract metadata
+	 * @param visitors visitors to apply
 	 */
 	default void applyVisitorsWithEnding(BlockBuilder blockBuilder, SingleContractMetadata singleContractMetadata,
 			List<MethodVisitor> visitors) {

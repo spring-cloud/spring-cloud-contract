@@ -34,8 +34,14 @@ import org.springframework.cloud.contract.verifier.builder.TestSideRequestTempla
  */
 public class HandlebarsEscapeHelper implements Helper<Map<String, Object>> {
 
+	/**
+	 * Helper name.
+	 */
 	public static final String NAME = "escapejsonbody";
 
+	/**
+	 * Request model key used in the template context.
+	 */
 	public static final String REQUEST_MODEL_NAME = "request";
 
 	@Override

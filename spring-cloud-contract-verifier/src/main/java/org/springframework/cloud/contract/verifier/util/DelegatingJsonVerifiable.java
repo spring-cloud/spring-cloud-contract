@@ -152,10 +152,14 @@ class DelegatingJsonVerifiable implements MethodBufferingJsonVerifiable {
 	}
 
 	@Override
-	public JsonVerifiable elementWithIndex(int i) {
-		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(this.delegate.elementWithIndex(i),
+	public MethodBufferingJsonVerifiable elementWithIndex(int i) {
+		JsonVerifiable delegateToUse = this.delegate;
+		if (delegateToUse.jsonPath().endsWith("[*]")) {
+			delegateToUse = delegateToUse.arrayField();
+		}
+		DelegatingJsonVerifiable verifiable = new DelegatingJsonVerifiable(delegateToUse.elementWithIndex(i),
 				this.methodsBuffer);
-		this.methodsBuffer.offer(".elementWithIndex(" + i + ")");
+		verifiable.methodsBuffer.offer(".elementWithIndex(" + i + ")");
 		return verifiable;
 	}
 

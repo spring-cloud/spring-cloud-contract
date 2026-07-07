@@ -53,4 +53,10 @@ class FinishedDelegatingJsonVerifiable extends DelegatingJsonVerifiable {
 		return this.keyBeforeChecking;
 	}
 
+	@Override
+	public String jsonPath() {
+		String jsonPath = this.delegate.jsonPath();
+		return jsonPath.contains("@.null") ? this.keyBeforeChecking : jsonPath;
+	}
+
 }

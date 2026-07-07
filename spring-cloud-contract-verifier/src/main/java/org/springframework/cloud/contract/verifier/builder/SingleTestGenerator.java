@@ -43,10 +43,19 @@ public interface SingleTestGenerator {
 
 	class GeneratedClassData {
 
+		/**
+		 * Name of the generated class.
+		 */
 		public final String className;
 
+		/**
+		 * Package name of the generated class.
+		 */
 		public final String classPackage;
 
+		/**
+		 * Filesystem path for the generated test class.
+		 */
 		public final Path testClassPath;
 
 		public GeneratedClassData(String className, String classPackage, Path testClassPath) {
