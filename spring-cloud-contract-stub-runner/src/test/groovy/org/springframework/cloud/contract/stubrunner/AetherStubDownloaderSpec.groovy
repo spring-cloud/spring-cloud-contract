@@ -20,14 +20,12 @@ import org.eclipse.aether.RepositorySystemSession
 import org.eclipse.aether.repository.Authentication
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import spock.lang.Ignore
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
 
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import org.springframework.util.ResourceUtils
 
-@Ignore("see https://github.com/spring-cloud/spring-cloud-contract/issues/2478")
 class AetherStubDownloaderSpec extends Specification {
 
 	@Rule
@@ -48,6 +46,7 @@ class AetherStubDownloaderSpec extends Specification {
 			entry == null
 	}
 
+	@RestoreSystemProperties
 	def 'should throw an exception when local m2 gets replaced with a temp dir and a jar is not found in remote'() {
 		given:
 			StubRunnerOptions stubRunnerOptions = new StubRunnerOptionsBuilder()
@@ -55,15 +54,19 @@ class AetherStubDownloaderSpec extends Specification {
 					.withStubRepositoryRoot("file://" + folder.newFolder().absolutePath)
 					.build()
 		and:
-			String localRepo = AetherFactories.localRepositoryDirectory(true)
-			new File(localRepo, "org/springframework/cloud/spring-cloud-contract-spec"
+			def m2repoFolder = 'm2repo' + File.separator + 'repository'
+			File localRepo = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + m2repoFolder)
+			System.setProperty("maven.repo.local", localRepo.getAbsolutePath())
+			new File(localRepo, "org/springframework/cloud/contract/verifier/stubs/bootService"
 					.replace("/", File.separator)).list().size() > 0
 
 		and:
 			AetherStubDownloader aetherStubDownloader = new AetherStubDownloader(stubRunnerOptions)
 
 		when:
-			def entry = aetherStubDownloader.downloadAndUnpackStubJar(new StubConfiguration("org.springframework.cloud", "spring-cloud-contract-spec", "+", ""))
+			def entry = aetherStubDownloader.downloadAndUnpackStubJar(
+					new StubConfiguration("org.springframework.cloud.contract.verifier.stubs",
+							"bootService", "+", ""))
 
 		then:
 			entry == null
